@@ -2,13 +2,13 @@
 
 <p align="center">
   <strong>Train your brain. No wifi needed.</strong><br>
-  An offline brain-training app for iOS — and an engine for building many small games from one codebase.
+  An offline brain-training app for iOS and Android — and an engine for building many small games from one codebase.
 </p>
 
 <p align="center">
   <img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue">
   <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.44.6-02569B">
-  <img alt="Platform" src="https://img.shields.io/badge/platform-iOS-lightgrey">
+  <img alt="Platform" src="https://img.shields.io/badge/platform-iOS%20%C2%B7%20Android-lightgrey">
   <img alt="Locales" src="https://img.shields.io/badge/locales-en%20%C2%B7%20de%20%C2%B7%20fa%20%C2%B7%20ckb-orange">
   <img alt="Status" src="https://img.shields.io/badge/status-in%20development-yellow">
 </p>
@@ -141,7 +141,11 @@ is **exactly 390×844 logical points**, matching the reference screenshots. No i
 does — the 16 is 393×852 and the 16 Pro is 402×874 — so comparing a build against the references on
 anything else is not an honest comparison.
 
-Requires Flutter 3.44.6, Xcode 26.6 and CocoaPods. iOS only; Android is deferred by decision.
+Requires Flutter 3.44.6, Xcode 26.6 and CocoaPods.
+
+MindForge targets **iOS and Android**. iOS is being built first, so the current epics and the
+canonical device above are iOS; Android follows once the app runs end to end. Nothing in the
+architecture is iOS-specific — there is no platform channel and no native UI.
 
 ## Contributing
 

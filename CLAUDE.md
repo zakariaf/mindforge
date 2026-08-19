@@ -9,7 +9,7 @@ First two games: **Stroop Rush** (tap the colour the word is *printed* in) and *
 (tap 1..25 ascending, fast). Schulte is the proof: it must ship without editing `lib/features/**`.
 
 It ships in **four locales, two of them right-to-left** — English, German, Persian and Kurdish Sorani —
-on **iOS only**. Neither is a bolt-on: RTL reaches every component's geometry and Eastern Arabic
+on **iOS and Android**, iOS first. Neither is a bolt-on: RTL reaches every component's geometry and Eastern Arabic
 numerals reach the Schulte tiles, which *are* the numbers 1..25.
 
 ## Hard product constraints
@@ -25,7 +25,7 @@ These are the easiest thing to break by adding one package. Check them before `d
 | On-device storage only | drift/SQLite under `lib/data/`. The only exit path is a user-initiated export/share. |
 | Bundled fonts | Fredoka + Nunito (Latin) **and Vazirmatn + one Arabic-script display face** ship as assets, each with its SIL OFL text registered through `registerSunburstFontLicences()`. Runtime font fetching is a network call. |
 | Four locales, two RTL | `en` (template, and the fallback), `de`, `fa`, `ckb`. System locale if supported, else `en`; the user's override persists in `settings.locale_tag`. `lib/core/supported_locale.dart` is the only list of shipped locales in the repo. |
-| iOS only | Android is **deferred by decision, not oversight** — no `android/` target, no `values-*` resources, no claim of parity. Build and run on the canonical simulator `MindForge iPhone 14`, UDID `C13DDC02-375D-4E1B-8F81-44EB407D09A4`, iOS 18.6, which is **exactly 390x844** and therefore the only device a reference screenshot can honestly be compared on (iPhone 16 is 393x852, 16 Pro is 402x874). |
+| iOS first, Android later | Both platforms ship. **iOS is the only target in E01-E11**: do not add an `android/` target, `values-*` resources or Android-specific code until an Android epic exists — the architecture stays platform-neutral (no platform channel, no native UI) so that epic is additive. Build and run on the canonical simulator `MindForge iPhone 14`, UDID `C13DDC02-375D-4E1B-8F81-44EB407D09A4`, iOS 18.6, which is **exactly 390x844** and therefore the only device a reference screenshot can honestly be compared on (iPhone 16 is 393x852, 16 Pro is 402x874). An AVD `MindForge_Android_390x844` (1170x2532 @ 480dpi = the same 390x844 dp) already exists on this machine for when that epic lands. |
 
 If a feature appears to require the network, it is the wrong feature.
 
