@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/supported_locales.dart';
 
 import 'support/source_text.dart';
 
@@ -151,17 +153,86 @@ void main() {
       );
 
       expect(
-        AppLocalizations.supportedLocales
-            .map((l) => l.toLanguageTag())
-            .toList(),
-        // E01 ships the template alone; E04 lands the other three ARBs and
-        // this expectation grows to the full set in the same PR.
-        ['en'],
+        supportedLocales.map((l) => l.languageCode).toList(),
+        expected,
         reason:
-            'gen-l10n derives supportedLocales from the ARB files present. '
-            'When E04 adds app_de.arb, app_fa.arb and app_ckb.arb this becomes '
-            'the full four and the CFBundleLocalizations claim stops being '
-            'ahead of the implementation',
+            'the list MaterialApp is handed must be en-first, because '
+            'Flutter falls back to supportedLocales.first',
+      );
+
+      expect(
+        AppLocalizations.supportedLocales.map((l) => l.languageCode).toList()
+          ..sort(),
+        [...expected]..sort(),
+        reason:
+            'gen-l10n derives its own list from the ARB FILENAMES, so the '
+            'two must hold the same SET even though they differ in order. '
+            'Without this a fifth ARB or a dropped enum case would give the '
+            'app two different answers to "which locales ship"',
+      );
+
+      expect(
+        AppLocalizations.supportedLocales.first.languageCode,
+        'ckb',
+        reason:
+            'measured: gen-l10n emits ALPHABETICAL order. This assertion '
+            'exists so that if it ever becomes en-first, someone re-reads why '
+            'lib/l10n/supported_locales.dart exists at all rather than '
+            'deleting it',
+      );
+    });
+  });
+
+  group('the shipped locale set has exactly one source', () {
+    test('lib/l10n/supported_locales.dart is a projection of the enum', () {
+      expect(
+        supportedLocales.map((l) => l.languageCode).toList(),
+        SupportedLocale.values.map((l) => l.tag).toList(),
+      );
+    });
+
+    test('the ARB files map 1:1 onto SupportedLocale', () {
+      final arbTags =
+          Directory('lib/l10n')
+              .listSync()
+              .whereType<File>()
+              .map((f) => f.uri.pathSegments.last)
+              .where((name) => RegExp(r'^app_\w+\.arb$').hasMatch(name))
+              .map((name) => name.substring(4, name.length - 4))
+              .toList()
+            ..sort();
+
+      expect(
+        arbTags,
+        (SupportedLocale.values.map((l) => l.tag).toList())..sort(),
+        reason:
+            'a fifth ARB nobody translated fails here, and so does an enum '
+            'case with no ARB',
+      );
+    });
+
+    test('every ARB declares an @@locale matching its filename', () {
+      for (final locale in SupportedLocale.values) {
+        final arb =
+            jsonDecode(
+                  File('lib/l10n/app_${locale.tag}.arb').readAsStringSync(),
+                )
+                as Map<String, dynamic>;
+
+        expect(arb['@@locale'], locale.tag);
+      }
+    });
+  });
+
+  group('the decision record', () {
+    test('ADR 0001 is superseded and ADR 0002 exists', () {
+      expect(
+        File('docs/decisions/0001-localisation.md').readAsStringSync(),
+        contains('Superseded by'),
+      );
+      expect(
+        File('docs/decisions/0002-four-locales-and-rtl.md').existsSync(),
+        isTrue,
       );
     });
   });

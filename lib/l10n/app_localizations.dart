@@ -5,7 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ckb.dart';
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_fa.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,43 +95,468 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ckb'),
+    Locale('de'),
+    Locale('en'),
+    Locale('fa'),
+  ];
 
-  /// The application name. Shown as the app title and as the wordmark at the top of the Home screen. A proper noun: it is never translated, only transliterated where a script demands it, and in fa and ckb it is a Latin run inside RTL copy that needs bidi isolation.
+  /// The application name and the wordmark at the top of Home and Settings. A proper noun: it stays 'MindForge' in ALL FOUR locales. In fa and ckb it is a Latin run inside RTL copy and is bidi-isolated at render.
   ///
   /// In en, this message translates to:
   /// **'MindForge'**
   String get appTitle;
 
-  /// Subtitle under the wordmark on the Home screen (01-home.png). Two short sentences. The second one is the product promise: the app works with no network connection at all, ever.
-  ///
-  /// In en, this message translates to:
-  /// **'Train your brain. No wifi needed.'**
-  String get homeTagline;
-
-  /// Section heading on the Home screen (01-home.png) above the grid of game cards. Sentence case, not title case.
-  ///
-  /// In en, this message translates to:
-  /// **'Your games'**
-  String get homeYourGames;
-
-  /// Label on the primary button that starts a round, on the game detail screen (02-game-detail.png). An imperative verb, as short as the language allows — it sits inside a fixed-width chunky button.
+  /// Bottom navigation tab leading to the game hub. A noun here, not a verb — it names a destination, unlike playButton which is an action.
   ///
   /// In en, this message translates to:
   /// **'Play'**
-  String get actionPlay;
+  String get navPlay;
 
-  /// Label on the pill showing the player's best score for a game (01-home.png). Rendered in capitals in English; a script without letter case renders it in its normal form rather than being forced.
+  /// Bottom navigation tab leading to the statistics screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get navStats;
+
+  /// Bottom navigation tab leading to settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// Greeting at the top of Home, chosen by time of day. A select rather than a Dart switch in a widget, so a locale that greets differently at different hours can say so in its own ARB.
+  ///
+  /// In en, this message translates to:
+  /// **'{daypart, select, morning{Good morning} afternoon{Good afternoon} evening{Good evening} other{Hello}}'**
+  String homeGreeting(String daypart);
+
+  /// Subtitle under the greeting on Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to train?'**
+  String get homeReadyPrompt;
+
+  /// The streak chip on Home. A plural, not a concatenation: 'day' and 'days' differ in en, and Persian and Sorani have their own category rules.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No streak yet} one{{count} day streak} other{{count} day streak}}'**
+  String streakDays(int count);
+
+  /// Heading of the suggested-session card on Home and game detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Mix'**
+  String get dailyMixTitle;
+
+  /// The Daily Mix summary line, e.g. '3 games, 4 minutes'. BOTH counts are pluralised inside ONE message: splicing two separately localized fragments is what produces ungrammatical output in languages that inflect the joiner.
+  ///
+  /// In en, this message translates to:
+  /// **'{games, plural, one{{games} game} other{{games} games}}, {minutes, plural, one{{minutes} minute} other{{minutes} minutes}}'**
+  String dailyMixSummary(int games, int minutes);
+
+  /// Section heading above the game cards on Home. Sentence case.
+  ///
+  /// In en, this message translates to:
+  /// **'Your games'**
+  String get yourGamesTitle;
+
+  /// Count chip beside the 'Your games' heading.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} unlocked} other{{count} unlocked}}'**
+  String gamesUnlocked(int count);
+
+  /// Label on the best-score pill. Authored in capitals: casing belongs in the string table, and SunburstType.label is the only step that permits caps. A script with no letter case renders it in its normal form rather than being forced.
   ///
   /// In en, this message translates to:
   /// **'BEST'**
-  String get labelBest;
+  String get bestLabel;
 
-  /// Row label in Settings (08-settings.png) that opens the language picker. The noun, not the imperative 'choose a language'.
+  /// Badge on a game card that is not yet playable.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// The name of the first game. IT IS TRANSLATED — this is a description, not a brand, and E07's GameDefinition therefore carries this ARB KEY rather than a display string.
+  ///
+  /// In en, this message translates to:
+  /// **'Stroop Rush'**
+  String get gameStroopRushName;
+
+  /// One-line description of Stroop Rush, on its card and its detail screen. It is also the on-board instruction during play.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the colour, not the word'**
+  String get gameStroopRushTagline;
+
+  /// The name of the second game. Translated, for the same reason as gameStroopRushName.
+  ///
+  /// In en, this message translates to:
+  /// **'Schulte Grid'**
+  String get gameSchulteGridName;
+
+  /// One-line description of Schulte Grid. The '1 to 25' is prose describing the fixed range of the grid, not a formatted value, so it is authored in the string.
+  ///
+  /// In en, this message translates to:
+  /// **'Find 1 to 25, fast'**
+  String get gameSchulteGridTagline;
+
+  /// The name of the third game, shown as a coming-soon card.
+  ///
+  /// In en, this message translates to:
+  /// **'N-Back'**
+  String get gameNBackName;
+
+  /// The category tags on a game detail header. The interpunct is authored in the string so an RTL locale can place it.
+  ///
+  /// In en, this message translates to:
+  /// **'Reaction · Focus'**
+  String get gameTagsReactionFocus;
+
+  /// A game and its difficulty together, in the countdown and play headers. The separator is inside the message so an RTL locale can move it.
+  ///
+  /// In en, this message translates to:
+  /// **'{game} · {difficulty}'**
+  String gameAndDifficulty(String game, String difficulty);
+
+  /// Label on the personal-best figure on game detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Your best'**
+  String get yourBest;
+
+  /// Label on the run-count figure on game detail and on Stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Games played'**
+  String get gamesPlayed;
+
+  /// Heading above the difficulty selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get difficultyTitle;
+
+  /// The easiest difficulty. An adjective describing the pace, not a proper noun.
+  ///
+  /// In en, this message translates to:
+  /// **'Chill'**
+  String get difficultyChill;
+
+  /// The default difficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get difficultyClassic;
+
+  /// The hardest and fastest difficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Blitz'**
+  String get difficultyBlitz;
+
+  /// The primary button that starts a round. An imperative verb, as short as the language allows — it sits inside a fixed-width chunky button.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get playButton;
+
+  /// The line under the countdown numeral. The numeral itself is a formatted number, never part of this string.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ready'**
+  String get getReady;
+
+  /// HUD label above the elapsed or remaining clock.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get hudTime;
+
+  /// HUD label above the running score.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get hudScore;
+
+  /// HUD label above the combo multiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get hudStreak;
+
+  /// HUD label above the found-tile count in Schulte Grid.
+  ///
+  /// In en, this message translates to:
+  /// **'Found'**
+  String get hudFound;
+
+  /// HUD label above the next number to find in Schulte Grid.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get hudNext;
+
+  /// The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{×{count}}}'**
+  String streakMultiplier(int count);
+
+  /// How many tiles have been found out of the total, e.g. '6 / 25'. Both values are placeholders so the separator can change per locale.
+  ///
+  /// In en, this message translates to:
+  /// **'{found} / {total}'**
+  String foundOfTotal(int found, int total);
+
+  /// A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get colourRed;
+
+  /// A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get colourBlue;
+
+  /// A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get colourGreen;
+
+  /// A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow'**
+  String get colourYellow;
+
+  /// The heading on the results screen. Warm and short; it is celebratory, not an evaluation of the score.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice run!'**
+  String get resultsTitle;
+
+  /// Badge shown on results when the run beat every previous run in its scope.
+  ///
+  /// In en, this message translates to:
+  /// **'New personal best'**
+  String get newPersonalBest;
+
+  /// Label above the large results score.
+  ///
+  /// In en, this message translates to:
+  /// **'Final score'**
+  String get finalScore;
+
+  /// Label on the accuracy figure on results.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy'**
+  String get accuracyLabel;
+
+  /// Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg reaction'**
+  String get avgReactionLabel;
+
+  /// The millisecond unit, rendered as its OWN run beside the number. A separate key so the value and its unit are never hand-glued, which is what breaks in RTL.
+  ///
+  /// In en, this message translates to:
+  /// **'ms'**
+  String get unitMilliseconds;
+
+  /// Label on the best-combo figure on results.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest streak'**
+  String get longestStreakLabel;
+
+  /// Button on results that starts another round of the same game and difficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Play again'**
+  String get playAgain;
+
+  /// Button on results that returns to the hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeButton;
+
+  /// The statistics screen heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get statsTitle;
+
+  /// The scope chip on Stats, saying the figures below cover every run ever.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get statsAllTime;
+
+  /// Label on the best-points figure on Stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Best score'**
+  String get bestScore;
+
+  /// Label on the fastest-completion figure on Stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Best time'**
+  String get bestTime;
+
+  /// Label on the total-play-time figure on Stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Time trained'**
+  String get timeTrained;
+
+  /// A duration in hours and minutes, e.g. '3h 12m'. The unit markers are INSIDE the message so de can say '3 Std. 12 Min.' and fa can say its own form.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h {minutes}m'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// Heading above the recent-runs chart on Stats.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Last {count} run} other{Last {count} runs}}'**
+  String lastNRuns(int count);
+
+  /// The subtitle under the chart heading, naming the game and its best score. The score arrives already formatted for the locale.
+  ///
+  /// In en, this message translates to:
+  /// **'{game} · best {score}'**
+  String chartSubtitle(String game, String score);
+
+  /// Axis label at the older end of the recent-runs chart. Its POSITION mirrors in RTL; the word does not change.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get chartOldest;
+
+  /// Axis label at the newer end of the recent-runs chart.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get chartLatest;
+
+  /// The settings screen heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Row label for the sound-effects toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get settingSound;
+
+  /// Row label for the haptic-feedback toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptics'**
+  String get settingHaptics;
+
+  /// Row label for the reduce-motion toggle. This is the app's own setting, independent of the OS one; either turning motion off is enough.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce motion'**
+  String get settingReduceMotion;
+
+  /// Row label for the colour-blind answer palette. It re-points gameplay answer colours only and never moves UI chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour-blind friendly palette'**
+  String get settingColourBlind;
+
+  /// The on state of a toggle, printed INSIDE the switch track. Authored in capitals. Its rendered width is a hard layout constraint: German EIN and Persian روشن are wider, and the track grows rather than the text shrinking.
+  ///
+  /// In en, this message translates to:
+  /// **'ON'**
+  String get toggleOn;
+
+  /// The off state of a toggle, printed inside the switch track. Same width constraint as toggleOn.
+  ///
+  /// In en, this message translates to:
+  /// **'OFF'**
+  String get toggleOff;
+
+  /// Settings row label that opens the language picker. The noun, not 'choose a language'.
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get settingsLanguage;
+
+  /// The option in the language picker that clears the override and follows the system locale. THIS one is translated; the language names beside it are not.
+  ///
+  /// In en, this message translates to:
+  /// **'Use device language'**
+  String get settingsLanguageSystem;
+
+  /// Heading of the about section in Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'About MindForge'**
+  String get aboutTitle;
+
+  /// The product tagline, in the about section. The second sentence is the promise: the app works with no network connection at all, ever.
+  ///
+  /// In en, this message translates to:
+  /// **'Train your brain. No wifi needed.'**
+  String get aboutTagline;
+
+  /// Heading of the pause sheet. No reference PNG exists for this sheet; it comes from system.html section 10.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get pauseTitle;
+
+  /// Button on the pause sheet that continues the run.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get pauseResume;
+
+  /// Button on the pause sheet that abandons the run. It discards the run rather than saving it, so the wording must not sound like 'finish'.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit run'**
+  String get pauseQuit;
+
+  /// A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageNameEn;
+
+  /// A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row.
+  ///
+  /// In en, this message translates to:
+  /// **'Deutsch'**
+  String get languageNameDe;
+
+  /// A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row.
+  ///
+  /// In en, this message translates to:
+  /// **'فارسی'**
+  String get languageNameFa;
+
+  /// A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row.
+  ///
+  /// In en, this message translates to:
+  /// **'کوردیی ناوەندی'**
+  String get languageNameCkb;
 }
 
 class _AppLocalizationsDelegate
@@ -142,7 +570,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['ckb', 'de', 'en', 'fa'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -151,8 +579,14 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ckb':
+      return AppLocalizationsCkb();
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'fa':
+      return AppLocalizationsFa();
   }
 
   throw FlutterError(
