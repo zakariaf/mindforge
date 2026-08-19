@@ -59,17 +59,6 @@ final class Device {
   String toString() => 'Device($name @${dpr}x)';
 }
 
-/// The locales the harness offers.
-///
-/// A stand-in for the real `supportedLocales`, which **E04 owns** once the ARB
-/// files and the `ckb` delegate land.
-const List<Locale> _kHarnessLocales = <Locale>[
-  Locale('en'),
-  Locale('de'),
-  Locale('fa'),
-  Locale('ckb'),
-];
-
 /// Sizes the test viewport to `device` and restores it afterwards.
 void useDevice(WidgetTester tester, Device device) {
   final view = tester.view
@@ -142,7 +131,44 @@ extension PumpApp on WidgetTester {
     );
   }
 
+  /// Pumps a throwaway tree in [localeCase] and returns [read] of its context.
+  ///
+  /// The `late X captured; pumpLocalized(Builder(...))` idiom was written out
+  /// eight times across four files, ten lines each, to get one value out of a
+  /// pumped tree. Usually the value is an inherited lookup:
+  ///
+  /// ```dart
+  /// final l10n = await tester.readInLocale(localeCase, AppLocalizations.of);
+  /// ```
+  Future<T> readInLocale<T>(
+    LocaleCase localeCase,
+    T Function(BuildContext context) read, {
+    ThemeData? theme,
+  }) async {
+    late T value;
+
+    await pumpLocalized(
+      Builder(
+        builder: (context) {
+          value = read(context);
+          return const SizedBox.shrink();
+        },
+      ),
+      localeCase,
+      theme: theme,
+    );
+
+    return value;
+  }
+
   /// Pumps [child] under a `MaterialApp` carrying [theme].
+  ///
+  /// **It takes no `textDirection`, deliberately.** It used to, as a test-only
+  /// stand-in for the absent `GlobalWidgetsLocalizations` — E04 vendored those
+  /// delegates, so direction now follows the locale here exactly as it does in
+  /// production. A hardcoded root `Directionality` is precisely what hides a
+  /// physical-side bug: it happens to look right. Use [pumpLocalized] when the
+  /// locale matters.
   ///
   /// [theme] defaults to `buildSunburstTheme()`, the one theme the app ships.
   /// A task testing a single extension in isolation passes an inline
@@ -154,29 +180,18 @@ extension PumpApp on WidgetTester {
   /// nothing to override anyway. E05 adds it, by whatever means Riverpod
   /// exposes then.
   ///
-  /// [textDirection], when non-null, wraps [child] in a `Directionality`. That
-  /// is a **test-only stand-in** for the absent `GlobalWidgetsLocalizations`:
-  /// measured on Flutter 3.44.6, `DefaultWidgetsLocalizations.textDirection` is
-  /// hardcoded LTR, so pumping `locale: fa` alone yields an LTR tree silently.
-  /// Production code must never do this — a hardcoded root `Directionality` is
-  /// exactly what hides a physical-side bug — and E04 removes the need for it.
   Future<void> pumpApp(
     Widget child, {
     ThemeData? theme,
     Locale locale = const Locale('en'),
-    TextDirection? textDirection,
     bool disableAnimations = false,
   }) {
-    final content = textDirection == null
-        ? child
-        : Directionality(textDirection: textDirection, child: child);
-
     return pumpWidget(
       ProviderScope(
         child: MaterialApp(
           theme: theme ?? buildSunburstTheme(),
           locale: locale,
-          supportedLocales: _kHarnessLocales,
+          supportedLocales: supportedLocales,
           home: Builder(
             builder: (context) => MediaQuery(
               // Layered ABOVE MaterialApp and built from .copyWith, never from
@@ -186,7 +201,7 @@ extension PumpApp on WidgetTester {
               data: MediaQuery.of(context).copyWith(
                 disableAnimations: disableAnimations,
               ),
-              child: content,
+              child: child,
             ),
           ),
         ),

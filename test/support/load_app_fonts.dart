@@ -28,9 +28,14 @@ import 'package:mindforge/theme/font_licences.dart';
 Future<void> loadAppFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  for (final font in kBundledFonts) {
-    final loader = FontLoader(font.family)
-      ..addFont(rootBundle.load(font.asset));
-    await loader.load();
-  }
+  // Loaded concurrently: three independent reads of ~680 KB, and awaiting each
+  // before starting the next is the one shape that makes them serial for no
+  // reason.
+  await Future.wait(
+    kBundledFonts.map(
+      (font) => (FontLoader(
+        font.family,
+      )..addFont(rootBundle.load(font.asset))).load(),
+    ),
+  );
 }

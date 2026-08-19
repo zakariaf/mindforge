@@ -5,6 +5,7 @@ import 'package:mindforge/l10n/locale_numbers.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
 import '../support/harness.dart';
+import '../support/l10n_strings.dart';
 import '../support/locale_cases.dart';
 
 /// The matrix E05 and every later epic run their components through.
@@ -18,66 +19,50 @@ void main() {
         // pumpLocalized asserts this internally; asserting it again here is
         // deliberate, so the matrix reads as a statement rather than relying on
         // a side effect of the helper.
-        late TextDirection resolved;
-
-        await tester.pumpLocalized(
-          Builder(
-            builder: (context) {
-              resolved = Directionality.of(context);
-              return const SizedBox.shrink();
-            },
-          ),
-          localeCase,
+        expect(
+          await tester.readInLocale(localeCase, Directionality.of),
+          localeCase.direction,
         );
-
-        expect(resolved, localeCase.direction);
       });
 
-      testWidgets('a plural in an RTL locale prints LOCALISED digits', (
-        tester,
-      ) async {
-        // The bug this shape exists to prevent: gen-l10n interpolates an int
+      test('NO string carries an ASCII digit in an RTL locale', () async {
+        // The bug this exists to prevent: gen-l10n interpolates an int
         // placeholder with Dart toString(), so "زنجیره‌ی 4 روزه" — a Persian
         // sentence with a Latin digit in it — is what shipped before the
         // placeholders became pre-formatted Strings.
-        late AppLocalizations l10n;
-
-        await tester.pumpLocalized(
-          Builder(
-            builder: (context) {
-              l10n = AppLocalizations.of(context);
-              return const SizedBox.shrink();
-            },
-          ),
-          localeCase,
+        //
+        // Asserted over EVERY message, not over the one that had the bug.
+        // Seven other keys carry numbers, and one key standing in for a rule
+        // is how the eighth regresses quietly.
+        final l10n = await AppLocalizations.delegate.load(
+          localeCase.flutterLocale,
         );
+        final rendered = renderAllStrings(l10n);
 
-        final formatted = LocaleNumbers(localeCase.locale).count(4);
-        final rendered = l10n.streakDays(4, formatted);
-
-        expect(rendered, contains(formatted));
-        if (localeCase.usesEasternArabicNumerals) {
-          expect(
-            RegExp('[0-9]').hasMatch(rendered),
-            isFalse,
-            reason:
-                'an ASCII digit in a Persian or Sorani sentence reads as '
-                'untranslated: "$rendered"',
-          );
+        if (!localeCase.usesEasternArabicNumerals) {
+          expect(rendered, isNotEmpty);
+          return;
         }
+
+        final offenders = <String>[
+          for (final entry in rendered.entries)
+            if (RegExp('[0-9]').hasMatch(entry.value))
+              '${entry.key}: "${entry.value}"',
+        ];
+
+        expect(
+          offenders,
+          isEmpty,
+          reason:
+              'an ASCII digit in a Persian or Sorani sentence reads as '
+              'untranslated',
+        );
       });
 
       testWidgets('every string resolves and none is empty', (tester) async {
-        late AppLocalizations l10n;
-
-        await tester.pumpLocalized(
-          Builder(
-            builder: (context) {
-              l10n = AppLocalizations.of(context);
-              return const SizedBox.shrink();
-            },
-          ),
+        final l10n = await tester.readInLocale(
           localeCase,
+          AppLocalizations.of,
         );
 
         // Numbers arrive PRE-FORMATTED, through LocaleNumbers. See the
@@ -115,17 +100,7 @@ void main() {
       testWidgets('the type scale resolves to a face that can draw it', (
         tester,
       ) async {
-        late SunburstType type;
-
-        await tester.pumpLocalized(
-          Builder(
-            builder: (context) {
-              type = SunburstType.of(context);
-              return const SizedBox.shrink();
-            },
-          ),
-          localeCase,
-        );
+        final type = await tester.readInLocale(localeCase, SunburstType.of);
 
         expect(
           type.body.fontFamily,

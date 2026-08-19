@@ -14,19 +14,26 @@ import 'package:mindforge/theme/sunburst_type.dart';
 /// key be measured in one place and rendered in the other.
 ///
 /// Getters with parameters cannot be called generically, which is why this is a
-/// hand-written map rather than a reflection loop. `renderedStringCount` is
-/// asserted against the generated class's real getter count, so a new ARB key
-/// that nobody added here fails a test instead of going unmeasured.
+/// hand-written map rather than a reflection loop. Its key set is asserted
+/// equal to the **template ARB's** message keys by
+/// `test/l10n/text_expansion_matrix_test.dart`, so a key added in a later epic
+/// and forgotten here fails a test instead of going unmeasured, unrendered in
+/// the Persian dump, and therefore missing from the RTL reference screens.
 ///
 /// **Numbers arrive PRE-FORMATTED.** gen-l10n interpolates an `int` placeholder
 /// with Dart `toString()`, which is Latin digits in every locale — measured,
 /// `streakDays` rendered `4` instead of `۴` before the placeholders changed
 /// shape. The `int` survives only where ICU needs it to pick a plural branch.
-Map<String, String> renderAllStrings(
-  AppLocalizations l10n,
-  SupportedLocale locale,
-) {
-  final fmt = LocaleNumbers(locale);
+///
+/// It takes **only** the localizations: the locale is derived from
+/// `l10n.localeName`, so the strings and the numerals cannot come from
+/// different locales. Passing both was five call sites keeping a pair in sync
+/// by hand, and a mismatch would have measured one locale's words at another's
+/// digits without failing anything.
+Map<String, String> renderAllStrings(AppLocalizations l10n) {
+  final fmt = LocaleNumbers(
+    SupportedLocale.tryParse(l10n.localeName) ?? SupportedLocale.en,
+  );
   String n(int value) => fmt.count(value);
 
   return <String, String>{

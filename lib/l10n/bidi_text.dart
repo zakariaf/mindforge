@@ -26,12 +26,16 @@ abstract final class BidiText {
   /// [text] wrapped so it cannot reorder, or be reordered by, its surroundings.
   ///
   /// Applied to any run whose script may differ from the paragraph: the
-  /// wordmark, a game id, a technical reference. It is a no-op for an empty
-  /// string, so a caller need not guard.
-  static String isolate(String text) =>
-      text.isEmpty ? text : '$_firstStrongIsolate$text$_popDirectionalIsolate';
+  /// wordmark, a game id, a technical reference.
+  ///
+  /// A no-op for an empty string and for one that is **already** isolated, so
+  /// neither a caller nor two layers of callers need to guard. Double-wrapping
+  /// is invisible on screen and survives into any value built from the result.
+  static String isolate(String text) => text.isEmpty || isIsolated(text)
+      ? text
+      : '$_firstStrongIsolate$text$_popDirectionalIsolate';
 
-  /// Whether [text] is already isolated, so a caller cannot double-wrap.
+  /// Whether [text] is already isolated, so [isolate] cannot double-wrap.
   static bool isIsolated(String text) =>
       text.startsWith(_firstStrongIsolate) &&
       text.endsWith(_popDirectionalIsolate);

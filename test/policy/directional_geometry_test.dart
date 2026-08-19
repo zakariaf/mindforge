@@ -41,17 +41,16 @@ const kPhysicalSideConstructs = <String, String>{
 ///
 /// This is the single question a reviewer will raise on the RTL PR, so it is
 /// answered in the source, here, and in the PR body.
+///
+/// **The other half of this rule is `check_i18n_bans.sh`**, which CI runs by
+/// name over `lib/`. It bans the same constructs from the shell side and is
+/// the weaker of the two — this list adds `EdgeInsets.fromLTRB`, the
+/// `BorderRadius.horizontal(left:` form and the corner variants. Two gates
+/// deliberately, because the shell one is vendored library code this
+/// repository does not own; if they ever disagree, this one is right.
 const kNonMirroringShadowFile = 'lib/theme/sunburst_shape.dart';
 
 void main() {
-  Iterable<File> dartFilesUnderLib() => Directory('lib')
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((f) => f.path.endsWith('.dart'))
-      // Generated localisations are not hand-written and hold no geometry.
-      .where((f) => !f.path.contains('app_localizations'))
-      .where((f) => !f.path.endsWith('.drift.dart'));
-
   test('no physical-side geometry appears under lib/', () {
     final offenders = <String>[];
 

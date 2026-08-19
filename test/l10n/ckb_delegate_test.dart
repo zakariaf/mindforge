@@ -4,76 +4,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
-import 'package:mindforge/l10n/supported_locales.dart';
 
-/// Pumps [child] with the **real** delegate list the app ships.
-Future<void> pumpWithAppDelegates(
-  WidgetTester tester,
-  Locale locale,
-  Widget child, {
-  List<LocalizationsDelegate<dynamic>>? delegates,
-}) => tester.pumpWidget(
-  MaterialApp(
-    locale: locale,
-    supportedLocales: supportedLocales,
-    localizationsDelegates:
-        delegates ??
-        localizationsDelegatesFor(AppLocalizations.localizationsDelegates),
-    home: child,
-  ),
-);
+import '../policy/support/source_text.dart';
+import '../support/harness.dart';
+import '../support/locale_cases.dart';
 
+/// The vendored `ckb` delegate trio: that it is needed, that it works, and
+/// that it claims nothing it should not.
+///
+/// **The SDK measurements that justify it live in
+/// `material_delegate_support_test.dart`** — that file is the characterization
+/// owner, and stating "82 codes, no ckb" in two places means two places to
+/// update the day Flutter adds Sorani. This file asserts the behaviour of the
+/// code written in response.
 void main() {
-  group('the SDK gap this file exists for is still real', () {
-    // THE VERIFICATION, not the assumption. If a future Flutter adds ckb these
-    // go red, and someone deletes the vendored delegates deliberately instead
-    // of shipping dead code forever.
-    test('kMaterialSupportedLanguages has 82 codes and no ckb or ku', () {
-      expect(kMaterialSupportedLanguages, hasLength(82));
-      expect(kMaterialSupportedLanguages, isNot(contains('ckb')));
-      expect(kMaterialSupportedLanguages, isNot(contains('ku')));
-    });
-
-    test('no Global delegate supports ckb, and all three support fa', () {
-      const delegates = <String, LocalizationsDelegate<dynamic>>{
-        'material': GlobalMaterialLocalizations.delegate,
-        'cupertino': GlobalCupertinoLocalizations.delegate,
-        'widgets': GlobalWidgetsLocalizations.delegate,
-      };
-
-      for (final entry in delegates.entries) {
-        expect(
-          entry.value.isSupported(const Locale('ckb')),
-          isFalse,
-          reason: '${entry.key} unexpectedly gained ckb',
-        );
-        expect(
-          entry.value.isSupported(const Locale('fa')),
-          isTrue,
-          reason: '${entry.key} lost fa, which is the delegation target',
-        );
-      }
-    });
-  });
-
-  group('every supported locale mounts', () {
-    for (final locale in supportedLocales) {
-      testWidgets('${locale.languageCode} mounts without throwing', (
+  group('every supported locale mounts and reads the right way', () {
+    for (final localeCase in LocaleCase.all) {
+      testWidgets('${localeCase.tag} mounts and resolves its direction', (
         tester,
       ) async {
-        await pumpWithAppDelegates(
-          tester,
-          locale,
+        // pumpLocalized uses the REAL delegate list and asserts the resolved
+        // direction internally, so this test is the mounting half; the
+        // direction half is the harness refusing to return.
+        await tester.pumpLocalized(
           Builder(
             builder: (context) {
-              // Reading it is what asserts when the delegate is missing; a bare
-              // Scaffold never touches MaterialLocalizations.
+              // Reading it is what asserts when the delegate is missing. A
+              // bare Scaffold never touches MaterialLocalizations, so a test
+              // that pumps one proves nothing.
               MaterialLocalizations.of(context);
+              CupertinoLocalizations.of(context);
               return const Scaffold();
             },
           ),
+          localeCase,
         );
 
         expect(tester.takeException(), isNull);
@@ -81,67 +48,22 @@ void main() {
     }
   });
 
-  group('direction follows the locale', () {
-    testWidgets('ltr, ltr, rtl, rtl for en, de, fa, ckb', (tester) async {
-      const expected = <String, TextDirection>{
-        'en': TextDirection.ltr,
-        'de': TextDirection.ltr,
-        'fa': TextDirection.rtl,
-        'ckb': TextDirection.rtl,
-      };
-
-      for (final entry in expected.entries) {
-        late TextDirection resolved;
-
-        await pumpWithAppDelegates(
-          tester,
-          Locale(entry.key),
-          Builder(
-            builder: (context) {
-              resolved = Directionality.of(context);
-              return const SizedBox.shrink();
-            },
-          ),
-        );
-
-        expect(
-          resolved,
-          entry.value,
-          reason:
-              'under ckb WITHOUT the vendored widgets delegate this is '
-              'ltr — the silent half of the bug, and the one no crash report '
-              'would surface',
-        );
-      }
-    });
-  });
-
-  group('Material and Cupertino chrome have real strings under ckb', () {
-    testWidgets('and they equal the fa values, proving the delegation target', (
+  group('Material and Cupertino chrome under ckb', () {
+    testWidgets('carries the fa strings, proving the delegation target', (
       tester,
     ) async {
       Future<(MaterialLocalizations, CupertinoLocalizations)> read(
-        String tag,
-      ) async {
-        late MaterialLocalizations material;
-        late CupertinoLocalizations cupertino;
+        SupportedLocale locale,
+      ) => tester.readInLocale(
+        LocaleCase(locale),
+        (context) => (
+          MaterialLocalizations.of(context),
+          CupertinoLocalizations.of(context),
+        ),
+      );
 
-        await pumpWithAppDelegates(
-          tester,
-          Locale(tag),
-          Builder(
-            builder: (context) {
-              material = MaterialLocalizations.of(context);
-              cupertino = CupertinoLocalizations.of(context);
-              return const SizedBox.shrink();
-            },
-          ),
-        );
-        return (material, cupertino);
-      }
-
-      final (ckbMaterial, ckbCupertino) = await read('ckb');
-      final (faMaterial, faCupertino) = await read('fa');
+      final (ckbMaterial, ckbCupertino) = await read(SupportedLocale.ckb);
+      final (faMaterial, faCupertino) = await read(SupportedLocale.fa);
 
       for (final pair in <(String, String, String)>[
         (
@@ -211,34 +133,32 @@ void main() {
         AppLocalizations.localizationsDelegates,
       );
 
-      int indexOfType(bool Function(LocalizationsDelegate<dynamic>) match) =>
-          delegates.indexWhere(match);
-
-      final vendoredMaterial = indexOfType(
-        (d) => d is CkbMaterialLocalizationsDelegate,
+      expect(
+        delegates.indexWhere((d) => d is CkbMaterialLocalizationsDelegate),
+        allOf(
+          greaterThanOrEqualTo(0),
+          lessThan(
+            delegates.indexWhere(
+              (d) => identical(d, GlobalMaterialLocalizations.delegate),
+            ),
+          ),
+        ),
       );
-      final globalMaterial = indexOfType(
-        (d) => identical(d, GlobalMaterialLocalizations.delegate),
+      expect(
+        delegates.indexWhere((d) => d is CkbWidgetsLocalizationsDelegate),
+        lessThan(
+          delegates.indexWhere(
+            (d) => identical(d, GlobalWidgetsLocalizations.delegate),
+          ),
+        ),
       );
-
-      expect(vendoredMaterial, greaterThanOrEqualTo(0));
-      expect(globalMaterial, greaterThan(vendoredMaterial));
-
-      final vendoredWidgets = indexOfType(
-        (d) => d is CkbWidgetsLocalizationsDelegate,
-      );
-      final globalWidgets = indexOfType(
-        (d) => identical(d, GlobalWidgetsLocalizations.delegate),
-      );
-
-      expect(globalWidgets, greaterThan(vendoredWidgets));
     });
   });
 
   group('the app wires them', () {
     test('lib/app.dart builds its list through localizationsDelegatesFor', () {
       expect(
-        File('lib/app.dart').readAsStringSync(),
+        withoutDartComments(File('lib/app.dart').readAsStringSync()),
         contains('localizationsDelegatesFor('),
         reason:
             'handing MaterialApp AppLocalizations.localizationsDelegates '

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 /// Reads the design authority and the theme source as **text**, so a test can
 /// compare what Dart says against what `system.html` says.
@@ -164,4 +165,38 @@ abstract final class DesignSource {
     }
     return families;
   }
+}
+
+/// The eight reference screens, in the order they are numbered.
+///
+/// **One list.** It was written out in `reference_pixel_test.dart`,
+/// `rtl_screens_test.dart` and `capture-screens.sh`; a ninth screen had to be
+/// added in three places, and the two that were forgotten would still pass.
+const kScreenBasenames = <String>[
+  '01-home',
+  '02-game-detail',
+  '03-countdown',
+  '04-stroop-rush',
+  '05-schulte-grid',
+  '06-results',
+  '07-stats',
+  '08-settings',
+];
+
+/// The pixel geometry every reference PNG is captured at: 390x844 at 2x, which
+/// is exactly the canonical simulator.
+const ({int width, int height}) kReferencePixelSize = (
+  width: 780,
+  height: 1688,
+);
+
+/// Reads a PNG's dimensions from its IHDR, without decoding the image.
+///
+/// Cheap enough to run over sixteen files in a synchronous test, and it needs
+/// no Flutter binding — `ui.instantiateImageCodec` needs both.
+({int width, int height}) pngSize(File file) {
+  // 8-byte signature, then the IHDR chunk: 4 length, 4 type, then w/h.
+  final header = ByteData.sublistView(file.readAsBytesSync());
+
+  return (width: header.getUint32(16), height: header.getUint32(20));
 }

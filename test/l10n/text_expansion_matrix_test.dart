@@ -1,9 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/theme/sunburst_theme.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
 import '../support/harness.dart';
@@ -102,23 +103,38 @@ void main() {
     }
   });
 
-  group('the slot table covers the strings', () {
-    test('every ARB key has a declared type step and line budget', () async {
+  group('the tables and the template ARB agree', () {
+    // THE CLOSED LOOP. Asserting the two hand-written maps against EACH OTHER
+    // proves only that they were edited together; both can miss a key the ARB
+    // has, and then it is unmeasured here, unrendered in the Persian dump, and
+    // absent from the RTL reference screens — with every gate green. So the
+    // template ARB is the third party, and it is the authority.
+    final arbKeys =
+        (jsonDecode(File('lib/l10n/app_en.arb').readAsStringSync())
+                as Map<String, dynamic>)
+            .keys
+            .where((k) => !k.startsWith('@'))
+            .toSet();
+
+    test('every ARB message is rendered by renderAllStrings', () async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      final keys = renderAllStrings(l10n, SupportedLocale.en).keys.toSet();
+      final rendered = renderAllStrings(l10n).keys.toSet();
 
       expect(
-        keys.difference(kTypeSlots.keys.toSet()),
+        arbKeys.difference(rendered),
         isEmpty,
-        reason:
-            'an ARB key with no slot would be silently unmeasured, which is '
-            'the failure this matrix exists to prevent',
+        reason: 'an ARB message no test renders is a message nothing measures',
       );
       expect(
-        kTypeSlots.keys.toSet().difference(keys),
+        rendered.difference(arbKeys),
         isEmpty,
-        reason: 'a slot for a key that no longer exists',
+        reason: 'a rendered key the ARB no longer declares',
       );
+    });
+
+    test('every ARB message has a declared type step and line budget', () {
+      expect(arbKeys.difference(kTypeSlots.keys.toSet()), isEmpty);
+      expect(kTypeSlots.keys.toSet().difference(arbKeys), isEmpty);
     });
   });
 
@@ -133,21 +149,8 @@ void main() {
     // the very glyphs the fallback exists to draw. It is a constraint on
     // LAYOUT: a row carrying a language name sizes to its content and never to
     // a fixed height.
-    testWidgets('so E05 must not give such a row a fixed height', (
-      tester,
-    ) async {
-      late SunburstType type;
-
-      await tester.pumpLocalized(
-        Builder(
-          builder: (context) {
-            type = SunburstType.of(context);
-            return const SizedBox.shrink();
-          },
-        ),
-        LocaleCase.all.first,
-      );
-
+    test('so E05 must not give such a row a fixed height', () async {
+      final type = _typeFor(LocaleCase.all.first);
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
       final latinBox = type.body.fontSize! * type.body.height!;
 
@@ -183,8 +186,8 @@ void main() {
         final l10n = await AppLocalizations.delegate.load(
           localeCase.flutterLocale,
         );
-        final strings = renderAllStrings(l10n, localeCase.locale);
-        final type = await _typeFor(tester, localeCase);
+        final strings = renderAllStrings(l10n);
+        final type = _typeFor(localeCase);
 
         for (final entry in strings.entries) {
           final painter = TextPainter(
@@ -240,15 +243,21 @@ Future<List<String>> _measure(
   required double scale,
   bool pseudo = false,
 }) async {
+  final l10n = await AppLocalizations.delegate.load(localeCase.flutterLocale);
+  final rendered = renderAllStrings(l10n);
+  final strings = pseudo
+      ? rendered.map((k, v) => MapEntry(k, PseudoLocale.expand(v)))
+      : rendered;
+
   await tester.pumpLocalized(
-    _TypeSpecimen(pseudo: pseudo),
+    _TypeSpecimen(strings),
     localeCase,
     textScaler: TextScaler.linear(scale),
   );
 
-  final type = await _typeFor(tester, localeCase, scale: scale);
-  final l10n = await AppLocalizations.delegate.load(localeCase.flutterLocale);
-  final strings = renderAllStrings(l10n, localeCase.locale);
+  // Read out of the tree that was just pumped, rather than pumping a second
+  // MaterialApp per case purely to reach SunburstType.of.
+  final type = SunburstType.of(tester.element(find.byType(_TypeSpecimen)));
   final available = device.logicalSize.width - _kContentInset;
   final overflowing = <String>[];
 
@@ -256,7 +265,7 @@ Future<List<String>> _measure(
     final slot = kTypeSlots[entry.key]!;
     final painter = TextPainter(
       text: TextSpan(
-        text: pseudo ? PseudoLocale.expand(entry.value) : entry.value,
+        text: entry.value,
         style: styleForStep(type, slot.step),
       ),
       textDirection: localeCase.direction,
@@ -274,26 +283,14 @@ Future<List<String>> _measure(
   return overflowing;
 }
 
-Future<SunburstType> _typeFor(
-  WidgetTester tester,
-  LocaleCase localeCase, {
-  double scale = 1,
-}) async {
-  late SunburstType type;
-
-  await tester.pumpLocalized(
-    Builder(
-      builder: (context) {
-        type = SunburstType.of(context);
-        return const SizedBox.shrink();
-      },
-    ),
-    localeCase,
-    textScaler: TextScaler.linear(scale),
-  );
-
-  return type;
-}
+/// The type scale for [localeCase], with no pump.
+///
+/// `SunburstType.of` reads the theme and the locale's script and nothing else —
+/// not MediaQuery, so not the text scaler. Building a whole `MaterialApp` to
+/// ask it was two tree builds per case for one of four possible answers.
+SunburstType _typeFor(LocaleCase localeCase) => buildSunburstTheme()
+    .extension<SunburstType>()!
+    .forScript(SunburstScript.forLocale(localeCase.flutterLocale));
 
 String _report(
   List<({String step, String locale, String key, double width})> rows,
@@ -346,18 +343,18 @@ String _report(
 /// the fallback cascade — so a string that cannot be laid out at all fails
 /// here.
 class _TypeSpecimen extends StatelessWidget {
-  const _TypeSpecimen({this.pseudo = false});
+  const _TypeSpecimen(this.strings);
 
-  /// Whether to expand every string through [PseudoLocale] first.
-  final bool pseudo;
+  /// The strings to render, already expanded if this is the pseudo lane.
+  ///
+  /// Passed in rather than built here: the measurement and the render used to
+  /// be two independent constructions of the same table, equal only by
+  /// assumption.
+  final Map<String, String> strings;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final type = SunburstType.of(context);
-    final tag = Localizations.localeOf(context).languageCode;
-    final locale = SupportedLocale.tryParse(tag) ?? SupportedLocale.en;
-    final strings = renderAllStrings(l10n, locale);
 
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(
@@ -367,7 +364,7 @@ class _TypeSpecimen extends StatelessWidget {
         children: [
           for (final entry in strings.entries)
             Text(
-              pseudo ? PseudoLocale.expand(entry.value) : entry.value,
+              entry.value,
               style: styleForStep(type, kTypeSlots[entry.key]!.step),
             ),
         ],

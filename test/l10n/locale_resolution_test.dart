@@ -65,8 +65,6 @@ void main() {
   });
 
   group('localeProvider', () {
-    late ProviderContainer container;
-
     ProviderContainer open({
       required List<Locale> systemLocales,
       AppSettings initial = const AppSettings.defaults(),
@@ -91,7 +89,7 @@ void main() {
     }
 
     test('follows the system when there is no override', () {
-      container = open(systemLocales: const <Locale>[Locale('fa')]);
+      final container = open(systemLocales: const <Locale>[Locale('fa')]);
 
       expect(container.read(localeProvider), SupportedLocale.fa);
     });
@@ -100,7 +98,7 @@ void main() {
       // The whole reason bootstrap() awaits a settings read: the seeded value
       // is already correct, so the first frame is in the right language and
       // the right direction rather than flipping.
-      container = open(
+      final container = open(
         systemLocales: const <Locale>[Locale('en')],
         initial: const AppSettings.defaults().withLocaleOverride(
           SupportedLocale.ckb,
@@ -115,7 +113,7 @@ void main() {
     });
 
     test('re-emits after the override is written', () async {
-      container = open(systemLocales: const <Locale>[Locale('en')]);
+      final container = open(systemLocales: const <Locale>[Locale('en')]);
       expect(container.read(localeProvider), SupportedLocale.en);
 
       final result = await container
@@ -123,15 +121,13 @@ void main() {
           .setLocale(SupportedLocale.fa);
       expect(result, isA<Ok<AppSettings, DataFailure>>());
 
-      for (var i = 0; i < 5; i++) {
-        await Future<void>.delayed(Duration.zero);
-      }
+      await pumpEventQueue();
 
       expect(container.read(localeProvider), SupportedLocale.fa);
     });
 
     test('clearing the override returns to the system locale', () async {
-      container = open(
+      final container = open(
         systemLocales: const <Locale>[Locale('de')],
         initial: const AppSettings.defaults().withLocaleOverride(
           SupportedLocale.fa,
@@ -143,15 +139,13 @@ void main() {
         await container.read(localeControllerProvider).setLocale(null),
         isA<Ok<AppSettings, DataFailure>>(),
       );
-      for (var i = 0; i < 5; i++) {
-        await Future<void>.delayed(Duration.zero);
-      }
+      await pumpEventQueue();
 
       expect(container.read(localeProvider), SupportedLocale.de);
     });
 
     test('a broken store falls back to the system, not to en', () async {
-      container = open(systemLocales: const <Locale>[Locale('fa')]);
+      final container = open(systemLocales: const <Locale>[Locale('fa')]);
       await container
           .read(appDatabaseProvider)
           .customStatement(

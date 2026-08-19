@@ -40,19 +40,25 @@ def main() -> int:
     data = json.load(open(strings_path, encoding="utf-8"))
     strings, numbers = data["strings"], data["numbers"]
 
-    html = html.replace('<html lang="en">', '<html lang="fa" dir="rtl">', 1)
-    if "<html lang=" not in html:
-        html = re.sub(r"<html\b[^>]*>", '<html lang="fa" dir="rtl">', html, count=1)
+    # One unconditional rewrite. The previous targeted replace plus a
+    # conditional regex fallback had a branch that could only fire when the
+    # replace had already failed AND no lang= survived.
+    html = re.sub(r"<html\b[^>]*>", '<html lang="fa" dir="rtl">', html, count=1)
+
+    swapped = 0
 
     def swap(match: "re.Match[str]") -> str:
-        tag, text, close = match.group(1), match.group(2), match.group(3)
+        nonlocal swapped
+        tag, close = match.group(1), match.group(3)
 
         key = re.search(r'data-l10n="([^"]+)"', tag)
         if key and key.group(1) in strings:
+            swapped += 1
             return tag + strings[key.group(1)] + close
 
         num = re.search(r'data-num="([^"]+)"', tag)
         if num and num.group(1) in numbers:
+            swapped += 1
             return tag + numbers[num.group(1)] + close
 
         return match.group(0)
@@ -62,9 +68,27 @@ def main() -> int:
         swap,
         html,
     )
+
+    # THE COVERAGE GUARANTEE, here rather than in a sibling test. The pattern
+    # above matches LEAF elements only: a marked node that later gains a nested
+    # <span> stops matching, silently keeps its English text, and the reference
+    # screenshot ships in the wrong language with nothing red. The renderer is
+    # the only thing that knows which nodes it actually swapped, so it is the
+    # only thing that can say so.
+    marked = len(re.findall(r"data-(?:l10n|num)=", html))
+    if swapped != marked:
+        print(
+            f"render-rtl: {marked} marked nodes but only {swapped} swapped. "
+            "A data-l10n or data-num node is not a leaf, or its key is missing "
+            "from strings-fa.json.",
+            file=sys.stderr,
+        )
+        return 1
+
     html = html.replace("</head>", RTL_HEAD + "</head>", 1)
 
     open(out, "w", encoding="utf-8").write(html)
+    print(f"render-rtl: swapped {swapped} nodes")
     return 0
 
 

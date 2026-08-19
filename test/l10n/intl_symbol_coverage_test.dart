@@ -7,8 +7,9 @@ import 'package:intl/number_symbols_data.dart' show numberFormatSymbols;
 void main() {
   group('intl has no ckb number symbols', () {
     test('and it THROWS rather than falling back', () {
-      expect(numberFormatSymbols.containsKey('ckb'), isFalse);
-
+      // That the key is absent is measured in material_delegate_support_test,
+      // which owns the characterization. This file owns the CONSEQUENCE.
+      //
       // Measured 2026-08-19, and it corrects the plan's stated risk. The
       // expectation was a SILENT fallback to Latin digits; what actually
       // happens is an ArgumentError. That is louder and worse: any number

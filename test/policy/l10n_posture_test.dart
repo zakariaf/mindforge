@@ -238,11 +238,47 @@ void main() {
   });
 
   group('the delegates are wired', () {
-    final app = File('lib/app.dart').readAsStringSync();
+    // The EXECUTABLE text. This group asserted `contains` over the raw file and
+    // went on passing after E04 stopped handing MaterialApp
+    // AppLocalizations.supportedLocales — because the only remaining occurrence
+    // is the comment saying why it must not be used. A policy test satisfied by
+    // the prose explaining its own violation is worse than no policy test.
+    final app = withoutDartComments(File('lib/app.dart').readAsStringSync());
 
-    test('MindForgeApp names both AppLocalizations statics', () {
-      expect(app, contains('AppLocalizations.localizationsDelegates'));
-      expect(app, contains('AppLocalizations.supportedLocales'));
-    });
+    test(
+      'the app delegate list is built through localizationsDelegatesFor',
+      () {
+        expect(
+          app,
+          contains('localizationsDelegatesFor('),
+          reason:
+              'handing MaterialApp AppLocalizations.localizationsDelegates '
+              'directly puts the Global delegates ahead of the vendored ckb '
+              'ones, and the first delegate of a type wins',
+        );
+        expect(app, contains('AppLocalizations.localizationsDelegates'));
+      },
+    );
+
+    test(
+      'supportedLocales is the enum-order projection, not the gen-l10n one',
+      () {
+        expect(
+          app,
+          contains('supportedLocales: supportedLocales'),
+          reason:
+              'lib/l10n/supported_locales.dart is the list MaterialApp gets',
+        );
+        expect(
+          app,
+          isNot(contains('AppLocalizations.supportedLocales')),
+          reason:
+              'gen-l10n emits that list ALPHABETICALLY, so its first entry is '
+              'ckb — and Flutter falls back to the first supported locale, which '
+              'would make Kurdish Sorani the language of every unsupported '
+              'device',
+        );
+      },
+    );
   });
 }

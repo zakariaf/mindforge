@@ -37,6 +37,7 @@ void main() {
 
   for (final localeCase in LocaleCase.rightToLeft) {
     final tag = localeCase.tag;
+    final numbers = LocaleNumbers(localeCase.locale);
 
     testWidgets('$tag numerals', (tester) async {
       useDevice(tester, Device.reference390);
@@ -45,18 +46,13 @@ void main() {
         _topStart(
           _Specimen(
             children: [
-              for (final row in <String>[
-                // Every digit, so a face missing one is visible rather than
-                // averaged away by a sample.
-                [
-                  for (var i = 0; i <= 9; i++) i,
-                ].map(_fmt(localeCase)).join(' '),
-                LocaleNumbers(localeCase.locale).count(1480),
-                LocaleNumbers(localeCase.locale).seconds(18600),
-                LocaleNumbers(localeCase.locale).clock(65000),
-                LocaleNumbers(localeCase.locale).percent(0.92),
-              ])
-                row,
+              // Every digit, so a face missing one is visible rather than
+              // averaged away by a sample.
+              List<String>.generate(10, numbers.count).join(' '),
+              numbers.count(1480),
+              numbers.seconds(18600),
+              numbers.clock(65000),
+              numbers.percent(0.92),
             ],
           ),
         ),
@@ -82,7 +78,7 @@ void main() {
               'MindForge',
               BidiText.isolate('MindForge'),
               'به ${BidiText.isolate('MindForge')} خوش آمدید!',
-              _scoreLine(localeCase),
+              _scoreLine(numbers),
             ],
           ),
         ),
@@ -125,14 +121,8 @@ Widget _topStart(Widget child) => Align(
 
 /// A game name beside its score: two Latin-ish runs in an RTL sentence, which
 /// is where an unisolated number lands on the wrong side of the dash.
-String _scoreLine(LocaleCase localeCase) {
-  final name = BidiText.isolate('Stroop Rush');
-  final score = LocaleNumbers(localeCase.locale).count(1480);
-  return '$name \u2014 $score';
-}
-
-String Function(int) _fmt(LocaleCase localeCase) =>
-    (value) => LocaleNumbers(localeCase.locale).count(value);
+String _scoreLine(LocaleNumbers numbers) =>
+    '${BidiText.isolate('Stroop Rush')} \u2014 ${numbers.count(1480)}';
 
 /// A plain stack of lines at the numeric HUD step, on the app's own surface.
 class _Specimen extends StatelessWidget {

@@ -29,69 +29,54 @@ void main() {
   test('dump the fa strings the RTL reference screens render', () async {
     final fa = await AppLocalizations.delegate.load(const Locale('fa'));
 
-    // Numbers arrive PRE-FORMATTED. gen-l10n interpolates an int placeholder
-    // with Dart toString(), which is Latin digits in every locale — measured,
-    // streakDays rendered "4" instead of "۴" before this changed.
-    String n(int value) => const LocaleNumbers(SupportedLocale.fa).count(value);
-
     // Every message the eight screens use, rendered through the ONE table
     // test/l10n/text_expansion_matrix_test.dart also lays out. A second copy
     // here would let a key be measured in one place and rendered in the other.
-    final strings = renderAllStrings(fa, SupportedLocale.fa);
+    final strings = renderAllStrings(fa);
 
     // The literal values on the reference screens, each formatted through
     // LocaleNumbers exactly as the app would. A Latin digit surviving into an
     // RTL screenshot means one of these was missed.
     // One formatter, bound once: LocaleNumbers is locale-bound so the
     // locale cannot be threaded wrong on one line out of forty.
+    // One formatter, bound once: LocaleNumbers is locale-bound, so the locale
+    // cannot be threaded wrong on one line out of forty.
+    //
+    // Numbers arrive PRE-FORMATTED. gen-l10n interpolates an int placeholder
+    // with Dart toString(), which is Latin digits in every locale — measured,
+    // streakDays rendered "4" instead of "۴" before this changed.
     const fmt = LocaleNumbers(SupportedLocale.fa);
+
+    // Every distinct data-num value in app.html's eight figures. The Schulte
+    // TILES are the 1..25 run: they are in here because on that board the tiles
+    // ARE the numbers, so a Latin digit there is not a cosmetic slip, it is the
+    // game rendered in the wrong script.
+    //
+    // The plain integers are generated rather than typed out, because
+    // thirty-four `'N': n(N)` rows are thirty-four chances to typo one and a
+    // reader cannot see which. test/policy/rtl_screens_test.dart asserts this
+    // map covers every data-num node, so a value the design adds later cannot
+    // be missed silently.
     final numbers = <String, String>{
-      // Every distinct data-num value in app.html's eight figures. The Schulte
-      // TILES are in here because the tiles ARE the numbers: a Latin digit on
-      // that board is not a cosmetic slip, it is the game rendered in the
-      // wrong script. test/policy/rtl_screens_test.dart asserts this map
-      // covers every data-num node, so a new one cannot be missed.
-      '1': n(1),
-      '2': n(2),
-      '3': n(3),
-      '4': n(4),
-      '5': n(5),
-      '6': n(6),
-      '7': n(7),
-      '8': n(8),
-      '9': n(9),
-      '10': n(10),
-      '11': n(11),
-      '12': n(12),
-      '13': n(13),
-      '14': n(14),
-      '15': n(15),
-      '16': n(16),
-      '17': n(17),
-      '18': n(18),
-      '19': n(19),
-      '20': n(20),
-      '21': n(21),
-      '22': n(22),
-      '23': n(23),
-      '24': n(24),
-      '25': n(25),
-      '128': n(128),
-      '640': n(640),
-      '780': n(780),
-      '860': n(860),
-      '940': n(940),
-      '1120': n(1120),
-      '1180': n(1180),
-      '1310': n(1310),
-      '1480': n(1480),
-      '1,480': n(1480),
-      '1,240': n(1240),
+      for (final value in <int>[
+        ...List<int>.generate(25, (i) => i + 1),
+        128,
+        640,
+        780,
+        860,
+        940,
+        1120,
+        1180,
+        1310,
+        1480,
+      ])
+        '$value': fmt.count(value),
+      // The four whose design text is not just the integer.
+      '1,480': fmt.count(1480),
+      '1,240': fmt.count(1240),
       '18.6s': '${fmt.seconds(18600)}${fa.unitSeconds}',
       '0:23': fmt.clock(23000),
-      '0:12.4':
-          '${fmt.clock(12000)}'
-          '${fmt.seconds(400).substring(1)}',
+      '0:12.4': '${fmt.clock(12000)}${fmt.seconds(400).substring(1)}',
       '92%': fmt.percent(0.92),
     };
 

@@ -6,6 +6,18 @@ import 'package:mindforge/l10n/locale_resolution.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
+/// The delegate list `MaterialApp` is handed, built once.
+///
+/// The vendored `ckb` delegates come FIRST: `Localizations._loadAll` takes the
+/// first delegate of a type that reports the locale supported.
+///
+/// Top-level rather than inline in `build()`: the input is a `static const` and
+/// the result is invariant, so rebuilding it would hand `Localizations` a new
+/// list identity on every root rebuild and make it walk `shouldReload` over all
+/// seven for nothing.
+final List<LocalizationsDelegate<dynamic>> appLocalizationsDelegates =
+    localizationsDelegatesFor(AppLocalizations.localizationsDelegates);
+
 /// The root widget.
 ///
 /// Themed from E03 onward. **Light only** — there is no `darkTheme:` and no
@@ -29,11 +41,7 @@ class MindForgeApp extends ConsumerWidget {
       locale: Locale(ref.watch(localeProvider).tag),
       title: 'MindForge',
       theme: buildSunburstTheme(),
-      // The vendored ckb delegates come FIRST: Localizations._loadAll takes
-      // the first delegate of a type that reports the locale supported.
-      localizationsDelegates: localizationsDelegatesFor(
-        AppLocalizations.localizationsDelegates,
-      ),
+      localizationsDelegates: appLocalizationsDelegates,
       // NOT AppLocalizations.supportedLocales: gen-l10n emits that list
       // alphabetically, so its first entry is ckb and Flutter's fallback for an
       // unsupported system locale would be Kurdish Sorani.

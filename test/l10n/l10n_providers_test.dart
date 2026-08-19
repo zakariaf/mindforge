@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
+
+import '../policy/support/source_text.dart';
 
 /// The two context-free accessors, and the reason they exist.
 ///
@@ -80,18 +80,20 @@ void main() {
 
   group('they are the only context-free lookup path', () {
     test('lookupAppLocalizations is called from l10n_providers.dart alone', () {
-      final offenders = <String>[];
-
-      for (final entity in Directory('lib').listSync(recursive: true)) {
-        if (entity is! File || !entity.path.endsWith('.dart')) continue;
-        if (entity.path.endsWith('lib/l10n/l10n_providers.dart')) continue;
-        // The generated file DEFINES it; it looks nothing up.
-        if (entity.path.endsWith('lib/l10n/app_localizations.dart')) continue;
-
-        if (entity.readAsStringSync().contains('lookupAppLocalizations(')) {
-          offenders.add(entity.path);
-        }
-      }
+      // The generated file DEFINES lookupAppLocalizations; dartFilesUnderLib
+      // excludes it, along with the comments — this scan used to read prose,
+      // so a file explaining the rule would have violated it.
+      final offenders =
+          dartFilesUnderLib(
+                skip: const <String>{'lib/l10n/l10n_providers.dart'},
+              )
+              .where(
+                (f) => withoutDartComments(
+                  f.readAsStringSync(),
+                ).contains('lookupAppLocalizations('),
+              )
+              .map((f) => f.path)
+              .toList();
 
       expect(
         offenders,

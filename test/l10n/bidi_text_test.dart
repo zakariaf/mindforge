@@ -48,5 +48,17 @@ void main() {
       expect(BidiText.isIsolated(BidiText.isolate('MindForge')), isTrue);
       expect(BidiText.isIsolated('MindForge'), isFalse);
     });
+
+    test('and isolate is idempotent, so two layers cannot double-wrap', () {
+      final once = BidiText.isolate('MindForge');
+
+      expect(
+        BidiText.isolate(once),
+        once,
+        reason:
+            'a double wrap is invisible on screen and survives into every '
+            'value built from the result',
+      );
+    });
   });
 }

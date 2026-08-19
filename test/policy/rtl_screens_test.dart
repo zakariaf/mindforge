@@ -1,29 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/l10n/locale_numbers.dart';
 
-/// The eight screens, in both directions.
-const kScreenBasenames = <String>[
-  '01-home',
-  '02-game-detail',
-  '03-countdown',
-  '04-stroop-rush',
-  '05-schulte-grid',
-  '06-results',
-  '07-stats',
-  '08-settings',
-];
-
-/// Reads a PNG's IHDR without decoding it.
-({int width, int height}) pngSize(File file) {
-  final bytes = file.readAsBytesSync();
-  final header = ByteData.sublistView(Uint8List.fromList(bytes));
-
-  // 8-byte signature, then the IHDR chunk: 4 length, 4 type, then w/h.
-  return (width: header.getUint32(16), height: header.getUint32(20));
-}
+import '../support/design_source.dart';
 
 void main() {
   const ltr = 'design/sunburst-pop/screens';
@@ -51,16 +32,13 @@ void main() {
         final ltrSize = pngSize(File('$ltr/$name.png'));
 
         expect(
-          <int>[rtlSize.width, rtlSize.height],
-          <int>[780, 1688],
+          rtlSize,
+          kReferencePixelSize,
           reason: '$name is not 390x844 at 2x',
         );
         expect(
-          <int>[rtlSize.width, rtlSize.height],
-          <int>[
-            ltrSize.width,
-            ltrSize.height,
-          ],
+          rtlSize,
+          ltrSize,
           reason: '$name: the two sets must be directly comparable',
         );
       }
@@ -113,7 +91,7 @@ void main() {
       );
     });
 
-    test('and every rendered number is in the Eastern Arabic block', () {
+    test('and every rendered digit is Eastern Arabic, not Arabic-Indic', () {
       final numbers = dump['numbers']! as Map<String, dynamic>;
 
       for (final entry in numbers.entries) {
@@ -126,6 +104,26 @@ void main() {
               '${entry.key} rendered "$rendered", which still holds an '
               'ASCII digit',
         );
+
+        // The absence of ASCII is not the claim the name makes. A run of
+        // Arabic-Indic U+0660-U+0669 — the block CLAUDE.md forbids, whose 4, 5
+        // and 6 are different glyphs — has no ASCII digit either and would
+        // have passed.
+        expect(
+          AsciiNumerals.hasNonAsciiDigits(rendered),
+          RegExp(r'\d').hasMatch(AsciiNumerals.normalize(rendered)),
+          reason: '${entry.key} rendered "$rendered" with no digit at all',
+        );
+        for (final rune in rendered.runes) {
+          expect(
+            rune >= 0x0660 && rune <= 0x0669,
+            isFalse,
+            reason:
+                '${entry.key} rendered "$rendered", which holds an '
+                'ARABIC-INDIC digit (U+0660-U+0669). MindForge renders the '
+                'EASTERN ARABIC block U+06F0-U+06F9',
+          );
+        }
       }
     });
   });
