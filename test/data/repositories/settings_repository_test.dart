@@ -28,6 +28,23 @@ void main() {
     addTearDown(db.close);
   });
 
+  /// Awaits [result] and asserts it is an [Ok], returning the value.
+  ///
+  /// Used for every arrange step. `@useResult` on the repository is what forces
+  /// this, and it is right to: an arrange step whose write silently failed
+  /// would leave the assertion afterwards testing nothing.
+  Future<AppSettings> arrange(
+    Future<Result<AppSettings, DataFailure>> result,
+  ) async {
+    final settled = await result;
+    expect(
+      settled,
+      isA<Ok<AppSettings, DataFailure>>(),
+      reason: 'the step being arranged did not succeed: $settled',
+    );
+    return (settled as Ok<AppSettings, DataFailure>).value;
+  }
+
   Future<Map<String, Object?>> rawRow() async {
     final row = await db
         .customSelect("SELECT * FROM settings WHERE id = 'app'")
@@ -37,20 +54,14 @@ void main() {
 
   group('read', () {
     test('returns Ok with the seeded defaults', () async {
-      final result = await repository.read();
-
-      expect(result, isA<Ok<AppSettings, DataFailure>>());
-      expect(
-        (result as Ok<AppSettings, DataFailure>).value,
-        const AppSettings.defaults(),
-      );
+      expect(await arrange(repository.read()), const AppSettings.defaults());
     });
 
     test('the result switches exhaustively with no default', () async {
       final result = await repository.read();
 
-      // A compile-time proof the family is sealed: adding a variant breaks
-      // this switch rather than falling into a wildcard arm.
+      // A compile-time proof the family is sealed: adding a variant breaks this
+      // switch rather than falling into a wildcard arm.
       final described = switch (result) {
         Ok<AppSettings, DataFailure>(:final value) =>
           'ok ${value.isSoundEnabled}',
@@ -63,8 +74,10 @@ void main() {
 
   group('update', () {
     test('resolves only after the row is durable', () async {
-      await repository.update(
-        const AppSettings.defaults().copyWith(isSoundEnabled: false),
+      await arrange(
+        repository.update(
+          const AppSettings.defaults().copyWith(isSoundEnabled: false),
+        ),
       );
 
       expect(
@@ -82,8 +95,10 @@ void main() {
       addTearDown(subscription.cancel);
 
       await pumpEventQueue();
-      await repository.update(
-        const AppSettings.defaults().copyWith(isHapticsEnabled: false),
+      await arrange(
+        repository.update(
+          const AppSettings.defaults().copyWith(isHapticsEnabled: false),
+        ),
       );
       await pumpEventQueue();
 
@@ -97,12 +112,14 @@ void main() {
     });
 
     test(
-      'it bumps row_revision by exactly one and stamps from the Clock',
+      'bumps row_revision by exactly one and stamps from the Clock',
       () async {
         final before = (await rawRow())['row_revision']! as int;
 
-        await repository.update(
-          const AppSettings.defaults().copyWith(isColourBlindPalette: true),
+        await arrange(
+          repository.update(
+            const AppSettings.defaults().copyWith(isColourBlindPalette: true),
+          ),
         );
 
         final after = await rawRow();
@@ -120,7 +137,7 @@ void main() {
       () async {
         // Not `await db.close()`: measured, drift silently REOPENS an in-memory
         // database on the next statement, so closing it provokes no failure at
-        // all. Dropping the table is a real store failure that SQLite reports.
+        // all. Dropping the table is a real store failure SQLite reports.
         await db.customStatement('DROP TABLE settings');
 
         final result = await repository.update(const AppSettings.defaults());
@@ -130,8 +147,8 @@ void main() {
           logSink.codes,
           ['data.store_unavailable'],
           reason:
-              'the original SqliteException is logged BEFORE the typed Err '
-              'is returned, or the stack trace is gone forever',
+              'the original SqliteException is logged BEFORE the typed Err is '
+              'returned, or the stack trace is gone forever',
         );
       },
     );
@@ -139,18 +156,18 @@ void main() {
 
   group('an unrecognised stored tag', () {
     setUp(() async {
+      // Legal by the column's shape CHECK and absent from SupportedLocale —
+      // exactly the shape of a locale withdrawn in a later build, or of a row
+      // written by a newer version of the app.
       await db.customStatement(
         "UPDATE settings SET locale_tag = 'ar' WHERE id = 'app'",
       );
     });
 
     test('degrades to follow-system and is logged once per emission', () async {
-      final result = await repository.read();
+      final settings = await arrange(repository.read());
 
-      expect(
-        (result as Ok<AppSettings, DataFailure>).value.localeOverride,
-        isNull,
-      );
+      expect(settings.localeOverride, isNull);
       expect(logSink.codes, ['data.unsupported_locale_tag']);
       expect(
         (logSink.recorded.single as UnsupportedLocaleTag).tag,
@@ -161,8 +178,8 @@ void main() {
       );
     });
 
-    test('it does not throw and does not rewrite the column', () async {
-      await repository.read();
+    test('does not throw and does not rewrite the column', () async {
+      await arrange(repository.read());
 
       expect((await rawRow())['locale_tag'], 'ar');
     });
@@ -170,27 +187,29 @@ void main() {
 
   group('the locale override survives a round trip', () {
     for (final locale in SupportedLocale.values) {
-      test('${locale.tag}', () async {
-        await repository.update(
-          const AppSettings.defaults().withLocaleOverride(locale),
+      test(locale.tag, () async {
+        await arrange(
+          repository.update(
+            const AppSettings.defaults().withLocaleOverride(locale),
+          ),
         );
 
         expect((await rawRow())['locale_tag'], locale.tag);
-
-        final read = await repository.read();
         expect(
-          (read as Ok<AppSettings, DataFailure>).value.localeOverride,
+          (await arrange(repository.read())).localeOverride,
           locale,
         );
       });
     }
 
     test('clearing it writes SQL NULL', () async {
-      await repository.update(
-        const AppSettings.defaults().withLocaleOverride(SupportedLocale.fa),
+      await arrange(
+        repository.update(
+          const AppSettings.defaults().withLocaleOverride(SupportedLocale.fa),
+        ),
       );
-      await repository.update(
-        const AppSettings.defaults().withSystemLocale(),
+      await arrange(
+        repository.update(const AppSettings.defaults().withSystemLocale()),
       );
 
       expect((await rawRow())['locale_tag'], isNull);
