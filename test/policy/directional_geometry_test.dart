@@ -58,10 +58,23 @@ void main() {
       // Comments stripped: several files name these constructs in order to say
       // why they are absent, and a gate that fires on its own rationale gets
       // deleted rather than obeyed.
-      final source = withoutDartComments(file.readAsStringSync());
+      //
+      // WHITESPACE COLLAPSED, which is load-bearing. `dart format` breaks a
+      // nested widget tree across lines, so the form that actually appears in
+      // E05's catalog is
+      //
+      //   padding: const EdgeInsets.only(
+      //     left: 20,
+      //
+      // and a same-line `contains('EdgeInsets.only(left:')` does not see it.
+      // Measured: a file containing exactly that passed both this test and
+      // check_i18n_bans.sh.
+      final source = withoutDartComments(
+        file.readAsStringSync(),
+      ).replaceAll(RegExp(r'\s+'), '');
 
       for (final banned in kPhysicalSideConstructs.entries) {
-        if (source.contains(banned.key)) {
+        if (source.contains(banned.key.replaceAll(' ', ''))) {
           offenders.add('${file.path}: ${banned.key} — ${banned.value}');
         }
       }
@@ -72,24 +85,33 @@ void main() {
     expect(offenders, isEmpty, reason: offenders.join('\n'));
   });
 
-  test('the hard offset shadow deliberately does not mirror', () {
-    // Asserted rather than merely commented, because it is the one place the
-    // rule above is knowingly not applied and it must stay knowing.
-    final source = File(kNonMirroringShadowFile).readAsStringSync();
-
+  test('the hard offset shadow cannot consult direction', () {
+    // The BEHAVIOURAL half, over executable text only. Asserting the phrase
+    // "does not mirror" over the raw file — as this did — is satisfied by the
+    // doc comment alone: the offset could be negated, or dropped to
+    // Offset.zero, and the test would stay green as long as the sentence
+    // survived. That the offset is identical in both directions is proved by
+    // pumping both locales, in sunburst_shape_test.dart.
     expect(
-      source,
-      contains('does not mirror'),
-      reason:
-          'the exception must stay documented AT the exception. Padding, '
-          'alignment and icon direction mirror; ILLUMINATION does not',
-    );
-    expect(
-      source.contains('Directionality'),
+      withoutDartComments(
+        File(kNonMirroringShadowFile).readAsStringSync(),
+      ).contains('Directionality'),
       isFalse,
       reason:
           'the shadow must not consult direction at all. Reading it would '
           'be the first step towards mirroring it',
+    );
+  });
+
+  test('and the exception stays documented AT the exception', () {
+    // A DOCUMENTATION check, and named as one. It reads the raw file on
+    // purpose: what it asserts is that the comment exists.
+    expect(
+      File(kNonMirroringShadowFile).readAsStringSync(),
+      contains('does not mirror'),
+      reason:
+          'padding, alignment and icon direction mirror; ILLUMINATION does '
+          'not, and the next reader has to be told why at the line itself',
     );
   });
 

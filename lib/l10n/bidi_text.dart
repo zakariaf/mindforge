@@ -35,10 +35,34 @@ abstract final class BidiText {
       ? text
       : '$_firstStrongIsolate$text$_popDirectionalIsolate';
 
-  /// Whether [text] is already isolated, so [isolate] cannot double-wrap.
-  static bool isIsolated(String text) =>
-      text.startsWith(_firstStrongIsolate) &&
-      text.endsWith(_popDirectionalIsolate);
+  /// Whether [text] is **one** isolate wrapping everything else.
+  ///
+  /// Checking only the two endpoints is not enough, and the difference is a
+  /// real defect: `'${isolate('MindForge')} v${isolate('1.2')}'` starts with an
+  /// FSI and ends with a PDI, so an endpoint check calls it isolated — and
+  /// [isolate] would then decline to wrap it, leaving the interior `' v'`
+  /// exactly as unprotected as if nothing had been done. That is the
+  /// reordering this whole file exists to prevent, declined silently.
+  ///
+  /// So the depth is walked: the opening isolate must still be open at the
+  /// last character, and never close early.
+  static bool isIsolated(String text) {
+    if (!text.startsWith(_firstStrongIsolate)) return false;
+
+    var depth = 0;
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] == _firstStrongIsolate) {
+        depth++;
+      } else if (text[i] == _popDirectionalIsolate) {
+        depth--;
+        // Closed before the end: what follows is outside the first isolate.
+        if (depth == 0) return i == text.length - 1;
+        if (depth < 0) return false;
+      }
+    }
+
+    return false;
+  }
 
   /// [text] with any isolation removed.
   ///

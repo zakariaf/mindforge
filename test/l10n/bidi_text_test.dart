@@ -49,6 +49,23 @@ void main() {
       expect(BidiText.isIsolated('MindForge'), isFalse);
     });
 
+    test('two isolates side by side are NOT one isolate', () {
+      // The endpoint check said they were, so isolate() declined to wrap the
+      // pair and left the neutral run BETWEEN them unprotected — which is the
+      // reordering this file exists to prevent, declined silently.
+      final joined =
+          '${BidiText.isolate('MindForge')} v${BidiText.isolate('1.2')}';
+
+      expect(BidiText.isIsolated(joined), isFalse);
+      expect(BidiText.isolate(joined), isNot(joined));
+      expect(BidiText.isIsolated(BidiText.isolate(joined)), isTrue);
+    });
+
+    test('and a stray opening isolate is not mistaken for a balanced one', () {
+      expect(BidiText.isIsolated('\u2068abc'), isFalse);
+      expect(BidiText.isIsolated('abc\u2069'), isFalse);
+    });
+
     test('and isolate is idempotent, so two layers cannot double-wrap', () {
       final once = BidiText.isolate('MindForge');
 

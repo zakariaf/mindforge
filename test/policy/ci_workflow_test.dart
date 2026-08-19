@@ -21,7 +21,13 @@ const kRequiredSteps = <String>[
   // so a shaping regression is legible on its own rather than buried among 500
   // geometry tests.
   'flutter test --tags golden',
-  '--exclude-tags golden',
+  // The reference screenshots are tied to app.html and strings-fa.json by a
+  // manifest of hashes, because CI cannot re-render them.
+  'test/policy/reference_manifest_test.dart',
+  // ONE --exclude-tags carrying a boolean selector. flutter_tools declares it
+  // as a single addOption, so two flags last-wins and the first is dropped —
+  // measured: the six golden tests ran inside the lane that excluded them.
+  '--exclude-tags "tool || golden"',
   'check_i18n_bans.sh',
   'flutter build ios --no-codesign',
 ];
@@ -101,11 +107,27 @@ void main() {
     });
 
     test('every required gate step is present', () {
+      // `executed`, not `workflow`. Reading the raw file meant the whole
+      // skill-gate suite and the golden lane could be deleted from CI and the
+      // test stayed green, as long as a `#` comment still carried the literal.
       final missing = kRequiredSteps
-          .where((s) => !workflow.contains(s))
+          .where((s) => !executed.contains(s))
           .toList();
 
       expect(missing, isEmpty, reason: 'missing steps: $missing');
+    });
+
+    test('no step repeats --exclude-tags, which silently drops one', () {
+      // flutter_tools declares it as a single addOption: last wins. Two flags
+      // read as "exclude both" and mean "exclude the second". Measured on
+      // Flutter 3.44.6 — the golden lane ran inside the default lane.
+      for (final line in executed.split('\n')) {
+        expect(
+          '--exclude-tags'.allMatches(line).length,
+          lessThan(2),
+          reason: 'use one --exclude-tags "a || b": $line',
+        );
+      }
     });
 
     test('no step can pass without passing, and no gate blesses', () {

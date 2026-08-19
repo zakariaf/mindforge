@@ -32,13 +32,6 @@ void main() {
     // Every message the eight screens use, rendered through the ONE table
     // test/l10n/text_expansion_matrix_test.dart also lays out. A second copy
     // here would let a key be measured in one place and rendered in the other.
-    final strings = renderAllStrings(fa);
-
-    // The literal values on the reference screens, each formatted through
-    // LocaleNumbers exactly as the app would. A Latin digit surviving into an
-    // RTL screenshot means one of these was missed.
-    // One formatter, bound once: LocaleNumbers is locale-bound so the
-    // locale cannot be threaded wrong on one line out of forty.
     // One formatter, bound once: LocaleNumbers is locale-bound, so the locale
     // cannot be threaded wrong on one line out of forty.
     //
@@ -47,6 +40,24 @@ void main() {
     // streakDays rendered "4" instead of "۴" before this changed.
     const fmt = LocaleNumbers(SupportedLocale.fa);
 
+    final strings = <String, String>{
+      ...renderAllStrings(fa),
+      // A message the design renders TWICE with different arguments: the HUD
+      // shows the live streak and the results card the longest one. The dump
+      // is key -> one string, so the second reading is a variant, keyed
+      // "message/variant" and marked with data-l10n-variant in app.html.
+      //
+      // It lives here rather than in renderAllStrings because that table is
+      // asserted key-for-key against the template ARB, and a variant is not an
+      // ARB message.
+      'streakMultiplier/11': fa.streakMultiplier(11, fmt.count(11)),
+    };
+
+    // The literal values on the reference screens, each formatted through
+    // LocaleNumbers exactly as the app would. A Latin digit surviving into an
+    // RTL screenshot means one of these was missed.
+    // One formatter, bound once: LocaleNumbers is locale-bound so the
+    // locale cannot be threaded wrong on one line out of forty.
     // Every distinct data-num value in app.html's eight figures. The Schulte
     // TILES are the 1..25 run: they are in here because on that board the tiles
     // ARE the numbers, so a Latin digit there is not a cosmetic slip, it is the

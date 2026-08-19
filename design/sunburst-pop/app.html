@@ -534,7 +534,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 
 .track{display:block;height:16px;border:var(--bw) solid var(--border);border-radius:var(--r-pill);background:var(--cream-2);overflow:hidden}
 .track i{
-  display:block;height:100%;border-right:var(--bw) solid var(--border);
+  display:block;height:100%;border-inline-end:var(--bw) solid var(--border);
   background-image:repeating-linear-gradient(45deg,var(--turquoise) 0 9px,var(--turquoise-deep) 9px 18px);
 }
 .track i.coral{background-image:repeating-linear-gradient(45deg,var(--coral) 0 9px,var(--coral-deep) 9px 18px)}
@@ -593,7 +593,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);
   font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.01em;
 }
-.ans .key{width:56px;flex:none;border-right:var(--bw) solid var(--border)}
+.ans .key{width:56px;flex:none;border-inline-end:var(--bw) solid var(--border)}
 .ans .lb{flex:1;display:grid;place-items:center}
 .ans--red{color:var(--paper)}
 .ans--blue{color:var(--paper)}
@@ -731,22 +731,27 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 .cbprev i{width:24px;height:16px;border:2px solid var(--ink);border-radius:5px;display:block}
 .srow .sv{font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink-2)}
 .sw-toggle{
-  width:66px;height:34px;flex:none;border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  /* 84, not 66. The track carries its own state word, and 66px fits ON/OFF
+     but clips روشن / خاموش — measured in the Persian reference, where the
+     label ran under the knob and was cut. A control that cannot show its own
+     label in two of the four shipped locales is a design defect, not an
+     implementation one, so the design changed. */
+  width:84px;height:34px;flex:none;border:var(--bw) solid var(--border);border-radius:var(--r-pill);
   background:var(--cream-2);position:relative;display:flex;align-items:center;cursor:pointer;
   box-shadow:inset 2px 2px 0 var(--cream-3);
 }
 .sw-toggle b{
-  position:absolute;top:1px;left:1px;width:26px;height:26px;border-radius:var(--r-pill);
+  position:absolute;top:1px;inset-inline-start:1px;width:26px;height:26px;border-radius:var(--r-pill);
   background:var(--paper);border:var(--bw) solid var(--border);
-  transition:left var(--dur-move) var(--ease-pop);
+  transition:inset-inline-start var(--dur-move) var(--ease-pop);
 }
 .sw-toggle s{
-  text-decoration:none;position:absolute;right:7px;font-family:var(--display);font-weight:600;font-size:10px;
+  text-decoration:none;position:absolute;inset-inline-end:7px;font-family:var(--display);font-weight:600;font-size:10px;
   letter-spacing:.08em;color:var(--ink-2);
 }
 .sw-toggle.on{background:var(--leaf);box-shadow:none}
-.sw-toggle.on b{left:33px}
-.sw-toggle.on s{right:auto;left:9px;color:var(--ink)}
+.sw-toggle.on b{inset-inline-start:51px}
+.sw-toggle.on s{inset-inline-end:auto;inset-inline-start:9px;color:var(--ink)}
 .setfoot{text-align:center;padding:14px 10px 20px;margin-top:auto}
 .setfoot b{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink-2)}
 /* the product tagline is marketing copy, not a disabled control label */
@@ -802,7 +807,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -881,19 +886,19 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-            </svg><span data-l10n="playButton">Play</span>
+            </svg><span data-l10n="navPlay">Play</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg><span data-l10n="statsTitle">Stats</span>
+            </svg><span data-l10n="navStats">Stats</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
               <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
-            </svg><span data-l10n="settingsTitle">Settings</span>
+            </svg><span data-l10n="navSettings">Settings</span>
           </span>
         </div>
       </div>
@@ -911,7 +916,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -935,7 +940,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
             <div class="hero">
               <div class="dots" aria-hidden="true"></div>
               <p class="kicker" data-l10n="gameTagsReactionFocus">Reaction · Focus</p>
-              <p class="ht">Stroop<br>Rush</p>
+              <p class="ht" data-l10n="gameStroopRushName">Stroop<br>Rush</p>
               <p data-l10n="gameStroopRushTagline">Tap the colour, not the word</p>
               <div class="swatchrow" aria-hidden="true"><i class="pat pat--stripe play--red"></i><i class="pat pat--solid play--blue"></i><i class="pat pat--dot play--green"></i><i class="pat pat--ring play--yellow"></i></div>
             </div>
@@ -987,7 +992,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
         <div class="count">
           <div class="rays" aria-hidden="true"></div>
           <div class="sb" style="color:var(--cream)">
-            <span class="t" data-num-latin>9:41</span>
+            <span class="t" data-latin>9:41</span>
             <span class="r">
               <span class="sig" aria-hidden="true" style="--ink:var(--cream)"><i></i><i></i><i></i><i></i></span>
               <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true" style="color:var(--cream)">
@@ -1028,7 +1033,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -1093,7 +1098,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -1153,7 +1158,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -1185,7 +1190,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
             <div class="trio">
               <span class="tri"><s data-l10n="accuracyLabel">Accuracy</s><b data-num="92%">92%</b></span>
               <span class="tri"><s data-l10n="avgReactionLabel">Avg reaction</s><b><span data-num="640">640</span><em style="font-size:14px;font-style:normal" data-l10n="unitMilliseconds">ms</em></b></span>
-              <span class="tri"><s data-l10n="longestStreakLabel">Longest streak</s><b data-l10n="streakMultiplier">x11</b></span>
+              <span class="tri"><s data-l10n="longestStreakLabel">Longest streak</s><b data-l10n="streakMultiplier" data-l10n-variant="11">x11</b></span>
             </div>
 
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
@@ -1212,7 +1217,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -1271,19 +1276,19 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-            </svg><span data-l10n="playButton">Play</span>
+            </svg><span data-l10n="navPlay">Play</span>
           </span>
           <span class="tab on">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg><span data-l10n="statsTitle">Stats</span>
+            </svg><span data-l10n="navStats">Stats</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
               <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
-            </svg><span data-l10n="settingsTitle">Settings</span>
+            </svg><span data-l10n="navSettings">Settings</span>
           </span>
         </div>
       </div>
@@ -1301,7 +1306,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
       <div class="island" aria-hidden="true"></div>
       <div class="app">
         <div class="sb">
-          <span class="t" data-num-latin>9:41</span>
+          <span class="t" data-latin>9:41</span>
           <span class="r">
             <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -1349,7 +1354,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
                 <span class="si" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M9 2.8v12.4" stroke="currentColor" stroke-width="3"/><path d="M9 2.8a6.2 6.2 0 0 1 0 12.4z" fill="currentColor"/></svg>
                 </span>
-                <span class="sl" style="font-size:15px;line-height:1.2">Colour-blind<br>friendly palette
+                <span class="sl" style="font-size:15px;line-height:1.2"><span data-l10n="settingColourBlind">Colour-blind<br>friendly palette</span>
                   <span class="cbprev cvd" role="img" aria-label="Preview: blue, yellow, orange, pink, each with its own ink fill pattern">
                     <i class="pat pat--solid play--blue"></i><i class="pat pat--ring play--yellow"></i><i class="pat pat--dot play--green"></i><i class="pat pat--stripe play--red"></i>
                   </span>
@@ -1390,19 +1395,19 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-            </svg><span data-l10n="playButton">Play</span>
+            </svg><span data-l10n="navPlay">Play</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg><span data-l10n="statsTitle">Stats</span>
+            </svg><span data-l10n="navStats">Stats</span>
           </span>
           <span class="tab on">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               <circle cx="8" cy="6.5" r="2.8" fill="var(--sunshine)" stroke="currentColor" stroke-width="2.6"/>
               <circle cx="14" cy="15.5" r="2.8" fill="var(--sunshine)" stroke="currentColor" stroke-width="2.6"/>
-            </svg><span data-l10n="settingsTitle">Settings</span>
+            </svg><span data-l10n="navSettings">Settings</span>
           </span>
         </div>
       </div>

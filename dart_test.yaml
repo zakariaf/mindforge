@@ -1,5 +1,9 @@
-# The tags the suites use, declared so `flutter test --tags` cannot silently
-# match nothing on a typo.
+# The tags the suites use.
+#
+# Declaring a tag here guards a typo in a test file's `@Tags([...])`, NOT one in
+# the CLI selector: `flutter test --tags bogusnothing` prints no unknown-tag
+# warning. A mistyped lane still fails, but through exit 79 (no tests ran)
+# rather than through this file.
 #
 # Both are EXCLUDED from the default lane, for different reasons:
 #

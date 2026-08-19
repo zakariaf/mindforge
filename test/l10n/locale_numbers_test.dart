@@ -121,22 +121,26 @@ void main() {
       expect(AsciiNumerals.normalize(''), '');
     });
 
-    test('round-trips every formatted count back to the stored integer', () {
-      // The invariant working agreement 12 states: a value that has been
-      // through a formatter and back must equal what the store holds.
-      for (final value in <int>[0, 7, 25, 1480, 9999]) {
-        for (final locale in SupportedLocale.values) {
-          final rendered = LocaleNumbers(locale).count(value);
-          final normalized = AsciiNumerals.normalize(
-            rendered,
-          ).replaceAll(RegExp('[^0-9]'), '');
+    test('leaves every separator in place, which is why it cannot parse', () {
+      // Stated as a property rather than demonstrated with a strip-and-parse
+      // recipe. The recipe that used to live here — normalize, then remove
+      // every non-digit — passes for these five values and SILENTLY DROPS THE
+      // SIGN on a negative, because under fa the minus is U+2212 and not an
+      // ASCII hyphen. LocaleNumbers.parse is the round trip; see its group.
+      for (final locale in SupportedLocale.values) {
+        final rendered = LocaleNumbers(locale).count(1480);
+        final normalized = AsciiNumerals.normalize(rendered);
 
-          expect(
-            int.parse(normalized),
-            value,
-            reason: '$value under $locale rendered "$rendered"',
-          );
-        }
+        expect(
+          RegExp('[0-9]').allMatches(normalized).length,
+          4,
+          reason: '$locale rendered "$rendered"',
+        );
+        expect(
+          normalized.length,
+          rendered.length,
+          reason: 'normalize converts digits and changes nothing else',
+        );
       }
     });
   });
@@ -146,6 +150,93 @@ void main() {
       expect(AsciiNumerals.hasNonAsciiDigits('۱۴۸۰'), isTrue);
       expect(AsciiNumerals.hasNonAsciiDigits('1480'), isFalse);
       expect(AsciiNumerals.hasNonAsciiDigits('stroop_rush'), isFalse);
+    });
+  });
+
+  group('the edges a run timer actually reaches', () {
+    // Every one of these was measured wrong before the fix beside it.
+    test('a negative duration reads zero, not most of a minute', () {
+      // -1500 ~/ 1000 is -1 (truncates toward zero) while -1 % 60 is 59
+      // (Dart's remainder is Euclidean and never negative), so the two
+      // disagreed and clock(-1500) rendered "0:59". E06's HUD computes
+      // limit - elapsed off the injected Clock; any frame landing after the
+      // deadline but before RunNotifier flips to `over` — a resume from
+      // background, a dropped frame, a GC pause — passes a small negative, and
+      // the timer APPEARED TO GAIN A MINUTE at the moment the round ended.
+      for (final locale in SupportedLocale.values) {
+        final numbers = LocaleNumbers(locale);
+
+        expect(numbers.clock(-1500), numbers.clock(0), reason: '$locale');
+        expect(numbers.clock(-60000), numbers.clock(0), reason: '$locale');
+        expect(numbers.seconds(-500), numbers.seconds(0), reason: '$locale');
+      }
+    });
+
+    test('clock and seconds never disagree about the same duration', () {
+      // clock floored and seconds ROUNDED, so a Blitz round ending at 59,999 ms
+      // showed 0:59 on the play HUD and 60.0 s on the results card, for one
+      // run. A stopwatch truncates; both do now.
+      const numbers = LocaleNumbers(SupportedLocale.en);
+
+      expect(numbers.seconds(59999), '59.9');
+      expect(numbers.clock(59999), '0:59');
+      expect(numbers.seconds(999), '0.9');
+      expect(numbers.clock(999), '0:00');
+      expect(numbers.seconds(18600), '18.6');
+    });
+
+    test('an accuracy just short of perfect does not read 100%', () {
+      // decimalDigits: 0 ROUNDED, so 199 of 200 correct rendered "100%" —
+      // beside newPersonalBest, which is a credibility bug rather than a
+      // rounding nicety. It truncates now.
+      const numbers = LocaleNumbers(SupportedLocale.en);
+
+      expect(numbers.percent(0.996), '99%');
+      expect(numbers.percent(1), '100%');
+      expect(numbers.percent(0), '0%');
+      expect(numbers.percent(0.005), '0%');
+    });
+
+    test('a ratio outside 0..1 is clamped rather than rendered', () {
+      const numbers = LocaleNumbers(SupportedLocale.en);
+
+      expect(numbers.percent(1.5), '100%');
+      expect(numbers.percent(-0.2), '0%');
+      expect(numbers.percent(double.nan), '0%');
+      expect(numbers.percent(double.infinity), '100%');
+    });
+  });
+
+  group('LocaleNumbers.parse', () {
+    test('reads back every value count formats, sign included', () {
+      // normalize() converts DIGITS only, by design — separators pass through
+      // so a grouped string keeps its shape. That makes its output unsuitable
+      // for int.parse, and the obvious follow-up (strip every non-digit) is
+      // worse: under fa, count(-1480) is LRM + U+2212 MINUS + digits, so
+      // stripping non-digits turns -1480 into 1480. This file used to
+      // demonstrate exactly that recipe.
+      //
+      // The inverse has to be locale-aware, because the separators are: 1.480
+      // is one thousand four hundred and eighty in de and one-point-four-eight
+      // in en.
+      for (final locale in SupportedLocale.values) {
+        final numbers = LocaleNumbers(locale);
+
+        for (final value in <int>[0, 7, 25, 1480, 9999, -1480, -7]) {
+          expect(
+            numbers.parse(numbers.count(value)),
+            value,
+            reason: '$locale round trip of $value',
+          );
+        }
+      }
+    });
+
+    test('and refuses a value this locale did not produce', () {
+      expect(
+        () => const LocaleNumbers(SupportedLocale.en).parse('۱٬۴۸۰'),
+        throwsFormatException,
+      );
     });
   });
 }

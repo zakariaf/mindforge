@@ -30,6 +30,14 @@ const kAllowedDirectDependencies = <String>{
   'very_good_analysis', // the lint floor, T01.5
   'build_runner', // drift codegen, E02
   'drift_dev', // drift codegen and the schema tooling, E02
+  // Test-only, E04. reference_manifest_test recomputes the sha256 hashes
+  // capture-screens.sh recorded, which is how CI notices a reference
+  // screenshot that no longer matches the app.html it was rendered from.
+  // Audited: crypto 3.0.7 is published by dart.dev and its whole transitive
+  // tree is [typed_data] — already in the lock, pure Dart, no platform code
+  // and no network. It was ALREADY resolved as a transitive dependency; this
+  // only declares what a test imports directly.
+  'crypto',
   // lib/core/ is Flutter-free, so its tests are too. Declared explicitly rather
   // than resolved by accident through riverpod 3's dependency on package:test —
   // the same graph kExplainedTransitives documents as removable.

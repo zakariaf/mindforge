@@ -45,6 +45,23 @@ cd design/sunburst-pop
 ./capture-screens.sh --rtl    # screens/rtl/*.png
 ```
 
+**You cannot forget.** Each run writes a `manifest.json` beside the PNGs holding
+the sha256 of `app.html`, of `strings-fa.json`, and of every image;
+`test/policy/reference_manifest_test.dart` recomputes all of them in CI. A
+source edited without a re-capture, or an image replaced by hand, fails the
+build. That gate exists because it already happened: `app.html` carried
+`data-num="640"` while the committed `06-results.png` still showed a Latin
+`640`, and the only thing that noticed was a human opening the file.
+
+The RTL renderer refuses rather than producing a half-translated reference. It
+counts the nodes it swapped against the nodes marked for swapping, and then
+sweeps the eight `.screen` subtrees for any ASCII digit or Latin word that no
+marked element accounts for. Text that is deliberately Latin — the wordmark,
+the `N-Back` placeholder name, the language row showing English in English, and
+the iOS status-bar clock, which stays Latin on a real Persian device — carries
+`data-latin`. Four nodes escaped before that sweep existed, every one of them
+found by eye.
+
 Re-dump the strings after editing any ARB — CI diffs the result, so an ARB
 change without a re-dump fails the build:
 

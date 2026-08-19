@@ -100,7 +100,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get gameSchulteGridName => 'خشتەی شولتە';
 
   @override
-  String get gameSchulteGridTagline => '١ تا ٢٥ بە خێرایی بدۆزەرەوە';
+  String get gameSchulteGridTagline => '۱ تا ۲۵ بە خێرایی بدۆزەرەوە';
 
   @override
   String get gameNBackName => 'N-Back';

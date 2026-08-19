@@ -74,7 +74,9 @@ void main() {
         overrides: [
           appDatabaseProvider.overrideWithValue(db),
           initialAppSettingsProvider.overrideWithValue(initial),
-          systemLocalesProvider.overrideWithValue(systemLocales),
+          systemLocalesProvider.overrideWith(
+            () => _FixedSystemLocales(systemLocales),
+          ),
         ],
       );
       // A live listener, so settingsProvider actually subscribes. Without one
@@ -144,13 +146,73 @@ void main() {
       expect(container.read(localeProvider), SupportedLocale.de);
     });
 
-    test('a broken store falls back to the system, not to en', () async {
-      final container = open(systemLocales: const <Locale>[Locale('fa')]);
+    test('a broken store keeps the last known-good language', () async {
+      // The seed and the system DISAGREE on purpose. With both saying the same
+      // thing this assertion was green whether or not the store was consulted
+      // at all — measured: it stayed green with localeProvider ignoring the
+      // persisted settings entirely.
+      final container = open(
+        systemLocales: const <Locale>[Locale('fa')],
+        initial: const AppSettings.defaults().withLocaleOverride(
+          SupportedLocale.de,
+        ),
+      );
+
+      expect(container.read(localeProvider), SupportedLocale.de);
+
       await container
           .read(appDatabaseProvider)
-          .customStatement(
-            'DROP TABLE settings',
-          );
+          .customStatement('DROP TABLE settings');
+      await pumpEventQueue();
+
+      expect(
+        container.read(localeProvider),
+        SupportedLocale.de,
+        reason:
+            'Riverpod retains the last data value across a stream error, so '
+            'the language the user chose survives a store that has stopped '
+            'answering. Falling back to the system here would change the '
+            'language under them at the moment things go wrong',
+      );
+    });
+
+    testWidgets('re-reads the system list when the device language changes', (
+      tester,
+    ) async {
+      // A snapshot taken at first read left a user with no override in the OLD
+      // language until a cold start: MindForgeApp passes an explicit locale:,
+      // so Flutter's own re-resolution never runs.
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      final before = container.read(systemLocalesProvider);
+      expect(before, isNotEmpty);
+
+      tester.platformDispatcher.localesTestValue = const <Locale>[
+        Locale('de'),
+        Locale('en'),
+      ];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
+      // What the engine calls on a system language change.
+      WidgetsBinding.instance.handleLocaleChanged();
+
+      expect(
+        container.read(systemLocalesProvider).first.languageCode,
+        'de',
+        reason:
+            'the observer must republish, or the app stays in the previous '
+            'language until it is killed and relaunched',
+      );
+    });
+
+    test('and with no override it follows the system, not en', () async {
+      final container = open(systemLocales: const <Locale>[Locale('fa')]);
+
+      await container
+          .read(appDatabaseProvider)
+          .customStatement('DROP TABLE settings');
+      await pumpEventQueue();
 
       expect(
         container.read(localeProvider),
@@ -161,4 +223,17 @@ void main() {
       );
     });
   });
+}
+
+/// A [SystemLocales] pinned to a fixed list.
+///
+/// The real one reads `PlatformDispatcher` and registers a
+/// `WidgetsBindingObserver`; a pure-Dart test has neither and needs neither.
+final class _FixedSystemLocales extends SystemLocales {
+  _FixedSystemLocales(this.locales);
+
+  final List<Locale> locales;
+
+  @override
+  List<Locale> build() => locales;
 }

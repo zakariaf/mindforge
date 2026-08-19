@@ -192,6 +192,15 @@ extension PumpApp on WidgetTester {
           theme: theme ?? buildSunburstTheme(),
           locale: locale,
           supportedLocales: supportedLocales,
+          // The REAL delegate list. Without it MaterialApp falls through to
+          // DefaultWidgetsLocalizations, whose textDirection is hardcoded LTR
+          // — measured: pumpApp(locale: Locale('ckb')) resolved to ltr, and a
+          // test that calls takeException() ate the framework's warning and
+          // then rendered Sorani left-to-right. The doc below said direction
+          // followed the locale here; it did not until this line.
+          localizationsDelegates: localizationsDelegatesFor(
+            AppLocalizations.localizationsDelegates,
+          ),
           home: Builder(
             builder: (context) => MediaQuery(
               // Layered ABOVE MaterialApp and built from .copyWith, never from

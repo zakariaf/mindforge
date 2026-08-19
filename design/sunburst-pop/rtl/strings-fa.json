@@ -9,7 +9,7 @@
     "homeReadyPrompt": "آماده‌ی تمرین؟",
     "streakDays": "زنجیره‌ی ۴ روزه",
     "dailyMixTitle": "ترکیب روزانه",
-    "dailyMixSummary": "۴ بازی، ۳ دقیقه",
+    "dailyMixSummary": "۳ بازی، ۴ دقیقه",
     "yourGamesTitle": "بازی‌های شما",
     "gamesUnlocked": "۲ باز شده",
     "bestLabel": "بهترین",
@@ -35,7 +35,7 @@
     "hudFound": "یافته",
     "hudNext": "بعدی",
     "streakMultiplier": "×۷",
-    "foundOfTotal": "۲۵ / ۶",
+    "foundOfTotal": "۶ / ۲۵",
     "colourRed": "قرمز",
     "colourBlue": "آبی",
     "colourGreen": "سبز",
@@ -55,7 +55,7 @@
     "bestScore": "بهترین امتیاز",
     "bestTime": "بهترین زمان",
     "timeTrained": "زمان تمرین",
-    "durationHoursMinutes": "۱۲ ساعت و ۳ دقیقه",
+    "durationHoursMinutes": "۳ ساعت و ۱۲ دقیقه",
     "lastNRuns": "۷ اجرای آخر",
     "chartSubtitle": "۱٬۴۸۰ · بهترین شتاب استروپ",
     "chartOldest": "قدیمی‌ترین",
@@ -77,7 +77,8 @@
     "languageNameEn": "English",
     "languageNameDe": "Deutsch",
     "languageNameFa": "فارسی",
-    "languageNameCkb": "کوردیی ناوەندی"
+    "languageNameCkb": "کوردیی ناوەندی",
+    "streakMultiplier/11": "×۱۱"
   },
   "numbers": {
     "1": "۱",

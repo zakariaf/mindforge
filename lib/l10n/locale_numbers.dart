@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mindforge/core/supported_locale.dart';
@@ -30,12 +32,16 @@ final class LocaleNumbers {
   /// The formatter for the locale [context] resolved to.
   ///
   /// The widget-tier counterpart of `localeNumbersProvider`, and the same
-  /// shape as `AppLocalizations.of`. An unparseable tag falls back to `en`
-  /// rather than throwing: `supportedLocales` cannot deliver one, so reaching
+  /// shape as `AppLocalizations.of`. An unparseable tag — or **no
+  /// `Localizations` ancestor at all**, which is how a component test that
+  /// pumps a widget bare reaches this — falls back to `en` rather than
+  /// throwing: `supportedLocales` cannot deliver one, so reaching
   /// the fallback would mean the delegate list was rewired — a visibly wrong
   /// language beats a crash in a number formatter.
   factory LocaleNumbers.of(BuildContext context) => LocaleNumbers(
-    SupportedLocale.tryParse(Localizations.localeOf(context).languageCode) ??
+    SupportedLocale.tryParse(
+          Localizations.maybeLocaleOf(context)?.languageCode ?? '',
+        ) ??
         SupportedLocale.en,
   );
 
@@ -68,28 +74,49 @@ final class LocaleNumbers {
   ///
   /// `0.92` renders `92%` in `en`. The percent sign is placed by the locale's
   /// own pattern, not concatenated — in `fa` it goes on the other side.
-  String percent(double ratio) => NumberFormat.decimalPercentPattern(
-    locale: _symbols,
-    decimalDigits: 0,
-  ).format(ratio);
+  ///
+  /// **Truncated, not rounded, and clamped.** Rounding made 199 correct out of
+  /// 200 render `100%`, which sits directly beside `newPersonalBest` on the
+  /// results screen: a run that dropped one reading as perfect is a
+  /// credibility bug, not a rounding nicety. The clamp covers a ratio computed
+  /// from a zero denominator, which is `NaN` and rendered as `NaN` / `ناعدد`.
+  String percent(double ratio) {
+    final safe = ratio.isNaN ? 0.0 : ratio.clamp(0.0, 1.0);
+
+    return NumberFormat.decimalPercentPattern(
+      locale: _symbols,
+      decimalDigits: 0,
+    ).format(_truncate(safe * 100, 0) / 100);
+  }
 
   /// A duration in milliseconds as seconds with one decimal, e.g. `18.6`.
   ///
   /// The unit marker is **not** included: `unitMilliseconds` and the seconds
   /// suffix are separate ARB keys rendered as their own runs, because a value
   /// hand-glued to its unit is what breaks in RTL.
+  ///
+  /// **Truncated like [clock], and floored at zero like it.** These two are the
+  /// same duration shown two ways, and they used to disagree: `seconds` rounded
+  /// while `clock` floored, so a Blitz round ending at 59,999 ms read `0:59` on
+  /// the play HUD and `60.0` on the results card, for one run.
   String seconds(int milliseconds) => NumberFormat.decimalPatternDigits(
     locale: _symbols,
     decimalDigits: 1,
-  ).format(milliseconds / 1000);
+  ).format(_truncate(_atLeastZero(milliseconds) / 1000, 1));
 
   /// A clock as `m:ss`, e.g. `0:23`, with digits in [locale]'s numbering
   /// system.
   ///
   /// The colon is a literal because it is a clock separator rather than a
   /// number, and both Persian and Sorani use it.
+  /// **Floored at zero.** `~/` truncates toward zero while `%` is Euclidean and
+  /// never negative, so the two disagreed for a negative input and
+  /// `clock(-1500)` rendered `0:59` — a timer appearing to GAIN A MINUTE at the
+  /// moment the round ended. E06's HUD computes `limit - elapsed` off the
+  /// injected `Clock`, and any frame landing after the deadline but before
+  /// `RunNotifier` flips to `over` passes a small negative.
   String clock(int milliseconds) {
-    final totalSeconds = milliseconds ~/ 1000;
+    final totalSeconds = _atLeastZero(milliseconds) ~/ 1000;
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
 
@@ -100,6 +127,31 @@ final class LocaleNumbers {
 
     return '${digits.format(minutes)}:'
         '${seconds < 10 ? digits.format(0) : ''}${digits.format(seconds)}';
+  }
+
+  /// Reads a number back that this locale's formatter produced.
+  ///
+  /// The inverse of [count], and the **only** parse path — it is locale-aware
+  /// because the separators are: `1.480` is one thousand four hundred and
+  /// eighty in `de` and one-point-four-eight in `en`, so a locale-blind
+  /// converter cannot be written. It handles the Eastern Arabic digits, the
+  /// `U+066C` grouping separator, and the `U+200E U+2212` prefix `intl` gives a
+  /// negative under `fa` and `ckb`.
+  ///
+  /// Throws `FormatException` on input this locale did not produce, which is
+  /// the right failure for a value that should never have reached it.
+  num parse(String formatted) =>
+      NumberFormat.decimalPattern(_symbols).parse(formatted);
+
+  /// A duration never runs backwards on screen.
+  static int _atLeastZero(int milliseconds) =>
+      milliseconds < 0 ? 0 : milliseconds;
+
+  /// [value] truncated to [digits] decimal places, toward zero.
+  static double _truncate(double value, int digits) {
+    final scale = math.pow(10, digits);
+
+    return (value * scale).truncateToDouble() / scale;
   }
 
   @override
@@ -154,8 +206,12 @@ abstract final class AsciiNumerals {
 
   /// Whether [input] contains any digit outside ASCII `0`–`9`.
   ///
-  /// Used by tests and by any future import path that must refuse a value it
-  /// cannot interpret rather than guessing.
+  /// Answers exactly that and nothing more — a separator or a sign is not a
+  /// digit, so `1٬480` is `false` here, and [normalize]'s output is **not**
+  /// parseable. To read a formatted number back, use `LocaleNumbers.parse`,
+  /// which knows the locale: stripping every non-digit instead looks right and
+  /// silently drops the sign, because under `fa` a negative is `U+200E U+2212`
+  /// and not an ASCII hyphen.
   static bool hasNonAsciiDigits(String input) => input.runes.any(
     (rune) =>
         (rune >= _easternArabicZero && rune <= _easternArabicZero + 9) ||

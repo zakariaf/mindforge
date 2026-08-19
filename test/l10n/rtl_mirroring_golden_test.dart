@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/locale_numbers.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
@@ -68,17 +69,26 @@ void main() {
     testWidgets('$tag mixed script', (tester) async {
       useDevice(tester, Device.reference390);
 
-      // The wordmark is Latin and the sentence around it is not. Without the
-      // isolate the trailing punctuation jumps to the wrong end of the line —
-      // the classic bidi defect, and one a screenshot shows immediately.
+      // Each line must be able to MOVE when the isolate is removed, or the
+      // golden is a picture of nothing. Measured: with isolate() replaced by
+      // the identity, a bare wordmark and a wordmark inside a Persian sentence
+      // were pixel-identical — the only line that shifted was the one with a
+      // number after the Latin run. All three lines here now put a neutral or
+      // numeric run next to a Latin one, which is where the reordering
+      // actually happens.
+      //
+      // The sample text is per locale, so ckb draws SORANI letters. With the
+      // same Persian sentence in both, all three ckb goldens were byte-identical
+      // to their fa twins and the lane could never catch a Sorani-only
+      // fallback: ڕ ڵ ۆ ێ ھ ە ڤ appeared in none of them.
       await tester.pumpLocalized(
         _topStart(
           _Specimen(
             children: [
-              'MindForge',
-              BidiText.isolate('MindForge'),
-              'به ${BidiText.isolate('MindForge')} خوش آمدید!',
+              '${_greeting(localeCase)} ${BidiText.isolate('MindForge')}!',
+              '${BidiText.isolate('MindForge')} v${numbers.count(2)}',
               _scoreLine(numbers),
+              '${BidiText.isolate('Schulte')} — ${numbers.clock(65000)}',
             ],
           ),
         ),
@@ -118,6 +128,16 @@ Widget _topStart(Widget child) => Align(
   alignment: AlignmentDirectional.topStart,
   child: RepaintBoundary(key: _kSpecimen, child: child),
 );
+
+/// A welcome line in the case's own language.
+///
+/// Sorani, not Persian: `ڕ ڵ ۆ ێ ھ ە` are the letters that refused Lalezar in
+/// E03, and a golden lane that never draws them cannot catch the fallback
+/// regression it exists for.
+String _greeting(LocaleCase localeCase) => switch (localeCase.locale) {
+  SupportedLocale.ckb => 'بەخێربێیت بۆ ڕاهێنانی مێشکت لەگەڵ',
+  _ => 'به تمرین مغز خوش آمدید با',
+};
 
 /// A game name beside its score: two Latin-ish runs in an RTL sentence, which
 /// is where an unisolated number lands on the wrong side of the dash.

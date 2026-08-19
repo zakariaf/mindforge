@@ -64,6 +64,13 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.15.1
+  # Test-only, for test/policy/reference_manifest_test.dart: it recomputes the
+  # sha256 hashes capture-screens.sh wrote, which is how CI notices that a
+  # reference screenshot no longer matches the app.html it was rendered from.
+  # Already in the lock as a transitive dependency at 3.0.7; declared here
+  # because depend_on_referenced_packages is right that an import must be
+  # declared.
+  crypto: ^3.0.7
   drift_dev: ^2.34.0
   flutter_test:
     sdk: flutter

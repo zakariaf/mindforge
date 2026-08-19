@@ -215,4 +215,55 @@ void main() {
       expect((await rawRow())['locale_tag'], isNull);
     });
   });
+
+  group('mutate', () {
+    test('applies the change inside the transaction it writes in', () async {
+      await arrange(
+        repository.update(
+          const AppSettings.defaults().copyWith(isSoundEnabled: false),
+        ),
+      );
+
+      final result = await repository.mutate(
+        (current) => current.withLocaleOverride(SupportedLocale.fa),
+      );
+
+      expect(
+        result,
+        isA<Ok<AppSettings, DataFailure>>()
+            .having((r) => r.value.localeOverride, 'locale', SupportedLocale.fa)
+            .having((r) => r.value.isSoundEnabled, 'sound', isFalse),
+        reason: 'the change must see the STORED value, not a caller snapshot',
+      );
+    });
+
+    test('does not lose a concurrent write to another field', () async {
+      // THE DEFECT THIS EXISTS FOR. As read() then update(), both callers read
+      // the same starting row and both wrote the WHOLE row back, so whichever
+      // committed second silently reverted the other's field — with both
+      // callers holding an Ok. E08 puts the language row and four toggles on
+      // one screen, which is exactly where that happens.
+      await Future.wait<Result<AppSettings, DataFailure>>(
+        <Future<Result<AppSettings, DataFailure>>>[
+          repository.mutate(
+            (current) => current.withLocaleOverride(SupportedLocale.ckb),
+          ),
+          repository.mutate(
+            (current) => current.copyWith(isSoundEnabled: false),
+          ),
+        ],
+      );
+
+      expect(
+        await repository.read(),
+        isA<Ok<AppSettings, DataFailure>>()
+            .having(
+              (r) => r.value.localeOverride,
+              'locale',
+              SupportedLocale.ckb,
+            )
+            .having((r) => r.value.isSoundEnabled, 'sound', isFalse),
+      );
+    });
+  });
 }

@@ -10,25 +10,45 @@ source is exactly how two sources of truth are born; this reads `app.html` and
 
 import json
 import re
+import os
 import sys
 
-# Vazirmatn is the face the app bundles for Arabic script (E03 T03.7). The
-# design page fetching a webfont is NOT a violation of the offline constraint:
-# CLAUDE.md's rule governs the Flutter binary, and app.html has always fetched
-# Fredoka and Nunito the same way. The shipped app bundles its faces.
+# Vazirmatn is loaded from the file the APP BUNDLES, not from a webfont CDN.
+#
+# Two reasons, and the first is a measured defect. A CDN fetch that fails —
+# captive portal, offline moment — renders the whole set in the macOS system
+# Arabic fallback: different digit shapes, different weights, no tofu to give it
+# away, chrome exits 0, and eight plausible wrong PNGs get committed as the
+# reference every RTL screen is built against. Nothing downstream can tell.
+# Second, reading assets/fonts/Vazirmatn[wght].ttf makes the reference and the
+# app the same bytes rather than the same font name.
+_FONT = "../../../assets/fonts/Vazirmatn[wght].ttf"
+
+# The weights and the line factor come from SunburstType.forScript, because the
+# reference is compared against what the app renders. Leaving app.html's Latin
+# weights and line-heights standing made every Persian screenshot lighter and
+# tighter than the build — and the README then tells the reviewer to conclude
+# the APP's line factor is wrong.
 RTL_HEAD = """
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: "Vazirmatn";
+    src: url("__FONT__") format("truetype-variations");
+    font-weight: 100 900;
+    font-display: block;
+  }
   /* Bind the Arabic face to both type roles, matching SunburstType.forScript:
-     one family, heavier for display, lighter for body. Nothing else here
-     touches layout — the mirroring must come from dir="rtl" and the
-     stylesheet's own logical properties, so that anywhere the CSS uses a
-     physical side and fails to mirror is a real defect to fix in app.html
-     rather than to paper over here. */
+     one family, heavier for display, lighter for body. The mirroring must come
+     from dir="rtl" and the stylesheet's own logical properties, so anywhere the
+     CSS uses a physical side and fails to mirror is a real defect to fix in
+     app.html rather than to paper over here. */
   [dir="rtl"] { --display: "Vazirmatn", sans-serif; --body: "Vazirmatn", sans-serif; }
-  [dir="rtl"] * { letter-spacing: 0 !important; }
+  /* SunburstType.arabicDisplayWeight / arabicBodyWeight / arabicLineFactor. */
+  [dir="rtl"] * { letter-spacing: 0 !important; line-height: 1.35em !important; }
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] b, [dir="rtl"] .ht,
+  [dir="rtl"] .ask, [dir="rtl"] .hero p, [dir="rtl"] .wm { font-weight: 900 !important; }
+  [dir="rtl"] p, [dir="rtl"] s, [dir="rtl"] em, [dir="rtl"] small,
+  [dir="rtl"] span, [dir="rtl"] div { font-weight: 500 !important; }
 </style>
 """
 
@@ -52,9 +72,15 @@ def main() -> int:
         tag, close = match.group(1), match.group(3)
 
         key = re.search(r'data-l10n="([^"]+)"', tag)
-        if key and key.group(1) in strings:
-            swapped += 1
-            return tag + strings[key.group(1)] + close
+        if key:
+            # A message the design renders twice with different arguments —
+            # streakMultiplier is x7 in the HUD and x11 on results — carries a
+            # variant, and the dump emits "key/variant" beside "key".
+            variant = re.search(r'data-l10n-variant="([^"]+)"', tag)
+            name = f"{key.group(1)}/{variant.group(1)}" if variant else key.group(1)
+            if name in strings:
+                swapped += 1
+                return tag + strings[name] + close
 
         num = re.search(r'data-num="([^"]+)"', tag)
         if num and num.group(1) in numbers:
@@ -64,7 +90,9 @@ def main() -> int:
         return match.group(0)
 
     html = re.sub(
-        r"(<[a-z][a-z0-9]*\b[^<>]*data-(?:l10n|num)=[^<>]*>)([^<>]*)(</[a-z][a-z0-9]*>)",
+        r"(<[a-z][a-z0-9]*\b[^<>]*data-(?:l10n|num)=[^<>]*>)"
+        r"((?:[^<>]|<br\s*/?>)*)"
+        r"(</[a-z][a-z0-9]*>)",
         swap,
         html,
     )
@@ -96,15 +124,9 @@ def main() -> int:
     # So: inside the eight .screen subtrees — which is exactly what
     # capture-screens.sh photographs, and nothing else on the page — no visible
     # text may hold an ASCII digit. The one deliberate exception carries
-    # data-num-latin: the iOS status-bar clock, which is system chrome and
+    # data-latin: the iOS status-bar clock, which is system chrome and
     # stays Latin on a real fa or ckb device.
-    stray = []
-    for screen in _screen_subtrees(html):
-        text = re.sub(
-            r"<[^>]*\bdata-num-latin\b[^>]*>.*?</[a-z][a-z0-9]*>", "", screen, flags=re.S
-        )
-        text = re.sub(r"<[^>]*>", "\n", text)
-        stray += [line.strip() for line in text.split("\n") if re.search(r"[0-9]", line)]
+    stray = _unmarked(html, r"[0-9]")
 
     if stray:
         print(
@@ -114,11 +136,68 @@ def main() -> int:
         )
         return 1
 
-    html = html.replace("</head>", RTL_HEAD + "</head>", 1)
+    # And the same question for WORDS, which is how the other three escapes got
+    # through: an unmarked node is invisible to the marked-vs-swapped count,
+    # because nothing was marked, so nothing was missing. `Stroop Rush` sat in
+    # 48px Fredoka in the middle of an otherwise Persian game-detail screen
+    # under an app bar that read شتاب استروپ.
+    #
+    # Anything deliberately Latin carries data-latin: the wordmark, the N-Back
+    # placeholder name, the language row showing English in English, and the
+    # iOS status-bar clock, which is system chrome and stays Latin on a real
+    # fa or ckb device.
+    english = _unmarked(html, r"[A-Za-z]{2}")
+
+    if english:
+        print(
+            "render-rtl: untranslated Latin text survived into the rendered "
+            "screens: " + "; ".join(english[:10]),
+            file=sys.stderr,
+        )
+        return 1
+
+    # Case-insensitive and by position, exactly as capture-screens.sh does it.
+    # html.replace("</head>", ...) is a SILENT no-op on <\/HEAD>, and the whole
+    # set would then render in the OS fallback face at exit 0.
+    head = html.lower().rfind("</head>")
+    if head < 0:
+        print("render-rtl: no </head> to inject the font override into", file=sys.stderr)
+        return 1
+    font = os.path.join(os.path.dirname(os.path.abspath(__file__)), _FONT)
+    if not os.path.exists(font):
+        print(f"render-rtl: the bundled face is missing: {font}", file=sys.stderr)
+        return 1
+    html = html[:head] + RTL_HEAD.replace("__FONT__", "file://" + font) + html[head:]
 
     open(out, "w", encoding="utf-8").write(html)
     print(f"render-rtl: swapped {swapped} nodes, no ASCII digit left on a screen")
     return 0
+
+
+def _unmarked(html: str, pattern: str) -> "list[str]":
+    """Text inside the eight screens that no marked element accounts for.
+
+    Elements carrying `data-l10n`, `data-num` or `data-latin` are removed
+    first: those were either swapped, or are a deliberate Latin run such as the
+    wordmark, the N-Back placeholder name, the language row showing English in
+    English, or the iOS status-bar clock. What is left is text nobody claimed,
+    and that is the hole — an unmarked node is invisible to the
+    marked-vs-swapped count, because nothing was marked, so nothing was
+    missing.
+    """
+    found = []
+    for screen in _screen_subtrees(html):
+        text = re.sub(
+            r"<[^>]*\bdata-(?:l10n|num|latin)\b[^>]*>.*?</[a-z][a-z0-9]*>",
+            "",
+            screen,
+            flags=re.S,
+        )
+        text = re.sub(r"<[^>]*>", "\n", text)
+        found += [
+            line.strip() for line in text.split("\n") if re.search(pattern, line)
+        ]
+    return found
 
 
 def _screen_subtrees(html: str) -> "list[str]":
