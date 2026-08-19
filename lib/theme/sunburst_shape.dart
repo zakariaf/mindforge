@@ -27,6 +27,12 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.focusWidth,
     required this.stripePitch,
     required this.stripeAngle,
+    required this.eChip,
+    required this.borderWidthNested,
+    required this.dashOn,
+    required this.dashOff,
+    required this.glyphStrokeNav,
+    required this.glyphStrokeControl,
   });
 
   /// The ink border on every raised surface. Three logical pixels, everywhere.
@@ -83,6 +89,47 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
 
   /// The stripe angle, in degrees.
   final double stripeAngle;
+
+  /// The half-step below [e1], for chips and badges.
+  ///
+  /// DERIVED: `system.html` has no `--sh-chip` custom property. The chips in
+  /// §04 and the badges in §09 are drawn with a 2px hard offset, which is half
+  /// of `--sh-1`'s 3px — small enough that the surface reads as lifted off the
+  /// page rather than standing on it.
+  final Offset eChip;
+
+  /// The ink edge on a surface drawn **inside** another surface.
+  ///
+  /// DERIVED: two logical pixels, not three. A segment inside its track and a
+  /// knob inside its rail put two borders within a few pixels of each other,
+  /// and at the full [borderWidth] the pair reads as one thick smudge rather
+  /// than as two edges. `system.html` §06 and §09 draw these nested edges at
+  /// 2px throughout.
+  final double borderWidthNested;
+
+  /// The painted length of one dash in a dashed ink edge.
+  ///
+  /// DERIVED: `system.html` §04's "coming soon" card is drawn with
+  /// `stroke-dasharray: 9 7`. Neither number is a `:root` custom property.
+  final double dashOn;
+
+  /// The gap between dashes in a dashed ink edge.
+  final double dashOff;
+
+  /// The stroke width of a glyph drawn at nav size, 22pt and up.
+  ///
+  /// Transcribed from `system.html` §08, where every nav and status glyph is
+  /// `stroke-width="2.6"` — 40 sites across `app.html`.
+  final double glyphStrokeNav;
+
+  /// The stroke width of a glyph drawn below nav size.
+  ///
+  /// Transcribed from `system.html` §08: `stroke-width="3"`, 14 sites across
+  /// `app.html`. The **smaller** glyph takes the **heavier** stroke, because a
+  /// thin line at 16pt disappears against a saturated fill. That is why the
+  /// resolver's rule is `< 22 -> 3.0` rather than `18-20 -> 3.0`: the 16px
+  /// disclosure chevron in the settings rows is drawn at 3.0 too.
+  final double glyphStrokeControl;
 
   /// 4 — the smallest step.
   ///
@@ -217,6 +264,12 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? focusWidth,
     double? stripePitch,
     double? stripeAngle,
+    Offset? eChip,
+    double? borderWidthNested,
+    double? dashOn,
+    double? dashOff,
+    double? glyphStrokeNav,
+    double? glyphStrokeControl,
   }) => SunburstShape(
     borderWidth: borderWidth ?? this.borderWidth,
     radiusSm: radiusSm ?? this.radiusSm,
@@ -234,6 +287,12 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     focusWidth: focusWidth ?? this.focusWidth,
     stripePitch: stripePitch ?? this.stripePitch,
     stripeAngle: stripeAngle ?? this.stripeAngle,
+    eChip: eChip ?? this.eChip,
+    borderWidthNested: borderWidthNested ?? this.borderWidthNested,
+    dashOn: dashOn ?? this.dashOn,
+    dashOff: dashOff ?? this.dashOff,
+    glyphStrokeNav: glyphStrokeNav ?? this.glyphStrokeNav,
+    glyphStrokeControl: glyphStrokeControl ?? this.glyphStrokeControl,
   );
 
   @override
@@ -260,6 +319,12 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       focusWidth: d(focusWidth, other.focusWidth),
       stripePitch: d(stripePitch, other.stripePitch),
       stripeAngle: d(stripeAngle, other.stripeAngle),
+      eChip: o(eChip, other.eChip),
+      borderWidthNested: d(borderWidthNested, other.borderWidthNested),
+      dashOn: d(dashOn, other.dashOn),
+      dashOff: d(dashOff, other.dashOff),
+      glyphStrokeNav: d(glyphStrokeNav, other.glyphStrokeNav),
+      glyphStrokeControl: d(glyphStrokeControl, other.glyphStrokeControl),
     );
   }
 
@@ -285,5 +350,14 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     // 45 degrees. Neither is a :root custom property.
     stripePitch: 9,
     stripeAngle: 45,
+    // DERIVED: half of e1. See the field docs for the evidence behind each.
+    eChip: Offset(2, 2),
+    borderWidthNested: 2,
+    // DERIVED: system.html §04, stroke-dasharray: 9 7.
+    dashOn: 9,
+    dashOff: 7,
+    // Transcribed from system.html §08.
+    glyphStrokeNav: 2.6,
+    glyphStrokeControl: 3,
   );
 }

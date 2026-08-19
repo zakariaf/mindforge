@@ -256,7 +256,9 @@ void main() {
       expect(halfway.borderWidthNested, 3);
       expect(halfway.dashOn, 14);
       expect(halfway.dashOff, 12);
-      expect(halfway.glyphStrokeNav, 3.6);
+      // closeTo, not equals: 2.6 -> 4.6 lands on 3.5999999999999996, which is
+      // the reason check_test_hygiene bans equals() on a double literal.
+      expect(halfway.glyphStrokeNav, closeTo(3.6, 1e-9));
       expect(halfway.glyphStrokeControl, 4);
     });
   });
