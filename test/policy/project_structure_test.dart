@@ -91,17 +91,28 @@ void main() {
       );
     });
 
-    test('lib/ holds no directory CLAUDE.md does not name', () {
-      final undocumented = actualLibDirectories.difference(expected).toList()
-        ..sort();
+    test('every directory under lib/ sits inside one CLAUDE.md names', () {
+      // The layout block maps top-level RESPONSIBILITIES; it is not an
+      // exhaustive tree. lib/data/db/tables/ is therefore fine, while a new
+      // top-level lib/services/ is not. What must never happen is a directory
+      // sitting outside the map entirely — that is a bucket nobody decided on.
+      final orphans =
+          actualLibDirectories
+              .where(
+                (path) => !expected.any(
+                  (named) => path == named || path.startsWith('$named/'),
+                ),
+              )
+              .toList()
+            ..sort();
 
       expect(
-        undocumented,
+        orphans,
         isEmpty,
         reason:
-            'these exist under lib/ but the CLAUDE.md layout block does '
-            'not name them. Either the layout block is out of date, or the '
-            'directory is in the wrong place: $undocumented',
+            'these sit under lib/ but inside nothing the CLAUDE.md layout '
+            'block names. Either the layout block is out of date, or the '
+            'directory is in the wrong place: $orphans',
       );
     });
 

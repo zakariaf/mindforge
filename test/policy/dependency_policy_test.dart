@@ -21,12 +21,15 @@ const kAllowedDirectDependencies = <String>{
   'intl', // LocaleNumbers' one NumberFormat construction site, E04
   'meta', // @immutable / @useResult on the lib/core value types, E02
   'path', // joining the application-support directory to the db file, E02
+  // Direct: connection.dart names CommonDatabase to type the pragma setup
+  // callback. It is drift's own runtime dependency, declared here because a
+  // file under lib/ imports it directly.
+  'sqlite3',
   'uuid', // UuidIdGenerator behind the IdGenerator seam, E02
   // dev
   'very_good_analysis', // the lint floor, T01.5
   'build_runner', // drift codegen, E02
   'drift_dev', // drift codegen, E02
-  'sqlite3', // NativeDatabase.memory() in the data-layer suite, E02
   // lib/core/ is Flutter-free, so its tests are too. Declared explicitly rather
   // than resolved by accident through riverpod 3's dependency on package:test —
   // the same graph kExplainedTransitives documents as removable.
