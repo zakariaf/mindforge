@@ -32,16 +32,27 @@ If a feature appears to require the network, it is the wrong feature.
 ## Current state (as of 2026-08-19)
 
 **The Flutter app is not scaffolded yet.** There is no `pubspec.yaml`, no `lib/`, no `test/`.
-Three commits so far: convention skills, three candidate design systems, Sunburst Pop screenshots.
+What exists is the plan and the conventions: the skills, the design system with its rendered
+reference screens, the eleven epics, and the public repository furniture.
 
 ```
+README.md                         the public front door, with the eight screenshots
+CONTRIBUTING.md                   the outside-contributor path: epic -> implement -> PR
+LICENSE / NOTICE                  Apache-2.0; NOTICE also covers bundled font licensing
+CLAUDE.md                         this file — the house rules
+.github/PULL_REQUEST_TEMPLATE.md  the five required PR sections
 .claude/skills/                   45 skills — 40 general Flutter/Dart conventions + 5 sunburst-*
+epics/                            E01–E11, the build plan; superseded/ holds the old ten-epic plan
 design/index.html                 the three-direction picker
 design/sunburst-pop/              CHOSEN — system.html, app.html, README.md, screens/*.png, capture-screens.sh
 design/cotton-cloud/              rejected alternative, kept for reference
 design/paper-crayon/              rejected alternative, kept for reference
 50-apps-challenge-slides.html     episode slides
 ```
+
+The repository is public at `github.com/zakariaf/mindforge` under Apache-2.0. Anything added here is
+published, so it must be true — no aspirational feature lists, no screenshots of software that does
+not exist described as if it ships.
 
 **Verified toolchain on this machine (2026-08-19). Do not re-derive; do re-assert in a test.**
 
@@ -254,6 +265,34 @@ Architecture and hygiene gates live beside them — `flutter-architecture/script
 `design-system-structure/scripts/check_font_bundling.sh`, and the rest under
 `.claude/skills/*/scripts/`. Run them **by name**, or through `tool/skill_gates.sh` once E01 lands —
 globbing the directory does not work (working agreement 10).
+
+## How we work
+
+This process is not optional and applies to every change, including your own.
+
+1. **Plan it as an epic before writing code.** Work is described in an `epics/E<NN>-<slug>.md` file
+   first — what it delivers, why, the current state, what it achieves, the skills to load, and every
+   task with its tests stated *before* its implementation. **A new game starts with an epic file, not
+   with a board widget.** An implementation with no epic is incomplete work, not fast work.
+2. **Test-first, always.** Write the test, watch it fail, then make it pass. A task that genuinely
+   cannot be written test-first says why in one line. Tests added afterwards to fit existing code are
+   visible in review and get sent back.
+3. **Commit granularly.** One logical change per commit, tests committed with the code they cover. The
+   commit sequence is the record of how the work was built. No emoji in commit messages.
+4. **Run `/simplify`, then `/code-review`,** before every PR, and address the findings. In that order —
+   simplification first, so the review reads the code actually being shipped.
+5. **Get every gate green** — `dart format`, `flutter analyze --fatal-infos`, `flutter test`, and
+   `tool/skill_gates.sh` (never a glob over the skill scripts; see working agreement 10).
+6. **Compare against the reference screenshots** for anything visual, on the canonical simulator, in
+   both directions once E04 lands. This is a **human step** — no pipeline performs it — which is why
+   the PR template requires naming the screens compared and what was found.
+7. **Open a PR** using `.github/PULL_REQUEST_TEMPLATE.md`: what changed, why, how it was verified,
+   screens compared, deliberately left out.
+8. **The maintainer reviews and merges.** Merges preserve the granular commits rather than squashing.
+   Do not self-merge.
+
+One branch and one PR per epic, then move to the next. `epics/README.md` is the authoritative version
+of this loop; `CONTRIBUTING.md` is the outside-contributor version of the same thing.
 
 ## Build order
 

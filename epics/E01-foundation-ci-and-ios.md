@@ -1159,7 +1159,11 @@ shaping, **and that the app launches at all** — the canonical simulator is a m
 (T01.10) and no runner has it. Those belong to the local pass and to E11's `design-review-workflow`
 sweep.
 
-`.github/PULL_REQUEST_TEMPLATE.md` carries exactly the five sections the delivery loop requires:
+`.github/PULL_REQUEST_TEMPLATE.md` **already exists** — it was added with the repository's README,
+LICENSE and CONTRIBUTING.md before this epic began. Do not recreate it. This task only *verifies* it
+against `test/policy/ci_workflow_test.dart` and extends it if a gate command changed, since the
+template's checklist quotes `tool/skill_gates.sh`, which this epic creates. It carries exactly the
+five sections the delivery loop requires:
 **What changed**, **Why**, **How it was verified** (the gate commands and their output), **Screens
 compared** (the PNG filenames — LTR from `design/sunburst-pop/screens/`, and from E04 on the RTL
 counterpart from `design/sunburst-pop/screens/rtl/` — and the fixed comparison order: structure →
