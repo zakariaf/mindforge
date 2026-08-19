@@ -67,7 +67,7 @@ void main() {
             'both families ship as variable fonts, so weight is driven by '
             'FontWeight against the wght axis. A `weight:` key here would pin '
             'one instance and silently discard the rest of the axis. The '
-            'weights E03 spends are ${kIntendedWeights.toString()}',
+            'weights E03 spends are $kIntendedWeights',
       );
     });
 

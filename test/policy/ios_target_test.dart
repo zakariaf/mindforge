@@ -28,7 +28,7 @@ void main() {
         plistStringValue('CFBundleDevelopmentRegion'),
         'en',
         reason:
-            'the template ships the \$(DEVELOPMENT_LANGUAGE) build-setting '
+            r'the template ships the $(DEVELOPMENT_LANGUAGE) build-setting '
             'indirection. The literal wins because a build setting is a second '
             'place the answer can live, and a policy test that has to resolve '
             'project.pbxproj to read a plist value is a test nobody trusts',
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('the bundle identifier is com.mindforge.mindforge', () {
-      final ids = RegExp(r'PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);')
+      final ids = RegExp('PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);')
           .allMatches(pbxproj)
           .map((m) => m.group(1)!.trim())
           .where((id) => !id.endsWith('.RunnerTests'))
@@ -122,7 +122,7 @@ void main() {
 
     test('every build configuration agrees on one deployment target', () {
       final targets = RegExp(
-        r'IPHONEOS_DEPLOYMENT_TARGET = ([0-9.]+);',
+        'IPHONEOS_DEPLOYMENT_TARGET = ([0-9.]+);',
       ).allMatches(pbxproj).map((m) => m.group(1)!).toSet();
 
       expect(

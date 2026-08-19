@@ -81,7 +81,7 @@ void main() {
       var inDependencyBlock = false;
 
       for (final line in pubspec.split('\n')) {
-        if (RegExp(r'^(dev_)?dependencies:').hasMatch(line)) {
+        if (RegExp('^(dev_)?dependencies:').hasMatch(line)) {
           inDependencyBlock = true;
           continue;
         }
@@ -113,7 +113,7 @@ void main() {
       var inDependencyBlock = false;
 
       for (final line in pubspec.split('\n')) {
-        if (RegExp(r'^(dev_)?dependencies:').hasMatch(line)) {
+        if (RegExp('^(dev_)?dependencies:').hasMatch(line)) {
           inDependencyBlock = true;
           continue;
         }
@@ -123,7 +123,7 @@ void main() {
         }
         if (!inDependencyBlock) continue;
 
-        final match = RegExp(r'^  ([a-z_0-9]+):').firstMatch(line);
+        final match = RegExp('^  ([a-z_0-9]+):').firstMatch(line);
         if (match != null) declared.add(match.group(1)!);
       }
 
@@ -145,7 +145,7 @@ void main() {
 
     test('no banned package appears in the resolved lock', () {
       final resolved = RegExp(
-        r'^  ([a-z_0-9]+):',
+        '^  ([a-z_0-9]+):',
         multiLine: true,
       ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
 
@@ -168,7 +168,7 @@ void main() {
 
     test('every explained transitive is still actually in the lock', () {
       final resolved = RegExp(
-        r'^  ([a-z_0-9]+):',
+        '^  ([a-z_0-9]+):',
         multiLine: true,
       ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
 

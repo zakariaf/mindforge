@@ -88,7 +88,7 @@ void main() {
 
     test('no language block restates what VGA already sets', () {
       expect(
-        RegExp(r'^language:', multiLine: true).hasMatch(options),
+        RegExp('^language:', multiLine: true).hasMatch(options),
         isFalse,
         reason:
             'VGA already sets strict-casts, strict-inference and '

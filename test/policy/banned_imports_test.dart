@@ -49,7 +49,7 @@ void main() {
           .join('\n');
 
       final importUris = RegExp(
-        '''^\\s*(?:import|export)\\s+['"]([^'"]+)['"]''',
+        r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''',
         multiLine: true,
       ).allMatches(source).map((m) => m.group(1)!);
 
