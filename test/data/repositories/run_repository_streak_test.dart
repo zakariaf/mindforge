@@ -1,4 +1,3 @@
-import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:mindforge/core/calendar_day.dart';
@@ -6,15 +5,13 @@ import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_commit.dart';
 import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/core/streak_status.dart';
-import 'package:mindforge/data/daos/runs_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/repositories/run_repository.dart';
 
-import '../../support/fake_id_generator.dart';
-import '../../support/fake_log_sink.dart';
 import '../../support/run_fixtures.dart';
 import '../../support/test_database.dart';
+import '../../support/test_repositories.dart';
 
 /// Four consecutive days ending on the 19th of August 2026, which is what the
 /// fixed clock below reports as "today".
@@ -25,14 +22,7 @@ void main() {
   /// injected clock's answer.
   Future<(AppDatabase, RunRepository)> openWithFourDays(DateTime now) async {
     final db = openTestDatabase(now: now);
-    final repository = RunRepository(
-      database: db,
-      dao: RunsDao(db),
-      clock: Clock.fixed(now),
-      idGenerator: FakeIdGenerator(),
-      logSink: FakeLogSink(),
-      isRegisteredGameId: (id) => id == 'stroop_rush',
-    );
+    final repository = testRunRepository(db, now: now);
 
     for (final draft in seededDrafts(
       seed: 11,
@@ -116,14 +106,7 @@ void main() {
 
   test('an empty store is a zero streak, never null', () async {
     final db = openTestDatabase();
-    final repository = RunRepository(
-      database: db,
-      dao: RunsDao(db),
-      clock: Clock.fixed(kTestNow),
-      idGenerator: FakeIdGenerator(),
-      logSink: FakeLogSink(),
-      isRegisteredGameId: (id) => id == 'stroop_rush',
-    );
+    final repository = testRunRepository(db);
     addTearDown(db.close);
 
     expect(await repository.watchStreak().first, const StreakStatus.empty());

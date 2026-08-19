@@ -1,4 +1,3 @@
-import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/result.dart';
@@ -6,7 +5,6 @@ import 'package:mindforge/core/run_commit.dart';
 import 'package:mindforge/core/run_draft.dart';
 import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/core/score_format.dart';
-import 'package:mindforge/data/daos/runs_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/repositories/run_repository.dart';
@@ -14,8 +12,7 @@ import 'package:mindforge/data/repositories/run_repository.dart';
 import '../../support/fake_id_generator.dart';
 import '../../support/fake_log_sink.dart';
 import '../../support/test_database.dart';
-
-const _kRegisteredGames = <String>{'stroop_rush', 'schulte_grid'};
+import '../../support/test_repositories.dart';
 
 RunDraft _draft({
   String clientRunKey = 'key-1',
@@ -51,13 +48,11 @@ void main() {
     db = openTestDatabase();
     ids = FakeIdGenerator();
     logSink = FakeLogSink();
-    repository = RunRepository(
-      database: db,
-      dao: RunsDao(db),
-      clock: Clock.fixed(kTestNow),
+    repository = testRunRepository(
+      db,
+      now: kTestNow,
       idGenerator: ids,
       logSink: logSink,
-      isRegisteredGameId: _kRegisteredGames.contains,
     );
     addTearDown(db.close);
   });

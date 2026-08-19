@@ -65,6 +65,39 @@ final class RunDraft {
   /// The **sum** of every reaction time in milliseconds.
   final int totalReactionMs;
 
+  /// A copy with any field replaced.
+  ///
+  /// Unlike `AppSettings.copyWith`, every field here is non-nullable, so
+  /// `null` unambiguously means "leave it alone" and there is no sentinel
+  /// problem to design around.
+  RunDraft copyWith({
+    String? gameId,
+    String? difficultyId,
+    String? clientRunKey,
+    int? startedAtUtcMs,
+    CalendarDay? playedOnDay,
+    int? durationMs,
+    ScoreFormat? format,
+    int? metricValue,
+    int? correctCount,
+    int? wrongCount,
+    int? longestCombo,
+    int? totalReactionMs,
+  }) => RunDraft(
+    gameId: gameId ?? this.gameId,
+    difficultyId: difficultyId ?? this.difficultyId,
+    clientRunKey: clientRunKey ?? this.clientRunKey,
+    startedAtUtcMs: startedAtUtcMs ?? this.startedAtUtcMs,
+    playedOnDay: playedOnDay ?? this.playedOnDay,
+    durationMs: durationMs ?? this.durationMs,
+    format: format ?? this.format,
+    metricValue: metricValue ?? this.metricValue,
+    correctCount: correctCount ?? this.correctCount,
+    wrongCount: wrongCount ?? this.wrongCount,
+    longestCombo: longestCombo ?? this.longestCombo,
+    totalReactionMs: totalReactionMs ?? this.totalReactionMs,
+  );
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

@@ -1,21 +1,15 @@
-import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_commit.dart';
 import 'package:mindforge/core/run_draft.dart';
 import 'package:mindforge/core/supported_locale.dart';
-import 'package:mindforge/data/daos/runs_dao.dart';
-import 'package:mindforge/data/daos/settings_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
-import 'package:mindforge/data/repositories/run_repository.dart';
-import 'package:mindforge/data/repositories/settings_repository.dart';
 
-import '../support/fake_id_generator.dart';
-import '../support/fake_log_sink.dart';
 import '../support/locale_matrix.dart';
 import '../support/run_fixtures.dart';
 import '../support/test_database.dart';
+import '../support/test_repositories.dart';
 
 /// Writes the same seeded fixture and returns every row of both tables.
 ///
@@ -23,26 +17,14 @@ import '../support/test_database.dart';
 /// variable across locales is the ambient locale itself.
 Future<Map<String, List<Map<String, Object?>>>> writeAndReadBack() async {
   final db = openTestDatabase();
-  final repository = RunRepository(
-    database: db,
-    dao: RunsDao(db),
-    clock: Clock.fixed(kTestNow),
-    idGenerator: FakeIdGenerator(),
-    logSink: FakeLogSink(),
-    isRegisteredGameId: (id) => id == 'stroop_rush',
-  );
+  final repository = testRunRepository(db);
 
   for (final draft in seededDrafts(seed: 12345, count: 8)) {
     final result = await repository.saveRun(draft);
     expect(result, isA<Ok<RunCommit, DataFailure>>(), reason: '$result');
   }
 
-  final settings = SettingsRepository(
-    database: db,
-    dao: SettingsDao(db),
-    clock: Clock.fixed(kTestNow),
-    logSink: FakeLogSink(),
-  );
+  final settings = testSettingsRepository(db);
   expect(
     await settings.update(
       const AppSettings.defaults().withLocaleOverride(SupportedLocale.ckb),
@@ -94,30 +76,10 @@ void main() {
     await forEachLocale((tag) async {
       if (tag != 'fa') return;
       final db = openTestDatabase();
-      final repository = RunRepository(
-        database: db,
-        dao: RunsDao(db),
-        clock: Clock.fixed(kTestNow),
-        idGenerator: FakeIdGenerator(),
-        logSink: FakeLogSink(),
-        isRegisteredGameId: (id) => id == 'stroop_rush',
-      );
+      final repository = testRunRepository(db);
 
       final draft = seededDrafts(seed: 1, count: 1).single;
-      final scored = RunDraft(
-        gameId: draft.gameId,
-        difficultyId: draft.difficultyId,
-        clientRunKey: draft.clientRunKey,
-        startedAtUtcMs: draft.startedAtUtcMs,
-        playedOnDay: draft.playedOnDay,
-        durationMs: draft.durationMs,
-        format: draft.format,
-        metricValue: 1480,
-        correctCount: draft.correctCount,
-        wrongCount: draft.wrongCount,
-        longestCombo: draft.longestCombo,
-        totalReactionMs: draft.totalReactionMs,
-      );
+      final scored = draft.copyWith(metricValue: 1480);
       expect(
         await repository.saveRun(scored),
         isA<Ok<RunCommit, DataFailure>>(),
@@ -145,32 +107,12 @@ void main() {
       final db = openTestDatabase();
       addTearDown(db.close);
 
-      final repository = RunRepository(
-        database: db,
-        dao: RunsDao(db),
-        clock: Clock.fixed(kTestNow),
-        idGenerator: FakeIdGenerator(),
-        logSink: FakeLogSink(),
-        isRegisteredGameId: (id) => id == 'stroop_rush',
-      );
+      final repository = testRunRepository(db);
       await forEachLocale((tag) async {
         for (final draft in seededDrafts(seed: 7, count: 2)) {
           expect(
             await repository.saveRun(
-              RunDraft(
-                gameId: draft.gameId,
-                difficultyId: draft.difficultyId,
-                clientRunKey: '$tag-${draft.clientRunKey}',
-                startedAtUtcMs: draft.startedAtUtcMs,
-                playedOnDay: draft.playedOnDay,
-                durationMs: draft.durationMs,
-                format: draft.format,
-                metricValue: draft.metricValue,
-                correctCount: draft.correctCount,
-                wrongCount: draft.wrongCount,
-                longestCombo: draft.longestCombo,
-                totalReactionMs: draft.totalReactionMs,
-              ),
+              draft.copyWith(clientRunKey: '$tag-${draft.clientRunKey}'),
             ),
             isA<Ok<RunCommit, DataFailure>>(),
           );

@@ -1,4 +1,3 @@
-import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/game_stats.dart';
 import 'package:mindforge/core/result.dart';
@@ -7,17 +6,13 @@ import 'package:mindforge/core/run_draft.dart';
 import 'package:mindforge/core/run_metric.dart';
 import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/core/score_format.dart';
-import 'package:mindforge/data/daos/runs_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/repositories/run_repository.dart';
 
-import '../../support/fake_id_generator.dart';
-import '../../support/fake_log_sink.dart';
 import '../../support/run_fixtures.dart';
 import '../../support/test_database.dart';
-
-const _kRegisteredGames = <String>{'stroop_rush', 'schulte_grid', 'quiet_game'};
+import '../../support/test_repositories.dart';
 
 void main() {
   late AppDatabase db;
@@ -25,13 +20,11 @@ void main() {
 
   setUp(() {
     db = openTestDatabase();
-    repository = RunRepository(
-      database: db,
-      dao: RunsDao(db),
-      clock: Clock.fixed(kTestNow),
-      idGenerator: FakeIdGenerator(),
-      logSink: FakeLogSink(),
-      isRegisteredGameId: _kRegisteredGames.contains,
+    repository = testRunRepository(
+      db,
+      // quiet_game is a deliberately run-free third game, so watchBestsByGame
+      // can be asserted to have NO entry for it rather than a zero.
+      registeredGameIds: {...kTestGameIds, 'quiet_game'},
     );
     addTearDown(db.close);
   });
@@ -54,20 +47,7 @@ void main() {
       await saveAll(
         seededDrafts(seed: 1, count: 12)..addAll(
           seededDrafts(seed: 99, count: 1).map(
-            (d) => RunDraft(
-              gameId: d.gameId,
-              difficultyId: d.difficultyId,
-              clientRunKey: 'peak',
-              startedAtUtcMs: d.startedAtUtcMs,
-              playedOnDay: d.playedOnDay,
-              durationMs: d.durationMs,
-              format: ScoreFormat.points,
-              metricValue: 9999,
-              correctCount: d.correctCount,
-              wrongCount: d.wrongCount,
-              longestCombo: d.longestCombo,
-              totalReactionMs: d.totalReactionMs,
-            ),
+            (d) => d.copyWith(clientRunKey: 'peak', metricValue: 9999),
           ),
         ),
       );
@@ -208,13 +188,9 @@ void main() {
         'answered', () async {
       for (var seed = 0; seed < 40; seed++) {
         final db = openTestDatabase();
-        final repo = RunRepository(
-          database: db,
-          dao: RunsDao(db),
-          clock: Clock.fixed(kTestNow),
-          idGenerator: FakeIdGenerator(),
-          logSink: FakeLogSink(),
-          isRegisteredGameId: _kRegisteredGames.contains,
+        final repo = testRunRepository(
+          db,
+          registeredGameIds: {...kTestGameIds, 'quiet_game'},
         );
 
         final drafts = seededDrafts(seed: seed, count: 5);
