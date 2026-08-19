@@ -74,6 +74,25 @@ analyzer:
     public_member_api_docs: error
     dangling_library_doc_comments: error
 
+    # --- A style rule Dart itself makes unsatisfiable -----------------------
+    # prefer_initializing_formals fires on `_field = param` in an initializer
+    # list and asks for `required this._field`. Dart forbids a NAMED parameter
+    # beginning with an underscore, so the suggestion is unimplementable
+    # wherever a class takes named constructor arguments and keeps its fields
+    # private — which is every repository and every service in this codebase.
+    # The alternatives are public fields, or positional arguments at every
+    # wiring site. Neither is better than ignoring a lint that cannot be obeyed.
+    prefer_initializing_formals: ignore
+
+    # --- A style rule that fights the seam pattern --------------------------
+    # one_member_abstracts wants a single-method interface rewritten as a
+    # top-level function. That is right for a utility and wrong for a SEAM: a
+    # function cannot be substituted in a ProviderScope, and substitution is the
+    # entire reason these types exist. MindForge has several — LogSink,
+    # IdGenerator (E02), HapticGateway (E06) — so this is settled once here
+    # rather than as an // ignore: on each of them.
+    one_member_abstracts: ignore
+
     # --- Deliberately NOT errors -------------------------------------------
     deprecated_member_use: warning              # never block a hotfix on churn
     deprecated_member_use_from_same_package: warning
