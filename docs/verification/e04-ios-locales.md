@@ -31,6 +31,18 @@ not prove any layout, because there is no layout yet.
 | `fa` | `fa / rtl` | `۱٬۴۸۰` `۱:۰۵` `۹۲٪` | Vazirmatn, Eastern Arabic U+06F0–U+06F9, U+066C group separator, U+066A percent sign |
 | `ckb` | `ckb / rtl` | `۱٬۴۸۰` `۱:۰۵` `۹۲٪` | Same, through the vendored delegates borrowing `fa` |
 
+Re-run after the code-review fixes, with the probe extended to the values those
+fixes changed. Under `ckb`, on the device:
+
+| Checked | Renders | Was |
+|---|---|---|
+| `navPlay` | `یاری` | `شروع` — the nav tab was keyed to `playButton` |
+| `gameSchulteGridTagline` | `۱ تا ۲۵ …` | `١ تا ٢٥ …` — Arabic-Indic, the forbidden block |
+| `clock(-1500)` | `۰:۰۰` | `۰:۵۹` — a timer gaining a minute as the round ended |
+| `seconds(59999)` | `۵۹٫۹` | `۶۰٫۰` — while `clock` said `۰:۵۹` for the same run |
+| `percent(0.996)` | `۹۹%` | `۱۰۰%` — beside `newPersonalBest`, for a run that dropped one |
+| `foundOfTotal(6, 25)` | `۶` at the start, `۲۵` at the end | the arguments were swapped in the reference |
+
 Every one of these matters:
 
 * **`ckb` resolved to `rtl` on the device.** Without `CkbWidgetsLocalizationsDelegate`
