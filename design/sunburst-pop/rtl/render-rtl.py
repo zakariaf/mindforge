@@ -85,11 +85,62 @@ def main() -> int:
         )
         return 1
 
+    # THE SECOND HALF, and the one that matters more. The count above only
+    # covers nodes that were MARKED. A number that was never given a data-num
+    # at all is invisible to it — measured: <b>640<em>ms</em></b> on the results
+    # screen shipped a Latin 640 into the Persian reference, because 640 is a
+    # bare text node beside a sibling element and the swap pattern matches leaf
+    # elements only. Three such nodes had already been found BY EYE, which is
+    # not a method.
+    #
+    # So: inside the eight .screen subtrees — which is exactly what
+    # capture-screens.sh photographs, and nothing else on the page — no visible
+    # text may hold an ASCII digit. The one deliberate exception carries
+    # data-num-latin: the iOS status-bar clock, which is system chrome and
+    # stays Latin on a real fa or ckb device.
+    stray = []
+    for screen in _screen_subtrees(html):
+        text = re.sub(
+            r"<[^>]*\bdata-num-latin\b[^>]*>.*?</[a-z][a-z0-9]*>", "", screen, flags=re.S
+        )
+        text = re.sub(r"<[^>]*>", "\n", text)
+        stray += [line.strip() for line in text.split("\n") if re.search(r"[0-9]", line)]
+
+    if stray:
+        print(
+            "render-rtl: ASCII digits survived into the rendered screens: "
+            + "; ".join(stray[:10]),
+            file=sys.stderr,
+        )
+        return 1
+
     html = html.replace("</head>", RTL_HEAD + "</head>", 1)
 
     open(out, "w", encoding="utf-8").write(html)
-    print(f"render-rtl: swapped {swapped} nodes")
+    print(f"render-rtl: swapped {swapped} nodes, no ASCII digit left on a screen")
     return 0
+
+
+def _screen_subtrees(html: str) -> "list[str]":
+    """Every `<div class="screen">...</div>` subtree, by tag depth.
+
+    Only these are photographed — capture-screens.sh pins `.fig#id .screen` to
+    the viewport and shoots that. The rest of the page is the design document
+    around them: swatch hexes, figure captions, the token tables. Scanning it
+    would report `#FFF8EC` as a stray digit.
+    """
+    out = []
+    for start in [m.start() for m in re.finditer(r'<div class="screen">', html)]:
+        depth, i = 0, start
+        for tag in re.finditer(r"<(/?)([a-z][a-z0-9]*)\b[^>]*?(/?)>", html[start:]):
+            i = start + tag.end()
+            if tag.group(3) == "/" or tag.group(2) in ("br", "img", "hr", "input"):
+                continue
+            depth += -1 if tag.group(1) else 1
+            if depth == 0:
+                break
+        out.append(html[start:i])
+    return out
 
 
 if __name__ == "__main__":

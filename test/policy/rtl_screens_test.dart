@@ -127,4 +127,32 @@ void main() {
       }
     });
   });
+
+  group('the renderer refuses a screen it cannot fully translate', () {
+    // Runs the REAL renderer, so the CI gate and the local one are the same
+    // implementation rather than two statements of the same rule. It writes to
+    // a temp file and asserts only the exit status: what is being checked is
+    // the refusal, not the output.
+    test('render-rtl.py exits 0 on the committed app.html', () {
+      final out = Directory.systemTemp.createTempSync('mindforge-rtl');
+      addTearDown(() => out.deleteSync(recursive: true));
+
+      final result = Process.runSync('python3', <String>[
+        'design/sunburst-pop/rtl/render-rtl.py',
+        'design/sunburst-pop/app.html',
+        'design/sunburst-pop/rtl/strings-fa.json',
+        '${out.path}/app-rtl.html',
+      ]);
+
+      expect(
+        result.exitCode,
+        0,
+        reason:
+            'the renderer refuses to write when a marked node was not swapped '
+            'or when an ASCII digit survives inside a .screen subtree. Both '
+            'mean the Persian reference would ship with English or Latin '
+            'content in it:\n${result.stderr}',
+      );
+    });
+  });
 }
