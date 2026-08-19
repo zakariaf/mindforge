@@ -47,7 +47,7 @@ List<ContrastPair> declaredPairs() =>
       },
     ).toList();
 
-const _palette = SunburstColors.sunburstPop;
+const SunburstColors _palette = SunburstColors.sunburstPop;
 
 final Map<String, Color> _slots = <String, Color>{
   'surface': _palette.surface,
