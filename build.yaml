@@ -12,8 +12,11 @@ targets:
         # (persistence-drift; check-drift-confinement.sh enforces it).
         generate_for:
           - lib/data/**
-        options:
-          # Generate a .drift.dart part beside each source file rather than one
-          # monolithic output, so a diff names the table that changed.
-          store_date_time_values_as_text: false
-          named_parameters: true
+        # No `options:` block. Two were briefly set here with a comment that
+        # described them as an output-layout choice; they are not.
+        # `store_date_time_values_as_text` is a PERMANENT storage-format
+        # decision — flipping it later silently reinterprets every stored
+        # timestamp — and MindForge declares no DateTime column at all, storing
+        # UTC epoch milliseconds as plain integers, so the option would govern
+        # nothing while looking like a reviewed choice. Add an option here only
+        # with a comment saying what it actually changes.

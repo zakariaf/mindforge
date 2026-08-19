@@ -8,30 +8,34 @@ void main() {
   group('RunMetric', () {
     test('for points, higher is better', () {
       expect(
-        RunMetric.points(1480).isBetterThan(RunMetric.points(1310)),
-        const BetterThan(true),
+        const RunMetric.points(1480).isBetterThan(const RunMetric.points(1310)),
+        const BetterThan(isBetter: true),
       );
       expect(
-        RunMetric.points(1310).isBetterThan(RunMetric.points(1480)),
-        const BetterThan(false),
+        const RunMetric.points(1310).isBetterThan(const RunMetric.points(1480)),
+        const BetterThan(isBetter: false),
       );
     });
 
     test('for duration, lower is better', () {
       expect(
-        RunMetric.duration(18600).isBetterThan(RunMetric.duration(21400)),
-        const BetterThan(true),
+        const RunMetric.duration(
+          18600,
+        ).isBetterThan(const RunMetric.duration(21400)),
+        const BetterThan(isBetter: true),
       );
       expect(
-        RunMetric.duration(21400).isBetterThan(RunMetric.duration(18600)),
-        const BetterThan(false),
+        const RunMetric.duration(
+          21400,
+        ).isBetterThan(const RunMetric.duration(18600)),
+        const BetterThan(isBetter: false),
       );
     });
 
     test('comparing two different formats returns a value, never a throw', () {
-      final outcome = RunMetric.points(
+      final outcome = const RunMetric.points(
         1480,
-      ).isBetterThan(RunMetric.duration(18600));
+      ).isBetterThan(const RunMetric.duration(18600));
 
       expect(outcome, isA<ScoreFormatMismatch>());
       expect(
@@ -42,7 +46,9 @@ void main() {
     });
 
     test('the comparison outcome switches exhaustively with no default', () {
-      final outcome = RunMetric.points(1).isBetterThan(RunMetric.points(0));
+      final outcome = const RunMetric.points(
+        1,
+      ).isBetterThan(const RunMetric.points(0));
 
       final described = switch (outcome) {
         BetterThan(isBetter: final b) => 'better=$b',
@@ -70,7 +76,7 @@ void main() {
           reason:
               'formatting a metric is E04 LocaleNumbers job. A formatter '
               'here would render 1480 as 1,480 in en and 1.480 in de, inside '
-              'a layer that must stay locale-independent. Found: \$banned',
+              r'a layer that must stay locale-independent. Found: $banned',
         );
       }
     });

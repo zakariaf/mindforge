@@ -19,6 +19,7 @@ const kAllowedDirectDependencies = <String>{
   'go_router', // the single router, E08
   'clock', // the injected Clock; DateTime.now() in domain code is a defect
   'intl', // LocaleNumbers' one NumberFormat construction site, E04
+  'meta', // @immutable / @useResult on the lib/core value types, E02
   'path', // joining the application-support directory to the db file, E02
   'uuid', // UuidIdGenerator behind the IdGenerator seam, E02
   // dev
@@ -26,6 +27,10 @@ const kAllowedDirectDependencies = <String>{
   'build_runner', // drift codegen, E02
   'drift_dev', // drift codegen, E02
   'sqlite3', // NativeDatabase.memory() in the data-layer suite, E02
+  // lib/core/ is Flutter-free, so its tests are too. Declared explicitly rather
+  // than resolved by accident through riverpod 3's dependency on package:test —
+  // the same graph kExplainedTransitives documents as removable.
+  'test',
 };
 
 /// Transitive packages whose presence in the lock is explained, measured and

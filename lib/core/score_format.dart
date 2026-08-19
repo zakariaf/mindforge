@@ -2,7 +2,7 @@
 ///
 /// The **one** score vocabulary in the project. `GameDefinition.scoreFormat`
 /// (E07) imports this enum, and the `runs.metric_kind` column stores
-/// [ScoreFormat.name] exactly — a second enum beside it would be one rename
+/// `ScoreFormat.name` exactly — a second enum beside it would be one rename
 /// away from a silent mismatch on the single column that decides MAX versus MIN.
 enum ScoreFormat {
   /// A point total. **Higher is better.** Stored as an integer count.

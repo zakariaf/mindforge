@@ -1,8 +1,8 @@
 /// The base of every failure family in the app.
 ///
 /// A `Failure` is a **value**, not a thrown thing: recoverable failures are
-/// returned through [Result] and switched exhaustively at the call site. Only
-/// bugs throw.
+/// returned through `Result` (`lib/core/result.dart`) and switched exhaustively
+/// at the call site. Only bugs throw.
 ///
 /// A leaf carries typed parameters, never a localized sentence. The UI decides
 /// what to say about `data.run_already_recorded`; the data layer only reports

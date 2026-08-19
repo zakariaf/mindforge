@@ -16,7 +16,7 @@ sealed class MetricComparison {
 @immutable
 final class BetterThan extends MetricComparison {
   /// Creates a successful comparison whose answer is [isBetter].
-  const BetterThan(this.isBetter);
+  const BetterThan({required this.isBetter});
 
   /// Whether the left-hand metric beats the right-hand one, in the direction
   /// its [ScoreFormat] defines.
@@ -102,7 +102,7 @@ final class RunMetric {
       return ScoreFormatMismatch(format, other.format);
     }
     return BetterThan(
-      switch (format) {
+      isBetter: switch (format) {
         ScoreFormat.points => value > other.value,
         ScoreFormat.duration => value < other.value,
       },

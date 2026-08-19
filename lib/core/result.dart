@@ -70,16 +70,16 @@ extension ResultX<T, F extends Failure> on Result<T, F> {
     required R Function(T value) onOk,
     required R Function(F failure) onErr,
   }) => switch (this) {
-    Ok<T, F>(value: final value) => onOk(value),
-    Err<T, F>(failure: final failure) => onErr(failure),
+    Ok<T, F>(:final value) => onOk(value),
+    Err<T, F>(:final failure) => onErr(failure),
   };
 
   /// Transforms an [Ok] value with [transform], passing an [Err] through
   /// **unchanged** — the identical failure instance, so its typed params
   /// survive.
   Result<R, F> map<R>(R Function(T value) transform) => switch (this) {
-    Ok<T, F>(value: final value) => Ok<R, F>(transform(value)),
-    Err<T, F>(failure: final failure) => Err<R, F>(failure),
+    Ok<T, F>(:final value) => Ok<R, F>(transform(value)),
+    Err<T, F>(:final failure) => Err<R, F>(failure),
   };
 
   /// Whether this is an [Ok].

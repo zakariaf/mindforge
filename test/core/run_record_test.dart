@@ -61,7 +61,7 @@ void main() {
     test('equality is identity on id', () {
       // Explicit stable identity: the same run read twice, once before and once
       // after a derived field changed shape, is still the same run.
-      expect(_record(metricValue: 1480), _record(metricValue: 10));
+      expect(_record(), _record(metricValue: 10));
       expect(_record().hashCode, _record(metricValue: 10).hashCode);
       expect(_record(), isNot(_record(id: 'run-2')));
     });
