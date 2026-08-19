@@ -1,0 +1,33 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "MindForge",
+  "@appTitle": {
+    "description": "The application name. Shown as the app title and as the wordmark at the top of the Home screen. A proper noun: it is never translated, only transliterated where a script demands it, and in fa and ckb it is a Latin run inside RTL copy that needs bidi isolation."
+  },
+
+  "homeTagline": "Train your brain. No wifi needed.",
+  "@homeTagline": {
+    "description": "Subtitle under the wordmark on the Home screen (01-home.png). Two short sentences. The second one is the product promise: the app works with no network connection at all, ever."
+  },
+
+  "homeYourGames": "Your games",
+  "@homeYourGames": {
+    "description": "Section heading on the Home screen (01-home.png) above the grid of game cards. Sentence case, not title case."
+  },
+
+  "actionPlay": "Play",
+  "@actionPlay": {
+    "description": "Label on the primary button that starts a round, on the game detail screen (02-game-detail.png). An imperative verb, as short as the language allows — it sits inside a fixed-width chunky button."
+  },
+
+  "labelBest": "BEST",
+  "@labelBest": {
+    "description": "Label on the pill showing the player's best score for a game (01-home.png). Rendered in capitals in English; a script without letter case renders it in its normal form rather than being forced."
+  },
+
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Row label in Settings (08-settings.png) that opens the language picker. The noun, not the imperative 'choose a language'."
+  }
+}

@@ -63,6 +63,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Runs gen-l10n against l10n.yaml as part of `flutter pub get` and the build.
+  generate: true
+
   # Fonts are BUNDLED, never fetched (CLAUDE.md). google_fonts is banned
   # because it ships an HTTP code path into an app whose central promise is
   # that it has none.
