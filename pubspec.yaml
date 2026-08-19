@@ -75,6 +75,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   very_good_analysis: ^10.3.0
+  # Test-only, E04: ci_workflow_test PARSES .github/workflows/ci.yml rather than
+  # grepping it. Every CI run on every branch had been failing in 0s because the
+  # file was not valid YAML, and no test noticed — eleven of them scanned it as
+  # text. Already in the lock as a transitive dependency of drift_dev.
+  yaml: ^3.1.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

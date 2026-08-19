@@ -207,7 +207,13 @@ jobs:
         run: flutter test --tags golden --reporter expanded
 
       - name: Run the skill gates
-        run: "$BASH5" tool/skill_gates.sh
+        # A block scalar, because `run: "$BASH5" tool/...` is NOT valid YAML —
+        # content after a closing quote is a parse error, and GitHub rejects the
+        # whole file before any job starts. Every run on every branch had been
+        # failing in 0s with "this run likely failed because of a workflow file
+        # issue", which reads like infrastructure rather than a bug in the file.
+        run: |
+          "$BASH5" tool/skill_gates.sh
 
       - name: Check directional geometry
         # Named separately as well as inside the runner, because this is the one

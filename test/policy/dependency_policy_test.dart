@@ -38,6 +38,11 @@ const kAllowedDirectDependencies = <String>{
   // and no network. It was ALREADY resolved as a transitive dependency; this
   // only declares what a test imports directly.
   'crypto',
+  // Test-only, E04. ci_workflow_test parses the workflow instead of only
+  // grepping it. Audited: yaml 3.1.3 is published by dart.dev, its tree is
+  // [collection source_span string_scanner], all already in the lock, all pure
+  // Dart. It was already resolved transitively through drift_dev.
+  'yaml',
   // lib/core/ is Flutter-free, so its tests are too. Declared explicitly rather
   // than resolved by accident through riverpod 3's dependency on package:test —
   // the same graph kExplainedTransitives documents as removable.

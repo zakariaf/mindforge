@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaml/yaml.dart';
 
 import 'support/source_text.dart';
 
@@ -104,6 +105,49 @@ void main() {
             'point at the record with flutter-version-file. The drift is '
             'caught by this test instead of by the action',
       );
+    });
+
+    test('is valid YAML at all', () {
+      // THE FIRST THING TO CHECK, and it was the one thing nothing checked.
+      // Every run on every branch failed in 0s with "this run likely failed
+      // because of a workflow file issue" — GitHub rejects the file before any
+      // job starts, so no gate in it had ever executed, while eleven tests
+      // asserted confidently about its contents as TEXT.
+      //
+      // The offending line was `run: "\$BASH5" tool/skill_gates.sh`: content
+      // after a closing quote is a YAML parse error.
+      late Map<dynamic, dynamic> parsed;
+
+      expect(
+        () => parsed = loadYaml(workflow) as Map<dynamic, dynamic>,
+        returnsNormally,
+      );
+      expect(
+        (parsed['jobs']! as Map<dynamic, dynamic>).keys,
+        containsAll(<String>['verify', 'build-ios']),
+      );
+    });
+
+    test('every step that runs a command has a runnable one', () {
+      final jobs = (loadYaml(workflow) as Map)['jobs'] as Map;
+
+      for (final job in jobs.values) {
+        for (final step in (job as Map)['steps'] as List) {
+          final run = (step as Map)['run'];
+          if (run == null) continue;
+
+          expect(
+            run,
+            isA<String>(),
+            reason: '${step['name']} has a malformed run block',
+          );
+          expect(
+            (run as String).trim(),
+            isNotEmpty,
+            reason: '${step['name']} runs nothing',
+          );
+        }
+      }
     });
 
     test('every required gate step is present', () {
