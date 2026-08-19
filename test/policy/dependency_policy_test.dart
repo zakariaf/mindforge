@@ -19,10 +19,13 @@ const kAllowedDirectDependencies = <String>{
   'go_router', // the single router, E08
   'clock', // the injected Clock; DateTime.now() in domain code is a defect
   'intl', // LocaleNumbers' one NumberFormat construction site, E04
+  'path', // joining the application-support directory to the db file, E02
+  'uuid', // UuidIdGenerator behind the IdGenerator seam, E02
   // dev
   'very_good_analysis', // the lint floor, T01.5
   'build_runner', // drift codegen, E02
   'drift_dev', // drift codegen, E02
+  'sqlite3', // NativeDatabase.memory() in the data-layer suite, E02
 };
 
 /// Transitive packages whose presence in the lock is explained, measured and
