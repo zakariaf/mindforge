@@ -12,7 +12,8 @@ void main() {
 
       final entries = await LicenseRegistry.licenses.toList();
 
-      for (final family in kBundledFontFamilies) {
+      for (final font in kBundledFonts) {
+        final family = font.family;
         final entry = entries.where((e) => e.packages.contains(family));
 
         expect(

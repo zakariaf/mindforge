@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_text.dart';
+
 void main() {
   group('startup policy', () {
     test('runZonedGuarded appears nowhere under lib/', () {
@@ -13,11 +15,9 @@ void main() {
           // construct in order to say why it is absent, and a gate that fires
           // on its own rationale gets deleted rather than obeyed.
           .where(
-            (f) => f
-                .readAsLinesSync()
-                .map((line) => line.replaceFirst(RegExp('//.*'), ''))
-                .join('\n')
-                .contains('runZonedGuarded'),
+            (f) => withoutDartComments(
+              f.readAsStringSync(),
+            ).contains('runZonedGuarded'),
           )
           .map((f) => f.path)
           .toList();

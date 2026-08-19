@@ -38,6 +38,14 @@ Set<String> _layoutDirectoriesFromClaudeMd() {
 void main() {
   final expected = _layoutDirectoriesFromClaudeMd();
 
+  // Walked once. Three of the tests below need the same list, and listSync
+  // recursive over lib/ is the most expensive thing in this file.
+  final actualLibDirectories = Directory('lib')
+      .listSync(recursive: true)
+      .whereType<Directory>()
+      .map((d) => d.path.substring('lib/'.length))
+      .toSet();
+
   group('project structure', () {
     test('CLAUDE.md names the foundation directories this plan depends on', () {
       // A guard on the parser as much as on the tree: if the block is
@@ -84,13 +92,8 @@ void main() {
     });
 
     test('lib/ holds no directory CLAUDE.md does not name', () {
-      final actual = Directory('lib')
-          .listSync(recursive: true)
-          .whereType<Directory>()
-          .map((d) => d.path.substring('lib/'.length))
-          .toSet();
-
-      final undocumented = actual.difference(expected).toList()..sort();
+      final undocumented = actualLibDirectories.difference(expected).toList()
+        ..sort();
 
       expect(
         undocumented,
@@ -103,10 +106,8 @@ void main() {
     });
 
     test('no grab-bag directory exists anywhere under lib/', () {
-      final offenders = Directory('lib')
-          .listSync(recursive: true)
-          .whereType<Directory>()
-          .map((d) => d.uri.pathSegments.where((s) => s.isNotEmpty).last)
+      final offenders = actualLibDirectories
+          .map((path) => path.split('/').last)
           .where(kGrabBagNames.contains)
           .toList();
 

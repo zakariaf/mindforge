@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_text.dart';
+
 /// Import URI prefixes that break a stated `CLAUDE.md` product constraint,
 /// mapped to the constraint each one breaks.
 ///
@@ -43,10 +45,7 @@ void main() {
 
     for (final file in dartFiles) {
       // Strip line comments so a URI quoted in prose is not a false positive.
-      final source = file
-          .readAsLinesSync()
-          .map((line) => line.replaceFirst(RegExp(r'\s*//.*$'), ''))
-          .join('\n');
+      final source = withoutDartComments(file.readAsStringSync());
 
       final importUris = RegExp(
         r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''',

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 
+import 'support/source_text.dart';
+
 /// Pins the posture recorded in `docs/decisions/0001-localisation.md`, so
 /// re-opening the decision reds this test rather than drifting half-adopted.
 void main() {
@@ -13,10 +15,7 @@ void main() {
   /// are about the declared options; the file explains in prose why each
   /// omitted option is omitted, and a gate that fires on its own rationale
   /// gets deleted rather than obeyed.
-  final l10nOptions = l10nYaml
-      .split('\n')
-      .map((line) => line.replaceFirst(RegExp('#.*'), ''))
-      .join('\n');
+  final l10nOptions = withoutYamlComments(l10nYaml);
   final pubspec = File('pubspec.yaml').readAsStringSync();
 
   group('l10n.yaml', () {

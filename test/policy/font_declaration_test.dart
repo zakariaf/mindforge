@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_text.dart';
+
 /// One bundled font family: the `family:` name and the `asset:` paths declared
 /// under it in `pubspec.yaml`.
 typedef FontFamilyDeclaration = ({String family, List<String> assets});
@@ -74,10 +76,7 @@ void main() {
     test('google_fonts appears nowhere in the declaration', () {
       // Comments are stripped first: the ban is on the declaration, and the
       // pubspec explains in prose why the package is refused.
-      final declaration = pubspec
-          .split('\n')
-          .map((line) => line.replaceFirst(RegExp('#.*'), ''))
-          .join('\n');
+      final declaration = withoutYamlComments(pubspec);
 
       expect(
         declaration.contains('google_fonts'),

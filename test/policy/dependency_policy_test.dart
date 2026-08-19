@@ -71,33 +71,55 @@ const kBannedPackagePrefixes = <String, String>{
   'sentry': 'CLAUDE.md: no analytics, no crash reporting',
 };
 
+/// Every name declared under `dependencies:` or `dev_dependencies:` in
+/// `pubspec.yaml`, mapped to its inline version constraint.
+///
+/// The value is `null` for an `sdk:` entry, which carries no inline version —
+/// `flutter`, `flutter_test` and `flutter_localizations`. Written once because
+/// the caret-range check and the allow-set check had each grown their own copy
+/// of this fifteen-line walk.
+Map<String, String?> _declaredDependencies(String pubspec) {
+  final declared = <String, String?>{};
+  var inDependencyBlock = false;
+
+  for (final line in pubspec.split('\n')) {
+    if (RegExp('^(dev_)?dependencies:').hasMatch(line)) {
+      inDependencyBlock = true;
+      continue;
+    }
+    if (line.isNotEmpty && !line.startsWith(' ') && !line.startsWith('#')) {
+      inDependencyBlock = false;
+      continue;
+    }
+    if (!inDependencyBlock) continue;
+
+    final match = RegExp('^  ([a-z_0-9]+):(.*)').firstMatch(line);
+    if (match == null) continue;
+
+    final version = match.group(2)!.trim();
+    declared[match.group(1)!] = version.isEmpty ? null : version;
+  }
+  return declared;
+}
+
+/// Every package name in the resolved `pubspec.lock`.
+Set<String> _resolvedPackages(File lock) => RegExp(
+  '^  ([a-z_0-9]+):',
+  multiLine: true,
+).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
+
 void main() {
   final pubspec = File('pubspec.yaml').readAsStringSync();
   final lock = File('pubspec.lock');
+  final declaredDependencies = _declaredDependencies(pubspec);
+  final resolvedPackages = _resolvedPackages(lock);
 
   group('dependency policy', () {
     test('every versioned direct dependency uses a caret range', () {
-      final offenders = <String>[];
-      var inDependencyBlock = false;
-
-      for (final line in pubspec.split('\n')) {
-        if (RegExp('^(dev_)?dependencies:').hasMatch(line)) {
-          inDependencyBlock = true;
-          continue;
-        }
-        if (line.isNotEmpty && !line.startsWith(' ') && !line.startsWith('#')) {
-          inDependencyBlock = false;
-          continue;
-        }
-        if (!inDependencyBlock) continue;
-
-        final match = RegExp(r'^  ([a-z_0-9]+):\s*(\S.*)$').firstMatch(line);
-        if (match == null) continue; // sdk: entries carry no inline version
-        final version = match.group(2)!.trim();
-        if (!version.startsWith('^')) {
-          offenders.add('${match.group(1)}: $version');
-        }
-      }
+      final offenders = declaredDependencies.entries
+          .where((e) => e.value != null && !e.value!.startsWith('^'))
+          .map((e) => '${e.key}: ${e.value}')
+          .toList();
 
       expect(
         offenders,
@@ -109,26 +131,10 @@ void main() {
     });
 
     test('the direct dependency set is the reviewed allow-set', () {
-      final declared = <String>{};
-      var inDependencyBlock = false;
-
-      for (final line in pubspec.split('\n')) {
-        if (RegExp('^(dev_)?dependencies:').hasMatch(line)) {
-          inDependencyBlock = true;
-          continue;
-        }
-        if (line.isNotEmpty && !line.startsWith(' ') && !line.startsWith('#')) {
-          inDependencyBlock = false;
-          continue;
-        }
-        if (!inDependencyBlock) continue;
-
-        final match = RegExp('^  ([a-z_0-9]+):').firstMatch(line);
-        if (match != null) declared.add(match.group(1)!);
-      }
-
       expect(
-        declared.difference(kAllowedDirectDependencies),
+        declaredDependencies.keys.toSet().difference(
+          kAllowedDirectDependencies,
+        ),
         isEmpty,
         reason:
             'a dependency was added without extending the reviewed '
@@ -144,13 +150,8 @@ void main() {
     });
 
     test('no banned package appears in the resolved lock', () {
-      final resolved = RegExp(
-        '^  ([a-z_0-9]+):',
-        multiLine: true,
-      ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
-
       final offenders = <String>[];
-      for (final name in resolved) {
+      for (final name in resolvedPackages) {
         if (kExplainedTransitives.containsKey(name)) continue;
 
         final exact = kBannedPackages[name];
@@ -167,13 +168,8 @@ void main() {
     });
 
     test('every explained transitive is still actually in the lock', () {
-      final resolved = RegExp(
-        '^  ([a-z_0-9]+):',
-        multiLine: true,
-      ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
-
       final stale = kExplainedTransitives.keys.where(
-        (k) => !resolved.contains(k),
+        (k) => !resolvedPackages.contains(k),
       );
       expect(
         stale,

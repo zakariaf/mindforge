@@ -1,32 +1,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+/// One bundled font family: the `family:` key in `pubspec.yaml`, the font asset
+/// declared under it, and the SIL OFL text shipped alongside it.
+typedef BundledFont = ({String family, String asset, String licenceAsset});
+
 /// The font families bundled into the binary, in declaration order.
 ///
-/// Each name is the `family:` key in `pubspec.yaml` and the package name the
-/// family's licence is registered under. **E03 T03.7 appends the Arabic-script
-/// faces here**; Fredoka and Nunito have no Arabic-script coverage, so `fa` and
-/// `ckb` cannot render from this list alone.
-const kBundledFontFamilies = <String>['Fredoka', 'Nunito'];
-
-/// The font asset paths declared under `flutter: fonts:` in `pubspec.yaml`.
+/// One record per family rather than three parallel lists: a face added to the
+/// family list and forgotten in the asset list is the exact defect this file
+/// exists to prevent, and parallel lists are how that happens.
 ///
-/// Kept beside [kBundledFontFamilies] so a face added to one and forgotten in
-/// the other is a failing test rather than a missing glyph on a device nobody
-/// checked.
-const kBundledFontAssets = <String>[
-  'assets/fonts/Fredoka[wdth,wght].ttf',
-  'assets/fonts/Nunito[wght].ttf',
+/// **E03 T03.7 appends the Arabic-script faces here.** Fredoka and Nunito have
+/// no Arabic-script coverage, so `fa` and `ckb` cannot render from this list
+/// alone — that is a stated incompleteness, not a finished font story.
+///
+/// Two licence files rather than one: the families carry different copyright
+/// holders, and a single `OFL.txt` would misattribute one of them.
+const kBundledFonts = <BundledFont>[
+  (
+    family: 'Fredoka',
+    asset: 'assets/fonts/Fredoka[wdth,wght].ttf',
+    licenceAsset: 'assets/fonts/OFL-Fredoka.txt',
+  ),
+  (
+    family: 'Nunito',
+    asset: 'assets/fonts/Nunito[wght].ttf',
+    licenceAsset: 'assets/fonts/OFL-Nunito.txt',
+  ),
 ];
-
-/// The SIL OFL text shipped for each bundled family.
-///
-/// Two files rather than one: the families carry different copyright holders,
-/// and a single `OFL.txt` would misattribute one of them.
-const _licenceAssetByFamily = <String, String>{
-  'Fredoka': 'assets/fonts/OFL-Fredoka.txt',
-  'Nunito': 'assets/fonts/OFL-Nunito.txt',
-};
 
 /// Registers the SIL OFL text of every bundled font family with
 /// [LicenseRegistry], so the licences are reachable from the in-app licences
@@ -37,12 +39,11 @@ const _licenceAssetByFamily = <String, String>{
 /// Arabic-script pair — is registered through this one.
 void registerSunburstFontLicences() {
   LicenseRegistry.addLicense(() async* {
-    for (final family in kBundledFontFamilies) {
-      final asset = _licenceAssetByFamily[family];
-      if (asset == null) continue;
-
-      final text = await rootBundle.loadString(asset);
-      yield LicenseEntryWithLineBreaks(<String>[family], text);
+    for (final font in kBundledFonts) {
+      yield LicenseEntryWithLineBreaks(
+        <String>[font.family],
+        await rootBundle.loadString(font.licenceAsset),
+      );
     }
   });
 }

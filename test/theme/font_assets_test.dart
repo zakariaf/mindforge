@@ -6,9 +6,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('font assets', () {
-    for (final asset in kBundledFontAssets) {
-      test('$asset is a real font file', () async {
-        final data = await rootBundle.load(asset);
+    for (final font in kBundledFonts) {
+      test('${font.asset} is a real font file', () async {
+        final data = await rootBundle.load(font.asset);
 
         expect(
           data.lengthInBytes,
