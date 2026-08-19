@@ -91,24 +91,50 @@ abstract final class DesignSource {
     return bindings;
   }
 
-  /// The names declared as `final <Type> a, b, c;` inside [className].
+  /// The names declared as `final <Type> a, b, c;` inside [className], which
+  /// may be a class or an enum.
   ///
   /// Used by the coverage tests so a field count is derived from the source
   /// rather than hardcoded — a hardcoded count is how a new slot gets forgotten
   /// in `copyWith` while the test still passes.
   static List<String> dartFieldNames(String path, String className) {
     final source = File(pathToRepoFile(path)).readAsStringSync();
-    final start = source.indexOf('class $className');
-    if (start == -1) throw StateError('$className not found in $path');
+    // A class or an enum: PlayAnswer is an enum and its field list is exactly
+    // what one of the tests asserts on.
+    final start = RegExp(
+      '(class|enum) ${RegExp.escape(className)}\\b',
+    ).firstMatch(source)?.start;
+    if (start == null) throw StateError('$className not found in $path');
+
+    // Bounded to this declaration's own braces. Scanning to end-of-file makes
+    // an enum declared above a class inherit every one of that class's fields,
+    // which is a test that passes for the wrong reason.
+    final body = _bracedBody(source, start);
 
     final names = <String>[];
     for (final match in RegExp(
       r'^\s*final [\w<>?, ]+? ([\w, ]+);',
       multiLine: true,
-    ).allMatches(source.substring(start))) {
+    ).allMatches(body)) {
       names.addAll(match.group(1)!.split(',').map((n) => n.trim()));
     }
     return names;
+  }
+
+  /// The `{ ... }` body of the declaration starting at [start].
+  static String _bracedBody(String source, int start) {
+    final open = source.indexOf('{', start);
+    if (open == -1) throw StateError('no body found');
+
+    var depth = 0;
+    for (var i = open; i < source.length; i++) {
+      if (source[i] == '{') depth++;
+      if (source[i] == '}') {
+        depth--;
+        if (depth == 0) return source.substring(open, i);
+      }
+    }
+    throw StateError('unbalanced braces from offset $start');
   }
 
   /// The `flutter: fonts:` block of `pubspec.yaml`, as family name to the list

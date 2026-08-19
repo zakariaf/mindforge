@@ -53,7 +53,8 @@ void main() {
         expect(
           dartHexes[entry.key],
           cssHexes[entry.value],
-          reason: 'system.html is the authority for values. If the Dart is '
+          reason:
+              'system.html is the authority for values. If the Dart is '
               'right and the design file is wrong, that is a deliberate design '
               'change: edit system.html, re-run capture-screens.sh, and commit '
               'the regenerated PNGs with the reason',
@@ -79,7 +80,8 @@ void main() {
       expect(
         transcribable,
         kPrimitiveToCssVar.values.toSet(),
-        reason: 'a colour exists in the design system that no Dart slot can '
+        reason:
+            'a colour exists in the design system that no Dart slot can '
             'reach',
       );
     });
@@ -96,7 +98,8 @@ void main() {
         expect(
           cssHexes[entry.key],
           cssHexes[entry.value],
-          reason: 'the colour-blind palette RE-POINTS answers at existing '
+          reason:
+              'the colour-blind palette RE-POINTS answers at existing '
               'hues rather than adding new ones. A fifth hue here would be a '
               'primitive with no chrome slot and no contrast declaration',
         );
