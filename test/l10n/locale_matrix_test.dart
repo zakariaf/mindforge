@@ -62,7 +62,7 @@ void main() {
             isFalse,
             reason:
                 'an ASCII digit in a Persian or Sorani sentence reads as '
-                'untranslated: "\$rendered"',
+                'untranslated: "$rendered"',
           );
         }
       });
