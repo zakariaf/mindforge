@@ -86,6 +86,12 @@ void main() {
           clockProvider.overrideWithValue(Clock.fixed(kTestNow)),
           idGeneratorProvider.overrideWithValue(FakeIdGenerator()),
           registeredGameIdsProvider.overrideWithValue(const {'stroop_rush'}),
+          // settingsProvider is SEEDED with this, so reading it without an
+          // override is a wiring error rather than a loading frame. bootstrap()
+          // supplies the value it read before runApp.
+          initialAppSettingsProvider.overrideWithValue(
+            const AppSettings.defaults().copyWith(isColourBlindPalette: true),
+          ),
         ],
       );
       // Order matters: tear-downs run in REVERSE, so the container must be
@@ -124,12 +130,24 @@ void main() {
         }, fireImmediately: true);
         addTearDown(subscription.close);
 
-        // A bounded settle rather than pumpEventQueue(): Riverpod's scheduler
-        // keeps re-arming microtasks while a StreamProvider has a live
-        // listener, so pumpEventQueue() never observes an empty queue and the
-        // test times out instead of failing.
+        // The FIRST emission is the seeded value, synchronously available —
+        // that is the whole point of bootstrap() awaiting a read, and it is
+        // what stops a Persian user's cold start painting an English LTR frame
+        // and then flipping to Persian RTL.
         await settle();
-        expect(emissions.last, const AppSettings.defaults());
+        expect(
+          emissions.first.isColourBlindPalette,
+          isTrue,
+          reason:
+              'the first emission came from initialAppSettingsProvider, '
+              'not from the database — the seeded value carries a flag the '
+              'stored row does not',
+        );
+        expect(
+          emissions[1],
+          const AppSettings.defaults(),
+          reason: 'the stored row follows immediately after',
+        );
 
         expect(
           await container

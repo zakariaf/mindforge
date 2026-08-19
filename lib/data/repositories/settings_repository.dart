@@ -5,9 +5,9 @@ import 'package:mindforge/core/result.dart';
 import 'package:mindforge/data/daos/settings_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/db/app_database.dart';
+import 'package:mindforge/data/db/store_guard.dart';
 import 'package:mindforge/data/db/write_stamp.dart';
 import 'package:mindforge/data/log_sink.dart';
-import 'package:sqlite3/common.dart' show SqliteException;
 
 /// The **single write path** for settings, and the single source of truth for
 /// reading them.
@@ -55,44 +55,28 @@ final class SettingsRepository {
   /// first frame paints in the right language and with reduce-motion already
   /// honoured.
   @useResult
-  Future<Result<AppSettings, DataFailure>> read() async {
-    try {
-      return Ok(_reportDegradation(await _dao.read()));
-    } on SqliteException catch (e, st) {
-      _logSink.recordFailure(
-        const StoreUnavailable(),
-        error: e,
-        stackTrace: st,
-      );
-      return const Err(StoreUnavailable());
-    }
-  }
+  Future<Result<AppSettings, DataFailure>> read() => guardStore(
+    () async => _reportDegradation(await _dao.read()),
+    logSink: _logSink,
+  );
 
   /// Persists [settings], then lets [watch] re-emit.
   ///
   /// Exactly one `db.transaction`, and the returned future resolves only after
   /// the row is durable.
   @useResult
-  Future<Result<AppSettings, DataFailure>> update(AppSettings settings) async {
-    try {
-      await _database.transaction(() async {
-        final stamp = nextWriteStamp(_clock, await _dao.readRevision());
-        await _dao.write(
-          settings,
-          updatedAtUtcMs: stamp.updatedAtUtcMs,
-          rowRevision: stamp.rowRevision,
-        );
-      });
-      return Ok(settings);
-    } on SqliteException catch (e, st) {
-      _logSink.recordFailure(
-        const StoreUnavailable(),
-        error: e,
-        stackTrace: st,
-      );
-      return const Err(StoreUnavailable());
-    }
-  }
+  Future<Result<AppSettings, DataFailure>> update(AppSettings settings) =>
+      guardStore(() async {
+        await _database.transaction(() async {
+          final stamp = nextWriteStamp(_clock, await _dao.readRevision());
+          await _dao.write(
+            settings,
+            updatedAtUtcMs: stamp.updatedAtUtcMs,
+            rowRevision: stamp.rowRevision,
+          );
+        });
+        return settings;
+      }, logSink: _logSink);
 
   /// Reports an unrecognised stored `locale_tag` and returns the degraded
   /// value.

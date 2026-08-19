@@ -9,6 +9,16 @@ import 'package:sqlite3/common.dart';
 /// The database file name inside the application-support directory.
 const String kDatabaseFileName = 'mindforge.sqlite';
 
+/// Resolves the database file inside the iOS application-support container.
+///
+/// Separated from opening it so `bootstrap()` can hand the path to
+/// `openMigratedDatabase`, which has to snapshot the bytes **before** any
+/// connection exists.
+Future<File> resolveDatabaseFile() async {
+  final directory = await getApplicationSupportDirectory();
+  return File(p.join(directory.path, kDatabaseFileName));
+}
+
 /// Opens the on-device database, lazily, with the per-connection pragmas set
 /// **before** any statement runs.
 ///

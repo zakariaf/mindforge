@@ -19,6 +19,13 @@ import 'package:mindforge/data/db/connection.dart';
 /// connection is writing to captures a torn WAL, and writing over a file a live
 /// connection holds corrupts it outright.
 ///
+/// The executor is `NativeDatabase.createInBackground`, the same one
+/// production would otherwise build directly. That matters: a store opened on
+/// a different executor here and a different one in `bootstrap()` would mean
+/// the restore path was never exercised against the connection the app
+/// actually uses, and drift's isolate hop changes which exception type
+/// surfaces.
+///
 /// [openDatabase] exists so a test can supply a database whose migration
 /// throws; production passes nothing and gets [AppDatabase].
 Future<AppDatabase> openMigratedDatabase(
@@ -30,7 +37,9 @@ Future<AppDatabase> openMigratedDatabase(
 
   AppDatabase? database;
   try {
-    database = build(NativeDatabase(file, setup: applyConnectionPragmas));
+    database = build(
+      NativeDatabase.createInBackground(file, setup: applyConnectionPragmas),
+    );
     // Forces the migration to actually run. Opening alone is lazy, so without
     // this the throw would surface later — at the first query, with the file
     // fallback already discarded.

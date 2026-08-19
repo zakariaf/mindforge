@@ -8,6 +8,7 @@ import 'package:mindforge/core/result.dart';
 import 'package:mindforge/data/daos/settings_dao.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/data/db/app_database.dart';
+import 'package:mindforge/data/db/app_database_opener.dart';
 import 'package:mindforge/data/db/connection.dart';
 import 'package:mindforge/data/log_sink.dart';
 import 'package:mindforge/data/repositories/settings_repository.dart';
@@ -42,7 +43,12 @@ Future<void> bootstrap() async {
   installErrorHandlers();
   registerSunburstFontLicences();
 
-  final database = AppDatabase(openDatabaseConnection());
+  // Opened through the snapshot-and-restore path, not by constructing
+  // AppDatabase directly. A migration that fails halfway leaves a file that is
+  // neither the old schema nor the new one, and MindForge has no server to
+  // re-fetch from — so the net has to be on the path the app actually takes,
+  // not only in a test.
+  final database = await openMigratedDatabase(await resolveDatabaseFile());
   final initialSettings = await _readInitialSettings(database);
 
   runApp(

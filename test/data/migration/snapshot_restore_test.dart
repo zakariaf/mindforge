@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart' show DriftRemoteException;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/db/app_database_opener.dart';
@@ -66,7 +67,19 @@ VALUES ('run-1', 1, 1, 1, 0, 'stroop_rush', 'classic', 'key-1',
 
       await expectLater(
         openMigratedDatabase(file, openDatabase: _ThrowingDatabase.new),
-        throwsA(isA<StateError>()),
+        // A DriftRemoteException WRAPPING the StateError, not the StateError
+        // itself. The opener uses NativeDatabase.createInBackground — the same
+        // executor production uses — and drift wraps everything crossing back
+        // from that isolate. This is precisely why
+        // lib/data/db/store_guard.dart exists: a repository catching only
+        // SqliteException catches nothing at all in the shipped app.
+        throwsA(
+          isA<DriftRemoteException>().having(
+            (e) => e.toString(),
+            'toString',
+            contains('deliberate mid-migration failure'),
+          ),
+        ),
         reason:
             'the failure must RETHROW after restoring — swallowing it would '
             'hand back a database nobody can trust',
@@ -93,7 +106,7 @@ VALUES ('run-1', 1, 1, 1, 0, 'stroop_rush', 'classic', 'key-1',
 
     await expectLater(
       openMigratedDatabase(file, openDatabase: _ThrowingDatabase.new),
-      throwsA(isA<StateError>()),
+      throwsA(isA<DriftRemoteException>()),
     );
 
     final db = await openMigratedDatabase(file);
@@ -117,7 +130,7 @@ VALUES ('run-1', 1, 1, 1, 0, 'stroop_rush', 'classic', 'key-1',
 
     await expectLater(
       openMigratedDatabase(file, openDatabase: _ThrowingDatabase.new),
-      throwsA(isA<StateError>()),
+      throwsA(isA<DriftRemoteException>()),
     );
 
     expect(

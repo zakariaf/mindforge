@@ -168,6 +168,66 @@ void main() {
     );
   });
 
+  group('a scope whose stored format differs', () {
+    test('cannot be beaten by a run of another format', () async {
+      // A game whose scoreFormat changed between versions leaves duration rows
+      // behind. Reconstructing the previous best with the INCOMING run's format
+      // — which is what a naive implementation does — compares 9000 points
+      // against 5000 milliseconds and badges it a personal best. That is the
+      // exact cross-unit ranking MetricComparison is sealed to prevent.
+      await save(
+        _draft(
+          clientRunKey: 'old-format',
+          gameId: 'schulte_grid',
+          format: ScoreFormat.duration,
+          metricValue: 5000,
+        ),
+      );
+
+      final commit = await save(
+        _draft(
+          clientRunKey: 'new-format',
+          gameId: 'schulte_grid',
+          metricValue: 9000,
+        ),
+      );
+
+      expect(
+        commit.isPersonalBest,
+        isFalse,
+        reason:
+            '9000 points does not beat 5000 milliseconds; there is no '
+            'ordering between them at all',
+      );
+    });
+
+    test('and a scope holding two formats claims no best', () async {
+      await save(
+        _draft(
+          clientRunKey: 'a',
+          gameId: 'schulte_grid',
+          format: ScoreFormat.duration,
+          metricValue: 5000,
+        ),
+      );
+      await save(
+        _draft(clientRunKey: 'b', gameId: 'schulte_grid', metricValue: 9000),
+      );
+
+      final third = await save(
+        _draft(clientRunKey: 'c', gameId: 'schulte_grid', metricValue: 99999),
+      );
+
+      expect(
+        third.isPersonalBest,
+        isFalse,
+        reason:
+            'saveRun must agree with watchPersonalBest, which reports '
+            'CorruptRow for exactly this data',
+      );
+    });
+  });
+
   group('idempotency', () {
     test('the same clientRunKey twice returns RunAlreadyRecorded', () async {
       await save(_draft());

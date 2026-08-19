@@ -16,6 +16,7 @@ import 'package:mindforge/core/streak_status.dart';
 import 'package:mindforge/data/daos/runs_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/db/app_database.dart';
+import 'package:mindforge/data/db/store_guard.dart';
 import 'package:mindforge/data/log_sink.dart';
 import 'package:sqlite3/common.dart' show SqliteException;
 
@@ -88,8 +89,8 @@ final class RunRepository {
       return Err(NotFound(draft.gameId));
     }
 
-    try {
-      return await _database.transaction(() async {
+    return guardStore(
+      () => _database.transaction(() async {
         final previousBest = await _dao.readBest(
           RunScope(draft.gameId, draft.difficultyId),
         );
@@ -136,42 +137,57 @@ final class RunRepository {
           createdAtUtcMs: nowMs,
         );
 
-        return Ok<RunCommit, DataFailure>(
-          RunCommit(
-            record: record,
-            isPersonalBest: _beatsPreviousBest(record.metric, previousBest),
-          ),
+        return RunCommit(
+          record: record,
+          isPersonalBest: _beatsPreviousBest(record.metric, previousBest),
         );
-      });
-    } on SqliteException catch (e, st) {
-      final failure = _classify(e, draft);
-      _logSink.recordFailure(failure, error: e, stackTrace: st);
-      return Err(failure);
-    }
+      }),
+      logSink: _logSink,
+      classify: (error) => _classify(error, draft),
+    );
   }
 
   /// Whether [metric] beats [previous].
   ///
-  /// **True when there is no previous best** — the first run in a scope is a
-  /// personal best, which is the case a naive `value > currentBest` against a
-  /// null gets wrong.
+  /// **True when the scope was empty** — the first run in a scope is a personal
+  /// best, which is the case a naive `value > currentBest` against a null gets
+  /// wrong.
+  ///
+  /// **False when the scope is not comparable.** The previous best is
+  /// reconstructed with the format it was actually STORED under, not with the
+  /// incoming run's — forcing the new run's format onto the old value is how a
+  /// `points` run of 9000 gets badged a personal best against a 5000 ms
+  /// duration, which is the exact cross-unit ranking [MetricComparison] is
+  /// sealed to prevent. A scope already holding two formats has no ordering at
+  /// all, so nothing in it can be called a best, and `watchPersonalBest`
+  /// reports the same data as [CorruptRow].
   bool _beatsPreviousBest(RunMetric metric, BestRead previous) {
+    // Order matters. A scope holding two formats reports a NULL value as well
+    // as two kinds, so checking the value first would call it an empty scope
+    // and hand it the badge.
+    if (previous.metricKinds.length > 1) return false;
+
     final value = previous.value;
-    if (value == null) return true;
+    if (value == null || previous.metricKinds.isEmpty) return true;
+
+    final storedFormat = ScoreFormat.values.byName(previous.metricKinds.single);
 
     return switch (metric.isBetterThan(
-      RunMetric(format: metric.format, value: value),
+      RunMetric(format: storedFormat, value: value),
     )) {
       BetterThan(:final isBetter) => isBetter,
-      // A scope already holding two formats has no ordering, so nothing in it
-      // can be called a best. watchPersonalBest surfaces the CorruptRow.
       ScoreFormatMismatch() => false,
     };
   }
 
   DataFailure _classify(SqliteException e, RunDraft draft) {
     final message = e.message.toLowerCase();
-    if (message.contains('unique')) {
+    // The index NAME, not just the word "unique". The primary key is unique
+    // too, and an id collision — a bug in the IdGenerator, not a replayed save
+    // — reported as RunAlreadyRecorded would tell the engine its write already
+    // landed when it did not.
+    if (message.contains('ux_runs_client_key') ||
+        message.contains('runs.client_run_key')) {
       return RunAlreadyRecorded(draft.clientRunKey);
     }
     // SQLite names the failing CHECK when the constraint is named; when it is

@@ -16,6 +16,11 @@ part 'runs_dao.drift.dart';
 /// silently rank a point total against a millisecond count.
 typedef BestRead = ({int? value, Set<String> metricKinds});
 
+/// Where a page of runs continues from.
+///
+/// The pair, not the instant: see [RunsDao.pageBefore].
+typedef RunCursor = ({int startedAtUtcMs, String id});
+
 /// Single-table queries over `runs`.
 ///
 /// Every `ORDER BY` and every comparison in this file is over an **integer**
@@ -59,22 +64,36 @@ class RunsDao extends DatabaseAccessor<AppDatabase> with _$RunsDaoMixin {
   );
 
   /// The [limit] most recent runs in [scope], newest first.
+  ///
+  /// Ordered by start instant **and then by id**. The tiebreaker is not
+  /// cosmetic: two runs can share a millisecond — genuinely on a fast device,
+  /// and always in a test driving a fixed `Clock` — and without it the order
+  /// between them is whatever SQLite happens to return, which makes the page
+  /// boundary below non-deterministic.
   Stream<List<RunRecord>> watchRecent(RunScope scope, {required int limit}) =>
       (_liveRuns()
             ..where((t) => _inScope(t, scope))
-            ..orderBy([(t) => OrderingTerm.desc(t.startedAtUtcMs)])
+            ..orderBy([
+              (t) => OrderingTerm.desc(t.startedAtUtcMs),
+              (t) => OrderingTerm.desc(t.id),
+            ])
             ..limit(limit))
           .watch()
           .map((rows) => rows.map(_toRecord).toList());
 
-  /// The [limit] runs in [scope] strictly older than [cursorStartedAtUtcMs].
+  /// The [limit] runs in [scope] strictly after [cursor] in the descending
+  /// `(started_at_utc_ms, id)` order [watchRecent] uses.
   ///
   /// Keyset paging. A row inserted while the user is paging shifts every later
   /// skip-count by one, so a skip-based pager silently repeats and drops rows.
   /// A cursor over an indexed integer cannot.
+  ///
+  /// The cursor is the **pair**, not the instant alone. With the instant alone,
+  /// two runs sharing a millisecond collapse onto one cursor value and the
+  /// second is skipped forever — which a fixed test clock produces every time.
   Future<List<RunRecord>> pageBefore(
     RunScope scope, {
-    required int cursorStartedAtUtcMs,
+    required RunCursor cursor,
     required int limit,
   }) async {
     final rows =
@@ -82,9 +101,16 @@ class RunsDao extends DatabaseAccessor<AppDatabase> with _$RunsDaoMixin {
               ..where(
                 (t) =>
                     _inScope(t, scope) &
-                    t.startedAtUtcMs.isSmallerThanValue(cursorStartedAtUtcMs),
+                    (t.startedAtUtcMs.isSmallerThanValue(
+                          cursor.startedAtUtcMs,
+                        ) |
+                        (t.startedAtUtcMs.equals(cursor.startedAtUtcMs) &
+                            t.id.isSmallerThanValue(cursor.id))),
               )
-              ..orderBy([(t) => OrderingTerm.desc(t.startedAtUtcMs)])
+              ..orderBy([
+                (t) => OrderingTerm.desc(t.startedAtUtcMs),
+                (t) => OrderingTerm.desc(t.id),
+              ])
               ..limit(limit))
             .get();
 

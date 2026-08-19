@@ -104,12 +104,20 @@ final runRepositoryProvider = Provider<RunRepository>(
 
 /// The current settings, re-emitting after every committed write.
 ///
-/// Seeded with [initialAppSettingsProvider] so there is no loading frame at
-/// all: the value read before `runApp` is already correct.
+/// **Seeded** with [initialAppSettingsProvider], so the first frame carries the
+/// persisted value rather than an `AsyncLoading`.
+///
+/// Reading this therefore requires [initialAppSettingsProvider] to be
+/// overridden. `bootstrap()` does it; every test must too.
 final StreamProvider<AppSettings> settingsProvider =
-    StreamProvider<AppSettings>(
-      (ref) => ref.watch(settingsRepositoryProvider).watch(),
-    );
+    StreamProvider<AppSettings>((ref) async* {
+      // Seeded first, so the very first frame carries the persisted value
+      // rather than an AsyncLoading. That is the whole reason bootstrap()
+      // awaits a read before runApp: a Persian user's cold start must not paint
+      // an English LTR frame and then flip to Persian RTL.
+      yield ref.watch(initialAppSettingsProvider);
+      yield* ref.watch(settingsRepositoryProvider).watch();
+    });
 
 /// The best score in one scope.
 final personalBestProvider = StreamProvider.autoDispose
