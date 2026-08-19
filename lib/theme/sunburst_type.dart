@@ -30,6 +30,7 @@ enum SunburstScript {
 /// all. `SunburstType.of(context)` does that resolution from the ambient
 /// `Locale`, so no call site ever picks a font.
 @immutable
+@immutable
 class SunburstType extends ThemeExtension<SunburstType> {
   /// Creates a type scale.
   const SunburstType({
@@ -154,7 +155,17 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// counters and means nothing here.
   SunburstType forScript(SunburstScript script) {
     if (script == SunburstScript.latin) return this;
+    // The one instance that is ever attached to the theme, resolved once.
+    // [of] calls this on EVERY build, and without the cache each call
+    // allocates ten TextStyles in the two RTL locales — a 25-tile Schulte grid
+    // reads the scale once per tile, so that is 250 allocations per frame for
+    // a value that never changes. `identical` rather than `==` because the
+    // latter compares ten TextStyles and would cost more than it saves.
+    if (identical(this, sunburstPop)) return _arabicSunburstPop;
+    return _buildArabic();
+  }
 
+  SunburstType _buildArabic() {
     TextStyle arabic(TextStyle latin, {required bool isDisplay}) =>
         latin.copyWith(
           fontFamily: arabicFace,
@@ -348,3 +359,10 @@ class SunburstType extends ThemeExtension<SunburstType> {
     ),
   );
 }
+
+/// The Arabic resolution of [SunburstType.sunburstPop], built once and reused.
+///
+/// A lazy top-level `final` rather than a field, because `SunburstType` is
+/// `@immutable` with a `const` constructor and a mutable memo would forfeit
+/// both.
+final SunburstType _arabicSunburstPop = SunburstType.sunburstPop._buildArabic();

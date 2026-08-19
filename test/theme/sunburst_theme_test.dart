@@ -10,6 +10,7 @@ import 'package:mindforge/theme/sunburst_theme.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
 import '../support/harness.dart';
+import 'contrast_test.dart' show contrastRatio;
 
 void main() {
   final theme = buildSunburstTheme();
@@ -145,11 +146,50 @@ void main() {
       );
     });
 
-    test('every accent reads ink for its label', () {
+    test('every offered label actually clears 4.5:1 on its surface', () {
+      // COMPUTED for every pair, not read off the @contrast declaration list.
+      // That is the point: the previous version returned ink unconditionally
+      // and its doc claimed a declaration that did not exist, so both the
+      // shell gate and contrast_test passed over the one pair that fails —
+      // ink on gameStroopDeep, measured 3.90:1.
+      //
+      // An omission from a declaration list is invisible. An omission here is
+      // impossible: the loop is over the enums.
       for (final accent in GameAccent.values) {
         for (final role in GameColourRole.values) {
-          expect(colours.accentLabelFor(accent, role), colours.textPrimary);
+          final label = colours.accentLabelFor(accent, role);
+          if (label == null) continue;
+
+          expect(
+            contrastRatio(label, colours.accentFor(accent, role)),
+            greaterThanOrEqualTo(4.5),
+            reason: '$accent/$role offers a label that fails the body floor',
+          );
         }
+      }
+    });
+
+    test('gameStroopDeep offers no label, because none clears the floor', () {
+      // Both candidates fail: ink 3.90:1, paper 3.94:1. It is a pressed face, a
+      // shadow edge and the dark half of a stripe — never a text surface — and
+      // returning a colour anyway would be a WCAG AA failure with no gate
+      // firing. A caller needing a label there should draw on the base.
+      expect(
+        colours.accentLabelFor(GameAccent.stroop, GameColourRole.deep),
+        isNull,
+      );
+
+      for (final candidate in <Color>[
+        colours.textPrimary,
+        colours.surfaceRaised,
+      ]) {
+        expect(
+          contrastRatio(candidate, colours.gameStroopDeep),
+          lessThan(4.5),
+          reason:
+              'if this ever clears the floor, the null above should become '
+              'that colour and this test should say so',
+        );
       }
     });
 

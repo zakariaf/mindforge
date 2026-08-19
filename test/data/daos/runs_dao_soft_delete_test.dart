@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart' show Variable;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_commit.dart';
@@ -64,6 +65,8 @@ void main() {
   group('a soft-deleted run disappears from every read', () {
     late AppDatabase db;
     late RunsDao dao;
+    late String deletedId;
+    late int deletedValue;
 
     setUp(() async {
       db = openTestDatabase();
@@ -77,8 +80,29 @@ void main() {
           isA<Ok<RunCommit, DataFailure>>(),
         );
       }
+      // The run holding the MAXIMUM score, not an arbitrary one. Deleting a
+      // middling run leaves MAX(metric_value) unchanged whether or not the
+      // filter is present, so the best-score assertion below would pass over a
+      // DAO that had forgotten it entirely — and that test is the stated
+      // justification for skipping check-softdelete-parity.sh.
+      final best = await db
+          .customSelect(
+            'SELECT id AS i FROM runs ORDER BY metric_value DESC LIMIT 1',
+          )
+          .getSingle();
+      deletedId = best.data['i']! as String;
+
+      final row = await db
+          .customSelect(
+            'SELECT metric_value AS v FROM runs WHERE id = ?',
+            variables: [Variable<String>(deletedId)],
+          )
+          .getSingle();
+      deletedValue = row.data['v']! as int;
+
       await db.customStatement(
-        "UPDATE runs SET is_deleted = 1, deleted_at_utc_ms = 1 WHERE id = 'run-1'",
+        'UPDATE runs SET is_deleted = 1, deleted_at_utc_ms = 1 WHERE id = ?',
+        [deletedId],
       );
     });
 
@@ -98,9 +122,17 @@ void main() {
 
       expect(
         best.value,
-        live.map((r) => r.metricValue).reduce((a, b) => a > b ? a : b),
-        reason: 'a deleted run must not be able to hold the best score',
+        lessThan(deletedValue),
+        reason:
+            'the deleted run held the maximum ($deletedValue). If the '
+            'filter were missing, readBest would still return it',
       );
+      expect(
+        best.value,
+        live.map((r) => r.metricValue).reduce((a, b) => a > b ? a : b),
+        reason: 'and the best is the maximum of what remains',
+      );
+      expect(live.map((r) => r.id), isNot(contains(deletedId)));
     });
 
     test('the played days', () async {
