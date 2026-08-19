@@ -153,9 +153,15 @@ the eighteen moments. Read the generic one for the pattern, the sunburst one for
 9. **Compare every built screen against `design/sunburst-pop/screens/*.png`** before calling it done.
    A difference is an implementation defect. If the reference is genuinely wrong, edit `app.html`,
    re-run `capture-screens.sh`, and commit that as a deliberate design change.
-10. **Every gate script under `.claude/skills/*/scripts/` passes before a commit.** They take an
-    optional target dir (default `lib`) and exit 0 cleanly when it is absent, so they are safe to
-    wire into CI today.
+10. **The sanctioned gate set passes before a commit — via `tool/skill_gates.sh`, not a glob.**
+    The six `sunburst-*` gates take an optional target dir (default `lib`) and exit 0 cleanly when it
+    is absent. The wider library does **not**: of the 49 scripts under `.claude/skills/*/scripts/`,
+    only 20 pass when run argument-less — five require an argument, five are runners rather than
+    gates, and one uses `mapfile` and exits 127 on macOS system bash 3.2. So never write
+    `for s in .claude/skills/*/scripts/*.sh; do bash "$s"; done`. E01 builds `tool/skill_gates.sh`
+    with an explicit run table and a skip table carrying a reason per row, plus
+    `test/policy/skill_gates_coverage_test.dart` which fails if a script appears in neither.
+    Until that exists, run the six sunburst gates by name.
 
 ## Commands
 
@@ -196,7 +202,13 @@ Architecture and hygiene gates live beside them — `flutter-architecture/script
 `project-structure-and-packages/scripts/check_import_boundaries.sh`,
 `state-management-riverpod/scripts/ban-legacy-providers.sh`,
 `design-system-structure/scripts/check_font_bundling.sh`, and the rest under
-`.claude/skills/*/scripts/`.
+`.claude/skills/*/scripts/`. Run them **by name**, or through `tool/skill_gates.sh` once E01 lands —
+globbing the directory does not work (working agreement 10).
+
+## Build order
+
+Ten epics, one branch and one PR each, in `epics/`. Read `epics/README.md` for the dependency graph,
+the delivery loop and the screenshot rule before starting any of them.
 
 Regenerate the reference screenshots after editing `app.html`:
 
