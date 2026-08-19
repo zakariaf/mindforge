@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindforge/l10n/app_localizations.dart';
 
 /// The root widget.
 ///
@@ -12,9 +13,11 @@ class MindForgeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'MindForge',
-      home: Scaffold(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: const Scaffold(),
     );
   }
 }
