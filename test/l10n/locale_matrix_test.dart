@@ -33,6 +33,40 @@ void main() {
         expect(resolved, localeCase.direction);
       });
 
+      testWidgets('a plural in an RTL locale prints LOCALISED digits', (
+        tester,
+      ) async {
+        // The bug this shape exists to prevent: gen-l10n interpolates an int
+        // placeholder with Dart toString(), so "زنجیره‌ی 4 روزه" — a Persian
+        // sentence with a Latin digit in it — is what shipped before the
+        // placeholders became pre-formatted Strings.
+        late AppLocalizations l10n;
+
+        await tester.pumpLocalized(
+          Builder(
+            builder: (context) {
+              l10n = AppLocalizations.of(context);
+              return const SizedBox.shrink();
+            },
+          ),
+          localeCase,
+        );
+
+        final formatted = LocaleNumbers.count(4, localeCase.locale);
+        final rendered = l10n.streakDays(4, formatted);
+
+        expect(rendered, contains(formatted));
+        if (localeCase.usesEasternArabicNumerals) {
+          expect(
+            RegExp('[0-9]').hasMatch(rendered),
+            isFalse,
+            reason:
+                'an ASCII digit in a Persian or Sorani sentence reads as '
+                'untranslated: "\$rendered"',
+          );
+        }
+      });
+
       testWidgets('every string resolves and none is empty', (tester) async {
         late AppLocalizations l10n;
 
@@ -46,16 +80,25 @@ void main() {
           localeCase,
         );
 
+        // Numbers arrive PRE-FORMATTED, through LocaleNumbers. See the
+        // NUMERALS note on those keys in the ARB.
+        String f(int v) => LocaleNumbers.count(v, localeCase.locale);
+        final three = f(3);
+        final four = f(4);
+        final six = f(6);
+        final twelve = f(12);
+        final twentyFive = f(25);
+
         // A representative slice across every message shape: plain, select,
         // plural, two-plural, and one with typed placeholders.
         final rendered = <String, String>{
           'appTitle': l10n.appTitle,
           'playButton': l10n.playButton,
           'homeGreeting': l10n.homeGreeting('evening'),
-          'streakDays': l10n.streakDays(4),
-          'dailyMixSummary': l10n.dailyMixSummary(4, 3),
-          'foundOfTotal': l10n.foundOfTotal(25, 6),
-          'durationHoursMinutes': l10n.durationHoursMinutes(12, 3),
+          'streakDays': l10n.streakDays(4, four),
+          'dailyMixSummary': l10n.dailyMixSummary(4, 3, four, three),
+          'foundOfTotal': l10n.foundOfTotal(twentyFive, six),
+          'durationHoursMinutes': l10n.durationHoursMinutes(twelve, three),
           'toggleOn': l10n.toggleOn,
           'settingsLanguageSystem': l10n.settingsLanguageSystem,
         };

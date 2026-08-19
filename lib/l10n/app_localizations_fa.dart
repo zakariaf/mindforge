@@ -38,11 +38,11 @@ class AppLocalizationsFa extends AppLocalizations {
   String get homeReadyPrompt => 'آماده‌ی تمرین؟';
 
   @override
-  String streakDays(int count) {
+  String streakDays(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'زنجیره‌ی $count روزه',
+      other: 'زنجیره‌ی $formatted روزه',
       zero: 'هنوز زنجیره‌ای نیست',
     );
     return '$_temp0';
@@ -52,16 +52,21 @@ class AppLocalizationsFa extends AppLocalizations {
   String get dailyMixTitle => 'ترکیب روزانه';
 
   @override
-  String dailyMixSummary(int games, int minutes) {
+  String dailyMixSummary(
+    int games,
+    int minutes,
+    String formattedGames,
+    String formattedMinutes,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       games,
       locale: localeName,
-      other: '$games بازی',
+      other: '$formattedGames بازی',
     );
     String _temp1 = intl.Intl.pluralLogic(
       minutes,
       locale: localeName,
-      other: '$minutes دقیقه',
+      other: '$formattedMinutes دقیقه',
     );
     return '$_temp0، $_temp1';
   }
@@ -70,11 +75,11 @@ class AppLocalizationsFa extends AppLocalizations {
   String get yourGamesTitle => 'بازی‌های شما';
 
   @override
-  String gamesUnlocked(int count) {
+  String gamesUnlocked(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count باز شده',
+      other: '$formatted باز شده',
     );
     return '$_temp0';
   }
@@ -148,17 +153,17 @@ class AppLocalizationsFa extends AppLocalizations {
   String get hudNext => 'بعدی';
 
   @override
-  String streakMultiplier(int count) {
+  String streakMultiplier(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '×$count',
+      other: '×$formatted',
     );
     return '$_temp0';
   }
 
   @override
-  String foundOfTotal(int found, int total) {
+  String foundOfTotal(String found, String total) {
     return '$found / $total';
   }
 
@@ -193,6 +198,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get unitMilliseconds => 'میلی‌ثانیه';
 
   @override
+  String get unitSeconds => 'ث';
+
+  @override
   String get longestStreakLabel => 'بلندترین زنجیره';
 
   @override
@@ -217,16 +225,16 @@ class AppLocalizationsFa extends AppLocalizations {
   String get timeTrained => 'زمان تمرین';
 
   @override
-  String durationHoursMinutes(int hours, int minutes) {
+  String durationHoursMinutes(String hours, String minutes) {
     return '$hours ساعت و $minutes دقیقه';
   }
 
   @override
-  String lastNRuns(int count) {
+  String lastNRuns(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count اجرای آخر',
+      other: '$formatted اجرای آخر',
     );
     return '$_temp0';
   }

@@ -38,12 +38,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeReadyPrompt => 'Bereit zum Training?';
 
   @override
-  String streakDays(int count) {
+  String streakDays(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Tage Serie',
-      one: '$count Tag Serie',
+      other: '$formatted Tage Serie',
+      one: '$formatted Tag Serie',
       zero: 'Noch keine Serie',
     );
     return '$_temp0';
@@ -53,18 +53,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dailyMixTitle => 'Tagesmix';
 
   @override
-  String dailyMixSummary(int games, int minutes) {
+  String dailyMixSummary(
+    int games,
+    int minutes,
+    String formattedGames,
+    String formattedMinutes,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       games,
       locale: localeName,
-      other: '$games Spiele',
-      one: '$games Spiel',
+      other: '$formattedGames Spiele',
+      one: '$formattedGames Spiel',
     );
     String _temp1 = intl.Intl.pluralLogic(
       minutes,
       locale: localeName,
-      other: '$minutes Minuten',
-      one: '$minutes Minute',
+      other: '$formattedMinutes Minuten',
+      one: '$formattedMinutes Minute',
     );
     return '$_temp0, $_temp1';
   }
@@ -73,12 +78,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get yourGamesTitle => 'Deine Spiele';
 
   @override
-  String gamesUnlocked(int count) {
+  String gamesUnlocked(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count freigeschaltet',
-      one: '$count freigeschaltet',
+      other: '$formatted freigeschaltet',
+      one: '$formatted freigeschaltet',
     );
     return '$_temp0';
   }
@@ -152,17 +157,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get hudNext => 'Nächste';
 
   @override
-  String streakMultiplier(int count) {
+  String streakMultiplier(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '×$count',
+      other: '×$formatted',
     );
     return '$_temp0';
   }
 
   @override
-  String foundOfTotal(int found, int total) {
+  String foundOfTotal(String found, String total) {
     return '$found / $total';
   }
 
@@ -197,6 +202,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get unitMilliseconds => 'ms';
 
   @override
+  String get unitSeconds => 's';
+
+  @override
   String get longestStreakLabel => 'Längste Serie';
 
   @override
@@ -221,17 +229,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get timeTrained => 'Trainingszeit';
 
   @override
-  String durationHoursMinutes(int hours, int minutes) {
+  String durationHoursMinutes(String hours, String minutes) {
     return '$hours Std. $minutes Min.';
   }
 
   @override
-  String lastNRuns(int count) {
+  String lastNRuns(int count, String formatted) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Letzte $count Runden',
-      one: 'Letzte $count Runde',
+      other: 'Letzte $formatted Runden',
+      one: 'Letzte $formatted Runde',
     );
     return '$_temp0';
   }

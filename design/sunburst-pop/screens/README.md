@@ -19,6 +19,42 @@ Open `contact-sheet.html` to see all eight side by side.
 ## Provenance
 
 Rendered from `../app.html` at 390×844 (iPhone 14 class) at 2× device pixel ratio.
+
+## Two sets, one source
+
+| Directory | Locale | Direction | Produced by |
+|---|---|---|---|
+| `screens/` | English | LTR | `./capture-screens.sh` |
+| `screens/rtl/` | **Persian** | **RTL** | `./capture-screens.sh --rtl` |
+
+Both are rendered from the **same** `app.html`. The RTL set is not a second HTML
+file: `rtl/render-rtl.py` reads `app.html`, flips `dir`, and substitutes every
+`data-l10n` and `data-num` node from `rtl/strings-fa.json` — which is generated
+from `lib/l10n/app_fa.arb` and `lib/l10n/locale_numbers.dart` by
+`tool/dump_design_strings_test.dart`. So the reference and the app read the same
+strings and the same number formatter, and cannot disagree.
+
+The transformed HTML is written to a temp directory and **never committed**. A
+75 KB duplicate of the design source in git is how two sources of truth are born.
+
+Regenerate both after editing `app.html`, and commit the PNGs with the change:
+
+```bash
+cd design/sunburst-pop
+./capture-screens.sh          # screens/*.png
+./capture-screens.sh --rtl    # screens/rtl/*.png
+```
+
+Re-dump the strings after editing any ARB — CI diffs the result, so an ARB
+change without a re-dump fails the build:
+
+```bash
+flutter test --tags tool tool/dump_design_strings_test.dart
+```
+
+**The files under `test/goldens/` are test artifacts and are not these.** A
+golden proves a *change* in shaping or mirroring; it does not prove the shaping
+is correct, and it proves nothing at all about translation.
 `../system.html` remains the authority for **token values**; these screens are the authority for
 **layout, spacing rhythm, and composition**. If the two ever disagree, `system.html` wins on values
 and the screens get re-rendered.
@@ -65,7 +101,23 @@ time budget so the webfonts land before the shot.
      surface; no blurred shadows.
    - **Type** — same face, weight and relative size per role.
    - **Colour** — sampled hexes match `system.html`.
-4. Differences are defects in the implementation, not in the reference. If you believe the reference
+4. **For RTL work, three more checks and one deliberate non-check:**
+   - **Mirroring** — the streak chip, the BEST pills, the nav bar, the difficulty control, the chart
+     axis and the back affordance have all moved to the opposite side. Anything that did not move is a
+     physical-side CSS rule in `app.html`, and the fix is a logical property (`margin-inline-start`,
+     `inset-inline-start`, `text-align: start`) — the CSS twin of the Dart rule the app enforces.
+   - **Numerals** — the Schulte board reads ۱–۲۵, the score ۱٬۴۸۰, the timer ۰:۱۲٫۴, the streak ×۷,
+     the accuracy ۹۲٪. A Latin digit anywhere is a missed `data-num` or a gap in `strings-fa.json`.
+   - **Glyphs and clipping** — no tofu box, and nothing sheared at the top or bottom of the score, the
+     countdown numeral or the Stroop stimulus. A clipped ascender means the Arabic line-height factor
+     in `sunburst_type.dart` is too low, and the fix is there, not in the HTML.
+   - **The hard offset shadow does NOT mirror.** It is still down-and-right on every raised surface.
+     It is a light-source constant — one imaginary light for the whole app — not a reading-direction
+     property, and a Persian build lit from the other side would disagree with every English
+     screenshot. This is the one thing to look at twice, and it is the single question a reviewer will
+     raise on an RTL PR.
+
+5. Differences are defects in the implementation, not in the reference. If you believe the reference
    is wrong, change `app.html`, re-run `capture-screens.sh`, and commit that as a deliberate design
    change — never let the code and the reference silently drift apart.
 

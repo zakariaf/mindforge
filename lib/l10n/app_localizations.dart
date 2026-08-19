@@ -138,11 +138,11 @@ abstract class AppLocalizations {
   /// **'Ready to train?'**
   String get homeReadyPrompt;
 
-  /// The streak chip on Home. A plural, not a concatenation: 'day' and 'days' differ in en, and Persian and Sorani have their own category rules.
+  /// The streak chip on Home. A plural, not a concatenation: 'day' and 'days' differ in en, and Persian and Sorani have their own category rules. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =0{No streak yet} one{{count} day streak} other{{count} day streak}}'**
-  String streakDays(int count);
+  /// **'{count, plural, =0{No streak yet} one{{formatted} day streak} other{{formatted} day streak}}'**
+  String streakDays(int count, String formatted);
 
   /// Heading of the suggested-session card on Home and game detail.
   ///
@@ -150,11 +150,16 @@ abstract class AppLocalizations {
   /// **'Daily Mix'**
   String get dailyMixTitle;
 
-  /// The Daily Mix summary line, e.g. '3 games, 4 minutes'. BOTH counts are pluralised inside ONE message: splicing two separately localized fragments is what produces ungrammatical output in languages that inflect the joiner.
+  /// The Daily Mix summary line, e.g. '3 games, 4 minutes'. BOTH counts are pluralised inside ONE message: splicing two separately localized fragments is what produces ungrammatical output in languages that inflect the joiner. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
-  /// **'{games, plural, one{{games} game} other{{games} games}}, {minutes, plural, one{{minutes} minute} other{{minutes} minutes}}'**
-  String dailyMixSummary(int games, int minutes);
+  /// **'{games, plural, one{{formattedGames} game} other{{formattedGames} games}}, {minutes, plural, one{{formattedMinutes} minute} other{{formattedMinutes} minutes}}'**
+  String dailyMixSummary(
+    int games,
+    int minutes,
+    String formattedGames,
+    String formattedMinutes,
+  );
 
   /// Section heading above the game cards on Home. Sentence case.
   ///
@@ -162,11 +167,11 @@ abstract class AppLocalizations {
   /// **'Your games'**
   String get yourGamesTitle;
 
-  /// Count chip beside the 'Your games' heading.
+  /// Count chip beside the 'Your games' heading. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{{count} unlocked} other{{count} unlocked}}'**
-  String gamesUnlocked(int count);
+  /// **'{count, plural, one{{formatted} unlocked} other{{formatted} unlocked}}'**
+  String gamesUnlocked(int count, String formatted);
 
   /// Label on the best-score pill. Authored in capitals: casing belongs in the string table, and SunburstType.label is the only step that permits caps. A script with no letter case renders it in its normal form rather than being forced.
   ///
@@ -300,17 +305,17 @@ abstract class AppLocalizations {
   /// **'Next'**
   String get hudNext;
 
-  /// The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script.
+  /// The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, other{×{count}}}'**
-  String streakMultiplier(int count);
+  /// **'{count, plural, other{×{formatted}}}'**
+  String streakMultiplier(int count, String formatted);
 
-  /// How many tiles have been found out of the total, e.g. '6 / 25'. Both values are placeholders so the separator can change per locale.
+  /// How many tiles have been found out of the total, e.g. '6 / 25'. Both values are placeholders so the separator can change per locale. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
   /// **'{found} / {total}'**
-  String foundOfTotal(int found, int total);
+  String foundOfTotal(String found, String total);
 
   /// A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized.
   ///
@@ -372,6 +377,12 @@ abstract class AppLocalizations {
   /// **'ms'**
   String get unitMilliseconds;
 
+  /// The seconds unit, rendered as its OWN run beside the number, e.g. "18.6" + "s". A separate key for the same reason as unitMilliseconds: a value hand-glued to its unit is what breaks in RTL.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get unitSeconds;
+
   /// Label on the best-combo figure on results.
   ///
   /// In en, this message translates to:
@@ -420,17 +431,17 @@ abstract class AppLocalizations {
   /// **'Time trained'**
   String get timeTrained;
 
-  /// A duration in hours and minutes, e.g. '3h 12m'. The unit markers are INSIDE the message so de can say '3 Std. 12 Min.' and fa can say its own form.
+  /// A duration in hours and minutes, e.g. '3h 12m'. The unit markers are INSIDE the message so de can say '3 Std. 12 Min.' and fa can say its own form. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
   /// **'{hours}h {minutes}m'**
-  String durationHoursMinutes(int hours, int minutes);
+  String durationHoursMinutes(String hours, String minutes);
 
-  /// Heading above the recent-runs chart on Stats.
+  /// Heading above the recent-runs chart on Stats. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Last {count} run} other{Last {count} runs}}'**
-  String lastNRuns(int count);
+  /// **'{count, plural, one{Last {formatted} run} other{Last {formatted} runs}}'**
+  String lastNRuns(int count, String formatted);
 
   /// The subtitle under the chart heading, naming the game and its best score. The score arrives already formatted for the locale.
   ///

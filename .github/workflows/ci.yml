@@ -122,6 +122,25 @@ jobs:
             exit 1
           fi
 
+      - name: Check the RTL design strings are current
+        # The Persian reference screenshots read their strings from this file,
+        # which is generated from lib/l10n/app_fa.arb. Editing an ARB without
+        # re-dumping would leave the reference and the app disagreeing — and
+        # the reference is what every RTL screen is built against.
+        #
+        # The dump WRITES, so it is tagged `tool` and excluded from the default
+        # test lane: a gate that regenerates what it checks asserts nothing.
+        # Here it is run first and then diffed, which is the same
+        # generate-then-diff shape as the codegen gate above.
+        run: |
+          flutter test --tags tool tool/dump_design_strings_test.dart
+          changed=$(git status --porcelain -- design/sunburst-pop/rtl/)
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            echo "::error::design/sunburst-pop/rtl/strings-fa.json is stale. Run 'flutter test --tags tool tool/dump_design_strings_test.dart' and commit the result."
+            exit 1
+          fi
+
       - name: Check the schema snapshots are current
         # The committed v1 snapshot must match the live schema, or the
         # migration harness in test/data/migration/ verifies against a stale
@@ -147,7 +166,11 @@ jobs:
         run: flutter analyze --fatal-infos --fatal-warnings
 
       - name: Test
-        run: flutter test --test-randomize-ordering-seed random --reporter expanded
+        # --exclude-tags tool: the dump test WRITES a file and is run by its own
+        # named step above, where its output is diffed.
+        run: |
+          flutter test --test-randomize-ordering-seed random \
+            --exclude-tags tool --reporter expanded
 
       - name: Run the skill gates
         run: "$BASH5" tool/skill_gates.sh

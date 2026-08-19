@@ -29,12 +29,15 @@
   "@homeReadyPrompt": {
     "description": "Subtitle under the greeting on Home."
   },
-  "streakDays": "{count, plural, =0{No streak yet} one{{count} day streak} other{{count} day streak}}",
+  "streakDays": "{count, plural, =0{No streak yet} one{{formatted} day streak} other{{formatted} day streak}}",
   "@streakDays": {
-    "description": "The streak chip on Home. A plural, not a concatenation: 'day' and 'days' differ in en, and Persian and Sorani have their own category rules.",
+    "description": "The streak chip on Home. A plural, not a concatenation: 'day' and 'days' differ in en, and Persian and Sorani have their own category rules. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "count": {
         "type": "int"
+      },
+      "formatted": {
+        "type": "String"
       }
     }
   },
@@ -42,15 +45,21 @@
   "@dailyMixTitle": {
     "description": "Heading of the suggested-session card on Home and game detail."
   },
-  "dailyMixSummary": "{games, plural, one{{games} game} other{{games} games}}, {minutes, plural, one{{minutes} minute} other{{minutes} minutes}}",
+  "dailyMixSummary": "{games, plural, one{{formattedGames} game} other{{formattedGames} games}}, {minutes, plural, one{{formattedMinutes} minute} other{{formattedMinutes} minutes}}",
   "@dailyMixSummary": {
-    "description": "The Daily Mix summary line, e.g. '3 games, 4 minutes'. BOTH counts are pluralised inside ONE message: splicing two separately localized fragments is what produces ungrammatical output in languages that inflect the joiner.",
+    "description": "The Daily Mix summary line, e.g. '3 games, 4 minutes'. BOTH counts are pluralised inside ONE message: splicing two separately localized fragments is what produces ungrammatical output in languages that inflect the joiner. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "games": {
         "type": "int"
       },
       "minutes": {
         "type": "int"
+      },
+      "formattedGames": {
+        "type": "String"
+      },
+      "formattedMinutes": {
+        "type": "String"
       }
     }
   },
@@ -58,12 +67,15 @@
   "@yourGamesTitle": {
     "description": "Section heading above the game cards on Home. Sentence case."
   },
-  "gamesUnlocked": "{count, plural, one{{count} unlocked} other{{count} unlocked}}",
+  "gamesUnlocked": "{count, plural, one{{formatted} unlocked} other{{formatted} unlocked}}",
   "@gamesUnlocked": {
-    "description": "Count chip beside the 'Your games' heading.",
+    "description": "Count chip beside the 'Your games' heading. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "count": {
         "type": "int"
+      },
+      "formatted": {
+        "type": "String"
       }
     }
   },
@@ -163,24 +175,27 @@
   "@hudNext": {
     "description": "HUD label above the next number to find in Schulte Grid."
   },
-  "streakMultiplier": "{count, plural, other{×{count}}}",
+  "streakMultiplier": "{count, plural, other{×{formatted}}}",
   "@streakMultiplier": {
-    "description": "The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script.",
+    "description": "The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "count": {
         "type": "int"
+      },
+      "formatted": {
+        "type": "String"
       }
     }
   },
   "foundOfTotal": "{found} / {total}",
   "@foundOfTotal": {
-    "description": "How many tiles have been found out of the total, e.g. '6 / 25'. Both values are placeholders so the separator can change per locale.",
+    "description": "How many tiles have been found out of the total, e.g. '6 / 25'. Both values are placeholders so the separator can change per locale. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "found": {
-        "type": "int"
+        "type": "String"
       },
       "total": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
@@ -221,6 +236,10 @@
     "description": "Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow."
   },
   "unitMilliseconds": "ms",
+  "unitSeconds": "s",
+  "@unitSeconds": {
+    "description": "The seconds unit, rendered as its OWN run beside the number, e.g. \"18.6\" + \"s\". A separate key for the same reason as unitMilliseconds: a value hand-glued to its unit is what breaks in RTL."
+  },
   "@unitMilliseconds": {
     "description": "The millisecond unit, rendered as its OWN run beside the number. A separate key so the value and its unit are never hand-glued, which is what breaks in RTL."
   },
@@ -258,22 +277,25 @@
   },
   "durationHoursMinutes": "{hours}h {minutes}m",
   "@durationHoursMinutes": {
-    "description": "A duration in hours and minutes, e.g. '3h 12m'. The unit markers are INSIDE the message so de can say '3 Std. 12 Min.' and fa can say its own form.",
+    "description": "A duration in hours and minutes, e.g. '3h 12m'. The unit markers are INSIDE the message so de can say '3 Std. 12 Min.' and fa can say its own form. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "hours": {
-        "type": "int"
+        "type": "String"
       },
       "minutes": {
-        "type": "int"
+        "type": "String"
       }
     }
   },
-  "lastNRuns": "{count, plural, one{Last {count} run} other{Last {count} runs}}",
+  "lastNRuns": "{count, plural, one{Last {formatted} run} other{Last {formatted} runs}}",
   "@lastNRuns": {
-    "description": "Heading above the recent-runs chart on Stats.",
+    "description": "Heading above the recent-runs chart on Stats. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
     "placeholders": {
       "count": {
         "type": "int"
+      },
+      "formatted": {
+        "type": "String"
       }
     }
   },

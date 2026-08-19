@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: ./capture-screens.sh
+# Usage: ./capture-screens.sh [--rtl]
 #
 # Regenerates screens/*.png — the reference screenshots every implementation is
 # compared against. Run this whenever app.html changes, and commit the result.
@@ -12,8 +12,12 @@ set -euo pipefail
 
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RTL=0
+if [ "${1:-}" = "--rtl" ]; then RTL=1; fi
+
 SRC="$HERE/app.html"
 OUT="$HERE/screens"
+if [ "$RTL" -eq 1 ]; then OUT="$HERE/screens/rtl"; fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -24,6 +28,16 @@ fi
 if [ ! -f "$SRC" ]; then
   echo "FAIL: '$SRC' not found." >&2
   exit 1
+fi
+
+if [ "$RTL" -eq 1 ]; then
+  # Rendered into the temp directory and never committed: a second copy of the
+  # design source in git is how two sources of truth are born. The Persian
+  # strings come straight out of lib/l10n/app_fa.arb via strings-fa.json, so
+  # the reference and the app cannot disagree.
+  python3 "$HERE/rtl/render-rtl.py" "$SRC" "$HERE/rtl/strings-fa.json" \
+    "$TMP/app-rtl.html"
+  SRC="$TMP/app-rtl.html"
 fi
 
 mkdir -p "$OUT"

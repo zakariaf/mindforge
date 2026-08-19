@@ -819,12 +819,12 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <div class="dots" aria-hidden="true"></div>
           <div class="in">
             <div class="brandrow">
-              <span class="wordmark"><i aria-hidden="true"><b></b></i><span>MindForge</span></span>
+              <span class="wordmark"><i aria-hidden="true"><b></b></i><span data-l10n="appTitle">MindForge</span></span>
               <span class="chip" style="padding:6px 12px" tabindex="0">
-                <svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true"><path d="M9 1.6c3.7 3.1 5.5 6.1 5.5 8.9a5.5 5.5 0 0 1-11 0c0-1.7.6-3.2 1.9-4.6.1 1.3.6 2.2 1.4 2.7C6.2 6.3 6.9 3.9 9 1.6z" fill="var(--coral)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>4 day streak</span>
+                <svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true"><path d="M9 1.6c3.7 3.1 5.5 6.1 5.5 8.9a5.5 5.5 0 0 1-11 0c0-1.7.6-3.2 1.9-4.6.1 1.3.6 2.2 1.4 2.7C6.2 6.3 6.9 3.9 9 1.6z" fill="var(--coral)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg><span data-l10n="streakDays" data-l10n-args='{"count": 4}'>4 day streak</span></span>
             </div>
-            <p class="greet">Good evening</p>
-            <p class="ask">Ready to train?</p>
+            <p class="greet" data-l10n="homeGreeting" data-l10n-args='{"daypart": "evening"}'>Good evening</p>
+            <p class="ask" data-l10n="homeReadyPrompt">Ready to train?</p>
           </div>
         </div>
 
@@ -832,33 +832,33 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <div class="body-pad">
             <div class="daily" tabindex="0">
               <div class="dl">
-                <p class="ct">Daily Mix</p>
-                <p>3 games, 4 minutes</p>
+                <p class="ct" data-l10n="dailyMixTitle">Daily Mix</p>
+                <p data-l10n="dailyMixSummary" data-l10n-args='{"games": 3, "minutes": 4}'>3 games, 4 minutes</p>
               </div>
               <span class="go" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
             </div>
 
-            <div class="seclab"><b>Your games</b><s>2 unlocked</s></div>
+            <div class="seclab"><b data-l10n="yourGamesTitle">Your games</b><s data-l10n="gamesUnlocked" data-l10n-args='{"count": 2}'>2 unlocked</s></div>
 
             <div class="gcard" tabindex="0">
               <div class="gt">
-                <p class="ct">Stroop Rush</p>
-                <p>Tap the colour, not the word</p>
-                <span class="bestpill"><s>BEST</s>1,480</span>
+                <p class="ct" data-l10n="gameStroopRushName">Stroop Rush</p>
+                <p data-l10n="gameStroopRushTagline">Tap the colour, not the word</p>
+                <span class="bestpill"><s data-l10n="bestLabel">BEST</s><span data-num="1,480">1,480</span></span>
               </div>
               <span class="gart" aria-hidden="true"><span class="quad"><i></i><i></i><i></i><i></i></span></span>
             </div>
 
             <div class="gcard gcard--turq" tabindex="0">
               <div class="gt">
-                <p class="ct">Schulte Grid</p>
-                <p>Find 1 to 25, fast</p>
-                <span class="bestpill"><s>BEST</s>18.6s</span>
+                <p class="ct" data-l10n="gameSchulteGridName">Schulte Grid</p>
+                <p data-l10n="gameSchulteGridTagline">Find 1 to 25, fast</p>
+                <span class="bestpill"><s data-l10n="bestLabel">BEST</s><span data-num="18.6s">18.6s</span></span>
               </div>
               <span class="gart" aria-hidden="true"><span class="mini">
-                <i>7</i><i class="on">1</i><i>4</i><i>9</i><i>2</i><i class="on">6</i><i>3</i><i>8</i><i>5</i>
+                <i data-num="7">7</i><i class="on" data-num="1">1</i><i data-num="4">4</i><i data-num="9">9</i><i data-num="2">2</i><i class="on" data-num="6">6</i><i data-num="3">3</i><i data-num="8">8</i><i data-num="5">5</i>
               </span></span>
             </div>
 
@@ -869,7 +869,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
                   <path d="M6.6 8.5V6.4a3.4 3.4 0 0 1 6.8 0v2.1" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                 </svg>
               </span>
-              <div><p class="ct">N-Back</p><p>Coming soon</p></div>
+              <div><p class="ct" data-l10n="gameNBackName">N-Back</p><p data-l10n="comingSoon">Coming soon</p></div>
             </div>
           </div>
         </div>
@@ -881,19 +881,19 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-            </svg><span>Play</span>
+            </svg><span data-l10n="playButton">Play</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg><span>Stats</span>
+            </svg><span data-l10n="statsTitle">Stats</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
               <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
-            </svg><span>Settings</span>
+            </svg><span data-l10n="settingsTitle">Settings</span>
           </span>
         </div>
       </div>
@@ -927,37 +927,37 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <span class="iconbtn" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 6.5 10l6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
-          <span class="tt">Stroop Rush</span>
+          <span class="tt" data-l10n="gameStroopRushName">Stroop Rush</span>
         </div>
 
         <div class="pane">
           <div style="padding:0 20px 26px;display:flex;flex-direction:column;gap:16px;height:100%">
             <div class="hero">
               <div class="dots" aria-hidden="true"></div>
-              <p class="kicker">Reaction · Focus</p>
+              <p class="kicker" data-l10n="gameTagsReactionFocus">Reaction · Focus</p>
               <p class="ht">Stroop<br>Rush</p>
-              <p>Tap the colour, not the word</p>
+              <p data-l10n="gameStroopRushTagline">Tap the colour, not the word</p>
               <div class="swatchrow" aria-hidden="true"><i class="pat pat--stripe play--red"></i><i class="pat pat--solid play--blue"></i><i class="pat pat--dot play--green"></i><i class="pat pat--ring play--yellow"></i></div>
             </div>
 
             <div class="statrow">
-              <div class="statbox sun"><s>Your best</s><b>1,480</b></div>
-              <div class="statbox"><s>Games played</s><b>128</b></div>
+              <div class="statbox sun"><s data-l10n="yourBest">Your best</s><b data-num="1,480">1,480</b></div>
+              <div class="statbox"><s data-l10n="gamesPlayed">Games played</s><b data-num="128">128</b></div>
             </div>
 
             <div>
-              <p class="lab" style="color:var(--ink-2);margin-bottom:10px">Difficulty</p>
+              <p class="lab" style="color:var(--ink-2);margin-bottom:10px" data-l10n="difficultyTitle">Difficulty</p>
               <div class="seg" role="group" aria-label="Difficulty">
-                <span class="seg-i" tabindex="0">Chill</span>
-                <span class="seg-i on" aria-current="true" tabindex="0">Classic</span>
-                <span class="seg-i" tabindex="0">Blitz</span>
+                <span class="seg-i" tabindex="0" data-l10n="difficultyChill">Chill</span>
+                <span class="seg-i on" aria-current="true" tabindex="0" data-l10n="difficultyClassic">Classic</span>
+                <span class="seg-i" tabindex="0" data-l10n="difficultyBlitz">Blitz</span>
               </div>
             </div>
 
             <div class="daily" style="background:var(--surface-raised);color:var(--ink)" tabindex="0">
               <div class="dl">
-                <p class="ct" style="font-size:19px">Daily Mix</p>
-                <p style="color:var(--ink-2)">3 games, 4 minutes</p>
+                <p class="ct" style="font-size:19px" data-l10n="dailyMixTitle">Daily Mix</p>
+                <p style="color:var(--ink-2)" data-l10n="dailyMixSummary" data-l10n-args='{"games": 3, "minutes": 4}'>3 games, 4 minutes</p>
               </div>
               <span class="go" style="background:var(--grape);color:var(--cream)" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -966,7 +966,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 
             <button class="btn btn--lg btn--leaf" type="button" style="width:100%;margin-top:auto">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Play
+              <span data-l10n="playButton">Play</span>
             </button>
           </div>
         </div>
@@ -1000,15 +1000,15 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           </div>
 
           <div class="cgame">
-            <span class="nm">Stroop Rush · Classic</span>
+            <span class="nm" data-l10n="gameAndDifficulty" data-l10n-args='{"game": "Stroop Rush", "difficulty": "Classic"}'>Stroop Rush · Classic</span>
             <span class="iconbtn" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
             </span>
           </div>
 
           <div class="cin">
-            <div class="bigring"><b>3</b></div>
-            <p class="ready">Get ready</p>
+            <div class="bigring"><b data-num="3">3</b></div>
+            <p class="ready" data-l10n="getReady">Get ready</p>
           </div>
 
           <div class="dotsrow" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
@@ -1044,17 +1044,17 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <span class="iconbtn" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           </span>
-          <span class="tt" style="flex:1">Stroop Rush</span>
-          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0">Classic</span>
+          <span class="tt" style="flex:1" data-l10n="gameStroopRushName">Stroop Rush</span>
+          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0" data-l10n="difficultyClassic">Classic</span>
         </div>
 
         <div class="playband playband--stroop">
           <div class="rays" aria-hidden="true"></div>
           <div class="dots" aria-hidden="true"></div>
           <div class="hud">
-            <span class="hstat"><s>Time</s><b>0:23</b></span>
-            <span class="hstat"><s>Score</s><b>1,240</b></span>
-            <span class="hstat streak"><s>Streak</s><b>x7</b></span>
+            <span class="hstat"><s data-l10n="hudTime">Time</s><b data-num="0:23">0:23</b></span>
+            <span class="hstat"><s data-l10n="hudScore">Score</s><b data-num="1,240">1,240</b></span>
+            <span class="hstat streak"><s data-l10n="hudStreak">Streak</s><b data-l10n="streakMultiplier" data-l10n-args='{"count": 7}'>x7</b></span>
           </div>
           <div class="trackwrap">
             <span class="track"><i class="coral" style="width:57%"></i></span>
@@ -1066,15 +1066,15 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
             <div class="wdots" aria-hidden="true"></div>
             <div class="stim">
               <div class="dots" aria-hidden="true"></div>
-              <p class="ask">Tap the colour, not the word</p>
-              <p class="word play--red"><span class="wout" aria-hidden="true">BLUE</span><span class="win pat pat--stripe">BLUE</span></p>
+              <p class="ask" data-l10n="gameStroopRushTagline">Tap the colour, not the word</p>
+              <p class="word play--red"><span class="wout" aria-hidden="true" data-l10n="colourBlue">BLUE</span><span class="win pat pat--stripe" data-l10n="colourBlue">BLUE</span></p>
             </div>
 
             <div class="answers">
-              <span class="ans ans--red play--red" tabindex="0"><span class="key pat pat--stripe" aria-hidden="true"></span><span class="lb">Red</span></span>
-              <span class="ans ans--blue play--blue" tabindex="0"><span class="key pat pat--solid" aria-hidden="true"></span><span class="lb">Blue</span></span>
-              <span class="ans ans--green play--green" tabindex="0"><span class="key pat pat--dot" aria-hidden="true"></span><span class="lb">Green</span></span>
-              <span class="ans ans--yellow play--yellow" tabindex="0"><span class="key pat pat--ring" aria-hidden="true"></span><span class="lb">Yellow</span></span>
+              <span class="ans ans--red play--red" tabindex="0"><span class="key pat pat--stripe" aria-hidden="true"></span><span class="lb" data-l10n="colourRed">Red</span></span>
+              <span class="ans ans--blue play--blue" tabindex="0"><span class="key pat pat--solid" aria-hidden="true"></span><span class="lb" data-l10n="colourBlue">Blue</span></span>
+              <span class="ans ans--green play--green" tabindex="0"><span class="key pat pat--dot" aria-hidden="true"></span><span class="lb" data-l10n="colourGreen">Green</span></span>
+              <span class="ans ans--yellow play--yellow" tabindex="0"><span class="key pat pat--ring" aria-hidden="true"></span><span class="lb" data-l10n="colourYellow">Yellow</span></span>
             </div>
           </div>
         </div>
@@ -1109,17 +1109,17 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <span class="iconbtn" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           </span>
-          <span class="tt" style="flex:1">Schulte Grid</span>
-          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0">Classic</span>
+          <span class="tt" style="flex:1" data-l10n="gameSchulteGridName">Schulte Grid</span>
+          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0" data-l10n="difficultyClassic">Classic</span>
         </div>
 
         <div class="playband playband--schulte">
           <div class="rays" aria-hidden="true"></div>
           <div class="dots" aria-hidden="true"></div>
           <div class="hud">
-            <span class="hstat"><s>Time</s><b>0:12.4</b></span>
-            <span class="hstat"><s>Found</s><b>6 / 25</b></span>
-            <span class="hstat streak"><s>Next</s><b>7</b></span>
+            <span class="hstat"><s data-l10n="hudTime">Time</s><b data-num="0:12.4">0:12.4</b></span>
+            <span class="hstat"><s data-l10n="hudFound">Found</s><b data-l10n="foundOfTotal" data-l10n-args='{"found": 6, "total": 25}'>6 / 25</b></span>
+            <span class="hstat streak"><s data-l10n="hudNext">Next</s><b data-num="7">7</b></span>
           </div>
           <div class="trackwrap">
             <span class="track"><i style="width:24%"></i></span>
@@ -1130,11 +1130,11 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <div class="playfill playfill--schulte">
             <div class="wdots" aria-hidden="true"></div>
             <div class="grid5">
-              <span class="tile" tabindex="0">14</span><span class="tile found">3</span><span class="tile" tabindex="0">22</span><span class="tile" tabindex="0">9</span><span class="tile" tabindex="0">17</span>
-              <span class="tile found">6</span><span class="tile" tabindex="0">25</span><span class="tile" tabindex="0">11</span><span class="tile found">1</span><span class="tile" tabindex="0">20</span>
-              <span class="tile" tabindex="0">19</span><span class="tile" tabindex="0">8</span><span class="tile" tabindex="0">15</span><span class="tile found">4</span><span class="tile" tabindex="0">12</span>
-              <span class="tile found">2</span><span class="tile" tabindex="0">23</span><span class="tile next" tabindex="0">7</span><span class="tile" tabindex="0">18</span><span class="tile" tabindex="0">10</span>
-              <span class="tile" tabindex="0">21</span><span class="tile" tabindex="0">13</span><span class="tile found">5</span><span class="tile" tabindex="0">24</span><span class="tile" tabindex="0">16</span>
+              <span class="tile" tabindex="0" data-num="14">14</span><span class="tile found" data-num="3">3</span><span class="tile" tabindex="0" data-num="22">22</span><span class="tile" tabindex="0" data-num="9">9</span><span class="tile" tabindex="0" data-num="17">17</span>
+              <span class="tile found" data-num="6">6</span><span class="tile" tabindex="0" data-num="25">25</span><span class="tile" tabindex="0" data-num="11">11</span><span class="tile found" data-num="1">1</span><span class="tile" tabindex="0" data-num="20">20</span>
+              <span class="tile" tabindex="0" data-num="19">19</span><span class="tile" tabindex="0" data-num="8">8</span><span class="tile" tabindex="0" data-num="15">15</span><span class="tile found" data-num="4">4</span><span class="tile" tabindex="0" data-num="12">12</span>
+              <span class="tile found" data-num="2">2</span><span class="tile" tabindex="0" data-num="23">23</span><span class="tile next" tabindex="0" data-num="7">7</span><span class="tile" tabindex="0" data-num="18">18</span><span class="tile" tabindex="0" data-num="10">10</span>
+              <span class="tile" tabindex="0" data-num="21">21</span><span class="tile" tabindex="0" data-num="13">13</span><span class="tile found" data-num="5">5</span><span class="tile" tabindex="0" data-num="24">24</span><span class="tile" tabindex="0" data-num="16">16</span>
             </div>
           </div>
         </div>
@@ -1168,32 +1168,32 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
         <div class="hdr res-hdr">
           <div class="rays" aria-hidden="true" style="opacity:.55;background:repeating-conic-gradient(from 0deg at 50% 50%, var(--leaf-deep) 0deg 5deg, transparent 5deg 12deg)"></div>
           <div class="in" style="padding-top:10px;padding-bottom:26px;text-align:center">
-            <p class="lab" style="color:var(--ink)">Stroop Rush · Classic</p>
-            <p class="ask" style="font-size:42px;margin:8px 0 16px">Nice run!</p>
+            <p class="lab" style="color:var(--ink)" data-l10n="gameAndDifficulty" data-l10n-args='{"game": "Stroop Rush", "difficulty": "Classic"}'>Stroop Rush · Classic</p>
+            <p class="ask" style="font-size:42px;margin:8px 0 16px" data-l10n="resultsTitle">Nice run!</p>
             <span class="pbadge">
-              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true"><path d="M9.5 1.6 11.9 6.6 17.4 7.4 13.4 11.2 14.4 16.7 9.5 14.1 4.6 16.7 5.6 11.2 1.6 7.4 7.1 6.6z" fill="var(--paper)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>New personal best</span>
+              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true"><path d="M9.5 1.6 11.9 6.6 17.4 7.4 13.4 11.2 14.4 16.7 9.5 14.1 4.6 16.7 5.6 11.2 1.6 7.4 7.1 6.6z" fill="var(--paper)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg><span data-l10n="newPersonalBest">New personal best</span></span>
           </div>
         </div>
 
         <div class="pane">
           <div style="padding:20px 20px 26px;display:flex;flex-direction:column;justify-content:center;gap:16px;height:100%">
             <div class="scoreslab">
-              <s>Final score</s>
-              <b>1,240</b>
+              <s data-l10n="finalScore">Final score</s>
+              <b data-num="1,240">1,240</b>
             </div>
 
             <div class="trio">
-              <span class="tri"><s>Accuracy</s><b>92%</b></span>
-              <span class="tri"><s>Avg reaction</s><b>640<em style="font-size:14px;font-style:normal">ms</em></b></span>
-              <span class="tri"><s>Longest streak</s><b>x11</b></span>
+              <span class="tri"><s data-l10n="accuracyLabel">Accuracy</s><b data-num="92%">92%</b></span>
+              <span class="tri"><s data-l10n="avgReactionLabel">Avg reaction</s><b>640<em style="font-size:14px;font-style:normal" data-l10n="unitMilliseconds">ms</em></b></span>
+              <span class="tri"><s data-l10n="longestStreakLabel">Longest streak</s><b data-l10n="streakMultiplier" data-l10n-args='{"count": 11}'>x11</b></span>
             </div>
 
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
               <button class="btn btn--lg btn--leaf" type="button">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Play again
+                <span data-l10n="playAgain">Play again</span>
               </button>
-              <button class="btn btn--sec" type="button">Home</button>
+              <button class="btn btn--sec" type="button" data-l10n="homeButton">Home</button>
             </div>
           </div>
         </div>
@@ -1227,39 +1227,39 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
         <div class="hdr stats-hdr">
           <div class="dots" aria-hidden="true"></div>
           <div class="in" style="padding-top:10px;padding-bottom:18px">
-            <p class="greet" style="color:var(--ink)">All time</p>
-            <p class="ask" style="margin-bottom:0">Stats</p>
+            <p class="greet" style="color:var(--ink)" data-l10n="statsAllTime">All time</p>
+            <p class="ask" style="margin-bottom:0" data-l10n="statsTitle">Stats</p>
           </div>
         </div>
 
         <div class="pane">
           <div class="body-pad" style="gap:16px">
             <div class="bestcard">
-              <span class="bl"><s>Best score</s><b>Stroop Rush</b></span>
-              <span class="bv">1,480</span>
+              <span class="bl"><s data-l10n="bestScore">Best score</s><b data-l10n="gameStroopRushName">Stroop Rush</b></span>
+              <span class="bv" data-num="1,480">1,480</span>
             </div>
             <div class="bestcard turq">
-              <span class="bl"><s>Best time</s><b>Schulte Grid</b></span>
-              <span class="bv">18.6s</span>
+              <span class="bl"><s data-l10n="bestTime">Best time</s><b data-l10n="gameSchulteGridName">Schulte Grid</b></span>
+              <span class="bv" data-num="18.6s">18.6s</span>
             </div>
 
             <div class="duo">
-              <div class="statbox"><s>Games played</s><b>128</b></div>
-              <div class="statbox"><s>Time trained</s><b>3h 12m</b></div>
+              <div class="statbox"><s data-l10n="gamesPlayed">Games played</s><b data-num="128">128</b></div>
+              <div class="statbox"><s data-l10n="timeTrained">Time trained</s><b data-l10n="durationHoursMinutes" data-l10n-args='{"hours": 3, "minutes": 12}'>3h 12m</b></div>
             </div>
 
             <div class="chart">
-              <div class="ch"><b>Last 7 runs</b><s>Stroop Rush · best 1,480</s></div>
+              <div class="ch"><b data-l10n="lastNRuns" data-l10n-args='{"count": 7}'>Last 7 runs</b><s data-l10n="chartSubtitle" data-l10n-args='{"game": "Stroop Rush", "score": "1,480"}'>Stroop Rush · best 1,480</s></div>
               <div class="bars">
-                <span class="bar"><u>780</u><i style="height:74px"></i></span>
-                <span class="bar"><u>940</u><i style="height:90px"></i></span>
-                <span class="bar"><u>1120</u><i style="height:107px"></i></span>
-                <span class="bar"><u>860</u><i style="height:82px"></i></span>
-                <span class="bar"><u>1310</u><i style="height:125px"></i></span>
-                <span class="bar"><u>1180</u><i style="height:112px"></i></span>
-                <span class="bar top"><u>1480</u><i style="height:141px"></i></span>
+                <span class="bar"><u data-num="780">780</u><i style="height:74px"></i></span>
+                <span class="bar"><u data-num="940">940</u><i style="height:90px"></i></span>
+                <span class="bar"><u data-num="1120">1120</u><i style="height:107px"></i></span>
+                <span class="bar"><u data-num="860">860</u><i style="height:82px"></i></span>
+                <span class="bar"><u data-num="1310">1310</u><i style="height:125px"></i></span>
+                <span class="bar"><u data-num="1180">1180</u><i style="height:112px"></i></span>
+                <span class="bar top"><u data-num="1480">1480</u><i style="height:141px"></i></span>
               </div>
-              <div class="axis"><s>Oldest</s><s>Latest</s></div>
+              <div class="axis"><s data-l10n="chartOldest">Oldest</s><s data-l10n="chartLatest">Latest</s></div>
             </div>
           </div>
         </div>
@@ -1271,19 +1271,19 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-            </svg><span>Play</span>
+            </svg><span data-l10n="playButton">Play</span>
           </span>
           <span class="tab on">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg><span>Stats</span>
+            </svg><span data-l10n="statsTitle">Stats</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
               <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
-            </svg><span>Settings</span>
+            </svg><span data-l10n="settingsTitle">Settings</span>
           </span>
         </div>
       </div>
@@ -1316,8 +1316,8 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
         <div class="hdr set-hdr">
           <div class="rays" aria-hidden="true" style="opacity:.3;background:repeating-conic-gradient(from 0deg at 50% 50%, var(--grape-pop) 0deg 5deg, transparent 5deg 12deg)"></div>
           <div class="in" style="padding-top:10px;padding-bottom:18px">
-            <p class="greet" style="color:var(--cream)">MindForge</p>
-            <p class="ask" style="margin-bottom:0;color:var(--cream)">Settings</p>
+            <p class="greet" style="color:var(--cream)" data-l10n="appTitle">MindForge</p>
+            <p class="ask" style="margin-bottom:0;color:var(--cream)" data-l10n="settingsTitle">Settings</p>
           </div>
         </div>
 
@@ -1328,22 +1328,22 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
                 <span class="si" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 6.5h3L10 3v12L6 11.5H3z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M13 6.2a4 4 0 0 1 0 5.6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
                 </span>
-                <span class="sl">Sound</span>
-                <span class="sw-toggle on" role="img" aria-label="Sound on" tabindex="0"><s>ON</s><b></b></span>
+                <span class="sl" data-l10n="settingSound">Sound</span>
+                <span class="sw-toggle on" role="img" aria-label="Sound on" tabindex="0"><s data-l10n="toggleOn">ON</s><b></b></span>
               </div>
               <div class="srow">
                 <span class="si" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="5.5" y="2.5" width="7" height="13" rx="2.2" stroke="currentColor" stroke-width="3"/><path d="M2.5 7v4M15.5 7v4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
                 </span>
-                <span class="sl">Haptics</span>
-                <span class="sw-toggle on" role="img" aria-label="Haptics on" tabindex="0"><s>ON</s><b></b></span>
+                <span class="sl" data-l10n="settingHaptics">Haptics</span>
+                <span class="sw-toggle on" role="img" aria-label="Haptics on" tabindex="0"><s data-l10n="toggleOn">ON</s><b></b></span>
               </div>
               <div class="srow">
                 <span class="si" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M9 5.2V9l2.6 2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
                 </span>
-                <span class="sl">Reduce motion</span>
-                <span class="sw-toggle" role="img" aria-label="Reduce motion off" tabindex="0"><s>OFF</s><b></b></span>
+                <span class="sl" data-l10n="settingReduceMotion">Reduce motion</span>
+                <span class="sw-toggle" role="img" aria-label="Reduce motion off" tabindex="0"><s data-l10n="toggleOff">OFF</s><b></b></span>
               </div>
               <div class="srow">
                 <span class="si" aria-hidden="true">
@@ -1354,7 +1354,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
                     <i class="pat pat--solid play--blue"></i><i class="pat pat--ring play--yellow"></i><i class="pat pat--dot play--green"></i><i class="pat pat--stripe play--red"></i>
                   </span>
                 </span>
-                <span class="sw-toggle" role="img" aria-label="Colour-blind friendly palette off" tabindex="0"><s>OFF</s><b></b></span>
+                <span class="sw-toggle" role="img" aria-label="Colour-blind friendly palette off" tabindex="0"><s data-l10n="toggleOff">OFF</s><b></b></span>
               </div>
             </div>
 
@@ -1363,22 +1363,22 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
                 <span class="si" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M2.8 9h12.4M9 2.8c1.8 2 2.7 4 2.7 6.2S10.8 13.2 9 15.2C7.2 13.2 6.3 11.2 6.3 9S7.2 4.8 9 2.8z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
                 </span>
-                <span class="sl">Language</span>
-                <span class="sv">English</span>
+                <span class="sl" data-l10n="settingsLanguage">Language</span>
+                <span class="sv" data-l10n="languageNameEn">English</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="color:var(--ink-2)"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <div class="srow">
                 <span class="si" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M9 8v4.2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="9" cy="5.6" r="1.2" fill="currentColor"/></svg>
                 </span>
-                <span class="sl">About MindForge</span>
+                <span class="sl" data-l10n="aboutTitle">About MindForge</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="color:var(--ink-2)"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
             </div>
 
             <div class="setfoot">
-              <b>MindForge</b>
-              <p>Train your brain. No wifi needed.</p>
+              <b data-l10n="appTitle">MindForge</b>
+              <p data-l10n="aboutTagline">Train your brain. No wifi needed.</p>
             </div>
           </div>
         </div>
@@ -1390,19 +1390,19 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
               <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-            </svg><span>Play</span>
+            </svg><span data-l10n="playButton">Play</span>
           </span>
           <span class="tab">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg><span>Stats</span>
+            </svg><span data-l10n="statsTitle">Stats</span>
           </span>
           <span class="tab on">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
               <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               <circle cx="8" cy="6.5" r="2.8" fill="var(--sunshine)" stroke="currentColor" stroke-width="2.6"/>
               <circle cx="14" cy="15.5" r="2.8" fill="var(--sunshine)" stroke="currentColor" stroke-width="2.6"/>
-            </svg><span>Settings</span>
+            </svg><span data-l10n="settingsTitle">Settings</span>
           </span>
         </div>
       </div>
