@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/l10n/bidi_text.dart';
 
 void main() {
-  const fsi = '⁨';
-  const pdi = '⁩';
+  // Escapes, not literals: an invisible bidi control in source misleads a
+  // human reader while meaning something else to the compiler.
+  const fsi = '\u2068';
+  const pdi = '\u2069';
 
   group('isolate', () {
     test('wraps a run in FSI and PDI', () {
@@ -34,7 +36,7 @@ void main() {
       // An isolated string is a RENDERING. Storing one puts invisible control
       // characters in a column every later read has to strip, and makes an
       // equality check against the stored form fail for no visible reason.
-      const isolated = '${fsi}stroop_rush$pdi';
+      const isolated = '\u2068stroop_rush\u2069';
 
       expect(isolated == 'stroop_rush', isFalse);
       expect(BidiText.strip(isolated), 'stroop_rush');

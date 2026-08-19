@@ -13,10 +13,15 @@
 abstract final class BidiText {
   /// FIRST STRONG ISOLATE — direction inferred from the run's own first strong
   /// character, which is what makes one helper serve both scripts.
-  static const String _firstStrongIsolate = '⁨';
+  // Written as an escape, not as the literal character. The analyzer's
+  // text_direction_code_point_in_literal is right: an invisible bidi control
+  // in source changes how the surrounding code READS to a human while meaning
+  // something else to the compiler, which is a review hazard in exactly the
+  // file that exists to handle bidi.
+  static const String _firstStrongIsolate = '\u2068';
 
   /// POP DIRECTIONAL ISOLATE.
-  static const String _popDirectionalIsolate = '⁩';
+  static const String _popDirectionalIsolate = '\u2069';
 
   /// [text] wrapped so it cannot reorder, or be reordered by, its surroundings.
   ///
