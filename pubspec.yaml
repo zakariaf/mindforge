@@ -92,10 +92,11 @@ flutter:
   # by FontWeight against the wght axis; a redundant FontVariation('wght', ...)
   # on top of that is what design-system-structure rule 10 forbids.
   #
-  # LATIN COVERAGE ONLY. Fredoka and Nunito have no Arabic script, so `fa` and
-  # `ckb` would tofu today. E03 T03.7 is the only other place this block may be
-  # edited: it adds Vazirmatn for body plus one Arabic-script display face, and
-  # extends kExpectedFontFamilies in test/policy/font_declaration_test.dart.
+  # Three faces, four locales. Fredoka and Nunito have NO Arabic-script
+  # coverage, so fa and ckb are served entirely by Vazirmatn — display and body
+  # both. Every step's fontFamilyFallback ends in a face that can draw the
+  # script it is rendering; a glyph falling through to an OS font is a defect,
+  # not a graceful fallback, and it is invisible on a developer's device.
   fonts:
     - family: Fredoka
       fonts:
@@ -103,6 +104,12 @@ flutter:
     - family: Nunito
       fonts:
         - asset: assets/fonts/Nunito[wght].ttf
+    # Arabic script, for fa and ckb. ONE family in both roles: Lalezar was
+    # measured against its own cmap and is missing five of the seven Sorani
+    # letters, so it is refused. See sunburst_type.dart.
+    - family: Vazirmatn
+      fonts:
+        - asset: assets/fonts/Vazirmatn[wght].ttf
 
   # The OFL texts are declared as assets so registerSunburstFontLicences() can
   # read them at runtime. Two files, not one: Fredoka and Nunito carry
@@ -110,3 +117,4 @@ flutter:
   assets:
     - assets/fonts/OFL-Fredoka.txt
     - assets/fonts/OFL-Nunito.txt
+    - assets/fonts/OFL-Vazirmatn.txt

@@ -10,13 +10,14 @@ typedef FontFamilyDeclaration = ({String family, List<String> assets});
 
 /// The families MindForge bundles, and nothing else.
 ///
-/// **E03 T03.7 appends the Arabic-script faces to this list and to nothing
-/// else.** Fredoka and Nunito have no Arabic-script coverage, so after E01 the
-/// app renders `en` and `de` and would tofu `fa` and `ckb`. That is a stated
-/// incompleteness, not a finished font story.
+/// Three faces cover four locales. Fredoka and Nunito have **no** Arabic-script
+/// coverage, so `fa` and `ckb` are served entirely by Vazirmatn — display and
+/// body both. `test/theme/font_coverage_test.dart` measures that from the
+/// font's own tables and records why Lalezar was refused.
 const kExpectedFontFamilies = <FontFamilyDeclaration>[
   (family: 'Fredoka', assets: ['assets/fonts/Fredoka[wdth,wght].ttf']),
   (family: 'Nunito', assets: ['assets/fonts/Nunito[wght].ttf']),
+  (family: 'Vazirmatn', assets: ['assets/fonts/Vazirmatn[wght].ttf']),
 ];
 
 /// The weights `sunburst-tokens/references/shape-and-type.md` names, which E03
@@ -27,6 +28,9 @@ const kExpectedFontFamilies = <FontFamilyDeclaration>[
 const kIntendedWeights = <String, List<int>>{
   'Fredoka': [600, 700],
   'Nunito': [700, 800],
+  // One family, both roles: the heaviest weight carries display, the lighter
+  // ones carry body.
+  'Vazirmatn': [500, 700, 900],
 };
 
 void main() {

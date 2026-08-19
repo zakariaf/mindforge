@@ -28,6 +28,14 @@ const kBundledFonts = <BundledFont>[
     asset: 'assets/fonts/Nunito[wght].ttf',
     licenceAsset: 'assets/fonts/OFL-Nunito.txt',
   ),
+  // Arabic script, for fa and ckb. ONE family serving both the display and the
+  // body role, at different weights — see kArabicDisplayWeight in
+  // sunburst_type.dart for why Lalezar was refused.
+  (
+    family: 'Vazirmatn',
+    asset: 'assets/fonts/Vazirmatn[wght].ttf',
+    licenceAsset: 'assets/fonts/OFL-Vazirmatn.txt',
+  ),
 ];
 
 /// Registers the SIL OFL text of every bundled font family with
