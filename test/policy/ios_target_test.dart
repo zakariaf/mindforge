@@ -71,22 +71,49 @@ void main() {
       );
     });
 
-    test('the Podfile and its lock are committed and tracked', () {
-      expect(File('ios/Podfile').existsSync(), isTrue);
-      expect(File('ios/Podfile.lock').existsSync(), isTrue);
-
-      final result =
-          Process.runSync('git', ['check-ignore', '-v', 'ios/Podfile.lock']);
+    test('the native integration is SwiftPM, with no CocoaPods layer', () {
+      // Measured on Flutter 3.44.6 (2026-08-19): Swift Package Manager is the
+      // default iOS plugin integration path, so `flutter build ios` generates
+      // ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage and
+      // never writes an ios/Podfile. The epic plan assumed CocoaPods and a
+      // committed Podfile.lock; that assumption is false on this toolchain.
+      //
+      // Nothing is lost. The generated package declares only path-local
+      // dependencies — into the pub cache and the Flutter framework — so there
+      // is no remote graph to resolve and no Package.resolved to commit. The
+      // native versions are already pinned, by pubspec.lock, which IS committed.
+      // Forcing --no-enable-swift-package-manager back on would add a Podfile
+      // treadmill and a second lock file for zero additional pinning.
       expect(
-        result.exitCode,
-        isNot(0),
-        reason: 'same rule and same reason as pubspec.lock — a fresh clone must '
-            'resolve the native graph that was tested. git check-ignore said: '
-            '${result.stdout}',
+        File('ios/Podfile').existsSync(),
+        isFalse,
+        reason: 'a Podfile appearing here means the SwiftPM default changed or '
+            'a plugin requiring CocoaPods was added. Either is a real decision: '
+            'commit ios/Podfile.lock and replace this test',
+      );
+
+      expect(
+        File('ios/Flutter/ephemeral/Packages/'
+                'FlutterGeneratedPluginSwiftPackage/Package.swift')
+            .existsSync(),
+        isTrue,
+        reason: 'run `flutter build ios --no-codesign` once to materialise the '
+            'generated plugin package',
+      );
+
+      final ignored = Process.runSync(
+        'git',
+        ['check-ignore', '-q', 'ios/Flutter/ephemeral'],
+      );
+      expect(
+        ignored.exitCode,
+        0,
+        reason: 'the generated package is build output and must stay '
+            'gitignored; ios/.gitignore already lists Flutter/ephemeral/',
       );
     });
 
-    test('the Podfile platform matches IPHONEOS_DEPLOYMENT_TARGET', () {
+    test('every build configuration agrees on one deployment target', () {
       final targets = RegExp(r'IPHONEOS_DEPLOYMENT_TARGET = ([0-9.]+);')
           .allMatches(pbxproj)
           .map((m) => m.group(1)!)
@@ -94,22 +121,12 @@ void main() {
 
       expect(
         targets,
-        hasLength(1),
-        reason: 'every build configuration must agree on one deployment target',
-      );
-
-      final podfilePlatform =
-          RegExp(r"platform :ios, '([0-9.]+)'").firstMatch(
-        File('ios/Podfile').readAsStringSync(),
-      );
-
-      expect(
-        podfilePlatform?.group(1),
-        targets.single,
-        reason: 'the value itself is whatever flutter create generated and is '
-            'pinned here so a later accidental change is a red test. Raising it '
-            'is a product decision; lowering it is a bug',
+        {'13.0'},
+        reason: 'the value is whatever flutter create generated on Flutter '
+            '3.44.6 and is pinned here so a later accidental change is a red '
+            'test. Raising it is a product decision; lowering it is a bug',
       );
     });
+
   });
 }
