@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/ckb_localizations.dart';
+import 'package:mindforge/l10n/supported_locales.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
+
+import 'locale_cases.dart';
 
 /// A logical viewport a test can render at.
 ///
@@ -76,6 +81,60 @@ void useDevice(WidgetTester tester, Device device) {
 
 /// Pumps a widget inside the app shell a real screen sees.
 extension PumpApp on WidgetTester {
+  /// Pumps [child] in [localeCase]'s locale, with the **real** delegate list.
+  ///
+  /// This is what E05 and every later epic use for a locale matrix, and it
+  /// differs from [pumpApp] in the way that matters: it does **not** take a
+  /// `textDirection`. Direction follows the locale through `Localizations`,
+  /// exactly as it does in production, so a component that assumed a physical
+  /// side fails here rather than being pinned upright by the harness.
+  ///
+  /// It also asserts the direction it got, so a delegate regression surfaces as
+  /// a failure in whichever test noticed rather than as silently mirrored
+  /// pixels in a golden nobody re-read.
+  Future<void> pumpLocalized(
+    Widget child,
+    LocaleCase localeCase, {
+    ThemeData? theme,
+    bool disableAnimations = false,
+  }) async {
+    late TextDirection resolved;
+
+    await pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          theme: theme ?? buildSunburstTheme(),
+          locale: localeCase.flutterLocale,
+          supportedLocales: supportedLocales,
+          localizationsDelegates: localizationsDelegatesFor(
+            AppLocalizations.localizationsDelegates,
+          ),
+          home: Builder(
+            builder: (context) {
+              resolved = Directionality.of(context);
+              return MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(disableAnimations: disableAnimations),
+                child: child,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      resolved,
+      localeCase.direction,
+      reason:
+          'the ambient direction under ${localeCase.tag} is not what the '
+          'locale requires. That is a delegate regression, and it would '
+          'otherwise show up as silently mirrored pixels in a golden nobody '
+          're-read',
+    );
+  }
+
   /// Pumps [child] under a `MaterialApp` carrying [theme].
   ///
   /// [theme] defaults to `buildSunburstTheme()`, the one theme the app ships.

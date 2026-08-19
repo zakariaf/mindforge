@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
+import 'package:mindforge/l10n/locale_resolution.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
@@ -10,15 +12,21 @@ import 'package:mindforge/theme/sunburst_theme.dart';
 /// `themeMode:`, because adding a dark mode is a new design direction rather
 /// than a token flip.
 ///
-/// There is still no `locale:`: the app follows the device until E04 adds the
-/// persisted override.
-class MindForgeApp extends StatelessWidget {
+/// The locale is resolved from the persisted override, falling back to the
+/// system locale and then to `en`. The direction follows it: nothing here names
+/// a `TextDirection`, because a hardcoded one is exactly what hides a
+/// physical-side bug.
+class MindForgeApp extends ConsumerWidget {
   /// Creates the root widget.
   const MindForgeApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
+      // Resolved before the first frame: settingsProvider is SEEDED with the
+      // row bootstrap() read ahead of runApp, so a Persian user's cold start
+      // never paints an English LTR frame and then flips.
+      locale: Locale(ref.watch(localeProvider).tag),
       title: 'MindForge',
       theme: buildSunburstTheme(),
       // The vendored ckb delegates come FIRST: Localizations._loadAll takes
