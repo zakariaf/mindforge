@@ -8,8 +8,10 @@ const kRequiredSteps = <String>[
   'tool/check_toolchain.sh',
   'flutter gen-l10n',
   'dart format --output=none --set-exit-if-changed .',
-  'build_runner build --delete-conflicting-outputs',
-  'git diff --exit-code',
+  'build_runner build',
+  // `git status --porcelain`, not `git diff --exit-code`: git diff compares
+  // tracked files only, so a newly created generated file is invisible to it.
+  'git status --porcelain',
   'flutter analyze --fatal-infos --fatal-warnings',
   '--test-randomize-ordering-seed random',
   'tool/skill_gates.sh',
@@ -55,7 +57,14 @@ void main() {
     });
 
     test('no ubuntu job exists', () {
-      expect(workflow.contains('ubuntu-'), isFalse);
+      // Matched against the extracted runs-on values, not the whole file: a
+      // whole-file substring search reds this test when someone lowercases the
+      // word in a comment, which has nothing to do with the contract.
+      final runners = RegExp(
+        r'runs-on:\s*(\S+)',
+      ).allMatches(workflow).map((m) => m.group(1)!);
+
+      expect(runners.where((r) => r.startsWith('ubuntu-')), isEmpty);
     });
 
     test('the Flutter action is pinned to the same version as the record', () {

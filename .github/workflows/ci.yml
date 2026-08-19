@@ -106,11 +106,19 @@ jobs:
         # committed-generated-code policy without its freshness gate is not a
         # policy. No build_runner generator is wired yet, so that half passes
         # trivially today; the gen-l10n half is live from E01.
+        #
+        # `git status --porcelain`, not `git diff`: git diff compares TRACKED
+        # files only, so a newly CREATED generated file is invisible to it.
+        # That is not hypothetical — when E04 adds app_de.arb, gen-l10n emits a
+        # new lib/l10n/app_localizations_de.dart, and forgetting to commit it
+        # would leave a diff-based gate green over an incomplete generated set.
         run: |
-          if ! git diff --exit-code -- \
-              '*.g.dart' '*.freezed.dart' '*.drift.dart' \
-              'lib/l10n/app_localizations*.dart'; then
-            echo "::error::Generated output is stale. Run 'flutter gen-l10n' and 'dart run build_runner build --delete-conflicting-outputs', then commit the result."
+          changed=$(git status --porcelain -- \
+            '*.g.dart' '*.freezed.dart' '*.drift.dart' \
+            'lib/l10n/app_localizations*.dart')
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            echo "::error::Generated output is stale or uncommitted. Run 'flutter gen-l10n' and 'dart run build_runner build', then commit the result."
             exit 1
           fi
 

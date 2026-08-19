@@ -34,6 +34,11 @@ const kAllowedDirectDependencies = <String>{
 /// This map exists so a name in the lock is either banned or explained, never
 /// merely tolerated.
 const kExplainedTransitives = <String, String>{
+  'web_socket':
+      'reached by web_socket_channel; see that entry. Listed '
+      "separately so this file and audit_deps.py's ALLOW set agree — a direct "
+      'dependency on it must not sail through one gate because only the other '
+      'names it.',
   'web_socket_channel':
       'measured with `flutter pub deps --style=compact` on 2026-08-19: reached '
       'by riverpod 3.4.2 -> test 1.31.0 -> shelf_web_socket 3.0.0, and by '
@@ -49,6 +54,7 @@ const kExplainedTransitives = <String, String>{
 const kBannedPackages = <String, String>{
   'http': 'CLAUDE.md: fully offline — no network code at all',
   'dio': 'CLAUDE.md: fully offline — no network code at all',
+  'web_socket': 'CLAUDE.md: fully offline — no network code at all',
   'web_socket_channel': 'CLAUDE.md: fully offline — no network code at all',
   'google_fonts':
       'CLAUDE.md: bundled fonts — runtime font fetching is a '
@@ -74,10 +80,12 @@ const kBannedPackagePrefixes = <String, String>{
 /// Every name declared under `dependencies:` or `dev_dependencies:` in
 /// `pubspec.yaml`, mapped to its inline version constraint.
 ///
-/// The value is `null` for an `sdk:` entry, which carries no inline version —
-/// `flutter`, `flutter_test` and `flutter_localizations`. Written once because
-/// the caret-range check and the allow-set check had each grown their own copy
-/// of this fifteen-line walk.
+/// The value is `null` when the entry carries no inline constraint, which is
+/// either an `sdk:` entry or a block form such as `foo:\n    version: 1.2.3`.
+/// The caret-range test below does **not** treat `null` as "nothing to check" —
+/// a block form is exactly how an exact pin would otherwise slip past the gate
+/// that exists to catch it. Written once because the caret-range check and the
+/// allow-set check had each grown their own copy of this fifteen-line walk.
 Map<String, String?> _declaredDependencies(String pubspec) {
   final declared = <String, String?>{};
   var inDependencyBlock = false;
