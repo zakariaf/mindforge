@@ -1,16 +1,15 @@
 import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_commit.dart';
 import 'package:mindforge/core/run_draft.dart';
+import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/data/daos/runs_dao.dart';
+import 'package:mindforge/data/daos/settings_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
-import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/repositories/run_repository.dart';
 import 'package:mindforge/data/repositories/settings_repository.dart';
-import 'package:mindforge/data/daos/settings_dao.dart';
-import 'package:mindforge/core/app_settings.dart';
-import 'package:mindforge/core/supported_locale.dart';
 
 import '../support/fake_id_generator.dart';
 import '../support/fake_log_sink.dart';
@@ -156,21 +155,24 @@ void main() {
       );
       await forEachLocale((tag) async {
         for (final draft in seededDrafts(seed: 7, count: 2)) {
-          await repository.saveRun(
-            RunDraft(
-              gameId: draft.gameId,
-              difficultyId: draft.difficultyId,
-              clientRunKey: '$tag-${draft.clientRunKey}',
-              startedAtUtcMs: draft.startedAtUtcMs,
-              playedOnDay: draft.playedOnDay,
-              durationMs: draft.durationMs,
-              format: draft.format,
-              metricValue: draft.metricValue,
-              correctCount: draft.correctCount,
-              wrongCount: draft.wrongCount,
-              longestCombo: draft.longestCombo,
-              totalReactionMs: draft.totalReactionMs,
+          expect(
+            await repository.saveRun(
+              RunDraft(
+                gameId: draft.gameId,
+                difficultyId: draft.difficultyId,
+                clientRunKey: '$tag-${draft.clientRunKey}',
+                startedAtUtcMs: draft.startedAtUtcMs,
+                playedOnDay: draft.playedOnDay,
+                durationMs: draft.durationMs,
+                format: draft.format,
+                metricValue: draft.metricValue,
+                correctCount: draft.correctCount,
+                wrongCount: draft.wrongCount,
+                longestCombo: draft.longestCombo,
+                totalReactionMs: draft.totalReactionMs,
+              ),
             ),
+            isA<Ok<RunCommit, DataFailure>>(),
           );
         }
       });
