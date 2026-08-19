@@ -11,8 +11,9 @@ const kSupportedLocaleCodes = <String>['en', 'de', 'fa', 'ckb'];
 
 void main() {
   final plist = File('ios/Runner/Info.plist').readAsStringSync();
-  final pbxproj =
-      File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+  final pbxproj = File(
+    'ios/Runner.xcodeproj/project.pbxproj',
+  ).readAsStringSync();
 
   String? plistStringValue(String key) {
     final match = RegExp(
@@ -26,7 +27,8 @@ void main() {
       expect(
         plistStringValue('CFBundleDevelopmentRegion'),
         'en',
-        reason: 'the template ships the \$(DEVELOPMENT_LANGUAGE) build-setting '
+        reason:
+            'the template ships the \$(DEVELOPMENT_LANGUAGE) build-setting '
             'indirection. The literal wins because a build setting is a second '
             'place the answer can live, and a policy test that has to resolve '
             'project.pbxproj to read a plist value is a test nobody trusts',
@@ -42,16 +44,16 @@ void main() {
       expect(
         array,
         isNotNull,
-        reason: 'iOS reads CFBundleLocalizations to decide which languages the '
+        reason:
+            'iOS reads CFBundleLocalizations to decide which languages the '
             'app is offered in. A locale absent from this array is unreachable '
             'no matter how complete app_fa.arb is, and nothing in Dart catches '
             'it',
       );
 
-      final entries = RegExp('<string>([^<]*)</string>')
-          .allMatches(array!.group(1)!)
-          .map((m) => m.group(1)!)
-          .toList();
+      final entries = RegExp(
+        '<string>([^<]*)</string>',
+      ).allMatches(array!.group(1)!).map((m) => m.group(1)!).toList();
 
       expect(entries, kSupportedLocaleCodes);
     });
@@ -66,7 +68,8 @@ void main() {
       expect(
         ids,
         {'com.mindforge.mindforge'},
-        reason: 'a bundle identifier is permanent once the app is first '
+        reason:
+            'a bundle identifier is permanent once the app is first '
             'uploaded; changing it afterwards creates a different app',
       );
     });
@@ -87,17 +90,20 @@ void main() {
       expect(
         File('ios/Podfile').existsSync(),
         isFalse,
-        reason: 'a Podfile appearing here means the SwiftPM default changed or '
+        reason:
+            'a Podfile appearing here means the SwiftPM default changed or '
             'a plugin requiring CocoaPods was added. Either is a real decision: '
             'commit ios/Podfile.lock and replace this test',
       );
 
       expect(
-        File('ios/Flutter/ephemeral/Packages/'
-                'FlutterGeneratedPluginSwiftPackage/Package.swift')
-            .existsSync(),
+        File(
+          'ios/Flutter/ephemeral/Packages/'
+          'FlutterGeneratedPluginSwiftPackage/Package.swift',
+        ).existsSync(),
         isTrue,
-        reason: 'run `flutter build ios --no-codesign` once to materialise the '
+        reason:
+            'run `flutter build ios --no-codesign` once to materialise the '
             'generated plugin package',
       );
 
@@ -108,25 +114,25 @@ void main() {
       expect(
         ignored.exitCode,
         0,
-        reason: 'the generated package is build output and must stay '
+        reason:
+            'the generated package is build output and must stay '
             'gitignored; ios/.gitignore already lists Flutter/ephemeral/',
       );
     });
 
     test('every build configuration agrees on one deployment target', () {
-      final targets = RegExp(r'IPHONEOS_DEPLOYMENT_TARGET = ([0-9.]+);')
-          .allMatches(pbxproj)
-          .map((m) => m.group(1)!)
-          .toSet();
+      final targets = RegExp(
+        r'IPHONEOS_DEPLOYMENT_TARGET = ([0-9.]+);',
+      ).allMatches(pbxproj).map((m) => m.group(1)!).toSet();
 
       expect(
         targets,
         {'13.0'},
-        reason: 'the value is whatever flutter create generated on Flutter '
+        reason:
+            'the value is whatever flutter create generated on Flutter '
             '3.44.6 and is pinned here so a later accidental change is a red '
             'test. Raising it is a product decision; lowering it is a bug',
       );
     });
-
   });
 }

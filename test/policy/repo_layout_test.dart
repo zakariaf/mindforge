@@ -13,7 +13,8 @@ void main() {
       expect(
         pubspec.readAsLinesSync().first.trim(),
         'name: mindforge',
-        reason: 'the working directory is E04, which is not a legal Dart '
+        reason:
+            'the working directory is E04, which is not a legal Dart '
             'package name, so --project-name was mandatory',
       );
     });
@@ -28,13 +29,13 @@ void main() {
       const absentPlatforms = <String, String>{
         'android':
             'deferred by decision, not unsupported. Nothing in lib/ may assume '
-                'iOS; re-adding it is flutter create --platforms=android plus '
-                'one PR for the build job',
+            'iOS; re-adding it is flutter create --platforms=android plus '
+            'one PR for the build job',
         'macos':
             'superseded by the canonical simulator. macOS earned its place only '
-                'as somewhere to eyeball the app, and MindForge iPhone 14 does '
-                'that better because it is exactly 390x844 while a macOS window '
-                'is whatever the developer dragged it to',
+            'as somewhere to eyeball the app, and MindForge iPhone 14 does '
+            'that better because it is exactly 390x844 while a macOS window '
+            'is whatever the developer dragged it to',
         'web': 'never in scope',
         'linux': 'never in scope',
         'windows': 'never in scope',
@@ -64,7 +65,8 @@ void main() {
       expect(
         result.exitCode,
         isNot(0),
-        reason: 'the Dart template gitignores pubspec.lock; an application must '
+        reason:
+            'the Dart template gitignores pubspec.lock; an application must '
             'commit it so a fresh clone resolves the graph that was tested '
             '(dependency-hygiene rule 2). git check-ignore said: '
             '${result.stdout}',

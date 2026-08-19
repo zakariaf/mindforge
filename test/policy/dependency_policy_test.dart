@@ -36,11 +36,11 @@ const kAllowedDirectDependencies = <String>{
 const kExplainedTransitives = <String, String>{
   'web_socket_channel':
       'measured with `flutter pub deps --style=compact` on 2026-08-19: reached '
-          'by riverpod 3.4.2 -> test 1.31.0 -> shelf_web_socket 3.0.0, and by '
-          'the build_runner dev tool. Riverpod 3 declares package:test as a '
-          'regular dependency because it ships test utilities in the main '
-          'package. Nothing under lib/ imports it, so it tree-shakes out of the '
-          'release binary; banned_imports_test.dart is what proves that.',
+      'by riverpod 3.4.2 -> test 1.31.0 -> shelf_web_socket 3.0.0, and by '
+      'the build_runner dev tool. Riverpod 3 declares package:test as a '
+      'regular dependency because it ships test utilities in the main '
+      'package. Nothing under lib/ imports it, so it tree-shakes out of the '
+      'release binary; banned_imports_test.dart is what proves that.',
 };
 
 /// Packages that break a stated `CLAUDE.md` product constraint, mapped to the
@@ -50,14 +50,16 @@ const kBannedPackages = <String, String>{
   'http': 'CLAUDE.md: fully offline — no network code at all',
   'dio': 'CLAUDE.md: fully offline — no network code at all',
   'web_socket_channel': 'CLAUDE.md: fully offline — no network code at all',
-  'google_fonts': 'CLAUDE.md: bundled fonts — runtime font fetching is a '
+  'google_fonts':
+      'CLAUDE.md: bundled fonts — runtime font fetching is a '
       'network call',
   'google_mobile_ads': 'CLAUDE.md: no ads, no IAP',
   'in_app_purchase': 'CLAUDE.md: no ads, no IAP',
   'posthog': 'CLAUDE.md: no analytics — zero telemetry packages',
   'mixpanel': 'CLAUDE.md: no analytics — zero telemetry packages',
   'amplitude': 'CLAUDE.md: no analytics — zero telemetry packages',
-  'device_info_plus': 'CLAUDE.md: no analytics — no user data leaves the device',
+  'device_info_plus':
+      'CLAUDE.md: no analytics — no user data leaves the device',
 };
 
 /// Banned package **families**, matched by prefix. Kept separate from
@@ -100,7 +102,8 @@ void main() {
       expect(
         offenders,
         isEmpty,
-        reason: 'dependency-hygiene rule 1: caret ranges in pubspec.yaml, exact '
+        reason:
+            'dependency-hygiene rule 1: caret ranges in pubspec.yaml, exact '
             'pins only in the committed pubspec.lock. Offenders: $offenders',
       );
     });
@@ -127,7 +130,8 @@ void main() {
       expect(
         declared.difference(kAllowedDirectDependencies),
         isEmpty,
-        reason: 'a dependency was added without extending the reviewed '
+        reason:
+            'a dependency was added without extending the reviewed '
             'allow-set in this file. Audit its transitive tree first '
             '(dependency-hygiene rule 3), then add it here with the epic that '
             'first uses it.',
@@ -140,10 +144,10 @@ void main() {
     });
 
     test('no banned package appears in the resolved lock', () {
-      final resolved = RegExp(r'^  ([a-z_0-9]+):', multiLine: true)
-          .allMatches(lock.readAsStringSync())
-          .map((m) => m.group(1)!)
-          .toSet();
+      final resolved = RegExp(
+        r'^  ([a-z_0-9]+):',
+        multiLine: true,
+      ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
 
       final offenders = <String>[];
       for (final name in resolved) {
@@ -163,17 +167,19 @@ void main() {
     });
 
     test('every explained transitive is still actually in the lock', () {
-      final resolved = RegExp(r'^  ([a-z_0-9]+):', multiLine: true)
-          .allMatches(lock.readAsStringSync())
-          .map((m) => m.group(1)!)
-          .toSet();
+      final resolved = RegExp(
+        r'^  ([a-z_0-9]+):',
+        multiLine: true,
+      ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
 
-      final stale =
-          kExplainedTransitives.keys.where((k) => !resolved.contains(k));
+      final stale = kExplainedTransitives.keys.where(
+        (k) => !resolved.contains(k),
+      );
       expect(
         stale,
         isEmpty,
-        reason: 'these packages left the resolved graph, so their measured '
+        reason:
+            'these packages left the resolved graph, so their measured '
             'explanation is now a decoy that would silently re-admit them: '
             '$stale. Delete the entry.',
       );
@@ -183,7 +189,8 @@ void main() {
       expect(
         pubspec.contains('cupertino_icons'),
         isFalse,
-        reason: 'MindForge draws inline stroke glyphs under lib/ui/glyphs/ '
+        reason:
+            'MindForge draws inline stroke glyphs under lib/ui/glyphs/ '
             '(CLAUDE.md working agreement 6); an icon font is dead weight',
       );
     });

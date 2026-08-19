@@ -45,7 +45,8 @@ void main() {
           multiLine: true,
         ).hasMatch(options),
         isTrue,
-        reason: 'a bare analysis_options.yaml lets a pub upgrade silently '
+        reason:
+            'a bare analysis_options.yaml lets a pub upgrade silently '
             'change what counts as an error (dependency-hygiene rule 5)',
       );
     });
@@ -65,7 +66,8 @@ void main() {
       expect(
         pinned,
         'analysis_options.$resolvedVersion.yaml',
-        reason: 'a filename that does not exist in the resolved package yields '
+        reason:
+            'a filename that does not exist in the resolved package yields '
             'one include_file_not_found warning and a ruleset of zero added '
             'rules — a green build that checks nothing',
       );
@@ -73,8 +75,12 @@ void main() {
 
     test('every silence-producing bug class is promoted to error', () {
       final missing = kPromotedToError
-          .where((rule) => !RegExp('^\\s+$rule: error\$', multiLine: true)
-              .hasMatch(options))
+          .where(
+            (rule) => !RegExp(
+              '^\\s+$rule: error\$',
+              multiLine: true,
+            ).hasMatch(options),
+          )
           .toList();
 
       expect(missing, isEmpty, reason: 'not mapped to error: $missing');
@@ -84,7 +90,8 @@ void main() {
       expect(
         RegExp(r'^language:', multiLine: true).hasMatch(options),
         isFalse,
-        reason: 'VGA already sets strict-casts, strict-inference and '
+        reason:
+            'VGA already sets strict-casts, strict-inference and '
             'strict-raw-types; restating them is config that drifts and then '
             'contradicts',
       );
@@ -112,13 +119,15 @@ void main() {
           .where((l) => l.trim().isNotEmpty && !l.trim().startsWith('#'));
 
       final hasListForm = lines.any((l) => l.trim().startsWith('- '));
-      final hasMapForm = lines.any((l) => RegExp(r':\s*(true|false)\s*$')
-          .hasMatch(l));
+      final hasMapForm = lines.any(
+        (l) => RegExp(r':\s*(true|false)\s*$').hasMatch(l),
+      );
 
       expect(
         hasListForm && hasMapForm,
         isFalse,
-        reason: 'mixing the two forms is a parse error, which silently '
+        reason:
+            'mixing the two forms is a parse error, which silently '
             'disables the analyzer',
       );
     });
