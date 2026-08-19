@@ -1,3 +1,8 @@
+> **SUPERSEDED — do not build from this file.** It plans the old ten-epic sequence, written
+> before the four-locale/two-direction and iOS-only requirements landed. It is superseded by
+> [`../E10-schulte-grid.md`](../E10-schulte-grid.md) — **E10 · Schulte Grid**. Kept for the record only; the live set is the
+> eleven files in `epics/`, indexed by [`../README.md`](../README.md).
+
 # E09 · Schulte Grid
 
 | | |

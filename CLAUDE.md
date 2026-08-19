@@ -8,6 +8,10 @@ supplies its rules, one board widget and one accent colour, and inherits every s
 First two games: **Stroop Rush** (tap the colour the word is *printed* in) and **Schulte Grid**
 (tap 1..25 ascending, fast). Schulte is the proof: it must ship without editing `lib/features/**`.
 
+It ships in **four locales, two of them right-to-left** — English, German, Persian and Kurdish Sorani —
+on **iOS only**. Neither is a bolt-on: RTL reaches every component's geometry and Eastern Arabic
+numerals reach the Schulte tiles, which *are* the numbers 1..25.
+
 ## Hard product constraints
 
 These are the easiest thing to break by adding one package. Check them before `dart pub add`.
@@ -19,7 +23,9 @@ These are the easiest thing to break by adding one package. Check them before `d
 | No ads, no IAP | Nothing to monetize. `ads-and-iap-monetization` exists in the library and is out of scope. |
 | No analytics, no crash reporting | Zero telemetry packages. No user data leaves the device, ever. |
 | On-device storage only | drift/SQLite under `lib/data/`. The only exit path is a user-initiated export/share. |
-| Bundled fonts | Fredoka + Nunito ship as assets. Runtime font fetching is a network call. |
+| Bundled fonts | Fredoka + Nunito (Latin) **and Vazirmatn + one Arabic-script display face** ship as assets, each with its SIL OFL text registered through `registerSunburstFontLicences()`. Runtime font fetching is a network call. |
+| Four locales, two RTL | `en` (template, and the fallback), `de`, `fa`, `ckb`. System locale if supported, else `en`; the user's override persists in `settings.locale_tag`. `lib/core/supported_locale.dart` is the only list of shipped locales in the repo. |
+| iOS only | Android is **deferred by decision, not oversight** — no `android/` target, no `values-*` resources, no claim of parity. Build and run on the canonical simulator `MindForge iPhone 14`, UDID `C13DDC02-375D-4E1B-8F81-44EB407D09A4`, iOS 18.6, which is **exactly 390x844** and therefore the only device a reference screenshot can honestly be compared on (iPhone 16 is 393x852, 16 Pro is 402x874). |
 
 If a feature appears to require the network, it is the wrong feature.
 
@@ -37,9 +43,22 @@ design/paper-crayon/              rejected alternative, kept for reference
 50-apps-challenge-slides.html     episode slides
 ```
 
-**Next step:** scaffold the app — `flutter create`, a pinned `pubspec.yaml`, `analysis_options.yaml`
-on `very_good_analysis` — then build `lib/theme/` by transcribing `design/sunburst-pop/system.html`
-per `sunburst-tokens`. The theme layer comes before any screen, because every screen reads it.
+**Verified toolchain on this machine (2026-08-19). Do not re-derive; do re-assert in a test.**
+
+| Fact | Value |
+|---|---|
+| Flutter / Dart / DevTools | 3.44.6 stable · Dart 3.12.2 · DevTools 2.57.0 |
+| Xcode / CocoaPods | 26.6 (build 17F113) · 1.15.2 |
+| Simulator runtimes | iOS 18.0, 18.6, 26.5 |
+| Canonical device | `MindForge iPhone 14` · `C13DDC02-375D-4E1B-8F81-44EB407D09A4` · iOS 18.6 · 390x844 |
+| `intl` | `0.20.2` — an **exact** pin inside `flutter_localizations`, not a range |
+| `ckb` in `GlobalMaterialLocalizations` | **absent** (82 codes; `en` `de` `fa` `ar` present). A custom delegate trio is required or a switch to Sorani throws — and silently renders LTR. |
+
+**Next step:** scaffold the app — `flutter create --platforms=ios`, a pinned `pubspec.yaml`,
+`analysis_options.yaml` on `very_good_analysis` — then build `lib/theme/` by transcribing
+`design/sunburst-pop/system.html` per `sunburst-tokens`. The theme layer comes before any screen,
+because every screen reads it, and localization comes before any component, because directional
+geometry cannot be retrofitted.
 
 ## Architecture we are building toward
 
@@ -49,14 +68,19 @@ per `sunburst-tokens`. The theme layer comes before any screen, because every sc
 ```
 lib/
   main.dart          thin; calls bootstrap()
+  core/              pure, Flutter-free foundation: Result/Failure, ScoreFormat, SupportedLocale,
+                     CalendarDay, SeededGenerator, HudTone. No intl, no NumberFormat, ever
   theme/             SunburstColors / SunburstShape / SunburstMotion / SunburstType + game_accent.dart
-                     — the ONLY directory where a raw aesthetic value may appear
+                     — the ONLY directory where a raw aesthetic value or a font family may appear
+  l10n/              the four ARBs + generated AppLocalizations, the ckb delegates, the locale
+                     resolver and providers, LocaleNumbers and AsciiNumerals, the bidi helper
   ui/components/     PopSurface and the chunky component catalog built on it
   ui/glyphs/         inline stroke icons (2.6 and 3.0 weights). No emoji, no icon font
   features/          the 8 shell screens
   games/             one folder per game: rules + board widget, nothing else
   data/              drift database, DAOs, repositories
   shared/feedback/   HapticGateway + FeedbackService — the only HapticFeedback call sites
+  shared/motion/     PressPhysics, PopCelebration, ShakeOnWrong — a separate fence from feedback/
   routing/           one GoRouter
 test/                mirrors lib/
 ```
@@ -82,14 +106,21 @@ Decisions, not a tutorial:
 Arcade-cabinet joy. Chunky, physical, high-energy; everything looks pressable. The signature
 construction rule: **every raised surface is a fill, a 3px solid ink (`#2B1B4D`) border, and one hard
 offset shadow with `blurRadius` and `spreadRadius` at 0** — and it translates down on press while its
-hit area holds still. Saturated pop colours on cream, Fredoka for display, Nunito for body. Light
-theme only; there is no dark mode and adding one is a new design direction, not a token flip.
+hit area holds still. Saturated pop colours on cream, Fredoka for display, Nunito for body — and in
+`fa`/`ckb`, an Arabic-script pair in their place. Light theme only; there is no dark mode and adding
+one is a new design direction, not a token flip.
+
+**The Fredoka personality does not survive translation, and no font swap fixes that.** In Persian and
+Sorani the identity is carried entirely by the shape language — the 3px ink border, the hard offset
+shadow at zero blur, the press-down translate, the saturated palette on cream. That is enough; those
+four things were always the direction. Say so rather than pretending a font swap is neutral.
 
 | Source | Authoritative over |
 |---|---|
 | `design/sunburst-pop/system.html` | **Token values.** Every hex, radius, shadow offset, duration, curve and type step. |
 | `design/sunburst-pop/app.html` | Layout, spacing rhythm and component usage across the 8 screens. |
-| `design/sunburst-pop/screens/*.png` | Implementation targets, rendered at 390×844 @2x. |
+| `design/sunburst-pop/screens/*.png` | Implementation targets — eight English LTR screens, rendered at 390×844 @2x. |
+| `design/sunburst-pop/screens/rtl/*.png` | Their Persian RTL counterparts, same eight basenames, same size. **Produced by E04**; they do not exist until it merges. |
 | `design/sunburst-pop/README.md` | Rationale, palette table, and the known risks. |
 
 Read `system.html` before changing a value. Do not use a colour from memory and do not "improve" one.
@@ -114,11 +145,13 @@ actually generates.
 | Writing a Notifier/provider, wiring DI, the single write path | `state-management-riverpod` |
 | Writing `build()`, splitting widgets, grid/list layout | `widget-composition` |
 | Routes, the bottom-nav shell, back handling | `navigation-and-routing` |
+| **Adding or translating an ARB key; any inset, alignment or text alignment; formatting or parsing any number; the `ckb` delegate; a mixed-script run** | **`i18n-rtl-l10n`** |
 | Drift tables, DAOs, `.watch` streams / a schema migration | `persistence-drift` / `run-migration` |
 | Modeling `Result`/`Failure`, never-lose-data flows | `error-handling-typed-results` |
 | Writing `main()`/`bootstrap()`, error handlers, lifecycle flush | `app-startup-and-bootstrap` |
 | Semantics, tap targets, contrast, text scaling | `accessibility-as-code` |
 | Golden, layout, RTL or a11y widget tests / re-baselining goldens | `widget-golden-and-a11y-testing` / `run-goldens-rebaseline` |
+| Bundling a font, the per-script fallback cascade, `LicenseRegistry` | `design-system-structure` + `i18n-rtl-l10n` |
 | Unit tests, fakes, invariants | `testing-strategy` |
 | Generating a round from a seed every device must reproduce | `seeded-determinism-and-golden-vectors` |
 | Injecting the `Clock` or any platform side effect | `service-boundary-and-native` |
@@ -144,7 +177,10 @@ the eighteen moments. Read the generic one for the pattern, the sunburst one for
    alarm aliased to a gameplay slot would turn magenta for exactly the players who need it.
 4. **Hue is never the only channel.** Every answer colour also carries an ink fill pattern
    (solid / stripe / dot / ring), on the key and inside the stimulus glyph.
-5. **Fonts are bundled, never fetched.** No `google_fonts`, no runtime HTTP for assets.
+5. **Fonts are bundled, never fetched.** No `google_fonts`, no runtime HTTP for assets. Four faces
+   ship: Fredoka and Nunito for Latin, Vazirmatn plus one display face for Arabic script. Every step's
+   `fontFamilyFallback` must end in a face covering every shipped script — a glyph falling through to
+   an OS font is a defect, not a graceful fallback, and it is invisible on the developer's device.
 6. **No emoji anywhere** — not in the UI, not in code, comments or commit messages. Icons are inline
    stroke glyphs at 2.6 (22px nav/status) and 3.0 (18–20px inside buttons).
 7. **Reduced motion collapses durations to `Duration.zero`,** never to shorter ones. Every moment
@@ -162,6 +198,20 @@ the eighteen moments. Read the generic one for the pattern, the sunburst one for
     with an explicit run table and a skip table carrying a reason per row, plus
     `test/policy/skill_gates_coverage_test.dart` which fails if a script appears in neither.
     Until that exists, run the six sunburst gates by name.
+11. **All geometry is directional.** `EdgeInsetsDirectional`, `AlignmentDirectional`, `TextAlign.start`,
+    `PositionedDirectional`, `BorderRadiusDirectional`, `Icons.adaptive`. `EdgeInsets.only(left:/right:)`,
+    `Alignment.centerLeft`, `TextAlign.left` and `Icons.arrow_back` are gate failures
+    (`check_i18n_bans.sh`), never an `// ignore:`. **The one exception is the hard offset shadow, which
+    does not mirror** — it is a light-source constant, one imaginary light for the whole app, not a
+    reading-direction property. Never wrap a test tree in a hardcoded `Directionality`: set the locale
+    and let direction follow, because a hardcoded one is exactly what hides a physical-side bug.
+12. **Numerals are localized at render and ASCII everywhere else.** `en`/`de` render Latin digits,
+    `fa`/`ckb` render Eastern Arabic `۰۱۲۳۴۵۶۷۸۹` (U+06F0–U+06F9 with U+066B/U+066C — **never** the
+    Arabic-Indic block U+0660–U+0669). The numbering system is pinned explicitly per locale in
+    `LocaleNumbers`, the **one** `NumberFormat` construction site in `lib/`; `ckb` borrows `fa`'s symbol
+    data because `intl` ships none for it and falls back to Latin silently. **Normalise to ASCII through
+    `AsciiNumerals.normalize` before any parse, comparison or write.** Seeded generation produces
+    integers and semantic tokens only: a golden vector must not move because the locale moved.
 
 ## Commands
 
@@ -207,11 +257,25 @@ globbing the directory does not work (working agreement 10).
 
 ## Build order
 
-Ten epics, one branch and one PR each, in `epics/`. Read `epics/README.md` for the dependency graph,
-the delivery loop and the screenshot rule before starting any of them.
+**Eleven epics**, one branch and one PR each, in `epics/`. Read `epics/README.md` for the dependency
+graph, the delivery loop, the localization and iOS-first sections and the screenshot rule before
+starting any of them. Persistence (E02) lands before localization (E04) because the locale override
+must persist; localization lands before the component library (E05) because directional geometry
+cannot be retrofitted across a built catalog. `epics/superseded/` holds the previous ten-epic plan;
+nothing is built from it.
 
-Regenerate the reference screenshots after editing `app.html`:
+Run the app on the canonical simulator — the only one that is exactly 390×844, which is what makes a
+screenshot comparison honest:
 
 ```bash
-cd design/sunburst-pop && ./capture-screens.sh    # rewrites screens/*.png; commit them with the change
+xcrun simctl boot C13DDC02-375D-4E1B-8F81-44EB407D09A4
+flutter run -d C13DDC02-375D-4E1B-8F81-44EB407D09A4
+```
+
+Regenerate the reference screenshots after editing `app.html` — **both sets**:
+
+```bash
+cd design/sunburst-pop
+./capture-screens.sh          # rewrites screens/*.png; commit them with the change
+./capture-screens.sh --rtl    # rewrites screens/rtl/*.png (exists from E04 on)
 ```

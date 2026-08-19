@@ -1,3 +1,8 @@
+> **SUPERSEDED — do not build from this file.** It plans the old ten-epic sequence, written
+> before the four-locale/two-direction and iOS-only requirements landed. It is superseded by
+> [`../E11-accessibility-qa-and-release.md`](../E11-accessibility-qa-and-release.md) — **E11 · Accessibility, QA and release**. Kept for the record only; the live set is the
+> eleven files in `epics/`, indexed by [`../README.md`](../README.md).
+
 # E10 · Accessibility, QA and release
 
 | | |
