@@ -16,11 +16,14 @@ void main() {
       '--dur-celebrate': Duration(milliseconds: 240),
     };
 
-    durations.forEach((name, expected) {
-      test('$name is ${expected.inMilliseconds}ms', () {
-        expect(DesignSource.cssScalar(name), '${expected.inMilliseconds}ms');
+    for (final entry in durations.entries) {
+      test('${entry.key} is ${entry.value.inMilliseconds}ms', () {
+        expect(
+          DesignSource.cssScalar(entry.key),
+          '${entry.value.inMilliseconds}ms',
+        );
       });
-    });
+    }
 
     test('the four Dart durations match', () {
       expect(motion.durTap, const Duration(milliseconds: 120));
