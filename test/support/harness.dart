@@ -97,28 +97,35 @@ extension PumpApp on WidgetTester {
     LocaleCase localeCase, {
     ThemeData? theme,
     bool disableAnimations = false,
+    TextScaler textScaler = TextScaler.noScaling,
   }) async {
     late TextDirection resolved;
 
     await pumpWidget(
       ProviderScope(
-        child: MaterialApp(
-          theme: theme ?? buildSunburstTheme(),
-          locale: localeCase.flutterLocale,
-          supportedLocales: supportedLocales,
-          localizationsDelegates: localizationsDelegatesFor(
-            AppLocalizations.localizationsDelegates,
+        // MediaQuery is layered ABOVE MaterialApp, and built with
+        // MediaQueryData.fromView rather than a bare MediaQueryData():
+        // constructing one from scratch drops padding, view insets and every
+        // accessibility flag the real app reads, and layering it below
+        // MaterialApp would leave MaterialApp itself reading the unscaled one.
+        child: MediaQuery(
+          data: MediaQueryData.fromView(view).copyWith(
+            disableAnimations: disableAnimations,
+            textScaler: textScaler,
           ),
-          home: Builder(
-            builder: (context) {
-              resolved = Directionality.of(context);
-              return MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(disableAnimations: disableAnimations),
-                child: child,
-              );
-            },
+          child: MaterialApp(
+            theme: theme ?? buildSunburstTheme(),
+            locale: localeCase.flutterLocale,
+            supportedLocales: supportedLocales,
+            localizationsDelegates: localizationsDelegatesFor(
+              AppLocalizations.localizationsDelegates,
+            ),
+            home: Builder(
+              builder: (context) {
+                resolved = Directionality.of(context);
+                return child;
+              },
+            ),
           ),
         ),
       ),

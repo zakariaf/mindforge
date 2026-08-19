@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_text.dart';
+
 /// The gate commands that must appear as steps in the workflow. Each one is a
 /// named contract, and a contract deleted without a review is a red test.
 const kRequiredSteps = <String>[
@@ -15,6 +17,11 @@ const kRequiredSteps = <String>[
   'flutter analyze --fatal-infos --fatal-warnings',
   '--test-randomize-ordering-seed random',
   'tool/skill_gates.sh',
+  // The golden lane runs, and it runs SEPARATELY: the default lane excludes it
+  // so a shaping regression is legible on its own rather than buried among 500
+  // geometry tests.
+  'flutter test --tags golden',
+  '--exclude-tags golden',
   'check_i18n_bans.sh',
   'flutter build ios --no-codesign',
 ];
@@ -30,6 +37,11 @@ const kRequiredPrSections = <String>[
 
 void main() {
   final workflow = File('.github/workflows/ci.yml').readAsStringSync();
+
+  // The RUN LINES, with the comments stripped. Every ban below is a ban on
+  // what CI executes, and a workflow that explains in a comment why it does not
+  // bless a golden must not fail the ban on blessing goldens.
+  final executed = withoutYamlComments(workflow);
 
   group('ci workflow', () {
     test('every runner is a pinned macOS label', () {
@@ -98,12 +110,12 @@ void main() {
 
     test('no step can pass without passing, and no gate blesses', () {
       expect(
-        workflow.contains('continue-on-error'),
+        executed.contains('continue-on-error'),
         isFalse,
         reason: 'a gate that cannot fail is not a gate',
       );
       expect(
-        workflow.contains('--update-goldens'),
+        executed.contains('--update-goldens'),
         isFalse,
         reason:
             'ci-pipeline-and-gates rule 9: a gate verifies, it never '

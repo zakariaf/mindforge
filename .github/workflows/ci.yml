@@ -166,11 +166,28 @@ jobs:
         run: flutter analyze --fatal-infos --fatal-warnings
 
       - name: Test
-        # --exclude-tags tool: the dump test WRITES a file and is run by its own
-        # named step above, where its output is diffed.
+        # Two tags are excluded here and each has its own step:
+        #   tool    WRITES a tracked file, and is run above where its output is
+        #           diffed. A gate that regenerates what it checks asserts
+        #           nothing.
+        #   golden  compares pixels, needs the real bundled faces, and belongs
+        #           in a lane that can be read on its own when it fails.
         run: |
           flutter test --test-randomize-ordering-seed random \
-            --exclude-tags tool --reporter expanded
+            --exclude-tags tool --exclude-tags golden --reporter expanded
+
+      - name: Golden lane
+        # COMPARE ONLY. There is deliberately no --update-goldens step anywhere
+        # in this repository: re-blessing a golden is a local, reviewed act in a
+        # commit that says so, because a pipeline that can bless its own output
+        # cannot fail.
+        #
+        # Six PNGs under test/goldens/rtl/. They detect a CHANGE in shaping,
+        # mirroring or digit block. They do not prove the shaping is correct and
+        # they prove nothing about translation — that is the human comparison
+        # against design/sunburst-pop/screens/rtl/ and E11's native-speaker
+        # review.
+        run: flutter test --tags golden --reporter expanded
 
       - name: Run the skill gates
         run: "$BASH5" tool/skill_gates.sh

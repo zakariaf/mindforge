@@ -10,6 +10,8 @@ import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/locale_numbers.dart';
 
+import '../test/support/l10n_strings.dart';
+
 /// Writes `design/sunburst-pop/rtl/strings-fa.json` from the **live** Persian
 /// localisations.
 ///
@@ -32,94 +34,10 @@ void main() {
     // streakDays rendered "4" instead of "۴" before this changed.
     String n(int value) => const LocaleNumbers(SupportedLocale.fa).count(value);
 
-    // Every message the eight screens use, with the sample arguments declared
-    // in app.html's data-l10n-args. Keys with no arguments are rendered
-    // directly; the rest are listed here because a getter with parameters
-    // cannot be called generically.
-    final strings = <String, String>{
-      'appTitle': fa.appTitle,
-      'navPlay': fa.navPlay,
-      'navStats': fa.navStats,
-      'navSettings': fa.navSettings,
-      'homeGreeting': fa.homeGreeting('evening'),
-      'homeReadyPrompt': fa.homeReadyPrompt,
-      'streakDays': fa.streakDays(4, n(4)),
-      'dailyMixTitle': fa.dailyMixTitle,
-      'dailyMixSummary': fa.dailyMixSummary(4, 3, n(4), n(3)),
-      'yourGamesTitle': fa.yourGamesTitle,
-      'gamesUnlocked': fa.gamesUnlocked(2, n(2)),
-      'bestLabel': fa.bestLabel,
-      'comingSoon': fa.comingSoon,
-      'gameStroopRushName': fa.gameStroopRushName,
-      'gameStroopRushTagline': fa.gameStroopRushTagline,
-      'gameSchulteGridName': fa.gameSchulteGridName,
-      'gameSchulteGridTagline': fa.gameSchulteGridTagline,
-      'gameNBackName': fa.gameNBackName,
-      'gameTagsReactionFocus': fa.gameTagsReactionFocus,
-      'gameAndDifficulty': fa.gameAndDifficulty(
-        fa.difficultyClassic,
-        fa.gameStroopRushName,
-      ),
-      'yourBest': fa.yourBest,
-      'gamesPlayed': fa.gamesPlayed,
-      'difficultyTitle': fa.difficultyTitle,
-      'difficultyChill': fa.difficultyChill,
-      'difficultyClassic': fa.difficultyClassic,
-      'difficultyBlitz': fa.difficultyBlitz,
-      'playButton': fa.playButton,
-      'getReady': fa.getReady,
-      'hudTime': fa.hudTime,
-      'hudScore': fa.hudScore,
-      'hudStreak': fa.hudStreak,
-      'hudFound': fa.hudFound,
-      'hudNext': fa.hudNext,
-      'streakMultiplier': fa.streakMultiplier(7, n(7)),
-      'foundOfTotal': fa.foundOfTotal(n(25), n(6)),
-      'colourRed': fa.colourRed,
-      'colourBlue': fa.colourBlue,
-      'colourGreen': fa.colourGreen,
-      'colourYellow': fa.colourYellow,
-      'resultsTitle': fa.resultsTitle,
-      'newPersonalBest': fa.newPersonalBest,
-      'finalScore': fa.finalScore,
-      'accuracyLabel': fa.accuracyLabel,
-      'avgReactionLabel': fa.avgReactionLabel,
-      'unitMilliseconds': fa.unitMilliseconds,
-      'longestStreakLabel': fa.longestStreakLabel,
-      'playAgain': fa.playAgain,
-      'homeButton': fa.homeButton,
-      'statsTitle': fa.statsTitle,
-      'statsAllTime': fa.statsAllTime,
-      'bestScore': fa.bestScore,
-      'bestTime': fa.bestTime,
-      'timeTrained': fa.timeTrained,
-      'durationHoursMinutes': fa.durationHoursMinutes(n(12), n(3)),
-      'lastNRuns': fa.lastNRuns(7, n(7)),
-      'chartSubtitle': fa.chartSubtitle(
-        const LocaleNumbers(SupportedLocale.fa).count(1480),
-        fa.gameStroopRushName,
-      ),
-      'chartOldest': fa.chartOldest,
-      'chartLatest': fa.chartLatest,
-      'settingsTitle': fa.settingsTitle,
-      'settingSound': fa.settingSound,
-      'settingHaptics': fa.settingHaptics,
-      'settingReduceMotion': fa.settingReduceMotion,
-      'settingColourBlind': fa.settingColourBlind,
-      'toggleOn': fa.toggleOn,
-      'toggleOff': fa.toggleOff,
-      'settingsLanguage': fa.settingsLanguage,
-      'settingsLanguageSystem': fa.settingsLanguageSystem,
-      'aboutTitle': fa.aboutTitle,
-      'aboutTagline': fa.aboutTagline,
-      'pauseTitle': fa.pauseTitle,
-      'pauseResume': fa.pauseResume,
-      'pauseQuit': fa.pauseQuit,
-      'languageNameEn': fa.languageNameEn,
-      'languageNameDe': fa.languageNameDe,
-      'languageNameFa': fa.languageNameFa,
-      'languageNameCkb': fa.languageNameCkb,
-    };
+    // Every message the eight screens use, rendered through the ONE table
+    // test/l10n/text_expansion_matrix_test.dart also lays out. A second copy
+    // here would let a key be measured in one place and rendered in the other.
+    final strings = renderAllStrings(fa, SupportedLocale.fa);
 
     // The literal values on the reference screens, each formatted through
     // LocaleNumbers exactly as the app would. A Latin digit surviving into an
