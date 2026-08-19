@@ -65,7 +65,9 @@ void Function() installErrorHandlers() {
       // This IS the top of the reporting chain, so a failure here has nothing
       // above it to be reported to. Rethrowing would turn one crash into two.
       // ignore: swallowed_catch
-    } on Object catch (_) {}
+    } on Object catch (_) {
+      // Nothing to do, for the reason immediately above.
+    }
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -76,7 +78,9 @@ void Function() installErrorHandlers() {
       // Same reason as above: the top of the reporting chain has nothing
       // above it to report to.
       // ignore: swallowed_catch
-    } on Object catch (_) {}
+    } on Object catch (_) {
+      // Nothing to do, for the reason immediately above.
+    }
     // Unconditionally true. Returning false re-throws into the engine and
     // terminates the isolate, which is the opposite of a crash net.
     return true;
