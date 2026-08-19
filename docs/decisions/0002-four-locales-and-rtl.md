@@ -81,9 +81,23 @@ the nearest script neighbour.
 
 ### `fa` is the numeral base for both RTL locales, and `ar` is not
 
-Measured: `intl` 0.20.2's `numberFormatSymbols` has **no `ckb` entry**, so a
-`NumberFormat` for Sorani falls back to Latin digits **silently**. A Sorani UI
-full of `1480` reads as untranslated, not as a cosmetic slip.
+Measured: `intl` 0.20.2's `numberFormatSymbols` has **no `ckb` entry**.
+
+**And this measurement corrects the risk as it was written down.** The expected
+failure was a *silent* fallback to Latin digits. What actually happens is
+louder and worse:
+
+```
+NumberFormat.decimalPattern('ckb')   → ArgumentError: Invalid locale "ckb"
+Intl.defaultLocale = 'ckb';
+NumberFormat.decimalPattern()        → ArgumentError: Invalid locale "ckb"
+```
+
+Both the explicit and the ambient path **throw**. So without the pin, *any*
+number formatted under Sorani crashes the app — a score, a clock, a Schulte
+tile — rather than merely rendering `1480` where `۱٬۴۸۰` belongs. The fix is the
+same either way, but it is load-bearing against a crash rather than against
+wrong glyphs, and `test/l10n/intl_symbol_coverage_test.dart` pins both paths.
 
 `fa`'s symbols are the Eastern Arabic block — `ZERO_DIGIT` U+06F0,
 `DECIMAL_SEP` U+066B, `GROUP_SEP` U+066C. `ar`'s CLDR default is **Latin**
