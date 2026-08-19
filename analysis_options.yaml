@@ -1,28 +1,108 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
+# =============================================================================
+# MindForge analyzer configuration.
 #
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
+# Built on very_good_analysis, with the bug classes that otherwise fail
+# SILENTLY promoted from info to error. Every promotion below is a class where
+# the code compiles, the tests pass and the operation simply never happens.
+#
+# VERIFY IN THE SAME COMMIT THAT BUMPS THE SDK OR very_good_analysis:
+#   1. The pinned include filename must EXIST in the resolved package:
+#        ls ~/.pub-cache/hosted/pub.dev/very_good_analysis-*/lib/
+#      test/policy/lint_config_test.dart asserts it against pubspec.lock.
+#   2. Confirm a known violation still errors. Do not trust a green analyzer.
+# =============================================================================
 
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
+# Pin the VERSION-NUMBERED file, never the bare analysis_options.yaml — a
+# `pub upgrade` must not silently change what counts as an error. This must
+# match the very_good_analysis version resolved in pubspec.lock.
+include: package:very_good_analysis/analysis_options.10.3.0.yaml
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+# No `language:` block. VGA already sets strict-casts, strict-inference and
+# strict-raw-types. Restating them is config that drifts and then contradicts.
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+analyzer:
+  exclude:
+    # Generated code: not hand-owned, regenerated on every build. Linting it
+    # produces findings nobody can act on. MIRROR this list in coverage
+    # filtering or the coverage number lies upward.
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.drift.dart"
+    - "**/*.gen.dart"
+    # The gen-l10n output is committed source (l10n.yaml sets output-dir:
+    # lib/l10n) and is freshness-gated in CI, but it is not hand-written and
+    # must not be analyzed as if it were.
+    - "**/l10n/app_localizations*.dart"
+    - "**/generated_plugin_registrant.dart"
+
+  errors:
+    # --- Dropped Futures: an operation that silently never happens ----------
+    unawaited_futures: error
+    discarded_futures: error
+
+    # --- Swallowed failure --------------------------------------------------
+    empty_catches: error
+    avoid_catches_without_on_clauses: error
+    only_throw_errors: error
+    throw_in_finally: error
+
+    # --- Async + UI: the dead-context-after-await hazard --------------------
+    use_build_context_synchronously: error
+
+    # --- Resource leaks (VGA ships close_sinks at ignore; re-promoted) -------
+    cancel_subscriptions: error
+    close_sinks: error
+
+    # --- Type holes at dynamic boundaries -----------------------------------
+    avoid_dynamic_calls: error
+    always_declare_return_types: error
+    cast_nullable_to_non_nullable: error
+
+    # --- Exhaustiveness (enum / static-const cases only; a sealed switch is a
+    #     COMPILE error, which is why CI must build and not merely analyze) ---
+    exhaustive_cases: error
+
+    # --- Shipping hygiene ---------------------------------------------------
+    avoid_print: error
+    avoid_slow_async_io: error
+
+    # --- Public-API docs, kept at error deliberately ------------------------
+    # MindForge's engine seam — GameDefinition, BoardSnapshot, RunNotifier — is
+    # an API a second game author reads without reading its implementation, so
+    # the docs are a contract rather than decoration (dartdoc-conventions).
+    # Revisit only with a stated reason.
+    public_member_api_docs: error
+    dangling_library_doc_comments: error
+
+    # --- Deliberately NOT errors -------------------------------------------
+    deprecated_member_use: warning              # never block a hotfix on churn
+    deprecated_member_use_from_same_package: warning
+    invalid_annotation_target: ignore           # drift/freezed annotation noise
+    lines_longer_than_80_chars: ignore          # fires only on unsplittable
+                                                # strings and URLs — pure noise
+
+# No `linter: rules:` block. `analyzer: errors:` only RE-RANKS diagnostics VGA
+# already produces; it cannot enable a rule VGA leaves off. Adding one here
+# would have to be in MAP-consistent form — mixing `- rule` list items with
+# `rule: false` map entries is a parse error that silently disables analysis.
+
+# --- No analyzer plugin ------------------------------------------------------
+# riverpod_lint was configured as a first-party analysis_server_plugin
+# (`plugins: riverpod_lint: version: ^3.1.3`, resolving to 3.1.8) and VERIFIED
+# against a real violation on 2026-08-19: a ConsumerWidget handed straight to
+# runApp() with no ProviderScope ancestor. `flutter analyze --fatal-infos` and
+# `dart analyze` both reported only public_member_api_docs — no
+# missing_provider_scope, no riverpod diagnostic of any kind.
+#
+# A configured plugin that emits nothing is a false safety signal, so it was
+# removed rather than left in place looking like coverage. Re-attempt on a
+# future analyzer or riverpod_lint bump, and re-run the same probe before
+# trusting it. custom_lint is not an alternative: it is the legacy plugin
+# system and is deprecation-bound.
+
+# --- Formatter ---------------------------------------------------------------
+# Tall style is selected by the language version in pubspec.yaml, not here.
+# `dart format` is the sole whitespace authority; this key only tunes it.
+formatter:
+  trailing_commas: preserve   # a trailing comma forces a vertical split, so a
+                              # widget-tree diff stays one argument per line
