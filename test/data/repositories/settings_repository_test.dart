@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/supported_locale.dart';
@@ -6,7 +7,6 @@ import 'package:mindforge/data/daos/settings_dao.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/repositories/settings_repository.dart';
-import 'package:test/test.dart';
 
 import '../../support/fake_log_sink.dart';
 import '../../support/test_database.dart';

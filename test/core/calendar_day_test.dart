@@ -1,6 +1,6 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:mindforge/core/calendar_day.dart';
-import 'package:test/test.dart';
 
 void main() {
   group('CalendarDay', () {

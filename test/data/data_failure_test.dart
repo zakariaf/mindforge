@@ -1,5 +1,5 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/data/data_failure.dart';
-import 'package:test/test.dart';
 
 /// The frozen code list. Renaming one is a deliberate edit here, because these
 /// strings appear in logs and in every call site's switch.

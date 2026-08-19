@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/supported_locale.dart';
-import 'package:test/test.dart';
 
 void main() {
   group('AppSettings', () {

@@ -1,6 +1,6 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/failure.dart';
 import 'package:mindforge/core/result.dart';
-import 'package:test/test.dart';
 
 final class _Boom extends Failure {
   const _Boom();

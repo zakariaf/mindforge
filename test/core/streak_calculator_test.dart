@@ -1,7 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/streak_calculator.dart';
 import 'package:mindforge/core/streak_status.dart';
-import 'package:test/test.dart';
 
 const _calculator = StreakCalculator();
 

@@ -1,9 +1,9 @@
 import 'package:clock/clock.dart';
 import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/data/db/connection.dart';
-import 'package:test/test.dart';
 
 /// A minimally valid `runs` insert, so each test below can violate exactly one
 /// constraint and prove SQLite is what rejects it.

@@ -1,7 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/run_record.dart';
 import 'package:mindforge/core/score_format.dart';
-import 'package:test/test.dart';
 
 RunRecord _record({
   String id = 'run-1',

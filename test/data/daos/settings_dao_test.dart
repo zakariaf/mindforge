@@ -1,7 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/data/daos/settings_dao.dart';
 import 'package:mindforge/data/db/app_database.dart';
-import 'package:test/test.dart';
 
 import '../../support/test_database.dart';
 

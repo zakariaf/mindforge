@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/run_metric.dart';
 import 'package:mindforge/core/score_format.dart';
-import 'package:test/test.dart';
 
 void main() {
   group('RunMetric', () {

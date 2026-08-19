@@ -34,7 +34,20 @@ environment:
 # that list is a red test, not a silent `pub get`.
 dependencies:
   clock: ^1.1.2
-  drift: ^2.34.3
+  # PINNED: drift_dev 2.34.0's schema tooling does not compile against drift
+  # 2.34.1+ — verifier_common.dart references GeneratedDatabase.allSchemaEntities
+  # and .schema, which drift's drift3_preview changed. Measured 2026-08-19:
+  # `dart run drift_dev schema dump` fails to build on drift 2.34.2 and 2.34.3
+  # and succeeds on 2.34.0.
+  #
+  # The obvious fix — upgrade drift_dev to 2.34.5 — is blocked from the other
+  # side: drift_dev >= 2.34.1+1 needs analyzer ^13, while riverpod 3.4.2's
+  # regular dependency on package:test drags in analyzer >=8 <13. CLAUDE.md
+  # mandates Riverpod 3.x, so the graph cannot be resolved that way.
+  #
+  # Revisit when riverpod drops its package:test dependency, or when drift_dev
+  # supports analyzer 12. Then this becomes a caret range again.
+  drift: '>=2.34.0 <2.34.1'
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -54,7 +67,6 @@ dev_dependencies:
   drift_dev: ^2.34.0
   flutter_test:
     sdk: flutter
-  test: ^1.31.0
   very_good_analysis: ^10.3.0
 
 # For information on the generic Dart part of this file, see the
