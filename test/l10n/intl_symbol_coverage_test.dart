@@ -33,7 +33,7 @@ void main() {
       Intl.defaultLocale = 'ckb';
       addTearDown(() => Intl.defaultLocale = previous);
 
-      expect(() => NumberFormat.decimalPattern(), throwsArgumentError);
+      expect(NumberFormat.decimalPattern, throwsArgumentError);
     });
   });
 
