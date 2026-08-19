@@ -126,7 +126,7 @@ void main() {
       lookupError,
       isNotNull,
       reason:
-          "DefaultMaterialLocalizations.delegate.isSupported is "
+          'DefaultMaterialLocalizations.delegate.isSupported is '
           "locale.languageCode == 'en', and Localizations._loadAll filters "
           'delegates by isSupported. Under fa with only the default delegates '
           'there is no MaterialLocalizations in scope at all',

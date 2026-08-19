@@ -64,7 +64,7 @@ const List<Locale> _kHarnessLocales = <Locale>[
   Locale('ckb'),
 ];
 
-/// Sizes the test viewport to [device] and restores it afterwards.
+/// Sizes the test viewport to `device` and restores it afterwards.
 void useDevice(WidgetTester tester, Device device) {
   final view = tester.view
     ..devicePixelRatio = device.dpr
@@ -73,7 +73,7 @@ void useDevice(WidgetTester tester, Device device) {
   addTearDown(view.reset);
 }
 
-/// Pumps [child] inside the app shell a real screen sees.
+/// Pumps a widget inside the app shell a real screen sees.
 extension PumpApp on WidgetTester {
   /// Pumps [child] under a `MaterialApp` carrying [theme].
   ///
