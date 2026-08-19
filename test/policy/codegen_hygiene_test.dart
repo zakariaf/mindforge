@@ -9,7 +9,8 @@ void main() {
       expect(
         buildYaml.existsSync(),
         isTrue,
-        reason: 'without a generate_for: glob, one edit anywhere regenerates '
+        reason:
+            'without a generate_for: glob, one edit anywhere regenerates '
             'the whole tree (codegen-and-toolchain rule 2)',
       );
 
@@ -18,7 +19,8 @@ void main() {
       expect(
         RegExp(r'generate_for:\s*\n\s*-\s*lib/data/\*\*').hasMatch(source),
         isTrue,
-        reason: 'drift_dev must be scoped to lib/data/**, the only directory '
+        reason:
+            'drift_dev must be scoped to lib/data/**, the only directory '
             'allowed to hold a drift symbol',
       );
     });
@@ -47,22 +49,26 @@ void main() {
       );
     });
 
-    test('the CI workflow diffs the drift outputs and the schema snapshots',
-        () {
-      final workflow = File('.github/workflows/ci.yml').readAsStringSync();
+    test(
+      'the CI workflow diffs the drift outputs and the schema snapshots',
+      () {
+        final workflow = File('.github/workflows/ci.yml').readAsStringSync();
 
-      expect(
-        workflow,
-        contains("'*.drift.dart'"),
-        reason: 'a committed-generated-code policy without its freshness gate '
-            'is not a policy',
-      );
-      expect(
-        workflow,
-        contains('drift_schemas/'),
-        reason: 'the committed v1 snapshot must match the live schema, or the '
-            'migration harness is verifying against a stale record',
-      );
-    });
+        expect(
+          workflow,
+          contains("'*.drift.dart'"),
+          reason:
+              'a committed-generated-code policy without its freshness gate '
+              'is not a policy',
+        );
+        expect(
+          workflow,
+          contains('drift_schemas/'),
+          reason:
+              'the committed v1 snapshot must match the live schema, or the '
+              'migration harness is verifying against a stale record',
+        );
+      },
+    );
   });
 }

@@ -21,11 +21,20 @@ void main() {
     });
 
     test('tryParse is exact, total and never throws', () {
-      for (final tag in <String>['ar', 'EN', 'fa-IR', '', '۱۲', 'en_US', ' en']) {
+      for (final tag in <String>[
+        'ar',
+        'EN',
+        'fa-IR',
+        '',
+        '۱۲',
+        'en_US',
+        ' en',
+      ]) {
         expect(
           SupportedLocale.tryParse(tag),
           isNull,
-          reason: 'the parse is exact — $tag is not a shipped tag. A near miss '
+          reason:
+              'the parse is exact — $tag is not a shipped tag. A near miss '
               'that resolved would silently give a user the wrong language',
         );
       }

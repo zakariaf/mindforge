@@ -36,7 +36,8 @@ void main() {
       expect(
         identical((mapped as Err<int, _Boom>).failure, failure),
         isTrue,
-        reason: 'reconstructing the failure would discard whatever typed '
+        reason:
+            'reconstructing the failure would discard whatever typed '
             'params the original carried',
       );
     });
