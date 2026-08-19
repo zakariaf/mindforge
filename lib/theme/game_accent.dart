@@ -47,10 +47,37 @@ extension GameAccentTokens on SunburstColors {
     (GameAccent.schulte, GameColourRole.deep) => gameSchulteDeep,
   };
 
-  /// The label colour to draw on [accent] in [role].
+  /// The label colour to draw on [accent] in [role], or **`null` when that
+  /// surface carries no compliant label at all**.
   ///
-  /// Both accents are light enough to take ink, and the `@contrast`
-  /// declarations in `sunburst_colors.dart` pin that at 4.5:1. Resolved here
-  /// rather than picked at a call site, for the same reason `answerLabel` is.
-  Color accentLabelFor(GameAccent accent, GameColourRole role) => textPrimary;
+  /// Nullable on purpose, and it is not a hedge. Measured:
+  ///
+  /// | surface | ink | paper |
+  /// |---|---|---|
+  /// | `gameStroop` (coral) | **5.49:1** | 3.10:1 |
+  /// | `gameStroopDeep` (coralDeep) | 3.90:1 | 3.94:1 |
+  /// | `gameSchulte` (turquoise) | **7.27:1** | 2.34:1 |
+  /// | `gameSchulteDeep` (turquoiseDeep) | **5.14:1** | 3.29:1 |
+  ///
+  /// `gameStroopDeep` clears 4.5:1 with **neither**. It is a pressed face, a
+  /// shadow edge and the dark half of a stripe — never a text surface — so this
+  /// returns `null` rather than handing back a colour that fails the floor. A
+  /// caller that needs a label there is asking the wrong question and should
+  /// draw on [GameColourRole.base].
+  ///
+  /// An earlier version returned `textPrimary` unconditionally and its doc
+  /// claimed a `@contrast` declaration that did not exist, so the gate and the
+  /// contrast test both passed over the one pair that fails.
+  /// `game_accent_test.dart` now COMPUTES the ratio for every pair instead of
+  /// trusting a declaration list, which is what makes an omission impossible
+  /// rather than merely unlikely.
+  Color? accentLabelFor(GameAccent accent, GameColourRole role) => switch ((
+    accent,
+    role,
+  )) {
+    (GameAccent.stroop, GameColourRole.base) => textPrimary,
+    (GameAccent.stroop, GameColourRole.deep) => null,
+    (GameAccent.schulte, GameColourRole.base) => textPrimary,
+    (GameAccent.schulte, GameColourRole.deep) => textPrimary,
+  };
 }

@@ -265,7 +265,9 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   // @contrast surfaceRaised playRed     4.5  paper label, default palette
   // @contrast surfaceRaised playBlue    4.5  paper label, default palette
   // @contrast surfaceRaised playGreen   4.5  paper label, default palette
-  // @contrast textInvert playPurple     4.5  cream label, Blitz palette
+  // @contrast surfaceRaised playPurple   4.5  paper label, Blitz palette
+  //   (was textInvert: answerLabel returns paper for every answer except
+  //    yellow, so the cream pairing was a row the code never renders)
   // @contrast surfaceRaised playOrange  4.5  paper label, Blitz palette
   // @contrast surfaceRaised cbPink      4.5  paper label, colour-blind palette
   // @contrast focusRing surface         3.0  focus ring is a UI component (SC 1.4.11)

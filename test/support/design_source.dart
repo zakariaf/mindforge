@@ -19,9 +19,16 @@ abstract final class DesignSource {
   static String get _rootBlock {
     final source = _systemHtml.readAsStringSync();
     final start = source.indexOf(':root{');
+    // Checked BEFORE the second indexOf: passing -1 as its start throws a
+    // RangeError, so the guard below would never run and a reformatted
+    // system.html would fail every theme test with an opaque range message
+    // instead of this one.
+    if (start == -1) {
+      throw StateError('system.html has no :root{ block to parse');
+    }
     final end = source.indexOf('}', start);
-    if (start == -1 || end == -1) {
-      throw StateError('system.html has no :root{} block to parse');
+    if (end == -1) {
+      throw StateError('system.html :root{ block is not closed');
     }
     return source.substring(start, end);
   }

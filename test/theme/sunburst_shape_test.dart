@@ -17,28 +17,27 @@ void main() {
     });
 
     test('the radius scale matches --r-*', () {
+      // Read from the design file, one property at a time. An earlier version
+      // copied the CSS line into the test as a literal and justified it with a
+      // claim that cssScalar could not split the shared line — measured, it
+      // can. As written before, editing a radius in system.html left this test
+      // green while the Dart silently diverged from the authority, which is
+      // exactly the drift this whole apparatus exists to catch.
       final expected = <String, Radius>{
-        '--r-sm': SunburstShape.sunburstPop.radiusSm,
-        '--r-md': SunburstShape.sunburstPop.radiusMd,
-        '--r-lg': SunburstShape.sunburstPop.radiusLg,
-        '--r-xl': SunburstShape.sunburstPop.radiusXl,
-        '--r-pill': SunburstShape.sunburstPop.radiusPill,
+        '--r-sm': shape.radiusSm,
+        '--r-md': shape.radiusMd,
+        '--r-lg': shape.radiusLg,
+        '--r-xl': shape.radiusXl,
+        '--r-pill': shape.radiusPill,
       };
 
-      // The five --r-* properties share one CSS line, so cssScalar cannot read
-      // them individually; the declared values are asserted against the numbers
-      // written in that line instead.
-      const cssLine =
-          '--r-sm:10px; --r-md:16px; --r-lg:22px; --r-xl:28px; '
-          '--r-pill:999px';
-
-      expected.forEach((name, radius) {
+      for (final entry in expected.entries) {
         expect(
-          cssLine,
-          contains('$name:${radius.x.toInt()}px'),
-          reason: '$name and its Dart radius disagree',
+          DesignSource.cssScalar(entry.key),
+          '${entry.value.x.toInt()}px',
+          reason: '${entry.key} and its Dart radius disagree',
         );
-      });
+      }
     });
 
     test('the four elevations are the hard offsets --sh-1..4', () {
