@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Golden failure artefacts. flutter_test writes master/test/diff images beside
+# the suite when a golden comparison fails; they are debugging output for the
+# run that produced them and are meaningless afterwards. A red-proof run
+# committed a set of these once.
+**/failures/

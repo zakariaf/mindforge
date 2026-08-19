@@ -10,6 +10,7 @@ import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
+import '../support/golden_tolerance.dart';
 import '../support/harness.dart';
 import '../support/load_app_fonts.dart';
 import '../support/locale_cases.dart';
@@ -34,7 +35,13 @@ import '../support/locale_cases.dart';
 /// --update-goldens`, in a commit whose title says so. There is no
 /// `--update-goldens` step in CI.
 void main() {
-  setUpAll(loadAppFonts);
+  setUpAll(() async {
+    await loadAppFonts();
+    // A few pixels of anti-aliasing separate a Mac from a GitHub runner. See
+    // golden_tolerance.dart for the measured noise floor and the measured
+    // signal these six files exist to catch.
+    installTolerantGoldenComparator();
+  });
 
   for (final localeCase in LocaleCase.rightToLeft) {
     final tag = localeCase.tag;
