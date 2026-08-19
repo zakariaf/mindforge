@@ -61,10 +61,13 @@ final class GameStats {
   double? get accuracy =>
       answeredCount == 0 ? null : correctCount / answeredCount;
 
-  /// The mean time to answer, or `null` when nothing was answered.
-  Duration? get averageReaction => answeredCount == 0
-      ? null
-      : Duration(milliseconds: totalReactionMs ~/ answeredCount);
+  /// The mean time to answer **in milliseconds**, or `null` when nothing was
+  /// answered.
+  ///
+  /// An `int` rather than a `Duration`, and the unit is in the name, matching
+  /// [timeTrainedMs] and [totalReactionMs]. `640ms` is a render projection.
+  int? get averageReactionMs =>
+      answeredCount == 0 ? null : totalReactionMs ~/ answeredCount;
 
   @override
   bool operator ==(Object other) =>

@@ -96,13 +96,13 @@ void main() {
       // exhaustive tree. lib/data/db/tables/ is therefore fine, while a new
       // top-level lib/services/ is not. What must never happen is a directory
       // sitting outside the map entirely — that is a bucket nobody decided on.
+      bool sitsInsideANamedDirectory(String path) => expected
+          .where((named) => path == named || path.startsWith('$named/'))
+          .isNotEmpty;
+
       final orphans =
           actualLibDirectories
-              .where(
-                (path) => !expected.any(
-                  (named) => path == named || path.startsWith('$named/'),
-                ),
-              )
+              .where((path) => !sitsInsideANamedDirectory(path))
               .toList()
             ..sort();
 

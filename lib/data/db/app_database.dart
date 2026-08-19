@@ -25,9 +25,9 @@ class AppDatabase extends _$AppDatabase {
   /// Opens the database over [e], stamping the seeded settings row from
   /// [_clock].
   ///
-  /// The clock is injected rather than read from the wall: `DateTime.now()` in
-  /// this layer would be the one call site that makes a fresh install's
-  /// timestamps untestable, and `check-determinism-bans.sh` bans it outright.
+  /// The clock is injected rather than read from the wall. Reading the wall
+  /// clock here would be the one call site that makes a fresh install's
+  /// timestamps untestable, and the determinism gate bans it outright.
   AppDatabase(super.e, {this._clock = const Clock()});
 
   /// Where the seeded settings row's timestamps come from.

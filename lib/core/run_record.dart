@@ -102,10 +102,14 @@ final class RunRecord {
   double? get accuracy =>
       answeredCount == 0 ? null : correctCount / answeredCount;
 
-  /// The mean time to answer, or `null` when nothing was answered.
-  Duration? get averageReaction => answeredCount == 0
-      ? null
-      : Duration(milliseconds: totalReactionMs ~/ answeredCount);
+  /// The mean time to answer **in milliseconds**, or `null` when nothing was
+  /// answered.
+  ///
+  /// An `int` rather than a `Duration`, and the unit is in the name, for the
+  /// same reason [durationMs] and [totalReactionMs] are: `lib/core/` is the
+  /// integer layer, and `640ms` is a render projection E04 owns.
+  int? get averageReactionMs =>
+      answeredCount == 0 ? null : totalReactionMs ~/ answeredCount;
 
   @override
   bool operator ==(Object other) =>

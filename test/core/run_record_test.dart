@@ -44,18 +44,20 @@ void main() {
       );
     });
 
-    test('averageReaction is the total over the answered count', () {
+    test('averageReactionMs is the total over the answered count', () {
       expect(
-        _record().averageReaction,
-        const Duration(milliseconds: 640),
+        _record().averageReactionMs,
+        640,
         reason:
             '32000ms over 50 answered. The sum is stored and the average '
-            'is derived, so no rounded double ever reaches a column',
+            'is derived, so no rounded double ever reaches a column. An int in '
+            'named milliseconds rather than a Duration: lib/core/ is the '
+            'integer layer, and 640ms is a render projection E04 owns',
       );
     });
 
-    test('averageReaction with nothing answered is null', () {
-      expect(_record(correctCount: 0, wrongCount: 0).averageReaction, isNull);
+    test('averageReactionMs with nothing answered is null', () {
+      expect(_record(correctCount: 0, wrongCount: 0).averageReactionMs, isNull);
     });
 
     test('equality is identity on id', () {
