@@ -30,7 +30,7 @@ void main() {
     // Numbers arrive PRE-FORMATTED. gen-l10n interpolates an int placeholder
     // with Dart toString(), which is Latin digits in every locale — measured,
     // streakDays rendered "4" instead of "۴" before this changed.
-    String n(int value) => LocaleNumbers.count(value, SupportedLocale.fa);
+    String n(int value) => const LocaleNumbers(SupportedLocale.fa).count(value);
 
     // Every message the eight screens use, with the sample arguments declared
     // in app.html's data-l10n-args. Keys with no arguments are rendered
@@ -96,7 +96,7 @@ void main() {
       'durationHoursMinutes': fa.durationHoursMinutes(n(12), n(3)),
       'lastNRuns': fa.lastNRuns(7, n(7)),
       'chartSubtitle': fa.chartSubtitle(
-        LocaleNumbers.count(1480, SupportedLocale.fa),
+        const LocaleNumbers(SupportedLocale.fa).count(1480),
         fa.gameStroopRushName,
       ),
       'chartOldest': fa.chartOldest,
@@ -124,7 +124,9 @@ void main() {
     // The literal values on the reference screens, each formatted through
     // LocaleNumbers exactly as the app would. A Latin digit surviving into an
     // RTL screenshot means one of these was missed.
-    const fa_ = SupportedLocale.fa;
+    // One formatter, bound once: LocaleNumbers is locale-bound so the
+    // locale cannot be threaded wrong on one line out of forty.
+    const fmt = LocaleNumbers(SupportedLocale.fa);
     final numbers = <String, String>{
       // Every distinct data-num value in app.html's eight figures. The Schulte
       // TILES are in here because the tiles ARE the numbers: a Latin digit on
@@ -167,12 +169,12 @@ void main() {
       '1480': n(1480),
       '1,480': n(1480),
       '1,240': n(1240),
-      '18.6s': '${LocaleNumbers.seconds(18600, fa_)}${fa.unitSeconds}',
-      '0:23': LocaleNumbers.clock(23000, fa_),
+      '18.6s': '${fmt.seconds(18600)}${fa.unitSeconds}',
+      '0:23': fmt.clock(23000),
       '0:12.4':
-          '${LocaleNumbers.clock(12000, fa_)}'
-          '${LocaleNumbers.seconds(400, fa_).substring(1)}',
-      '92%': LocaleNumbers.percent(0.92, fa_),
+          '${fmt.clock(12000)}'
+          '${fmt.seconds(400).substring(1)}',
+      '92%': fmt.percent(0.92),
     };
 
     final file = File('design/sunburst-pop/rtl/strings-fa.json')

@@ -1,20 +1,47 @@
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mindforge/core/supported_locale.dart';
 
 /// The **one** `NumberFormat` construction site in `lib/`.
 ///
 /// Every score, clock, tile, percentage and duration in MindForge is formatted
-/// here. `test/policy/canonical_storage_test.dart` proves `NumberFormat` cannot
-/// be reached from `lib/data/` or `lib/core/`, and
+/// through an instance of this class. `test/policy/canonical_storage_test.dart`
+/// proves `NumberFormat` cannot be reached from `lib/data/` or `lib/core/`, and
 /// `test/policy/number_format_sites_test.dart` proves it is not constructed
 /// anywhere else in `lib/` either.
+///
+/// **It is bound to a locale rather than taking one per call.** A Schulte board
+/// formats twenty-five tiles in one paint and a HUD formats a clock every
+/// frame; threading the locale through each call is twenty-five chances to
+/// thread the wrong one. Widgets get an instance from [LocaleNumbers.of], code
+/// with no `BuildContext` gets one from `localeNumbersProvider` in
+/// `l10n_providers.dart`, and neither picks a locale of its own.
 ///
 /// **The numbering system is pinned per locale, explicitly.** That is not
 /// belt-and-braces: measured on `intl` 0.20.2, both
 /// `NumberFormat.decimalPattern('ckb')` and the ambient-locale form **throw**
 /// `ArgumentError: Invalid locale "ckb"`. Without the pin, any number formatted
 /// under Sorani would crash the app.
-abstract final class LocaleNumbers {
+@immutable
+final class LocaleNumbers {
+  /// Formats numbers for [locale].
+  const LocaleNumbers(this.locale);
+
+  /// The formatter for the locale [context] resolved to.
+  ///
+  /// The widget-tier counterpart of `localeNumbersProvider`, and the same
+  /// shape as `AppLocalizations.of`. An unparseable tag falls back to `en`
+  /// rather than throwing: `supportedLocales` cannot deliver one, so reaching
+  /// the fallback would mean the delegate list was rewired — a visibly wrong
+  /// language beats a crash in a number formatter.
+  factory LocaleNumbers.of(BuildContext context) => LocaleNumbers(
+    SupportedLocale.tryParse(Localizations.localeOf(context).languageCode) ??
+        SupportedLocale.en,
+  );
+
+  /// The locale every method here formats for.
+  final SupportedLocale locale;
+
   /// The locale whose CLDR symbol data actually formats [locale].
   ///
   /// `ckb` borrows `fa` because `intl` ships no Sorani symbols. `fa` and not
@@ -27,55 +54,63 @@ abstract final class LocaleNumbers {
     SupportedLocale.ckb => 'fa',
   };
 
+  String get _symbols => symbolLocaleFor(locale);
+
   /// A whole number, grouped for [locale].
   ///
   /// `1480` renders `1,480` in `en`, `1.480` in `de`, and `۱٬۴۸۰` in both `fa`
   /// and `ckb` — Eastern Arabic digits U+06F0–U+06F9 with the U+066C group
   /// separator.
-  static String count(int value, SupportedLocale locale) =>
-      NumberFormat.decimalPattern(symbolLocaleFor(locale)).format(value);
+  String count(int value) =>
+      NumberFormat.decimalPattern(_symbols).format(value);
 
   /// A percentage from a ratio in `[0.0, 1.0]`, with no fractional part.
   ///
   /// `0.92` renders `92%` in `en`. The percent sign is placed by the locale's
   /// own pattern, not concatenated — in `fa` it goes on the other side.
-  static String percent(double ratio, SupportedLocale locale) =>
-      NumberFormat.decimalPercentPattern(
-        locale: symbolLocaleFor(locale),
-        decimalDigits: 0,
-      ).format(ratio);
+  String percent(double ratio) => NumberFormat.decimalPercentPattern(
+    locale: _symbols,
+    decimalDigits: 0,
+  ).format(ratio);
 
   /// A duration in milliseconds as seconds with one decimal, e.g. `18.6`.
   ///
   /// The unit marker is **not** included: `unitMilliseconds` and the seconds
   /// suffix are separate ARB keys rendered as their own runs, because a value
   /// hand-glued to its unit is what breaks in RTL.
-  static String seconds(int milliseconds, SupportedLocale locale) {
-    final format = NumberFormat.decimalPatternDigits(
-      locale: symbolLocaleFor(locale),
-      decimalDigits: 1,
-    );
-    return format.format(milliseconds / 1000);
-  }
+  String seconds(int milliseconds) => NumberFormat.decimalPatternDigits(
+    locale: _symbols,
+    decimalDigits: 1,
+  ).format(milliseconds / 1000);
 
   /// A clock as `m:ss`, e.g. `0:23`, with digits in [locale]'s numbering
   /// system.
   ///
   /// The colon is a literal because it is a clock separator rather than a
   /// number, and both Persian and Sorani use it.
-  static String clock(int milliseconds, SupportedLocale locale) {
+  String clock(int milliseconds) {
     final totalSeconds = milliseconds ~/ 1000;
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
 
     final digits = NumberFormat.decimalPatternDigits(
-      locale: symbolLocaleFor(locale),
+      locale: _symbols,
       decimalDigits: 0,
     )..turnOffGrouping();
 
     return '${digits.format(minutes)}:'
         '${seconds < 10 ? digits.format(0) : ''}${digits.format(seconds)}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is LocaleNumbers && other.locale == locale;
+
+  @override
+  int get hashCode => locale.hashCode;
+
+  @override
+  String toString() => 'LocaleNumbers(${locale.tag})';
 }
 
 /// Converts any localized digits back to ASCII.

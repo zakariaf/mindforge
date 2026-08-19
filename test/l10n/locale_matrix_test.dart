@@ -52,7 +52,7 @@ void main() {
           localeCase,
         );
 
-        final formatted = LocaleNumbers.count(4, localeCase.locale);
+        final formatted = LocaleNumbers(localeCase.locale).count(4);
         final rendered = l10n.streakDays(4, formatted);
 
         expect(rendered, contains(formatted));
@@ -82,7 +82,7 @@ void main() {
 
         // Numbers arrive PRE-FORMATTED, through LocaleNumbers. See the
         // NUMERALS note on those keys in the ARB.
-        String f(int v) => LocaleNumbers.count(v, localeCase.locale);
+        String f(int v) => LocaleNumbers(localeCase.locale).count(v);
         final three = f(3);
         final four = f(4);
         final six = f(6);
@@ -139,7 +139,7 @@ void main() {
       });
 
       test('numbers render in the right digit system', () {
-        final rendered = LocaleNumbers.count(1480, localeCase.locale);
+        final rendered = LocaleNumbers(localeCase.locale).count(1480);
 
         if (localeCase.usesEasternArabicNumerals) {
           expect(rendered, '۱٬۴۸۰');

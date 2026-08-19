@@ -20,11 +20,11 @@ void main() {
 
   group('count', () {
     test('groups 1480 the way each locale does', () {
-      expect(LocaleNumbers.count(1480, SupportedLocale.en), '1,480');
-      expect(LocaleNumbers.count(1480, SupportedLocale.de), '1.480');
-      expect(LocaleNumbers.count(1480, SupportedLocale.fa), '۱٬۴۸۰');
+      expect(const LocaleNumbers(SupportedLocale.en).count(1480), '1,480');
+      expect(const LocaleNumbers(SupportedLocale.de).count(1480), '1.480');
+      expect(const LocaleNumbers(SupportedLocale.fa).count(1480), '۱٬۴۸۰');
       expect(
-        LocaleNumbers.count(1480, SupportedLocale.ckb),
+        const LocaleNumbers(SupportedLocale.ckb).count(1480),
         '۱٬۴۸۰',
         reason: 'Sorani renders the same Eastern Arabic digits as Persian',
       );
@@ -37,7 +37,7 @@ void main() {
         SupportedLocale.fa,
         SupportedLocale.ckb,
       ]) {
-        final rendered = LocaleNumbers.count(4560, locale);
+        final rendered = LocaleNumbers(locale).count(4560);
 
         for (final rune in rendered.runes) {
           final isArabicIndic = rune >= 0x0660 && rune <= 0x0669;
@@ -56,7 +56,7 @@ void main() {
       expect(
         List.generate(
           5,
-          (i) => LocaleNumbers.count(i + 21, SupportedLocale.fa),
+          (i) => const LocaleNumbers(SupportedLocale.fa).count(i + 21),
         ),
         <String>['۲۱', '۲۲', '۲۳', '۲۴', '۲۵'],
       );
@@ -65,18 +65,18 @@ void main() {
 
   group('percent', () {
     test('places the sign by the locale pattern, never by concatenation', () {
-      expect(LocaleNumbers.percent(0.92, SupportedLocale.en), '92%');
+      expect(const LocaleNumbers(SupportedLocale.en).percent(0.92), '92%');
 
       // German puts a NON-BREAKING space (U+00A0) before the sign, not a plain
       // one. Asserting the codepoint rather than eyeballing the string is the
       // point: a hand-concatenated '92' + '%' would produce neither, and would
       // also let the number wrap away from its sign at a line break.
       expect(
-        LocaleNumbers.percent(0.92, SupportedLocale.de),
+        const LocaleNumbers(SupportedLocale.de).percent(0.92),
         '92\u00A0%',
       );
       expect(
-        LocaleNumbers.percent(0.92, SupportedLocale.fa),
+        const LocaleNumbers(SupportedLocale.fa).percent(0.92),
         contains('۹۲'),
         reason: 'the digits are Eastern Arabic; the sign placement is CLDRs',
       );
@@ -85,22 +85,22 @@ void main() {
 
   group('seconds and clock', () {
     test('seconds renders one decimal with no unit glued on', () {
-      expect(LocaleNumbers.seconds(18600, SupportedLocale.en), '18.6');
-      expect(LocaleNumbers.seconds(18600, SupportedLocale.de), '18,6');
-      expect(LocaleNumbers.seconds(18600, SupportedLocale.fa), '۱۸٫۶');
+      expect(const LocaleNumbers(SupportedLocale.en).seconds(18600), '18.6');
+      expect(const LocaleNumbers(SupportedLocale.de).seconds(18600), '18,6');
+      expect(const LocaleNumbers(SupportedLocale.fa).seconds(18600), '۱۸٫۶');
     });
 
     test('clock pads the seconds and localises the digits', () {
-      expect(LocaleNumbers.clock(23000, SupportedLocale.en), '0:23');
-      expect(LocaleNumbers.clock(65000, SupportedLocale.en), '1:05');
-      expect(LocaleNumbers.clock(23000, SupportedLocale.fa), '۰:۲۳');
-      expect(LocaleNumbers.clock(65000, SupportedLocale.ckb), '۱:۰۵');
+      expect(const LocaleNumbers(SupportedLocale.en).clock(23000), '0:23');
+      expect(const LocaleNumbers(SupportedLocale.en).clock(65000), '1:05');
+      expect(const LocaleNumbers(SupportedLocale.fa).clock(23000), '۰:۲۳');
+      expect(const LocaleNumbers(SupportedLocale.ckb).clock(65000), '۱:۰۵');
     });
 
     test('clock does not group the minutes', () {
       // A 100-minute run must read 100:00, not 1,00:00.
-      expect(LocaleNumbers.clock(6000000, SupportedLocale.en), '100:00');
-      expect(LocaleNumbers.clock(6000000, SupportedLocale.fa), '۱۰۰:۰۰');
+      expect(const LocaleNumbers(SupportedLocale.en).clock(6000000), '100:00');
+      expect(const LocaleNumbers(SupportedLocale.fa).clock(6000000), '۱۰۰:۰۰');
     });
   });
 
@@ -126,7 +126,7 @@ void main() {
       // through a formatter and back must equal what the store holds.
       for (final value in <int>[0, 7, 25, 1480, 9999]) {
         for (final locale in SupportedLocale.values) {
-          final rendered = LocaleNumbers.count(value, locale);
+          final rendered = LocaleNumbers(locale).count(value);
           final normalized = AsciiNumerals.normalize(
             rendered,
           ).replaceAll(RegExp('[^0-9]'), '');
