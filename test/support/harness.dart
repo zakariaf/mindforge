@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/theme/sunburst_theme.dart';
 
 /// A logical viewport a test can render at.
 ///
@@ -77,10 +78,9 @@ void useDevice(WidgetTester tester, Device device) {
 extension PumpApp on WidgetTester {
   /// Pumps [child] under a `MaterialApp` carrying [theme].
   ///
-  /// [theme] is **required**: `buildSunburstTheme()` does not exist until
-  /// T03.11, and a harness that called it would leave every earlier task's
-  /// tests uncompilable. T03.11 gives it a default in the same commit that
-  /// creates the function.
+  /// [theme] defaults to `buildSunburstTheme()`, the one theme the app ships.
+  /// A task testing a single extension in isolation passes an inline
+  /// `ThemeData(extensions: [...])` instead.
   ///
   /// There is deliberately **no `overrides` parameter yet**. Riverpod 3 does
   /// not export `Override` from `flutter_riverpod` — it lives behind
@@ -96,7 +96,7 @@ extension PumpApp on WidgetTester {
   /// exactly what hides a physical-side bug — and E04 removes the need for it.
   Future<void> pumpApp(
     Widget child, {
-    required ThemeData theme,
+    ThemeData? theme,
     Locale locale = const Locale('en'),
     TextDirection? textDirection,
     bool disableAnimations = false,
@@ -108,7 +108,7 @@ extension PumpApp on WidgetTester {
     return pumpWidget(
       ProviderScope(
         child: MaterialApp(
-          theme: theme,
+          theme: theme ?? buildSunburstTheme(),
           locale: locale,
           supportedLocales: _kHarnessLocales,
           home: Builder(
