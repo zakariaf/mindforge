@@ -1,0 +1,19 @@
+# Builder configuration.
+#
+# Every builder is fenced with a `generate_for:` glob. Without one, editing any
+# file in the package makes build_runner reconsider the whole tree, and a
+# generator that scans lib/ finds nothing to do far more often than it finds
+# something (codegen-and-toolchain rule 2).
+targets:
+  $default:
+    builders:
+      drift_dev:
+        # lib/data/ is the only directory allowed to hold a drift symbol
+        # (persistence-drift; check-drift-confinement.sh enforces it).
+        generate_for:
+          - lib/data/**
+        options:
+          # Generate a .drift.dart part beside each source file rather than one
+          # monolithic output, so a diff names the table that changed.
+          store_date_time_values_as_text: false
+          named_parameters: true

@@ -114,6 +114,17 @@ jobs:
             exit 1
           fi
 
+      - name: Check the schema snapshots are current
+        # The committed v1 snapshot must match the live schema, or the
+        # migration harness in test/data/migration/ verifies against a stale
+        # record and proves nothing.
+        run: |
+          dart run drift_dev schema dump lib/data/db/app_database.dart drift_schemas/
+          if ! git diff --exit-code -- drift_schemas/; then
+            echo "::error::The schema snapshot is stale. Run 'dart run drift_dev schema dump lib/data/db/app_database.dart drift_schemas/' and commit the result."
+            exit 1
+          fi
+
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
 
