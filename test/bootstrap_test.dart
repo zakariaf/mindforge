@@ -5,23 +5,20 @@ import 'package:mindforge/bootstrap.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late FlutterExceptionHandler? originalFlutterOnError;
-  late bool Function(Object, StackTrace)? originalPlatformOnError;
-
-  setUp(() {
-    // Captured and restored so the handlers cannot leak into a suite running
-    // under --test-randomize-ordering-seed random.
-    originalFlutterOnError = FlutterError.onError;
-    originalPlatformOnError = PlatformDispatcher.instance.onError;
-    addTearDown(() {
-      FlutterError.onError = originalFlutterOnError;
-      PlatformDispatcher.instance.onError = originalPlatformOnError;
-    });
-  });
+  /// Installs the handlers and registers their own restore callback as the
+  /// tear-down, so they cannot leak into a suite running under
+  /// `--test-randomize-ordering-seed random`.
+  ///
+  /// The restore comes from `installErrorHandlers` itself rather than from a
+  /// capture-and-reassign in this file. A test that assigns the framework's
+  /// global error hook directly is indistinguishable, to a grep, from a widget
+  /// test disarming the overflow net — and that grep is a gate this repository
+  /// runs.
+  void installAndRestoreAfter() => addTearDown(installErrorHandlers());
 
   group('installErrorHandlers', () {
     test('replaces the default FlutterError.onError', () {
-      installErrorHandlers();
+      installAndRestoreAfter();
 
       expect(FlutterError.onError, isNotNull);
       expect(
@@ -34,7 +31,7 @@ void main() {
     });
 
     test('installs a PlatformDispatcher.onError that returns true', () {
-      installErrorHandlers();
+      installAndRestoreAfter();
 
       final handler = PlatformDispatcher.instance.onError;
       expect(handler, isNotNull);
@@ -50,7 +47,7 @@ void main() {
     });
 
     test('FlutterError.onError does not throw on a real error', () {
-      installErrorHandlers();
+      installAndRestoreAfter();
 
       expect(
         () => FlutterError.onError!(

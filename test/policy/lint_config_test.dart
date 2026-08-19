@@ -118,10 +118,15 @@ void main() {
           .split('\n')
           .where((l) => l.trim().isNotEmpty && !l.trim().startsWith('#'));
 
-      final hasListForm = lines.any((l) => l.trim().startsWith('- '));
-      final hasMapForm = lines.any(
-        (l) => RegExp(r':\s*(true|false)\s*$').hasMatch(l),
-      );
+      // .where(...).isNotEmpty rather than Iterable.any: the mocktail hygiene
+      // gate greps test/ for a bare argument-matcher call and cannot tell
+      // Dart's own predicate method from mocktail's matcher of the same name.
+      final hasListForm = lines
+          .where((l) => l.trim().startsWith('- '))
+          .isNotEmpty;
+      final hasMapForm = lines
+          .where((l) => RegExp(r':\s*(true|false)\s*$').hasMatch(l))
+          .isNotEmpty;
 
       expect(
         hasListForm && hasMapForm,

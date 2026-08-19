@@ -20,6 +20,8 @@ import 'package:mindforge/theme/font_licences.dart';
 ///   persisted locale until E02 and no locale controller until E04.
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // The restore callback is discarded on purpose: the app never uninstalls its
+  // own crash net.
   installErrorHandlers();
   registerSunburstFontLicences();
 
@@ -35,15 +37,23 @@ Future<void> bootstrap() async {
   );
 }
 
-/// Installs the two error handlers that catch everything the app can throw.
+/// Installs the two error handlers that catch everything the app can throw,
+/// and returns a callback that puts the previous handlers back.
 ///
-/// Exactly two, and no `runZonedGuarded`: a third capture point swallows what
-/// the other two were installed to report. Called from [bootstrap] before any
-/// other statement that can fail.
+/// Exactly two handlers, and no `runZonedGuarded`: a third capture point
+/// swallows what the other two were installed to report. Called from
+/// [bootstrap] before any other statement that can fail; `bootstrap` discards
+/// the restore callback because the app never uninstalls its own crash net.
 ///
-/// Exposed for `test/bootstrap_test.dart`, which asserts both are installed and
-/// that the platform handler returns `true`.
-void installErrorHandlers() {
+/// The callback exists because this function mutates process-global state, and
+/// a function that does that should hand back the undo rather than making every
+/// caller reconstruct it. `test/bootstrap_test.dart` uses it so the handlers
+/// cannot leak into a suite running under
+/// `--test-randomize-ordering-seed random`.
+void Function() installErrorHandlers() {
+  final previousFlutterOnError = FlutterError.onError;
+  final previousPlatformOnError = PlatformDispatcher.instance.onError;
+
   FlutterError.onError = (details) {
     // A crash handler that can itself crash turns one failure into two, and
     // the second one has no net under it.
@@ -52,9 +62,10 @@ void installErrorHandlers() {
       if (kDebugMode) {
         debugPrint('FlutterError: ${details.exceptionAsString()}');
       }
-    } on Object catch (_) {
-      // Deliberately swallowed: there is nothing above this to report to.
-    }
+      // This IS the top of the reporting chain, so a failure here has nothing
+      // above it to be reported to. Rethrowing would turn one crash into two.
+      // ignore: swallowed_catch
+    } on Object catch (_) {}
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -62,11 +73,17 @@ void installErrorHandlers() {
       if (kDebugMode) {
         debugPrint('PlatformDispatcher error: $error\n$stack');
       }
-    } on Object catch (_) {
-      // Same reason as above.
-    }
+      // Same reason as above: the top of the reporting chain has nothing
+      // above it to report to.
+      // ignore: swallowed_catch
+    } on Object catch (_) {}
     // Unconditionally true. Returning false re-throws into the engine and
     // terminates the isolate, which is the opposite of a crash net.
     return true;
+  };
+
+  return () {
+    FlutterError.onError = previousFlutterOnError;
+    PlatformDispatcher.instance.onError = previousPlatformOnError;
   };
 }
