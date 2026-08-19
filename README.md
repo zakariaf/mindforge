@@ -147,6 +147,22 @@ MindForge targets **iOS and Android**. iOS is being built first, so the current 
 canonical device above are iOS; Android follows once the app runs end to end. Nothing in the
 architecture is iOS-specific — there is no platform channel and no native UI.
 
+Concretely, the repository holds **one platform directory, `ios/`**, and that is a decision rather
+than an omission:
+
+- **iOS ships.** It is the only target generated, built and tested today.
+- **Android is deferred, not unsupported.** Re-adding it is `flutter create --platforms=android .`
+  plus one PR to restore the build job. Generating an `android/` directory nobody builds, tests or
+  opens costs a Gradle upgrade treadmill for zero shipped value, and `test/policy/repo_layout_test.dart`
+  asserts its absence with that reason attached.
+- **macOS is dropped.** It earned its place in an earlier plan only as somewhere to eyeball the app;
+  the canonical simulator does that job better and more honestly, because it is exactly 390×844 while
+  a macOS window is whatever the developer dragged it to.
+- `web/`, `linux/` and `windows/` were never in scope.
+
+The bundle identifier is **`com.mindforge.mindforge`**, and it is permanent once the app is first
+uploaded to the store.
+
 ## Contributing
 
 **Want to add a game?** That is the whole point of the engine, and there is a defined path for it:
