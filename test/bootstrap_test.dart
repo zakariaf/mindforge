@@ -6,7 +6,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late FlutterExceptionHandler? originalFlutterOnError;
-  late ErrorCallback? originalPlatformOnError;
+  late bool Function(Object, StackTrace)? originalPlatformOnError;
 
   setUp(() {
     // Captured and restored so the handlers cannot leak into a suite running
@@ -27,7 +27,8 @@ void main() {
       expect(
         FlutterError.onError,
         isNot(same(FlutterError.presentError)),
-        reason: 'the default handler was left in place, so nothing new is '
+        reason:
+            'the default handler was left in place, so nothing new is '
             'reported',
       );
     });
@@ -41,7 +42,8 @@ void main() {
       expect(
         handler!(Exception('boom'), StackTrace.empty),
         isTrue,
-        reason: 'returning false re-throws into the engine and terminates the '
+        reason:
+            'returning false re-throws into the engine and terminates the '
             'isolate. The handler must claim every error unconditionally '
             '(app-startup-and-bootstrap)',
       );
@@ -59,7 +61,8 @@ void main() {
           ),
         ),
         returnsNormally,
-        reason: 'a crash handler that can itself crash turns one failure into '
+        reason:
+            'a crash handler that can itself crash turns one failure into '
             'two, and the second one has no net under it',
       );
     });

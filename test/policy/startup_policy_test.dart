@@ -9,14 +9,24 @@ void main() {
           .listSync(recursive: true)
           .whereType<File>()
           .where((f) => f.path.endsWith('.dart'))
-          .where((f) => f.readAsStringSync().contains('runZonedGuarded'))
+          // Comments are stripped: bootstrap.dart's doc comment names the
+          // construct in order to say why it is absent, and a gate that fires
+          // on its own rationale gets deleted rather than obeyed.
+          .where(
+            (f) => f
+                .readAsLinesSync()
+                .map((line) => line.replaceFirst(RegExp('//.*'), ''))
+                .join('\n')
+                .contains('runZonedGuarded'),
+          )
           .map((f) => f.path)
           .toList();
 
       expect(
         offenders,
         isEmpty,
-        reason: 'app-startup-and-bootstrap rule 2: exactly two error handlers, '
+        reason:
+            'app-startup-and-bootstrap rule 2: exactly two error handlers, '
             'and runZonedGuarded is neither. It adds a third capture point '
             'that swallows what the other two were installed to report. '
             'Offenders: $offenders',
@@ -32,11 +42,12 @@ void main() {
         reason: 'the entrypoint delegates to the one composition root',
       );
 
-      for (const forbidden in <String>['runApp(', 'WidgetsFlutterBinding']) {
+      for (final forbidden in <String>['runApp(', 'WidgetsFlutterBinding']) {
         expect(
           main.contains(forbidden),
           isFalse,
-          reason: '$forbidden belongs in bootstrap(), where the ordering is '
+          reason:
+              '$forbidden belongs in bootstrap(), where the ordering is '
               'visible in one place. An entrypoint that grows a second step '
               'grows a third',
         );
