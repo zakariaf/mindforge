@@ -1,0 +1,1570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Sunburst Pop — MindForge Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SUNBURST POP — SYSTEM REFERENCE
+   All colour lives on :root. Nothing below :root uses a hex.
+   ============================================================ */
+:root{
+  /* ---- primitives -------------------------------------- */
+  --cream:#FFF8EC;
+  --cream-2:#FFEEDA;
+  --cream-3:#F6E3C6;
+  --paper:#FFFFFF;
+  --ink:#2B1B4D;
+  --ink-2:#5A4A7D;
+  --ink-3:#8E80AE;
+  --sunshine:#FFC53D;
+  --sunshine-deep:#F2A81E;
+  --coral:#FF6B5A;
+  --coral-deep:#E8452F;
+  --turquoise:#22C7B8;
+  --turquoise-deep:#12A79A;
+  --grape:#6A45E8;
+  --grape-pop:#7C5CFF;
+  --leaf:#4CC86A;
+  --leaf-deep:#2FA64F;
+  --tangerine:#FF9330;
+  --dot:#F2DFC0;
+
+  /* ---- gameplay palette --------------------------------- */
+  --play-red:#D81E2C;
+  --play-blue:#1F6BE0;
+  --play-green:#157A39;
+  --play-yellow:#F5B301;
+  --play-purple:#6A45E8;
+  --play-orange:#C24409;
+  --play-pink:#C2185B;
+
+  /* ---- colour-blind answer palette (Settings → ON) ------ */
+  --cb-blue:#1F6BE0;
+  --cb-yellow:#F5B301;
+  --cb-orange:#C24409;
+  --cb-pink:#C2185B;
+
+  /* ---- semantic slots ----------------------------------- */
+  --surface:var(--cream);
+  --surface-sunk:var(--cream-2);
+  --surface-raised:var(--paper);
+  --surface-invert:var(--ink);
+  --text-primary:var(--ink);
+  --text-secondary:var(--ink-2);
+  --text-disabled:var(--ink-3);
+  --text-invert:var(--cream);
+  --border:var(--ink);
+  --accent:var(--sunshine);
+  --accent-2:var(--grape);
+  --success:var(--leaf);
+  --warning:var(--tangerine);
+  --danger:var(--play-red);
+  --focus:var(--grape-pop);
+
+  /* ---- shape -------------------------------------------- */
+  --bw:3px;
+  --r-sm:10px; --r-md:16px; --r-lg:22px; --r-xl:28px; --r-pill:999px;
+  --sh-0:none;
+  --sh-1:3px 3px 0 var(--ink);
+  --sh-2:5px 5px 0 var(--ink);
+  --sh-3:8px 8px 0 var(--ink);
+  --sh-4:10px 10px 0 var(--ink);
+
+  /* ---- motion ------------------------------------------- */
+  --dur-tap:120ms;
+  --dur-state:160ms;
+  --dur-move:180ms;
+  --dur-celebrate:240ms;
+  --ease-pop:cubic-bezier(.2,1.5,.4,1);
+  --ease-out:cubic-bezier(.2,.8,.2,1);
+  --ease-inout:cubic-bezier(.6,0,.3,1);
+
+  /* ---- type --------------------------------------------- */
+  --display:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Avenir Next","Segoe UI",system-ui,sans-serif;
+}
+
+/* Settings → "Colour-blind friendly palette". One class re-points the four
+   answer slots; the fill patterns travel with them, so nothing else changes. */
+.cvd{
+  --play-red:var(--cb-pink);
+  --play-green:var(--cb-orange);
+  --play-blue:var(--cb-blue);
+  --play-yellow:var(--cb-yellow);
+}
+/* documentation aid only — never shipped */
+.greyscale{filter:grayscale(1)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);color:var(--text-primary);
+  background-color:var(--cream-2);
+  background-image:radial-gradient(var(--dot) 2.2px, transparent 2.3px);
+  background-size:24px 24px;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{animation:none !important;transition:none !important} }
+
+.wrap{max-width:1240px;margin:0 auto;padding:36px 22px 100px}
+.dsp{font-family:var(--display);font-weight:600;letter-spacing:-.01em}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px}
+
+/* ---------- masthead ---------- */
+.masthead{
+  position:relative;overflow:hidden;background:var(--sunshine);
+  border:var(--bw) solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-3);
+  padding:32px 30px 28px;margin-bottom:34px;
+}
+.masthead .rays{
+  position:absolute;left:78%;top:-360px;width:860px;height:860px;transform:translateX(-50%);
+  background:repeating-conic-gradient(from 0deg at 50% 50%, var(--sunshine-deep) 0deg 6deg, transparent 6deg 13deg);
+  opacity:.55;pointer-events:none;
+}
+.masthead > *{position:relative}
+.brandline{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logomark{width:32px;height:32px;border:var(--bw) solid var(--border);border-radius:11px;background:var(--coral);
+  box-shadow:var(--sh-1);display:grid;place-items:center;flex:none}
+.logomark span{width:10px;height:10px;background:var(--cream);border-radius:3px;display:block}
+.brandline b{font-family:var(--display);font-weight:600;font-size:16px}
+.brandline i{font-style:normal;font-size:12.5px;font-weight:800;color:var(--ink-2)}
+h1.big{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-height:.95;
+  font-size:clamp(40px,6.4vw,70px);text-shadow:4px 4px 0 var(--paper),8px 8px 0 var(--ink)}
+.lede{font-size:clamp(15px,1.5vw,18px);font-weight:700;max-width:60ch;margin-top:20px;line-height:1.5}
+
+/* ---------- nav ---------- */
+.tocnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:44px}
+.tocnav a{
+  font-family:var(--display);font-weight:600;font-size:13px;text-decoration:none;color:var(--ink);
+  background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  padding:7px 14px;box-shadow:var(--sh-1);
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop),background var(--dur-tap) linear;
+}
+.tocnav a:hover{background:var(--sunshine);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.tocnav a:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.tocnav a:focus-visible{outline:none;box-shadow:0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+
+/* ---------- sections ---------- */
+.sec{margin-bottom:64px;scroll-margin-top:20px}
+.sec-h{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px}
+.sec-n{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;
+  background:var(--ink);color:var(--cream);font-family:var(--display);font-weight:700;font-size:15px}
+.sec-h h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,36px);letter-spacing:-.025em;line-height:1.05}
+.sec-h p{font-size:.9rem;font-weight:700;color:var(--ink-2);margin-top:6px;max-width:70ch;line-height:1.5}
+h3.sub{font-family:var(--display);font-weight:600;font-size:19px;margin:26px 0 14px;letter-spacing:-.01em}
+h3.sub:first-child{margin-top:0}
+.note{font-size:.845rem;font-weight:700;color:var(--ink-2);line-height:1.55;max-width:78ch;margin-top:12px}
+
+.panel{background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);padding:22px}
+.sec > .panel + .panel{margin-top:16px}
+
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+
+/* ---------- personality ---------- */
+.pcards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}
+.pcard{border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:18px 18px 20px}
+.pcard h3{font-family:var(--display);font-weight:600;font-size:18px;margin-bottom:8px}
+.pcard ul{list-style:none;font-size:14px;font-weight:700;line-height:1.6}
+.pcard li{padding-left:20px;position:relative;margin-top:4px}
+.pcard li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:3px;
+  border:2px solid var(--ink);background:var(--paper)}
+
+/* ---------- colour tokens ---------- */
+.tok{background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  box-shadow:var(--sh-1);overflow:hidden}
+.tok .chipbox{height:78px;border-bottom:var(--bw) solid var(--border);display:flex;align-items:flex-end;justify-content:flex-end;padding:8px}
+.tok .body{padding:11px 13px 13px}
+.tok b{display:block;font-family:var(--display);font-weight:600;font-size:15.5px;letter-spacing:-.01em}
+.tok code{display:block;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;
+  color:var(--ink-2);margin-top:3px;font-weight:600}
+.tok s{text-decoration:none;display:block;font-size:.78rem;font-weight:800;color:var(--ink-2);margin-top:7px;line-height:1.4}
+.cr{display:inline-flex;align-items:center;gap:5px;background:var(--cream-2);border:2px solid var(--ink);
+  border-radius:var(--r-pill);padding:2px 8px;font-family:var(--display);font-weight:600;font-size:11px;margin-top:9px}
+.cr.pass{background:var(--leaf)}
+.cr.warn{background:var(--sunshine)}
+.cr.fail{background:var(--danger);color:var(--paper)}
+
+/* ---------- table ---------- */
+.tablewrap{overflow-x:auto;border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:12px 14px;font-size:.845rem;font-weight:700;border-bottom:2px solid var(--ink)}
+th{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  background:var(--cream-2);border-bottom:var(--bw) solid var(--ink)}
+tr:last-child td{border-bottom:0}
+td .dotcol{width:20px;height:20px;border-radius:6px;border:2px solid var(--ink);display:inline-block;vertical-align:-5px;margin-right:8px}
+
+/* ---------- type scale ---------- */
+.typerow{display:grid;grid-template-columns:1fr 252px;gap:18px;align-items:baseline;
+  padding:18px 0;border-bottom:2px solid var(--ink)}
+.typerow:last-child{border-bottom:0}
+.typemeta{font-size:.78rem;font-weight:800;color:var(--ink-2);line-height:1.55;text-align:right}
+.typemeta b{display:block;font-family:var(--display);font-weight:600;font-size:13.5px;color:var(--ink)}
+@media (max-width:640px){ .typerow{grid-template-columns:1fr} .typemeta{text-align:left} }
+
+/* ---------- spacing / radius ---------- */
+.spacerow{display:flex;align-items:center;gap:14px;padding:9px 0}
+.spacerow i{display:block;height:22px;background-image:repeating-linear-gradient(45deg,var(--grape-pop) 0 7px,var(--grape) 7px 14px);
+  border:2px solid var(--ink);border-radius:5px}
+.spacerow b{font-family:var(--display);font-weight:600;font-size:14px;width:74px;flex:none}
+.spacerow s{text-decoration:none;font-size:12.5px;font-weight:800;color:var(--ink-2)}
+.radbox{background:var(--turquoise);border:var(--bw) solid var(--ink);box-shadow:var(--sh-1);
+  height:92px;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:14px}
+
+/* ---------- elevation ---------- */
+.elev{background:var(--paper);border:var(--bw) solid var(--ink);border-radius:var(--r-md);
+  height:92px;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:14px;margin:0 12px 16px 0}
+
+/* ---------- motion ---------- */
+.motionrow{display:flex;flex-wrap:wrap;gap:16px}
+.mcard{flex:1 1 210px;border:var(--bw) solid var(--ink);border-radius:var(--r-md);box-shadow:var(--sh-1);
+  background:var(--paper);padding:14px}
+.mcard b{font-family:var(--display);font-weight:600;font-size:15px;display:block}
+.mcard s{text-decoration:none;font-size:12.5px;font-weight:800;color:var(--ink-2);display:block;margin-top:3px}
+.mtrack{margin-top:12px;height:34px;background:var(--cream-2);border:2px solid var(--ink);border-radius:var(--r-pill);
+  position:relative;overflow:hidden}
+.mdot{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:var(--r-pill);
+  border:2px solid var(--ink);background:var(--sunshine)}
+.m1 .mdot{animation:slide 1.8s var(--ease-pop) infinite alternate}
+.m2 .mdot{animation:slide 1.8s var(--ease-out) infinite alternate;background:var(--turquoise)}
+.m3 .mdot{animation:slide 1.8s var(--ease-inout) infinite alternate;background:var(--coral)}
+@keyframes slide{from{left:3px}to{left:calc(100% - 27px)}}
+.curve{background:var(--cream-2);border:2px solid var(--ink);border-radius:var(--r-sm);display:block;margin-top:10px}
+
+/* ============================================================
+   COMPONENT GALLERY
+   ============================================================ */
+.stateset{display:flex;flex-wrap:wrap;gap:20px}
+.state{display:flex;flex-direction:column;gap:9px;align-items:flex-start}
+.state > .cap{font-family:var(--display);font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.01em;
+  background:var(--sunshine);color:var(--ink);border:var(--bw) solid var(--border);
+  border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:14px 22px;cursor:pointer;
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop);
+}
+.btn:active,.btn.pressed{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.btn:focus-visible{outline:none;box-shadow:var(--sh-2),0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+.btn.focusring{box-shadow:var(--sh-2),0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+.btn--leaf{background:var(--leaf)}
+.btn--sec{background:var(--paper)}
+.btn--ghost{background:transparent;box-shadow:none;border-color:transparent;text-decoration:underline;
+  text-decoration-thickness:3px;text-underline-offset:5px}
+.btn--ghost:active,.btn--ghost.pressed{transform:translate(2px,2px);box-shadow:none}
+.btn[disabled],.btn.disabled{background:var(--cream-2);color:var(--text-disabled);border-color:var(--ink-3);
+  box-shadow:3px 3px 0 var(--ink-3);cursor:not-allowed;transform:none}
+.btn--ghost.disabled,.btn--ghost[disabled]{background:transparent;border-color:transparent;box-shadow:none}
+
+.gcard{
+  width:100%;max-width:280px;display:flex;align-items:center;gap:12px;background:var(--coral);
+  border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:15px 16px;
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop);
+}
+.gcard.pressed{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.gcard.locked{background:var(--cream-2);border-style:dashed}
+.gcard h4{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:-.015em;line-height:1.1}
+.gcard p{font-size:13px;font-weight:700;margin-top:2px}
+.gcard.locked h4,.gcard.locked p{color:var(--ink-2)}
+.bestpill{display:inline-flex;align-items:center;gap:6px;margin-top:9px;background:var(--cream);
+  border:2px solid var(--border);border-radius:var(--r-pill);padding:3px 10px;
+  font-family:var(--display);font-weight:600;font-size:12.5px}
+.bestpill s{text-decoration:none;font-size:9.5px;letter-spacing:.13em;color:var(--ink-2)}
+.gart{width:58px;height:58px;flex:none;border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  background:var(--cream);box-shadow:var(--sh-1);display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:8px}
+.gart i{border-radius:5px;border:2px solid var(--border);display:block}
+.gart i:nth-child(1){background:var(--play-red)}
+.gart i:nth-child(2){background:var(--play-blue)}
+.gart i:nth-child(3){background:var(--play-green)}
+.gart i:nth-child(4){background:var(--play-yellow)}
+
+.seg{display:inline-flex;gap:6px;background:var(--cream-2);border:var(--bw) solid var(--border);
+  border-radius:var(--r-pill);padding:6px}
+.seg-i{padding:13px 22px;border-radius:var(--r-pill);font-family:var(--display);font-weight:600;font-size:16px;
+  color:var(--ink-2);border:var(--bw) solid transparent}
+.seg-i.on{background:var(--sunshine);color:var(--ink);border-color:var(--border);box-shadow:2px 2px 0 var(--ink);transform:translate(-1px,-1px)}
+.seg-i.pressed{background:var(--sunshine-deep);color:var(--ink);border-color:var(--border);box-shadow:none;transform:translate(1px,1px)}
+.seg-i.disabled{color:var(--text-disabled)}
+
+.hstat{background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  box-shadow:var(--sh-1);padding:7px 16px 8px;text-align:center;min-width:96px}
+.hstat s{text-decoration:none;display:block;font-family:var(--display);font-weight:600;font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink-2)}
+.hstat b{display:block;font-family:var(--display);font-weight:700;font-size:22px;line-height:1.15;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hstat.hot{background:var(--sunshine)}
+.hstat.bad{background:var(--coral)}
+
+.track{display:block;width:min(230px,100%);height:16px;border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  background:var(--cream-2);overflow:hidden}
+.track i{display:block;height:100%;border-right:var(--bw) solid var(--border);
+  background-image:repeating-linear-gradient(45deg,var(--turquoise) 0 9px,var(--turquoise-deep) 9px 18px)}
+.track i.full{border-right:0}
+.track i.coral{background-image:repeating-linear-gradient(45deg,var(--coral) 0 9px,var(--coral-deep) 9px 18px)}
+
+.ring{width:104px;height:104px;border-radius:var(--r-pill);border:var(--bw) solid var(--ink);
+  box-shadow:var(--sh-1);display:grid;place-items:center;position:relative}
+.ring::after{content:"";position:absolute;inset:13px;border-radius:var(--r-pill);background:var(--paper);
+  border:var(--bw) solid var(--ink)}
+.ring b{position:relative;z-index:2;font-family:var(--display);font-weight:700;font-size:22px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+.tile{width:64px;height:64px;display:grid;place-items:center;background:var(--surface-raised);
+  border:var(--bw) solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-1);
+  font-family:var(--display);font-weight:600;font-size:24px;font-variant-numeric:tabular-nums}
+.tile.found{background:var(--turquoise-deep);color:var(--ink);box-shadow:none;transform:translate(2px,2px)}
+.tile.next{background:var(--sunshine);box-shadow:var(--sh-2),0 0 0 2px var(--cream),0 0 0 5px var(--ink)}
+.tile.wrong{background:var(--danger);color:var(--paper);animation:shake var(--dur-celebrate) var(--ease-out) 2}
+@media (prefers-reduced-motion:reduce){.tile.wrong{animation:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* the board's state key. It lives here, in the reference — a shipped game
+   never prints a legend over its own live board. */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+.lg{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--ink-2)}
+.lg i{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;display:block}
+.lg i.f{background:var(--turquoise-deep)} .lg i.n{background:var(--sunshine)}
+.lg i.i{background:var(--cream)} .lg i.w{background:var(--danger)}
+
+.tgl{width:66px;height:34px;border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  background:var(--cream-2);position:relative;display:block;box-shadow:inset 2px 2px 0 var(--cream-3)}
+.tgl b{position:absolute;top:1px;left:1px;width:26px;height:26px;border-radius:var(--r-pill);
+  background:var(--paper);border:var(--bw) solid var(--border);transition:left var(--dur-move) var(--ease-pop)}
+.tgl s{text-decoration:none;position:absolute;right:8px;top:8px;font-family:var(--display);font-weight:600;
+  font-size:9.5px;letter-spacing:.1em;color:var(--ink-2)}
+.tgl.on{background:var(--leaf);box-shadow:none}
+.tgl.on b{left:33px}
+.tgl.on s{right:auto;left:9px;color:var(--ink)}
+.tgl.disabled{background:var(--cream-2);border-color:var(--ink-3);box-shadow:none}
+.tgl.disabled b{border-color:var(--ink-3)}
+.tgl.disabled s{color:var(--ink-3)}
+
+.badge{display:inline-flex;align-items:center;gap:7px;background:var(--sunshine);
+  border:var(--bw) solid var(--border);border-radius:var(--r-pill);box-shadow:var(--sh-1);
+  padding:7px 15px;font-family:var(--display);font-weight:600;font-size:14px}
+.badge.new{transform:rotate(-2.5deg);box-shadow:var(--sh-2)}
+.badge.quiet{background:var(--paper)}
+.badge.lock{background:var(--cream-2);color:var(--ink-2);border-style:dashed;box-shadow:none}
+
+.sheetdemo{width:100%;max-width:330px;background:var(--cream);border:var(--bw) solid var(--ink);
+  border-radius:var(--r-xl) var(--r-xl) var(--r-md) var(--r-md);box-shadow:var(--sh-3);padding:14px 18px 18px}
+.sheetdemo .grab{width:56px;height:6px;border-radius:var(--r-pill);background:var(--ink);margin:0 auto 14px}
+.sheetdemo h4{font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.02em}
+.sheetdemo p{font-size:14px;font-weight:700;color:var(--ink-2);margin:6px 0 16px;line-height:1.45}
+.sheetdemo .row{display:flex;flex-direction:column;gap:10px}
+.sheetdemo .btn{width:100%;font-size:16px;padding:13px 18px}
+
+.navdemo{width:100%;max-width:330px;height:90px;background:var(--paper);border:var(--bw) solid var(--ink);border-radius:var(--r-md);
+  display:flex;align-items:flex-start;justify-content:space-around;padding:9px 12px 0;overflow:hidden}
+.navdemo .tab{display:flex;flex-direction:column;align-items:center;gap:4px;width:88px;padding:7px 0 6px;
+  border-radius:var(--r-md);color:var(--ink-2);border:var(--bw) solid transparent}
+.navdemo .tab span{font-family:var(--display);font-weight:600;font-size:11.5px}
+.navdemo .tab.on{background:var(--sunshine);color:var(--ink);border-color:var(--ink);box-shadow:var(--sh-1)}
+
+/* stroop stimulus demo */
+.stimdemo{background:var(--paper);border:var(--bw) solid var(--ink);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);padding:26px 22px 30px;text-align:center;max-width:330px}
+/* two registered copies: the outline pass underneath, the pattern-filled pass
+   on top. A text-shadow paints OVER a background-clip:text fill, so one element
+   would ink over its own pattern — hence .wout and .win. */
+.word{position:relative;font-family:var(--display);font-weight:700;font-size:64px;line-height:1;
+  letter-spacing:.01em;color:var(--play,var(--play-red))}
+.word .wout{position:absolute;left:0;top:0;width:100%;color:transparent;
+  text-shadow:3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),
+    2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),8px 8px 0 var(--ink);
+}
+.word .win{position:relative;display:block;color:var(--play,var(--play-red))}
+.word.y{--play:var(--play-yellow);color:var(--play-yellow)}
+
+/* ------------------------------------------------------------
+   ANSWER FILL PATTERNS — the mandatory second, non-hue channel.
+   ------------------------------------------------------------ */
+.pat{background-color:var(--play)}
+.pat--solid{background-image:linear-gradient(var(--play),var(--play))}
+.pat--stripe{background-image:repeating-linear-gradient(45deg,var(--play) 0 5px,var(--ink) 5px 9px)}
+.pat--dot{background-image:radial-gradient(var(--ink) 2.6px,var(--play) 2.7px);background-size:10px 10px}
+.pat--ring{background-image:repeating-radial-gradient(circle at 50% 50%,var(--play) 0 4px,var(--ink) 4px 7px)}
+.play--red{--play:var(--play-red)}
+.play--blue{--play:var(--play-blue)}
+.play--green{--play:var(--play-green)}
+.play--yellow{--play:var(--play-yellow)}
+@supports (background-clip:text) or (-webkit-background-clip:text){
+  .word .win.pat{-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+}
+
+.ansdemo{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:330px}
+.ans{height:66px;display:flex;align-items:stretch;overflow:hidden;background:var(--play);
+  border:var(--bw) solid var(--ink);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);font-family:var(--display);font-weight:700;font-size:19px;
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop)}
+.ans .key{width:46px;flex:none;border-right:var(--bw) solid var(--ink)}
+.ans .lb{flex:1;display:grid;place-items:center}
+.ans--onpaper{color:var(--paper)}
+.ans--onink{color:var(--ink)}
+
+/* ------------------------------------------------------------
+   PRESS + FOCUS — every pressable surface, no exceptions.
+   ------------------------------------------------------------ */
+.tile,.tgl,.tab,.chipdemo{transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop)}
+.ans:active,.ans.pressed,.gcard:active{transform:translate(4px,4px) scale(.98);box-shadow:1px 1px 0 var(--ink)}
+.tile:active,.tgl:active,.tab:active,.seg-i:active{transform:translate(2px,2px) scale(.97);box-shadow:1px 1px 0 var(--ink)}
+.ans:focus-visible,.gcard:focus-visible,.ans.focusring,.gcard.focusring{
+  outline:none;box-shadow:var(--sh-2),0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+.tile:focus-visible,.tgl:focus-visible,.tab:focus-visible,.seg-i:focus-visible,
+.tile.focusring,.tgl.focusring,.seg-i.focusring{
+  outline:none;box-shadow:var(--sh-1),0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+
+/* code block */
+pre{background:var(--ink);color:var(--cream);border:var(--bw) solid var(--ink);border-radius:var(--r-lg);
+  box-shadow:var(--sh-3);padding:20px;overflow-x:auto;margin-top:16px}
+pre code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;line-height:1.65;white-space:pre}
+.filename{display:inline-block;font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;background:var(--sunshine);border:var(--bw) solid var(--ink);border-radius:var(--r-pill);
+  box-shadow:var(--sh-1);padding:5px 14px}
+
+/* ---------- iconography ---------- */
+.iconwall{display:flex;flex-wrap:wrap;gap:14px}
+.icell{width:96px;text-align:center}
+.icell .box{
+  width:96px;height:72px;display:grid;place-items:center;background:var(--paper);
+  border:var(--bw) solid var(--ink);border-radius:var(--r-md);box-shadow:var(--sh-1);color:var(--ink);
+}
+.icell s{text-decoration:none;display:block;margin-top:7px;font-family:var(--display);font-weight:600;
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.icell b{display:block;font-family:var(--display);font-weight:700;font-size:12px}
+
+/* ---------- responsive: the page never scrolls sideways ---------- */
+@media (max-width:560px){
+  .wrap{padding:28px 14px 80px}
+  .panel{padding:16px}
+  .masthead{padding:24px 18px 22px}
+  .sec{margin-bottom:48px}
+  /* the two demos with intrinsic minimum widths get their own scroller
+     rather than being silently clipped by body{overflow-x:hidden} */
+  .stateset{max-width:100%}
+  .state{max-width:100%}
+  .seg{max-width:100%;overflow-x:auto}
+  .seg-i{padding-left:14px;padding-right:14px}
+  .navdemo{overflow:auto hidden}
+  .navdemo .tab{flex:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="rays" aria-hidden="true"></div>
+    <div class="brandline">
+      <span class="logomark" aria-hidden="true"><span></span></span>
+      <b>MindForge</b><i>Train your brain. No wifi needed.</i>
+    </div>
+    <h1 class="big">Sunburst Pop</h1>
+    <p class="lede">The system reference. Arcade-cabinet joy, built on one rule: every surface is an ink-outlined
+      object sitting on top of the page, and it presses down when you touch it. Tokens here map 1:1 to the Flutter
+      <b class="mono">MindforgeTokens</b> ThemeExtension at the bottom of the page.</p>
+  </header>
+
+  <nav class="tocnav" aria-label="Sections">
+    <a href="#personality">01 Personality</a><a href="#colour">02 Colour</a><a href="#stroop">03 Stroop palette</a>
+    <a href="#type">04 Type</a><a href="#space">05 Space</a><a href="#radius">06 Radius</a>
+    <a href="#elevation">07 Elevation</a><a href="#icons">08 Iconography</a><a href="#motion">09 Motion</a>
+    <a href="#components">10 Components</a><a href="#a11y">11 Accessibility</a><a href="#flutter">12 Flutter mapping</a>
+  </nav>
+
+  <!-- ==================== 01 PERSONALITY ==================== -->
+  <section class="sec" id="personality">
+    <div class="sec-h"><span class="sec-n">01</span>
+      <div><h2>Personality</h2>
+        <p>Loud, warm, physical. A seaside arcade cabinet rebuilt as a phone app: heavy ink outlines, hard offset
+          shadows with no blur, saturated colour blocks, and type that grins. Nothing is flat, nothing is subtle,
+          nothing is corporate.</p></div>
+    </div>
+    <div class="pcards">
+      <div class="pcard" style="background:var(--leaf)">
+        <h3>Choose this when…</h3>
+        <ul>
+          <li>The app must feel like a toy you want to poke, not a tool you have to use</li>
+          <li>Sessions are short and the reward loop is the product</li>
+          <li>The audience skews broad and casual — family living rooms, commutes, waiting rooms</li>
+          <li>You want each new game to arrive with its own colour and instantly belong</li>
+        </ul>
+      </div>
+      <div class="pcard" style="background:var(--coral)">
+        <h3>Avoid this when…</h3>
+        <ul>
+          <li>The screen is dense with numbers — hard shadows eat vertical rhythm fast</li>
+          <li>The brand needs to read clinical, medical or "serious cognitive science"</li>
+          <li>A dark mode is required — this direction is committed to light and warm</li>
+          <li>Long reading sessions are expected; this is a sprint aesthetic, not a marathon one</li>
+        </ul>
+      </div>
+      <div class="pcard" style="background:var(--sunshine)">
+        <h3>Non-negotiables</h3>
+        <ul>
+          <li>3px ink border on every surface — the border <em>is</em> the brand</li>
+          <li>Shadow offsets only on the +x/+y diagonal, never blurred, always ink</li>
+          <li>Press = translate toward the shadow + shrink shadow to 1px</li>
+          <li>Ink is the default text colour on light fills, and the only one on a saturated fill; the six answer fills declare their own label colour in §03, and nothing else may</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 02 COLOUR ==================== -->
+  <section class="sec" id="colour">
+    <div class="sec-h"><span class="sec-n">02</span>
+      <div><h2>Colour</h2>
+        <p>Seven primitives and one ink. Colour carries identity (each game owns a hue) but never carries state on
+          its own — state is always also shape, shadow or a word. Contrast figures below are measured against the
+          surface each token actually sits on.</p></div>
+    </div>
+
+    <h3 class="sub">Primitives</h3>
+    <div class="grid g4">
+      <div class="tok"><div class="chipbox" style="background:var(--cream)"></div><div class="body">
+        <b>Cream</b><code>--cream · #FFF8EC</code><s>App background. The page everything is printed on.</s></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--cream-2)"></div><div class="body">
+        <b>Cream Sunk</b><code>--cream-2 · #FFEEDA</code><s>Inset wells: segmented-control track, progress track, toggle track.</s></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--paper)"></div><div class="body">
+        <b>Paper</b><code>--paper · #FFFFFF</code><s>Raised surfaces: cards, HUD pills, grid tiles, sheets.</s></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--ink)"></div><div class="body">
+        <b>Ink</b><code>--ink · #2B1B4D</code><s>All text, all borders, all shadows. Never pure black.</s>
+        <span class="cr pass">14.4:1 on cream</span></div></div>
+
+      <div class="tok"><div class="chipbox" style="background:var(--sunshine)"></div><div class="body">
+        <b>Sunshine</b><code>--sunshine · #FFC53D</code><s>Primary action, selected state, streaks, the header burst.</s>
+        <span class="cr pass">ink 9.6:1</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--coral)"></div><div class="body">
+        <b>Coral</b><code>--coral · #FF6B5A</code><s>Stroop Rush identity. Heat, urgency, timer bars.</s>
+        <span class="cr pass">ink 5.4:1</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--turquoise)"></div><div class="body">
+        <b>Turquoise</b><code>--turquoise · #22C7B8</code><s>Schulte Grid identity. Found tiles, progress fill.</s>
+        <span class="cr pass">ink 7.2:1</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--grape)"></div><div class="body">
+        <b>Grape</b><code>--grape · #6A45E8</code><s>Daily Mix, countdown, settings header. The only dark fill.</s>
+        <span class="cr pass">cream 5.5:1</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--grape-pop)"></div><div class="body">
+        <b>Grape Pop</b><code>--grape-pop · #7C5CFF</code><s>Decoration and focus ring only. Too light for body text.</s>
+        <span class="cr warn">cream 4.1:1 — large only</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--leaf)"></div><div class="body">
+        <b>Leaf</b><code>--leaf · #4CC86A</code><s>Success, Play buttons, toggle ON, results burst.</s>
+        <span class="cr pass">ink 7.1:1</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--tangerine)"></div><div class="body">
+        <b>Tangerine</b><code>--tangerine · #FF9330</code><s>Warning. Held apart from sunshine so "caution" ≠ "primary".</s>
+        <span class="cr pass">ink 6.9:1</span></div></div>
+      <div class="tok"><div class="chipbox" style="background:var(--ink-2)"></div><div class="body">
+        <b>Ink Soft</b><code>--ink-2 · #5A4A7D</code><s>Secondary text, HUD labels, captions.</s>
+        <span class="cr pass">7.3:1 on cream</span></div></div>
+    </div>
+
+    <h3 class="sub">Semantic slots</h3>
+    <p class="note">Components only ever reference the slot, never the primitive. Re-skinning a game means
+      re-pointing one slot, not hunting hexes.</p>
+    <div class="tablewrap" style="margin-top:14px">
+      <table>
+        <thead><tr><th>Slot</th><th>Maps to</th><th>Hex</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><span class="dotcol" style="background:var(--surface)"></span><b class="mono">surface</b></td><td>cream</td><td class="mono">#FFF8EC</td><td>Screen background</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--surface-sunk)"></span><b class="mono">surfaceSunk</b></td><td>cream-2</td><td class="mono">#FFEEDA</td><td>Inset tracks and wells</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--surface-raised)"></span><b class="mono">surfaceRaised</b></td><td>paper</td><td class="mono">#FFFFFF</td><td>Cards, pills, tiles, sheets</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--surface-invert)"></span><b class="mono">surfaceInvert</b></td><td>ink</td><td class="mono">#2B1B4D</td><td>Code blocks, tooltips, badge counters</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--text-primary)"></span><b class="mono">textPrimary</b></td><td>ink</td><td class="mono">#2B1B4D</td><td>Everything readable — 14.4:1 on surface</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--text-secondary)"></span><b class="mono">textSecondary</b></td><td>ink-2</td><td class="mono">#5A4A7D</td><td>Labels, captions — 7.3:1 on surface</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--text-disabled)"></span><b class="mono">textDisabled</b></td><td>ink-3</td><td class="mono">#8E80AE</td><td>Disabled only, always paired with a disabled shape</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--text-invert)"></span><b class="mono">textInvert</b></td><td>cream</td><td class="mono">#FFF8EC</td><td>Text on grape and ink fills</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--border)"></span><b class="mono">border</b></td><td>ink</td><td class="mono">#2B1B4D</td><td>3px on every surface, plus every shadow</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--accent)"></span><b class="mono">accent</b></td><td>sunshine</td><td class="mono">#FFC53D</td><td>Primary action and selected state</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--accent-2)"></span><b class="mono">accentAlt</b></td><td>grape</td><td class="mono">#6A45E8</td><td>Daily Mix, countdown, system moments</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--success)"></span><b class="mono">success</b></td><td>leaf</td><td class="mono">#4CC86A</td><td>Correct answer, toggle ON, Play</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--warning)"></span><b class="mono">warning</b></td><td>tangerine</td><td class="mono">#FF9330</td><td>Time running out, unsaved run</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--danger)"></span><b class="mono">danger</b></td><td>play-red</td><td class="mono">#D81E2C</td><td>Wrong answer, destructive confirm</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--focus)"></span><b class="mono">focusRing</b></td><td>grape-pop</td><td class="mono">#7C5CFF</td><td>Keyboard / switch-control focus, 4px outside a 3px cream gap</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--cream-3)"></span><b class="mono">divider</b></td><td>cream-edge</td><td class="mono">#F6E3C6</td><td>The toggle-track inset only. Row dividers are ink — cream-edge on paper is 1.1:1</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--dot)"></span><b class="mono">dotPattern</b></td><td>dot</td><td class="mono">#F2DFC0</td><td>The page's own halftone ground behind the phones</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--sunshine-deep)"></span><b class="mono">accentDeep</b></td><td>sunshine-deep</td><td class="mono">#F2A81E</td><td>The dark half of every sunshine stripe and ray</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--coral-deep)"></span><b class="mono">gameStroopDeep</b></td><td>coral-deep</td><td class="mono">#E8452F</td><td>Stroop timer stripes, chart bars, the play-band rays</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--turquoise-deep)"></span><b class="mono">gameSchulteDeep</b></td><td>turquoise-deep</td><td class="mono">#12A79A</td><td>Schulte progress stripes and the found-tile fill — ink 5.1:1</td></tr>
+          <tr><td><span class="dotcol" style="background:var(--leaf-deep)"></span><b class="mono">successDeep</b></td><td>leaf-deep</td><td class="mono">#2FA64F</td><td>The results-header ray burst</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 03 STROOP PALETTE ==================== -->
+  <section class="sec" id="stroop">
+    <div class="sec-h"><span class="sec-n">03</span>
+      <div><h2>Stroop answer palette</h2>
+        <p>The whole mechanic of Stroop Rush is "which hue is this glyph painted in", so these six are the most
+          load-bearing colours in the product. They are deliberately <em>not</em> the brand primitives: brand colours
+          are tuned to feel good next to each other, answer colours are tuned to be told apart at speed and to hold
+          contrast as text on cream.</p></div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Answer</th><th>Token</th><th>Hex</th><th>As text on cream #FFF8EC</th><th>As fill, label colour</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td><span class="dotcol" style="background:var(--play-red)"></span>Red</td><td class="mono">playRed</td><td class="mono">#D81E2C</td><td><b>4.8:1</b></td><td>paper label — 5.1:1</td><td><span class="cr pass">AA body</span></td></tr>
+          <tr><td><span class="dotcol" style="background:var(--play-blue)"></span>Blue</td><td class="mono">playBlue</td><td class="mono">#1F6BE0</td><td><b>4.7:1</b></td><td>paper label — 5.0:1</td><td><span class="cr pass">AA body</span></td></tr>
+          <tr><td><span class="dotcol" style="background:var(--play-green)"></span>Green</td><td class="mono">playGreen</td><td class="mono">#157A39</td><td><b>5.2:1</b></td><td>paper label — 5.5:1</td><td><span class="cr pass">AA body</span></td></tr>
+          <tr><td><span class="dotcol" style="background:var(--play-yellow)"></span>Yellow</td><td class="mono">playYellow</td><td class="mono">#F5B301</td><td><b>1.8:1</b></td><td>ink label — 8.2:1</td><td><span class="cr fail">needs the outline</span></td></tr>
+          <tr><td><span class="dotcol" style="background:var(--play-purple)"></span>Purple <s style="text-decoration:none;color:var(--ink-2)">(Blitz)</s></td><td class="mono">playPurple</td><td class="mono">#6A45E8</td><td><b>5.5:1</b></td><td>cream label — 5.5:1</td><td><span class="cr pass">AA body</span></td></tr>
+          <tr><td><span class="dotcol" style="background:var(--play-orange)"></span>Orange <s style="text-decoration:none;color:var(--ink-2)">(Blitz)</s></td><td class="mono">playOrange</td><td class="mono">#C24409</td><td><b>4.8:1</b></td><td>paper label — 5.1:1</td><td><span class="cr pass">AA body</span></td></tr>
+          <tr><td><span class="dotcol" style="background:var(--play-pink)"></span>Pink <s style="text-decoration:none;color:var(--ink-2)">(CB set)</s></td><td class="mono">playPink</td><td class="mono">#C2185B</td><td><b>5.6:1</b></td><td>paper label — 5.9:1</td><td><span class="cr pass">AA body</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">Hue is never the only channel</h3>
+    <p class="note">Hue alone does not survive this product's own audience. Simulated under Vienot-1999,
+      <b class="mono">playRed #D81E2C</b> becomes <b class="mono">#7E7E1A</b> and <b class="mono">playGreen #157A39</b>
+      becomes <b class="mono">#68683C</b> — ΔE76 27.0 apart for a deuteranope, 17.2 for a protanope, and in flat greyscale
+      red, blue and green sit within 1.02–1.09:1 of each other. So every answer colour owns a <b>fill pattern</b> drawn in
+      ink, and that pattern is painted on the answer key <em>and</em> into the stimulus glyph itself. Match the pattern,
+      not the hue, and the game is still playable with no colour vision at all.</p>
+
+    <div class="grid g2" style="margin-top:16px;align-items:start">
+      <div class="panel" style="background:var(--cream)">
+        <p class="cap dsp" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)">Default set · solid / stripe / dot / ring</p>
+        <div class="ansdemo" style="margin-top:12px">
+          <span class="ans play--red ans--onpaper"><span class="key pat pat--stripe" aria-hidden="true"></span><span class="lb">Red</span></span>
+          <span class="ans play--blue ans--onpaper"><span class="key pat pat--solid" aria-hidden="true"></span><span class="lb">Blue</span></span>
+          <span class="ans play--green ans--onpaper"><span class="key pat pat--dot" aria-hidden="true"></span><span class="lb">Green</span></span>
+          <span class="ans play--yellow ans--onink"><span class="key pat pat--ring" aria-hidden="true"></span><span class="lb">Yellow</span></span>
+        </div>
+        <p class="note" style="margin-top:12px">Same four, forced to greyscale — the patterns still separate them.</p>
+        <div class="ansdemo greyscale" style="margin-top:10px" aria-hidden="true">
+          <span class="ans play--red ans--onpaper"><span class="key pat pat--stripe"></span><span class="lb">Red</span></span>
+          <span class="ans play--blue ans--onpaper"><span class="key pat pat--solid"></span><span class="lb">Blue</span></span>
+          <span class="ans play--green ans--onpaper"><span class="key pat pat--dot"></span><span class="lb">Green</span></span>
+          <span class="ans play--yellow ans--onink"><span class="key pat pat--ring"></span><span class="lb">Yellow</span></span>
+        </div>
+      </div>
+      <div class="panel cvd" style="background:var(--cream)">
+        <p class="cap dsp" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)">Colour-blind palette (setting ON)</p>
+        <div class="ansdemo" style="margin-top:12px">
+          <span class="ans play--blue ans--onpaper"><span class="key pat pat--solid" aria-hidden="true"></span><span class="lb">Blue</span></span>
+          <span class="ans play--yellow ans--onink"><span class="key pat pat--ring" aria-hidden="true"></span><span class="lb">Yellow</span></span>
+          <span class="ans play--green ans--onpaper"><span class="key pat pat--dot" aria-hidden="true"></span><span class="lb">Orange</span></span>
+          <span class="ans play--red ans--onpaper"><span class="key pat pat--stripe" aria-hidden="true"></span><span class="lb">Pink</span></span>
+        </div>
+        <p class="note" style="margin-top:12px">The same four slots, re-pointed by one <b class="mono">.cvd</b> class.
+          Worst deuteranope pair goes from ΔE76 27.0 to 37.7, worst protanope pair from 17.2 to 49.0.</p>
+        <div class="ansdemo greyscale" style="margin-top:10px" aria-hidden="true">
+          <span class="ans play--blue ans--onpaper"><span class="key pat pat--solid"></span><span class="lb">Blue</span></span>
+          <span class="ans play--yellow ans--onink"><span class="key pat pat--ring"></span><span class="lb">Yellow</span></span>
+          <span class="ans play--green ans--onpaper"><span class="key pat pat--dot"></span><span class="lb">Orange</span></span>
+          <span class="ans play--red ans--onpaper"><span class="key pat pat--stripe"></span><span class="lb">Pink</span></span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">The yellow problem, and the fix</h3>
+    <p class="note">A yellow that still reads as <em>yellow</em> cannot reach 4.5:1 against a cream background — darken it
+      far enough and players call it brown, which breaks the game. So the stimulus word is never bare: every stimulus
+      carries a 3px ink outline plus an 8px ink hard shadow, which is exactly the arcade look we wanted anyway.
+      The outline is drawn from <b class="mono">--ink</b>, so the effective text contrast is always ink-on-cream (14.4:1)
+      and the hue becomes decoration on top of a legible shape. Answer buttons solve it differently again: yellow takes
+      an ink label (8.2:1), the other five take a paper or cream label.</p>
+
+    <div class="grid g2" style="margin-top:20px;align-items:start">
+      <div class="panel" style="background:var(--cream)">
+        <p class="cap dsp" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)">Wrong — bare fill, 1.8:1, hue only</p>
+        <div class="stimdemo" style="margin-top:12px;box-shadow:var(--sh-1)"><p class="word y">BLUE</p></div>
+      </div>
+      <div class="panel" style="background:var(--cream)">
+        <p class="cap dsp" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)">Right — ink outline (14.4:1) + ring fill</p>
+        <div class="stimdemo" style="margin-top:12px;box-shadow:var(--sh-1)"><p class="word y"><span class="wout" aria-hidden="true">BLUE</span><span class="win pat pat--ring">BLUE</span></p></div>
+      </div>
+    </div>
+
+    <p class="note">The <b>Colour-blind friendly palette</b> setting re-points the four answer slots onto
+      <b class="mono">playBlue</b>, <b class="mono">playYellow</b>, <b class="mono">playOrange</b> and
+      <b class="mono">playPink</b> — it does not "swap red/green for blue/orange", which would have put blue in the set
+      twice and paired orange against red, two colours that simulate to within ΔE76 5.2 of each other. All four still
+      clear 4.5:1 as text on cream and 4.9:1 under a paper or ink label. The fill patterns are not part of the setting:
+      they are always on, in both palettes, because a pattern is the only channel that survives a black-and-white
+      screenshot. In Flutter the swap is <b class="mono">tokens.answerColour(a, colourBlind: true)</b> — see §12.</p>
+  </section>
+
+  <!-- ==================== 04 TYPE ==================== -->
+  <section class="sec" id="type">
+    <div class="sec-h"><span class="sec-n">04</span>
+      <div><h2>Typography</h2>
+        <p><b>Fredoka</b> (Google Fonts) carries every heading, number and button — it is round, heavy and slightly
+          childlike, which is the whole point. <b>Nunito</b> carries body and captions; it shares Fredoka's roundness
+          but stays quiet at 13–15px. Numerals are always tabular so HUD values never jitter mid-run.</p></div>
+    </div>
+    <div class="panel">
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:700;font-size:76px;line-height:.95;letter-spacing:-.04em;font-variant-numeric:tabular-nums">1,240</div>
+        <div class="typemeta"><b>score-hero</b>Fredoka 700 · 76/72 · −4% tracking<br>Results score only. One per screen.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:700;font-size:42px;line-height:1;letter-spacing:-.03em">Nice run!</div>
+        <div class="typemeta"><b>display-xl</b>Fredoka 700 · 42/42 · −3%<br>Celebration titles, countdown copy.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:700;font-size:33px;line-height:1.02;letter-spacing:-.025em">Ready to train?</div>
+        <div class="typemeta"><b>display-l</b>Fredoka 700 · 33/34 · −2.5%<br>Screen titles: Home, Stats, Settings.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.015em">Stroop Rush</div>
+        <div class="typemeta"><b>title</b>Fredoka 600 · 21/23 · −1.5%<br>Card titles, sheet titles.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.02em">0:12.4 · x7 · 6 / 25</div>
+        <div class="typemeta"><b>numeric-hud</b>Fredoka 700 · 22/26 · tabular<br>Every live value in a HUD pill.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:600;font-size:18px">Play again</div>
+        <div class="typemeta"><b>button</b>Fredoka 600 · 18/22<br>All buttons and nav labels. Never all-caps.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--body);font-weight:700;font-size:15px;line-height:1.4">Tap the colour, not the word — the word is a trap and that is the entire game.</div>
+        <div class="typemeta"><b>body</b>Nunito 700 · 15/21<br>Instructions, descriptions, settings rows.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--body);font-weight:700;font-size:13px;color:var(--ink-2)">Find 1 to 25, fast</div>
+        <div class="typemeta"><b>caption</b>Nunito 700 · 13/18 · textSecondary<br>Card subtitles, helper text.</div>
+      </div>
+      <div class="typerow">
+        <div style="font-family:var(--display);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)">Longest streak</div>
+        <div class="typemeta"><b>label</b>Fredoka 600 · 10/14 · +14% tracking · UPPER<br>The only place caps are allowed.</div>
+      </div>
+      <div class="typerow">
+        <div class="word play--red" style="font-size:78px"><span class="wout" aria-hidden="true">BLUE</span><span class="win pat pat--stripe">BLUE</span></div>
+        <div class="typemeta"><b>stimulus</b>Fredoka 700 · 78/78 · ink outline + fill pattern<br>Stroop word only. Both are mandatory.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 05 SPACE ==================== -->
+  <section class="sec" id="space">
+    <div class="sec-h"><span class="sec-n">05</span>
+      <div><h2>Spacing</h2>
+        <p>A 4pt base with seven steps, and the app uses all of them. Screen gutter is always 20, the gap between
+          stacked cards is always 16, and inside a card the padding is 15–17. Hard shadows already add visual space,
+          so gaps run tighter here than in a soft-shadow system.</p></div>
+    </div>
+    <div class="panel">
+      <div class="spacerow"><b>space-1</b><i style="width:4px"></i><s>4px — icon to label, border-to-glyph nudges</s></div>
+      <div class="spacerow"><b>space-2</b><i style="width:8px"></i><s>8px — pill padding, grid tile gap</s></div>
+      <div class="spacerow"><b>space-3</b><i style="width:12px"></i><s>12px — inside HUD rows, answer-button gap</s></div>
+      <div class="spacerow"><b>space-4</b><i style="width:16px"></i><s>16px — card inner padding, and the gap between every stacked card</s></div>
+      <div class="spacerow"><b>space-5</b><i style="width:20px"></i><s>20px — the screen gutter, on all eight screens without exception</s></div>
+      <div class="spacerow"><b>space-6</b><i style="width:28px"></i><s>28px — between a header and the content it owns</s></div>
+      <div class="spacerow"><b>space-7</b><i style="width:40px"></i><s>40px — around the hero moment (countdown, results score)</s></div>
+    </div>
+  </section>
+
+  <!-- ==================== 06 RADIUS ==================== -->
+  <section class="sec" id="radius">
+    <div class="sec-h"><span class="sec-n">06</span>
+      <div><h2>Radius</h2>
+        <p>Chunky throughout. The rule: the bigger the surface, the bigger the radius — a 22px card holding a 16px
+          tile holding a 10px chip reads as nested plastic, not as sloppy rounding.</p></div>
+    </div>
+    <div class="grid g4">
+      <div class="radbox" style="border-radius:var(--r-sm)">10 · r-sm</div>
+      <div class="radbox" style="border-radius:var(--r-md)">16 · r-md</div>
+      <div class="radbox" style="border-radius:var(--r-lg)">22 · r-lg</div>
+      <div class="radbox" style="border-radius:var(--r-xl)">28 · r-xl</div>
+      <div class="radbox" style="border-radius:var(--r-pill)">999 · r-pill</div>
+    </div>
+    <p class="note">r-sm — inner chips and swatches. r-md — HUD pills, grid tiles, icon buttons. r-lg — cards and
+      buttons. r-xl — hero panels, stimulus card, sheets. r-pill — anything that holds a single short value.</p>
+  </section>
+
+  <!-- ==================== 07 ELEVATION ==================== -->
+  <section class="sec" id="elevation">
+    <div class="sec-h"><span class="sec-n">07</span>
+      <div><h2>Elevation</h2>
+        <p>There is no blur in this system. Elevation is an ink rectangle offset down and right — light comes from
+          the top-left, always, and the shadow is the same ink as the border so surfaces read as die-cut card stock.</p></div>
+    </div>
+    <div class="grid g3">
+      <div><div class="elev" style="box-shadow:var(--sh-0)">e0 · none</div><p class="note" style="margin-top:0">Pressed buttons, found tiles. Flat on the page.</p></div>
+      <div><div class="elev" style="box-shadow:var(--sh-1)">e1 · 3px 3px</div><p class="note" style="margin-top:0">HUD pills, chips, small tiles, icon buttons.</p></div>
+      <div><div class="elev" style="box-shadow:var(--sh-2)">e2 · 5px 5px</div><p class="note" style="margin-top:0">Cards, buttons, the default raised surface.</p></div>
+      <div><div class="elev" style="box-shadow:var(--sh-3)">e3 · 8px 8px</div><p class="note" style="margin-top:0">Hero panels, stimulus card, modal sheets.</p></div>
+      <div><div class="elev" style="box-shadow:var(--sh-4)">e4 · 10px 10px</div><p class="note" style="margin-top:0">One per screen, maximum: the countdown ring.</p></div>
+    </div>
+    <p class="note"><b>The press rule.</b> On press, translate the surface by (offset − 1px) on both axes and shrink the
+      shadow to 1px 1px. An e2 button moves 4px and keeps a 1px shadow, so the object appears to be pushed into the page
+      rather than simply changing colour. Every pressable surface in the app obeys this — it is the single most
+      recognisable behaviour in the direction.</p>
+  </section>
+
+  <!-- ==================== 08 ICONOGRAPHY ==================== -->
+  <section class="sec" id="icons">
+    <div class="sec-h"><span class="sec-n">08</span>
+      <div><h2>Iconography</h2>
+        <p>Same rule as everything else: one ink line, rounded ends, no fills except where a glyph is a solid shape.
+          Two stroke weights only, and nothing in between. Icons are drawn, never borrowed — there is no emoji anywhere
+          in the product, because a full-colour Apple or Segoe glyph is the one mark that would not look hand-built.</p></div>
+    </div>
+    <div class="panel">
+      <h3 class="sub">22px · stroke 2.6 — navigation and status</h3>
+      <div class="iconwall">
+        <div class="icell"><div class="box">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+            <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+            <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+            <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+          </svg></div><b>Play</b><s>Tab bar</s></div>
+        <div class="icell"><div class="box">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+          </svg></div><b>Stats</b><s>Tab bar</s></div>
+        <div class="icell"><div class="box">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+            <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+          </svg></div><b>Settings</b><s>Tab bar</s></div>
+        <div class="icell"><div class="box">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg></div><b>Go</b><s>Play / Daily Mix</s></div>
+        <div class="icell"><div class="box">
+          <svg width="22" height="17" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+            <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+          </svg></div><b>Wifi</b><s>Status bar</s></div>
+      </div>
+
+      <h3 class="sub">18–20px · stroke 3 — icon buttons and settings rows</h3>
+      <div class="iconwall">
+        <div class="icell"><div class="box">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M12.5 4 6.5 10l6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg></div><b>Back</b><s>Icon button</s></div>
+        <div class="icell"><div class="box">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg></div><b>Pause</b><s>Icon button</s></div>
+        <div class="icell"><div class="box">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg></div><b>Close</b><s>Icon button</s></div>
+        <div class="icell"><div class="box">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M3 6.5h3L10 3v12L6 11.5H3z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M13 6.2a4 4 0 0 1 0 5.6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg></div><b>Sound</b><s>Settings row</s></div>
+        <div class="icell"><div class="box">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/>
+            <path d="M9 5.2V9l2.6 2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg></div><b>Motion</b><s>Settings row</s></div>
+        <div class="icell"><div class="box">
+          <svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true">
+            <rect x="3.5" y="8.5" width="11" height="9" rx="2.5" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M6.1 8.5V6.4a2.9 2.9 0 0 1 5.8 0v2.1" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg></div><b>Lock</b><s>Locked game</s></div>
+      </div>
+
+      <h3 class="sub">Badge glyphs — drawn, not typed</h3>
+      <div class="stateset" style="margin-top:4px">
+        <div class="state"><span class="cap">Celebration</span><span class="badge new"><svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true"><path d="M9.5 1.6 11.9 6.6 17.4 7.4 13.4 11.2 14.4 16.7 9.5 14.1 4.6 16.7 5.6 11.2 1.6 7.4 7.1 6.6z" fill="var(--paper)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>New personal best</span></div>
+        <div class="state"><span class="cap">Streak</span><span class="badge"><svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true"><path d="M9 1.6c3.7 3.1 5.5 6.1 5.5 8.9a5.5 5.5 0 0 1-11 0c0-1.7.6-3.2 1.9-4.6.1 1.3.6 2.2 1.4 2.7C6.2 6.3 6.9 3.9 9 1.6z" fill="var(--coral)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>4 day streak</span></div>
+        <div class="state"><span class="cap">Locked</span><span class="badge lock"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><rect x="2.8" y="7.4" width="10.4" height="8.4" rx="2.4" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M5.4 7.4V5.5a2.6 2.6 0 0 1 5.2 0v1.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Coming soon</span></div>
+      </div>
+      <p class="note">Star, flame and padlock are inline SVG in the app's own language — one closed path, an ink stroke,
+        one flat fill from the palette. They are the only decorative glyphs in the system and they are specified here
+        rather than borrowed from the platform font.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 09 MOTION ==================== -->
+  <section class="sec" id="motion">
+    <div class="sec-h"><span class="sec-n">09</span>
+      <div><h2>Motion</h2>
+        <p>Fast and springy. Nothing eases gently; things arrive slightly past their mark and settle. Above 240ms
+          this direction starts to feel sluggish and cheap, so nothing is allowed to run longer.</p></div>
+    </div>
+    <div class="motionrow">
+      <div class="mcard m1"><b>tap · 120ms</b><s>ease-pop — press down / release</s>
+        <div class="mtrack"><span class="mdot"></span></div>
+        <svg class="curve" width="100%" height="70" viewBox="0 0 120 70" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M2 14 H118" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M4 62 C 26 62 38 -2 62 2 C 78 5 84 20 116 14" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <s style="margin-top:8px">cubic-bezier(.2, 1.5, .4, 1)</s></div>
+      <div class="mcard m2"><b>state · 160ms</b><s>ease-out — toggles, selection, HUD value swaps</s>
+        <div class="mtrack"><span class="mdot"></span></div>
+        <svg class="curve" width="100%" height="70" viewBox="0 0 120 70" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M2 14 H118" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M4 62 C 28 22 58 14 116 14" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <s style="margin-top:8px">cubic-bezier(.2, .8, .2, 1)</s></div>
+      <div class="mcard m3"><b>move · 180ms</b><s>ease-in-out — sheets, page transitions</s>
+        <div class="mtrack"><span class="mdot"></span></div>
+        <svg class="curve" width="100%" height="70" viewBox="0 0 120 70" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M2 14 H118" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M4 62 C 62 62 58 14 116 14" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <s style="margin-top:8px">cubic-bezier(.6, 0, .3, 1)</s></div>
+      <div class="mcard"><b>celebrate · 240ms</b><s>ease-pop — personal-best badge, streak bump</s>
+        <div class="mtrack"><span class="mdot" style="background:var(--leaf);animation:slide 2.4s var(--ease-pop) infinite alternate"></span></div>
+        <svg class="curve" width="100%" height="70" viewBox="0 0 120 70" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M2 14 H118" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M4 62 C 26 62 38 -2 62 2 C 78 5 84 20 116 14" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <s style="margin-top:8px">Scale 0.86 → 1.06 → 1.0, plus a 2.5° tilt. Never loops.</s></div>
+    </div>
+    <p class="note">The four tracks above run at roughly 10× the real duration so the curve is readable at a glance;
+      the shipped values are the ones printed on each card. Nothing in the system is allowed above 240ms, and nothing
+      is allowed to repeat without an end — the wrong-tile shake is 240ms × 2, then rest.</p>
+    <p class="note"><b>Reduced motion.</b> When the OS flag or the in-app <em>Reduce motion</em> switch is on, every
+      duration collapses to 0ms and the press transform is dropped — the pressed <em>colour and shadow</em> state
+      still applies instantly, so feedback survives. Rays and sunbursts stop animating; they never animated in the
+      first place, which is deliberate.</p>
+  </section>
+
+  <!-- ==================== 10 COMPONENTS ==================== -->
+  <section class="sec" id="components">
+    <div class="sec-h"><span class="sec-n">10</span>
+      <div><h2>Components</h2>
+        <p>Every component below is live. "Pressed" is rendered as a static state so it can be read on a slide, but
+          the default instances also respond to a real press and a real keyboard focus.</p></div>
+    </div>
+
+    <div class="panel">
+      <h3 class="sub">Primary button</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Default</span><button class="btn" type="button">Play again</button></div>
+        <div class="state"><span class="cap">Pressed</span><button class="btn pressed" type="button">Play again</button></div>
+        <div class="state"><span class="cap">Focus</span><button class="btn focusring" type="button">Play again</button></div>
+        <div class="state"><span class="cap">Disabled</span><button class="btn disabled" type="button" disabled>Play again</button></div>
+        <div class="state"><span class="cap">Success variant</span><button class="btn btn--leaf" type="button">Play</button></div>
+      </div>
+
+      <h3 class="sub">Secondary button</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Default</span><button class="btn btn--sec" type="button">Home</button></div>
+        <div class="state"><span class="cap">Pressed</span><button class="btn btn--sec pressed" type="button">Home</button></div>
+        <div class="state"><span class="cap">Focus</span><button class="btn btn--sec focusring" type="button">Home</button></div>
+        <div class="state"><span class="cap">Disabled</span><button class="btn btn--sec disabled" type="button" disabled>Home</button></div>
+      </div>
+
+      <h3 class="sub">Ghost button</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Default</span><button class="btn btn--ghost" type="button">Skip tutorial</button></div>
+        <div class="state"><span class="cap">Pressed</span><button class="btn btn--ghost pressed" type="button">Skip tutorial</button></div>
+        <div class="state"><span class="cap">Disabled</span><button class="btn btn--ghost disabled" type="button" disabled>Skip tutorial</button></div>
+      </div>
+      <p class="note">Ghost has no border and no shadow — it is the only surface in the system allowed to break the
+        outline rule, which is why it is reserved for one dismissive action per screen.</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="sub">Game card</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Default</span>
+          <div class="gcard" tabindex="0"><div style="flex:1"><h4>Stroop Rush</h4><p>Tap the colour, not the word</p>
+            <span class="bestpill"><s>BEST</s>1,480</span></div>
+            <span class="gart" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div></div>
+        <div class="state"><span class="cap">Pressed</span>
+          <div class="gcard pressed" style="background:var(--turquoise)"><div style="flex:1"><h4>Schulte Grid</h4><p>Find 1 to 25, fast</p>
+            <span class="bestpill"><s>BEST</s>18.6s</span></div>
+            <span class="gart" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div></div>
+        <div class="state"><span class="cap">Locked</span>
+          <div class="gcard locked"><div style="flex:1"><h4>N-Back</h4><p>Coming soon</p></div>
+            <span class="badge lock"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><rect x="2.8" y="7.4" width="10.4" height="8.4" rx="2.4" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M5.4 7.4V5.5a2.6 2.6 0 0 1 5.2 0v1.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Locked</span></div></div>
+      </div>
+
+      <h3 class="sub">Difficulty segmented control</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Classic selected · Blitz focused</span>
+          <div class="seg"><span class="seg-i" tabindex="0">Chill</span><span class="seg-i on" tabindex="0">Classic</span><span class="seg-i focusring" tabindex="0">Blitz</span></div></div>
+        <div class="state"><span class="cap">Blitz being pressed</span>
+          <div class="seg"><span class="seg-i">Chill</span><span class="seg-i on">Classic</span><span class="seg-i pressed">Blitz</span></div></div>
+        <div class="state"><span class="cap">Blitz locked</span>
+          <div class="seg"><span class="seg-i on">Chill</span><span class="seg-i">Classic</span><span class="seg-i disabled">Blitz <svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><rect x="2.8" y="7.4" width="10.4" height="8.4" rx="2.4" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M5.4 7.4V5.5a2.6 2.6 0 0 1 5.2 0v1.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="sub">HUD stat pill</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Neutral</span><span class="hstat"><s>Time</s><b>0:23</b></span></div>
+        <div class="state"><span class="cap">Neutral</span><span class="hstat"><s>Score</s><b>1,240</b></span></div>
+        <div class="state"><span class="cap">Highlighted</span><span class="hstat hot"><s>Streak</s><b>x7</b></span></div>
+        <div class="state"><span class="cap">Alarm (under 5s)</span><span class="hstat bad"><s>Time</s><b>0:04</b></span></div>
+      </div>
+
+      <h3 class="sub">Progress bar</h3>
+      <div class="stateset" style="align-items:flex-end">
+        <div class="state"><span class="cap">Empty</span><span class="track"><i style="width:0"></i></span></div>
+        <div class="state"><span class="cap">6 / 25 · 24%</span><span class="track"><i style="width:24%"></i></span></div>
+        <div class="state"><span class="cap">Timer · 57%</span><span class="track"><i class="coral" style="width:57%"></i></span></div>
+        <div class="state"><span class="cap">Complete</span><span class="track"><i class="full" style="width:100%"></i></span></div>
+      </div>
+
+      <h3 class="sub">Timer ring</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Full</span>
+          <span class="ring" style="background:conic-gradient(var(--turquoise) 0 100%, var(--cream-2) 0)"><b>60</b></span></div>
+        <div class="state"><span class="cap">Running · 62%</span>
+          <span class="ring" style="background:conic-gradient(var(--turquoise) 0 62%, var(--cream-2) 62% 100%)"><b>0:23</b></span></div>
+        <div class="state"><span class="cap">Low · 12%</span>
+          <span class="ring" style="background:conic-gradient(var(--coral) 0 12%, var(--cream-2) 12% 100%)"><b>0:04</b></span></div>
+        <div class="state"><span class="cap">Done</span>
+          <span class="ring" style="background:var(--cream-2)"><b>0:00</b></span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="sub">Grid tile</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Idle</span><span class="tile" tabindex="0">14</span></div>
+        <div class="state"><span class="cap">Found</span><span class="tile found">3</span></div>
+        <div class="state"><span class="cap">Next</span><span class="tile next" tabindex="0">7</span></div>
+        <div class="state"><span class="cap">Wrong (shakes)</span><span class="tile wrong">9</span></div>
+        <div class="state"><span class="cap">Focus · idle</span><span class="tile focusring" tabindex="0">14</span></div>
+        <div class="state"><span class="cap">Focus · on sunshine</span><span class="tile next focusring" tabindex="0">7</span></div>
+      </div>
+      <div class="legend">
+        <span class="lg"><i class="i" aria-hidden="true"></i>Not yet — cream, e1, ink glyph</span>
+        <span class="lg"><i class="f" aria-hidden="true"></i>Found — deep fill, e0, sunk 2px</span>
+        <span class="lg"><i class="n" aria-hidden="true"></i>Next — sunshine, e2, double ring</span>
+        <span class="lg"><i class="w" aria-hidden="true"></i>Wrong — danger, paper glyph, shake ×2</span>
+      </div>
+      <p class="note">Found sinks flat and changes fill to <b class="mono">gameSchulteDeep</b> — never element opacity,
+        which would fade the 3px ink border along with it and the border is the brand. Next lifts to e2 and gains a
+        cream-then-ink double ring; wrong flips to danger with a paper glyph and a 240ms shake played twice, then rest.
+        Four different <em>shapes</em> of feedback, so the board still parses in greyscale. The focus ring is the same
+        4px grape-pop outside a 3px cream gap on every fill — the cream gap is what keeps it at 4.1:1 against sunshine
+        rather than 2.8:1 measured directly.</p>
+
+      <h3 class="sub">Stroop answer buttons</h3>
+      <div class="ansdemo" style="margin-top:6px">
+        <span class="ans play--red ans--onpaper" tabindex="0"><span class="key pat pat--stripe" aria-hidden="true"></span><span class="lb">Red</span></span>
+        <span class="ans play--blue ans--onpaper" tabindex="0"><span class="key pat pat--solid" aria-hidden="true"></span><span class="lb">Blue</span></span>
+        <span class="ans play--green ans--onpaper pressed"><span class="key pat pat--dot" aria-hidden="true"></span><span class="lb">Green</span></span>
+        <span class="ans play--yellow ans--onink focusring"><span class="key pat pat--ring" aria-hidden="true"></span><span class="lb">Yellow</span></span>
+      </div>
+      <p class="note">The ink key on the left of every answer is the pattern channel, and it is the same pattern the
+        stimulus glyph is painted with. Labels are the second redundant channel; hue is the third, not the first.</p>
+
+      <h3 class="sub">Toggle switch</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">On</span><span class="tgl on" role="img" aria-label="On"><s>ON</s><b></b></span></div>
+        <div class="state"><span class="cap">Off</span><span class="tgl" role="img" aria-label="Off"><s>OFF</s><b></b></span></div>
+        <div class="state"><span class="cap">Disabled off</span><span class="tgl disabled" role="img" aria-label="Off, disabled"><s>OFF</s><b></b></span></div>
+        <div class="state"><span class="cap">Focus</span><span class="tgl on focusring" role="img" aria-label="On, focused" tabindex="0"><s>ON</s><b></b></span></div>
+      </div>
+      <p class="note">The word ON / OFF is printed inside the track. State never depends on the green alone, which
+        keeps the switch readable for deuteranopes and in a screenshot printed in black and white. The track itself is
+        66×34; the tap target is the whole 62px settings row it sits in, which is what the hand actually aims at.</p>
+
+      <h3 class="sub">Badge</h3>
+      <div class="stateset">
+        <div class="state"><span class="cap">Celebration</span><span class="badge new"><svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true"><path d="M9.5 1.6 11.9 6.6 17.4 7.4 13.4 11.2 14.4 16.7 9.5 14.1 4.6 16.7 5.6 11.2 1.6 7.4 7.1 6.6z" fill="var(--paper)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>New personal best</span></div>
+        <div class="state"><span class="cap">Streak</span><span class="badge"><svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true"><path d="M9 1.6c3.7 3.1 5.5 6.1 5.5 8.9a5.5 5.5 0 0 1-11 0c0-1.7.6-3.2 1.9-4.6.1 1.3.6 2.2 1.4 2.7C6.2 6.3 6.9 3.9 9 1.6z" fill="var(--coral)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>4 day streak</span></div>
+        <div class="state"><span class="cap">Quiet</span><span class="badge quiet">Classic</span></div>
+        <div class="state"><span class="cap">Locked</span><span class="badge lock"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><rect x="2.8" y="7.4" width="10.4" height="8.4" rx="2.4" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M5.4 7.4V5.5a2.6 2.6 0 0 1 5.2 0v1.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Coming soon</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="grid g2" style="align-items:start">
+        <div>
+          <h3 class="sub">Modal sheet</h3>
+          <div class="sheetdemo">
+            <div class="grab" aria-hidden="true"></div>
+            <h4>Leave the run?</h4>
+            <p>Your score for this run will not be saved. Your 4 day streak is safe either way.</p>
+            <div class="row">
+              <button class="btn" type="button">Keep playing</button>
+              <button class="btn btn--sec" type="button">Leave run</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="sub">Bottom navigation</h3>
+          <div class="navdemo">
+            <span class="tab on" tabindex="0">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                <rect x="2.5" y="2.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+                <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+                <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+                <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+              </svg><span>Play</span></span>
+            <span class="tab">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              </svg><span>Stats</span></span>
+            <span class="tab">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+                <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+                <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+              </svg><span>Settings</span></span>
+          </div>
+          <p class="note">Three destinations, 3px ink top border, and the active item wearing a sunshine chip with its
+            own e1 shadow. The bar never appears during a run — gameplay owns the full screen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 11 ACCESSIBILITY ==================== -->
+  <section class="sec" id="a11y">
+    <div class="sec-h"><span class="sec-n">11</span>
+      <div><h2>Accessibility rules</h2>
+        <p>A colour-recognition game has an obvious obligation. These are the rules that keep the direction honest.</p></div>
+    </div>
+    <div class="panel">
+      <div class="grid g2">
+        <div>
+          <h3 class="sub">Always true</h3>
+          <p class="note" style="margin-top:0">
+            • Body text is ink on cream or paper — 14.4:1 and 15.2:1.<br>
+            • Secondary text is ink-2 <em>on cream or paper only</em> — 7.3:1 and 7.8:1. On any saturated fill the label
+              goes to full ink, because ink-2 drops to 2.8:1 on coral and 3.7:1 on turquoise.<br>
+            • ink-3 is disabled controls and nothing else. A status line or a tagline is ink-2.<br>
+            • Every decorative ray or dot layer is re-measured <em>as rendered pixels</em>, not against the flat fill
+              underneath. Worst-case measured composites: Home header ink 6.4:1, countdown cream 4.7:1, Settings header
+              cream 5.0:1, Stroop hero ink 4.9:1, Results header ink 5.8:1, Stats header ink 5.5:1. That is why the
+              countdown burst runs at .55 and the Stroop hero dots at .08.<br>
+            • The two play-screen colour bands carry no small text at all — only ink-outlined objects sit on them —
+              which is what lets their ray and dot layers run at full strength.<br>
+            • Every fill that carries a label declares its label colour in the token table; there is no "pick one" case.<br>
+            • Tap targets are ≥ 48px: icon buttons 48×48, segmented items 48 tall, answer keys 92, grid tiles 60–64.
+              The toggle track is 66×34 and its tap target is the 62px settings row around it.<br>
+            • Focus is a 4px grape-pop ring outside a 3px cream gap — implemented on buttons, cards, tiles, answers,
+              segmented items, tabs and toggles, and shown above on sunshine, turquoise and yellow fills.<br>
+            • Every answer colour carries an ink fill pattern as well as a hue, on the key and on the stimulus glyph.<br>
+            • The 3px ink border means every surface boundary survives greyscale and low vision.
+          </p>
+        </div>
+        <div>
+          <h3 class="sub">Never allowed</h3>
+          <p class="note" style="margin-top:0">
+            • Hue as the sole carrier of state <em>or of an answer</em> — pair it with shadow, ring, position, a word
+              or a fill pattern.<br>
+            • A bare coloured glyph on cream — the stimulus outline and its fill pattern are not optional.<br>
+            • Element opacity on anything that has an ink border; recede by changing the fill instead.<br>
+            • Text on grape-pop below 24px.<br>
+            • Motion that a player cannot turn off, that runs longer than 240ms, or that repeats without an end.<br>
+            • Feedback that only exists as motion.<br>
+            • Disabled styling without a disabled shape change (border drops to ink-3, shadow goes soft-ink).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 12 FLUTTER ==================== -->
+  <section class="sec" id="flutter">
+    <div class="sec-h"><span class="sec-n">12</span>
+      <div><h2>Flutter mapping</h2>
+        <p>Transcribe this straight into <b class="mono">lib/theme/mindforge_tokens.dart</b>. Same two-tier structure as
+          the CSS above: primitives are private consts, the ThemeExtension only exposes semantic slots plus the
+          gameplay palette. Widgets read <b class="mono">MindforgeTokens.of(context)</b> and never see a raw
+          <b class="mono">Color(0x…)</b>.</p></div>
+    </div>
+    <span class="filename">lib/theme/mindforge_tokens.dart</span>
+<pre><code>import 'dart:ui' show FontFeature;
+
+import 'package:flutter/material.dart';
+
+/// Sunburst Pop — the one place a raw colour value may appear.
+class _P {
+  const _P._();
+
+  static const cream       = Color(0xFFFFF8EC);
+  static const creamSunk   = Color(0xFFFFEEDA);
+  static const creamEdge   = Color(0xFFF6E3C6);
+  static const dot         = Color(0xFFF2DFC0);
+  static const paper       = Color(0xFFFFFFFF);
+  static const ink         = Color(0xFF2B1B4D);
+  static const inkSoft     = Color(0xFF5A4A7D);
+  static const inkMuted    = Color(0xFF8E80AE);
+  static const sunshine    = Color(0xFFFFC53D);
+  static const sunshineDeep= Color(0xFFF2A81E);
+  static const coral       = Color(0xFFFF6B5A);
+  static const coralDeep   = Color(0xFFE8452F);
+  static const turquoise   = Color(0xFF22C7B8);
+  static const turquoiseDeep = Color(0xFF12A79A);
+  static const grape       = Color(0xFF6A45E8);
+  static const grapePop    = Color(0xFF7C5CFF);
+  static const leaf        = Color(0xFF4CC86A);
+  static const leafDeep    = Color(0xFF2FA64F);
+  static const tangerine   = Color(0xFFFF9330);
+  // gameplay palette — tuned for contrast on cream, not for brand harmony
+  static const playRed     = Color(0xFFD81E2C);
+  static const playBlue    = Color(0xFF1F6BE0);
+  static const playGreen   = Color(0xFF157A39);
+  static const playYellow  = Color(0xFFF5B301);
+  static const playPurple  = Color(0xFF6A45E8);
+  static const playOrange  = Color(0xFFC24409);
+  static const playPink    = Color(0xFFC2185B);
+}
+
+/// The non-hue channel every answer colour must also carry. Red and green
+/// collapse to one olive under deuteranopia and to one grey in a screenshot;
+/// stripe and dot never do. Painted on the answer key AND into the glyph.
+enum PlayFill { solid, stripe, dot, ring }
+
+/// The four default answers plus the two Blitz extras, each bound to its fill.
+/// A widget asks for [PlayAnswer.red] and gets a colour + a pattern, never a
+/// bare Color it then has to decorate by hand.
+enum PlayAnswer {
+  red(PlayFill.stripe),
+  blue(PlayFill.solid),
+  green(PlayFill.dot),
+  yellow(PlayFill.ring),
+  purple(PlayFill.solid),
+  orange(PlayFill.stripe);
+
+  const PlayAnswer(this.fill);
+
+  /// The ink pattern drawn over this answer's hue.
+  final PlayFill fill;
+}
+
+@immutable
+class MindforgeTokens extends ThemeExtension&lt;MindforgeTokens&gt; {
+  const MindforgeTokens({
+    required this.surface,
+    required this.surfaceSunk,
+    required this.surfaceRaised,
+    required this.surfaceInvert,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textDisabled,
+    required this.textInvert,
+    required this.border,
+    required this.divider,
+    required this.dotPattern,
+    required this.accent,
+    required this.accentDeep,
+    required this.accentAlt,
+    required this.success,
+    required this.successDeep,
+    required this.warning,
+    required this.danger,
+    required this.focusRing,
+    required this.gameStroop,
+    required this.gameStroopDeep,
+    required this.gameSchulte,
+    required this.gameSchulteDeep,
+    required this.playRed,
+    required this.playBlue,
+    required this.playGreen,
+    required this.playYellow,
+    required this.playPurple,
+    required this.playOrange,
+    required this.cbBlue,
+    required this.cbYellow,
+    required this.cbOrange,
+    required this.cbPink,
+  });
+
+  // ---- semantic slots -------------------------------------------------
+  final Color surface, surfaceSunk, surfaceRaised, surfaceInvert;
+  final Color textPrimary, textSecondary, textDisabled, textInvert;
+  final Color border, divider, dotPattern;
+  final Color accent, accentDeep, accentAlt;
+  final Color success, successDeep, warning, danger, focusRing;
+
+  // ---- per-game identity ----------------------------------------------
+  final Color gameStroop, gameStroopDeep, gameSchulte, gameSchulteDeep;
+
+  // ---- gameplay palette (Stroop answers) -------------------------------
+  final Color playRed, playBlue, playGreen, playYellow, playPurple, playOrange;
+
+  // ---- colour-blind palette (Settings → "Colour-blind friendly palette") -
+  final Color cbBlue, cbYellow, cbOrange, cbPink;
+
+  /// The single place the colour-blind setting is applied. Widgets pass the
+  /// slot and the flag; nothing downstream knows which palette is live.
+  Color answerColour(PlayAnswer a, {bool colourBlind = false}) =&gt; switch (a) {
+    PlayAnswer.red    =&gt; colourBlind ? cbPink   : playRed,
+    PlayAnswer.blue   =&gt; colourBlind ? cbBlue   : playBlue,
+    PlayAnswer.green  =&gt; colourBlind ? cbOrange : playGreen,
+    PlayAnswer.yellow =&gt; colourBlind ? cbYellow : playYellow,
+    PlayAnswer.purple =&gt; playPurple,
+    PlayAnswer.orange =&gt; playOrange,
+  };
+
+  /// Label colour for an answer fill. Never "pick one at the call site".
+  /// Holds in both palettes: only the yellow slot stays light enough to need ink.
+  Color answerLabel(PlayAnswer a) =&gt;
+      a == PlayAnswer.yellow ? textPrimary : surfaceRaised;
+
+  // ---- shape ------------------------------------------------------------
+  static const double borderWidth = 3;
+  static const radiusSm  = Radius.circular(10);
+  static const radiusMd  = Radius.circular(16);
+  static const radiusLg  = Radius.circular(22);
+  static const radiusXl  = Radius.circular(28);
+  static const radiusPill= Radius.circular(999);
+
+  /// One stripe geometry for progress fills, chart bars and answer keys.
+  static const double stripePitch = 9;
+  static const double stripeAngle = 45;
+
+  /// Hard offset shadows. No blur, ever: blurRadius stays 0.
+  static const Offset e1 = Offset(3, 3);
+  static const Offset e2 = Offset(5, 5);
+  static const Offset e3 = Offset(8, 8);
+  static const Offset e4 = Offset(10, 10);
+
+  List&lt;BoxShadow&gt; shadow(Offset o) =&gt;
+      [BoxShadow(color: border, offset: o, blurRadius: 0, spreadRadius: 0)];
+
+  /// A pressed surface moves (offset - 1), keeps a 1px shadow and shrinks
+  /// slightly. Every pressable surface in the app uses this, no exceptions.
+  Offset pressTranslate(Offset o) =&gt; Offset(o.dx - 1, o.dy - 1);
+  static const double pressScale = 0.98;
+
+  /// Focus: 4px focusRing outside a 3px surface gap, so the ring is always
+  /// measured against cream and never against the fill it surrounds.
+  static const double focusGap = 3;
+  static const double focusWidth = 4;
+
+  // ---- motion -------------------------------------------------------------
+  static const durTap       = Duration(milliseconds: 120);
+  static const durState     = Duration(milliseconds: 160);
+  static const durMove      = Duration(milliseconds: 180);
+  static const durCelebrate = Duration(milliseconds: 240);
+  static const easePop   = Cubic(0.2, 1.5, 0.4, 1.0);
+  static const easeOut   = Cubic(0.2, 0.8, 0.2, 1.0);
+  static const easeInOut = Cubic(0.6, 0.0, 0.3, 1.0);
+
+  static const MindforgeTokens sunburstPop = MindforgeTokens(
+    surface:         _P.cream,
+    surfaceSunk:     _P.creamSunk,
+    surfaceRaised:   _P.paper,
+    surfaceInvert:   _P.ink,
+    textPrimary:     _P.ink,
+    textSecondary:   _P.inkSoft,
+    textDisabled:    _P.inkMuted,
+    textInvert:      _P.cream,
+    border:          _P.ink,
+    divider:         _P.creamEdge,
+    dotPattern:      _P.dot,
+    accent:          _P.sunshine,
+    accentDeep:      _P.sunshineDeep,
+    accentAlt:       _P.grape,
+    success:         _P.leaf,
+    successDeep:     _P.leafDeep,
+    warning:         _P.tangerine,
+    danger:          _P.playRed,
+    focusRing:       _P.grapePop,
+    gameStroop:      _P.coral,
+    gameStroopDeep:  _P.coralDeep,
+    gameSchulte:     _P.turquoise,
+    gameSchulteDeep: _P.turquoiseDeep,
+    playRed:         _P.playRed,
+    playBlue:        _P.playBlue,
+    playGreen:       _P.playGreen,
+    playYellow:      _P.playYellow,
+    playPurple:      _P.playPurple,
+    playOrange:      _P.playOrange,
+    cbBlue:          _P.playBlue,
+    cbYellow:        _P.playYellow,
+    cbOrange:        _P.playOrange,
+    cbPink:          _P.playPink,
+  );
+
+  /// Asserting accessor — a missing extension is a bug, not a fallback.
+  static MindforgeTokens of(BuildContext context) {
+    final tokens = Theme.of(context).extension&lt;MindforgeTokens&gt;();
+    assert(tokens != null, 'MindforgeTokens missing from ThemeData.extensions');
+    return tokens!;
+  }
+
+  List&lt;Object?&gt; get _props =&gt; [
+        surface, surfaceSunk, surfaceRaised, surfaceInvert,
+        textPrimary, textSecondary, textDisabled, textInvert,
+        border, divider, dotPattern,
+        accent, accentDeep, accentAlt,
+        success, successDeep, warning, danger, focusRing,
+        gameStroop, gameStroopDeep, gameSchulte, gameSchulteDeep,
+        playRed, playBlue, playGreen, playYellow, playPurple, playOrange,
+        cbBlue, cbYellow, cbOrange, cbPink,
+      ];
+
+  @override
+  bool operator ==(Object other) =&gt;
+      identical(this, other) ||
+      other is MindforgeTokens &amp;&amp;
+          runtimeType == other.runtimeType &amp;&amp;
+          _listEquals(_props, other._props);
+
+  @override
+  int get hashCode =&gt; Object.hashAll(_props);
+
+  static bool _listEquals(List&lt;Object?&gt; a, List&lt;Object?&gt; b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i &lt; a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  MindforgeTokens copyWith({
+    Color? surface, Color? surfaceSunk, Color? surfaceRaised, Color? surfaceInvert,
+    Color? textPrimary, Color? textSecondary, Color? textDisabled, Color? textInvert,
+    Color? border, Color? divider, Color? dotPattern,
+    Color? accent, Color? accentDeep, Color? accentAlt,
+    Color? success, Color? successDeep, Color? warning, Color? danger, Color? focusRing,
+    Color? gameStroop, Color? gameStroopDeep, Color? gameSchulte, Color? gameSchulteDeep,
+    Color? playRed, Color? playBlue, Color? playGreen, Color? playYellow,
+    Color? playPurple, Color? playOrange,
+    Color? cbBlue, Color? cbYellow, Color? cbOrange, Color? cbPink,
+  }) {
+    return MindforgeTokens(
+      surface:         surface         ?? this.surface,
+      surfaceSunk:     surfaceSunk     ?? this.surfaceSunk,
+      surfaceRaised:   surfaceRaised   ?? this.surfaceRaised,
+      surfaceInvert:   surfaceInvert   ?? this.surfaceInvert,
+      textPrimary:     textPrimary     ?? this.textPrimary,
+      textSecondary:   textSecondary   ?? this.textSecondary,
+      textDisabled:    textDisabled    ?? this.textDisabled,
+      textInvert:      textInvert      ?? this.textInvert,
+      border:          border          ?? this.border,
+      divider:         divider         ?? this.divider,
+      dotPattern:      dotPattern      ?? this.dotPattern,
+      accent:          accent          ?? this.accent,
+      accentDeep:      accentDeep      ?? this.accentDeep,
+      accentAlt:       accentAlt       ?? this.accentAlt,
+      success:         success         ?? this.success,
+      successDeep:     successDeep     ?? this.successDeep,
+      warning:         warning         ?? this.warning,
+      danger:          danger          ?? this.danger,
+      focusRing:       focusRing       ?? this.focusRing,
+      gameStroop:      gameStroop      ?? this.gameStroop,
+      gameStroopDeep:  gameStroopDeep  ?? this.gameStroopDeep,
+      gameSchulte:     gameSchulte     ?? this.gameSchulte,
+      gameSchulteDeep: gameSchulteDeep ?? this.gameSchulteDeep,
+      playRed:         playRed         ?? this.playRed,
+      playBlue:        playBlue        ?? this.playBlue,
+      playGreen:       playGreen       ?? this.playGreen,
+      playYellow:      playYellow      ?? this.playYellow,
+      playPurple:      playPurple      ?? this.playPurple,
+      playOrange:      playOrange      ?? this.playOrange,
+      cbBlue:          cbBlue          ?? this.cbBlue,
+      cbYellow:        cbYellow        ?? this.cbYellow,
+      cbOrange:        cbOrange        ?? this.cbOrange,
+      cbPink:          cbPink          ?? this.cbPink,
+    );
+  }
+
+  @override
+  MindforgeTokens lerp(covariant MindforgeTokens? other, double t) {
+    if (other == null) return this;
+    Color c(Color a, Color b) =&gt; Color.lerp(a, b, t)!;
+    return MindforgeTokens(
+      surface:         c(surface, other.surface),
+      surfaceSunk:     c(surfaceSunk, other.surfaceSunk),
+      surfaceRaised:   c(surfaceRaised, other.surfaceRaised),
+      surfaceInvert:   c(surfaceInvert, other.surfaceInvert),
+      textPrimary:     c(textPrimary, other.textPrimary),
+      textSecondary:   c(textSecondary, other.textSecondary),
+      textDisabled:    c(textDisabled, other.textDisabled),
+      textInvert:      c(textInvert, other.textInvert),
+      border:          c(border, other.border),
+      divider:         c(divider, other.divider),
+      dotPattern:      c(dotPattern, other.dotPattern),
+      accent:          c(accent, other.accent),
+      accentDeep:      c(accentDeep, other.accentDeep),
+      accentAlt:       c(accentAlt, other.accentAlt),
+      success:         c(success, other.success),
+      successDeep:     c(successDeep, other.successDeep),
+      warning:         c(warning, other.warning),
+      danger:          c(danger, other.danger),
+      focusRing:       c(focusRing, other.focusRing),
+      gameStroop:      c(gameStroop, other.gameStroop),
+      gameStroopDeep:  c(gameStroopDeep, other.gameStroopDeep),
+      gameSchulte:     c(gameSchulte, other.gameSchulte),
+      gameSchulteDeep: c(gameSchulteDeep, other.gameSchulteDeep),
+      playRed:         c(playRed, other.playRed),
+      playBlue:        c(playBlue, other.playBlue),
+      playGreen:       c(playGreen, other.playGreen),
+      playYellow:      c(playYellow, other.playYellow),
+      playPurple:      c(playPurple, other.playPurple),
+      playOrange:      c(playOrange, other.playOrange),
+      cbBlue:          c(cbBlue, other.cbBlue),
+      cbYellow:        c(cbYellow, other.cbYellow),
+      cbOrange:        c(cbOrange, other.cbOrange),
+      cbPink:          c(cbPink, other.cbPink),
+    );
+  }
+}
+
+/// Typography — bundle Fredoka and Nunito as assets; do not use google_fonts.
+class MindforgeText {
+  const MindforgeText._();
+
+  static const _display = 'Fredoka';
+  static const _body = 'Nunito';
+
+  static const scoreHero = TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 76, height: 0.95, letterSpacing: -3.0,
+      fontFeatures: [FontFeature.tabularFigures()]);
+  static const displayXl = TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 42, height: 1.0, letterSpacing: -1.26);
+  static const displayL  = TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 33, height: 1.02, letterSpacing: -0.83);
+  static const title     = TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 21, height: 1.1, letterSpacing: -0.32);
+  static const numericHud= TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 22, height: 1.18, letterSpacing: -0.44,
+      fontFeatures: [FontFeature.tabularFigures()]);
+  static const button    = TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 18, height: 1.22);
+  static const body      = TextStyle(fontFamily: _body, fontWeight: FontWeight.w700,
+      fontSize: 15, height: 1.4);
+  static const caption   = TextStyle(fontFamily: _body, fontWeight: FontWeight.w700,
+      fontSize: 13, height: 1.38);
+  static const label     = TextStyle(fontFamily: _display, fontWeight: FontWeight.w600,
+      fontSize: 10, height: 1.4, letterSpacing: 1.4);
+  /// Stroop stimulus. MUST be painted with the ink outline behind the fill,
+  /// and shaded with the answer's PlayFill pattern rather than a flat hue.
+  static const stimulus  = TextStyle(fontFamily: _display, fontWeight: FontWeight.w700,
+      fontSize: 78, height: 1.0, letterSpacing: 0.78);
+}
+</code></pre>
+    <p class="note">The stimulus outline is a three-pass paint in Flutter: draw the glyph once with a
+      <b class="mono">Paint()..style = PaintingStyle.stroke..strokeWidth = 6..color = tokens.border</b>, then filled with
+      <b class="mono">tokens.answerColour(a, colourBlind: cvd)</b>, then a third pass clipped to the glyph that strokes
+      the <b class="mono">a.fill</b> pattern in <b class="mono">tokens.border</b>. Those are the three most important
+      lines of rendering code in the app — the first makes the colour game legible, the third makes it playable without
+      colour vision. The colour-blind setting is read from settings state and passed in; no widget branches on it.</p>
+  </section>
+
+</div>
+
+<script>
+/* Trivial: click a hex in the token table to copy it. Page is complete without it. */
+document.querySelectorAll('td.mono, .tok code').forEach(function (el) {
+  el.style.cursor = 'copy';
+  el.addEventListener('click', function () {
+    var hex = (el.textContent.match(/#[0-9A-Fa-f]{6}/) || [])[0];
+    if (hex && navigator.clipboard) { navigator.clipboard.writeText(hex); }
+  });
+});
+</script>
+</body>
+</html>

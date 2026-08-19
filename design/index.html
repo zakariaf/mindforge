@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>MindForge — pick a design direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&family=Nunito:wght@400;700;800&family=Outfit:wght@500;600;700;800&family=Patrick+Hand&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   MindForge — direction chooser
+   Neutral-but-warm shell. The three option cards carry all the colour,
+   and every swatch below is the REAL token value lifted out of the
+   matching app.html :root block — not an approximation.
+   Every colour in this document is declared here and used via var().
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  /* ── shell: warm neutral, deliberately quiet ─────────────────── */
+  --shell-bg:      #FBF7F2;
+  --shell-bg-2:    #F4EDE3;
+  --shell-card:    #FFFFFF;
+  --shell-ink:     #2A2521;
+  --shell-ink-2:   #5C544B;
+  --shell-ink-3:   #857B70;
+  --shell-line:    #E6DCCE;
+  --shell-line-2:  #F0E8DC;
+  --shell-accent:  #A54F1E;
+  --shell-accent-soft:#FBEADC;
+  --shell-shadow:  rgba(42,37,33,.07);
+  --shell-shadow-2:rgba(42,37,33,.12);
+
+  /* ── SUNBURST POP — from ./sunburst-pop/app.html :root ───────── */
+  --sp-cream:     #FFF8EC;
+  --sp-cream-2:   #FFEEDA;
+  --sp-paper:     #FFFFFF;
+  --sp-ink:       #2B1B4D;
+  --sp-ink-2:     #5A4A7D;
+  --sp-sunshine:  #FFC53D;
+  --sp-coral:     #FF6B5A;
+  --sp-turquoise: #22C7B8;
+  --sp-grape:     #6A45E8;
+  --sp-leaf:      #4CC86A;
+  --sp-tangerine: #FF9330;
+  --sp-dot:       #F2DFC0;
+
+  /* ── COTTON CLOUD — from ./cotton-cloud/app.html :root ───────── */
+  --cc-paper:     #FBF7FF;
+  --cc-white:     #FFFFFF;
+  --cc-mist:      #F3ECFB;
+  --cc-haze:      #EDE4F7;
+  --cc-plum:      #4A3F5C;
+  --cc-plum-70:   #756989;
+  --cc-lav:       #B9A7FF;
+  --cc-lav-200:   #C9BAFF;
+  --cc-lav-ink:   #5B44C9;
+  --cc-mint:      #7FE3C4;
+  --cc-peach:     #FFB39B;
+  --cc-sky:       #8FD3FF;
+  --cc-sky-200:   #9FDCFF;
+  --cc-blush:     #FFD6E8;
+  --cc-sh:        rgba(74,63,92,.14);
+  --cc-sh-soft:   rgba(74,63,92,.08);
+  --cc-sh-lav:    rgba(185,167,255,.38);
+
+  /* ── PAPER CRAYON — from ./paper-crayon/app.html :root ───────── */
+  --pc-paper:     #FDF6E3;
+  --pc-paper-white:#FFFCF2;
+  --pc-paper-warm:#F8EFD8;
+  --pc-kraft:     #E7D5AC;
+  --pc-graphite:  #33302E;
+  --pc-ink-soft:  #5E574E;
+  --pc-red:       #E5544B;
+  --pc-blue:      #3D7DD8;
+  --pc-grass:     #58B368;
+  --pc-sunny:     #F2B705;
+  --pc-violet:    #8A5FBF;
+  --pc-violet-ink:#6F45A0;
+  --pc-a18:       rgba(51,48,46,.18);
+  --pc-a45:       rgba(51,48,46,.45);
+  --pc-tape:      rgba(242,183,5,.58);
+  --pc-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* ── shell shape + type ──────────────────────────────────────── */
+  --r-s:10px; --r-m:16px; --r-l:24px; --r-xl:34px; --r-pill:999px;
+  --font-head:"Outfit","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --font-body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-sun-display:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --font-sun-body:"Nunito","Avenir Next",system-ui,sans-serif;
+  --font-cot-display:"Quicksand","Trebuchet MS",system-ui,sans-serif;
+  --font-cot-body:"Manrope","Avenir Next",system-ui,sans-serif;
+  --font-pap-hand:"Caveat","Bradley Hand","Chalkboard SE",ui-rounded,cursive;
+  --font-pap-print:"Patrick Hand","Chalkboard SE",ui-rounded,cursive;
+  --font-pap-body:"Nunito",ui-sans-serif,system-ui,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{
+  margin:0;
+  background:var(--shell-bg);
+  color:var(--shell-ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+a{color:var(--shell-accent)}
+h1,h2,h3,h4{font-family:var(--font-head);line-height:1.15;margin:0;letter-spacing:-.02em}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+
+.wrap{max-width:1220px;margin:0 auto;padding:0 24px}
+@media (max-width:520px){ .wrap{padding:0 16px} }
+
+/* ══════════════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════════════ */
+.masthead{
+  background:
+    radial-gradient(900px 380px at 12% -10%, var(--shell-accent-soft) 0%, transparent 62%),
+    linear-gradient(180deg, var(--shell-bg-2) 0%, var(--shell-bg) 100%);
+  border-bottom:1px solid var(--shell-line);
+  padding:56px 0 48px;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--shell-accent);
+  background:var(--shell-card);
+  border:1px solid var(--shell-line);
+  border-radius:var(--r-pill);
+  padding:7px 15px 7px 11px;
+  margin-bottom:22px;
+}
+.eyebrow .dot{width:8px;height:8px;border-radius:var(--r-pill);background:var(--shell-accent);flex:none}
+h1{font-size:clamp(2.1rem,5.4vw,3.5rem);font-weight:800;max-width:16ch}
+h1 em{font-style:normal;color:var(--shell-accent)}
+.lede{
+  margin-top:20px;max-width:62ch;font-size:clamp(1rem,1.6vw,1.125rem);
+  color:var(--shell-ink-2);
+}
+.lede + .lede{margin-top:14px}
+.lede strong{color:var(--shell-ink);font-weight:600}
+
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.fact{
+  font-size:12.5px;font-weight:600;color:var(--shell-ink-2);
+  background:var(--shell-card);border:1px solid var(--shell-line);
+  border-radius:var(--r-pill);padding:6px 13px;
+}
+.fact b{color:var(--shell-ink);font-weight:700}
+
+.decision{
+  margin-top:34px;
+  background:var(--shell-card);
+  border:1px solid var(--shell-line);
+  border-left:4px solid var(--shell-accent);
+  border-radius:var(--r-m);
+  padding:20px 22px;
+  max-width:74ch;
+  box-shadow:0 2px 10px var(--shell-shadow);
+}
+.decision h2{font-size:1rem;letter-spacing:.01em;margin-bottom:7px}
+.decision p{font-size:14.5px;color:var(--shell-ink-2)}
+
+/* ══════════════════════════════════════════════════════════════════
+   SECTION FURNITURE
+   ══════════════════════════════════════════════════════════════════ */
+section{padding:64px 0}
+.sec-head{margin-bottom:34px;max-width:70ch}
+.sec-num{
+  font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--shell-ink-3);display:block;margin-bottom:10px;
+}
+.sec-head h2{font-size:clamp(1.55rem,3.2vw,2.1rem);font-weight:700}
+.sec-head p{margin-top:12px;color:var(--shell-ink-2);font-size:15.5px}
+
+/* ══════════════════════════════════════════════════════════════════
+   OPTION CARDS — each previews its own direction
+   ══════════════════════════════════════════════════════════════════ */
+.options{
+  display:grid;gap:34px;
+  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+  align-items:start;
+}
+@media (max-width:760px){ .options{grid-template-columns:1fr;gap:40px} }
+
+.opt{display:flex;flex-direction:column;overflow:hidden;position:relative}
+.opt-head{padding:24px 24px 22px;position:relative}
+.opt-rank{
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  display:block;margin-bottom:9px;opacity:.85;
+}
+.opt-name{font-size:1.95rem;line-height:1.05}
+.opt-person{margin-top:11px;font-size:14.5px;line-height:1.55}
+.opt-body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:22px;flex:1}
+
+.blk-t{
+  font-size:10.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:11px;display:block;
+}
+
+/* swatches */
+.sw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.sw{min-width:0}
+.sw i{
+  display:block;height:38px;border-radius:8px;background:var(--sw);
+  box-shadow:inset 0 0 0 1px var(--sw-edge, transparent);
+}
+.sw b{display:block;font-size:10px;font-weight:700;margin-top:6px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.sw span{display:block;font-size:9.5px;line-height:1.3;opacity:.72;font-weight:600}
+
+/* type pairing */
+.type-row{display:flex;flex-direction:column;gap:9px}
+.type-item{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.type-item .face{font-size:1.35rem;line-height:1.2}
+.type-item .meta{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.7;text-align:right;flex:none;font-family:var(--font-body)}
+
+/* best for / watch out */
+.two{display:grid;grid-template-columns:1fr;gap:20px}
+.bullets li{font-size:13.5px;line-height:1.5;padding-left:20px;position:relative;margin-bottom:7px}
+.bullets li:last-child{margin-bottom:0}
+.bullets li::before{position:absolute;left:0;top:0;font-weight:800}
+.good li::before{content:"+"}
+.bad li::before{content:"!"}
+
+/* links */
+.opt-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:auto;padding-top:4px}
+.lnk{
+  text-decoration:none;font-size:13px;font-weight:700;
+  padding:10px 15px;display:inline-flex;align-items:center;gap:7px;
+  transition:transform 140ms ease, box-shadow 140ms ease;
+}
+.lnk .arw{font-size:11px;opacity:.7}
+
+/* ─── SUNBURST POP card ─────────────────────────────────────────── */
+.opt--sun{
+  background:var(--sp-cream);
+  border:3px solid var(--sp-ink);
+  border-radius:22px;
+  box-shadow:8px 8px 0 var(--sp-ink);
+  color:var(--sp-ink);
+  font-family:var(--font-sun-body);
+  transition:transform 140ms cubic-bezier(.2,1.5,.4,1), box-shadow 140ms ease;
+}
+.opt--sun:hover{transform:translate(3px,3px);box-shadow:5px 5px 0 var(--sp-ink)}
+.opt--sun .opt-head{
+  background:var(--sp-sunshine);
+  border-bottom:3px solid var(--sp-ink);
+  background-image:radial-gradient(var(--sp-tangerine) 1.8px, transparent 1.9px);
+  background-size:20px 20px;
+}
+.opt--sun .opt-rank{color:var(--sp-ink)}
+.opt--sun .opt-name{font-family:var(--font-sun-display);font-weight:700}
+.opt--sun .opt-person,.opt--sun .bullets li{color:var(--sp-ink)}
+.opt--sun .opt-person{font-weight:700}
+.opt--sun .blk-t{color:var(--sp-ink-2)}
+.opt--sun .sw i{border:2px solid var(--sp-ink);border-radius:8px;box-shadow:2px 2px 0 var(--sp-ink)}
+.opt--sun .sw span{color:var(--sp-ink-2);opacity:1}
+.opt--sun .type-item .face{font-weight:700}
+.opt--sun .type-item .meta{color:var(--sp-ink-2);opacity:1}
+.opt--sun .lnk{
+  background:var(--sp-paper);color:var(--sp-ink);
+  border:3px solid var(--sp-ink);border-radius:var(--r-pill);
+  box-shadow:3px 3px 0 var(--sp-ink);
+}
+.opt--sun .lnk:first-child{background:var(--sp-turquoise)}
+.opt--sun .lnk:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sp-ink)}
+
+/* ─── COTTON CLOUD card ─────────────────────────────────────────── */
+.opt--cot{
+  background:linear-gradient(160deg, var(--cc-white) 0%, var(--cc-paper) 100%);
+  border:0;
+  border-radius:32px;
+  box-shadow:0 22px 52px var(--cc-sh), 0 2px 8px var(--cc-sh-soft);
+  color:var(--cc-plum);
+  font-family:var(--font-cot-body);
+  transition:transform 260ms cubic-bezier(.22,1,.36,1), box-shadow 260ms ease;
+}
+.opt--cot:hover{transform:translateY(-6px);box-shadow:0 32px 64px var(--cc-sh), 0 10px 26px var(--cc-sh-lav)}
+.opt--cot .opt-head{
+  background:linear-gradient(104deg, var(--cc-lav-200) 0%, var(--cc-sky-200) 100%);
+  border-radius:32px 32px 26px 26px;
+}
+.opt--cot .opt-rank{color:var(--cc-plum)}
+.opt--cot .opt-name{font-family:var(--font-cot-display);font-weight:700}
+.opt--cot .opt-person{color:var(--cc-plum);font-weight:500}
+.opt--cot .blk-t{color:var(--cc-plum-70)}
+.opt--cot .sw i{border-radius:14px;box-shadow:0 6px 14px var(--cc-sh-soft)}
+.opt--cot .sw span{color:var(--cc-plum-70);opacity:1}
+.opt--cot .bullets li{color:var(--cc-plum)}
+.opt--cot .bullets li::before{color:var(--cc-lav-ink)}
+.opt--cot .type-item .face{font-weight:600}
+.opt--cot .type-item .meta{color:var(--cc-plum-70);opacity:1}
+.opt--cot .lnk{
+  background:var(--cc-mist);color:var(--cc-lav-ink);
+  border-radius:var(--r-pill);box-shadow:0 4px 12px var(--cc-sh-soft);
+}
+.opt--cot .lnk:first-child{
+  background:linear-gradient(104deg, var(--cc-lav-200) 0%, var(--cc-sky-200) 100%);
+  color:var(--cc-plum);box-shadow:0 8px 20px var(--cc-sh-lav);
+}
+.opt--cot .lnk:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--cc-sh-lav)}
+
+/* ─── PAPER CRAYON card ─────────────────────────────────────────── */
+.opt--pap{
+  background-color:var(--pc-paper);
+  background-image:var(--pc-noise);
+  background-size:200px 200px;
+  border:2.5px solid var(--pc-graphite);
+  border-radius:20px 26px 18px 24px / 24px 18px 26px 20px;
+  box-shadow:0 5px 0 var(--pc-a45), 0 14px 24px -12px var(--pc-a45);
+  color:var(--pc-graphite);
+  font-family:var(--font-pap-body);
+  transform:rotate(-.55deg);
+  overflow:visible; /* the tape overhangs the top edge; the head clips itself */
+  transition:transform 200ms cubic-bezier(.2,1.5,.4,1), box-shadow 200ms ease;
+}
+.opt--pap:hover{transform:rotate(.35deg) translateY(-3px);box-shadow:0 7px 0 var(--pc-a45), 0 18px 28px -12px var(--pc-a45)}
+.opt--pap::before{ /* washi tape */
+  content:"";position:absolute;top:-11px;left:50%;
+  width:104px;height:26px;transform:translateX(-50%) rotate(-2.4deg);
+  background:var(--pc-tape);border-left:1px dashed var(--pc-a18);border-right:1px dashed var(--pc-a18);
+  z-index:2;
+}
+.opt--pap .opt-head{
+  background:var(--pc-paper-warm);
+  border-bottom:2.5px solid var(--pc-graphite);
+  border-radius:17px 23px 0 0 / 21px 15px 0 0;
+}
+.opt--pap .opt-rank{color:var(--pc-ink-soft)}
+.opt--pap .opt-name{font-family:var(--font-pap-hand);font-weight:700;font-size:2.5rem;color:var(--pc-violet-ink)}
+.opt--pap .opt-person{color:var(--pc-graphite)}
+.opt--pap .blk-t{color:var(--pc-ink-soft)}
+.opt--pap .sw i{
+  border:2px solid var(--pc-graphite);
+  border-radius:10px 14px 11px 13px / 13px 11px 14px 10px;
+  box-shadow:0 2px 0 var(--pc-a18);
+}
+.opt--pap .sw span{color:var(--pc-ink-soft);opacity:1}
+.opt--pap .bullets li{color:var(--pc-graphite)}
+.opt--pap .bullets li::before{color:var(--pc-violet-ink)}
+.opt--pap .type-item .face{font-family:var(--font-pap-print)}
+.opt--pap .type-item .meta{color:var(--pc-ink-soft);opacity:1}
+.opt--pap .lnk{
+  background:var(--pc-paper-white);color:var(--pc-graphite);
+  border:2.5px solid var(--pc-graphite);
+  border-radius:17px 6px 15px 8px / 8px 15px 6px 17px;
+  box-shadow:0 3px 0 var(--pc-a45);
+  font-family:var(--font-pap-print);font-weight:400;font-size:14.5px;
+}
+.opt--pap .lnk:first-child{background:var(--pc-violet);color:var(--pc-paper-white)}
+.opt--pap .lnk:hover{transform:translateY(2px);box-shadow:0 1px 0 var(--pc-a45)}
+
+/* ══════════════════════════════════════════════════════════════════
+   COMPARISON TABLE
+   ══════════════════════════════════════════════════════════════════ */
+.tbl-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--shell-card);
+  border:1px solid var(--shell-line);
+  border-radius:var(--r-l);
+  box-shadow:0 4px 20px var(--shell-shadow);
+}
+table{border-collapse:collapse;width:100%;min-width:880px;font-size:13.5px}
+caption{
+  caption-side:top;text-align:left;padding:20px 22px 4px;
+  font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--shell-ink-3);
+}
+th,td{padding:16px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--shell-line-2)}
+thead th{
+  background:var(--shell-card);
+  border-bottom:1px solid var(--shell-line);
+  padding-top:14px;
+}
+thead th .col-name{font-family:var(--font-head);font-size:1.05rem;font-weight:700;display:block;letter-spacing:-.01em}
+thead th .col-bar{display:block;height:6px;border-radius:var(--r-pill);margin-bottom:10px;width:44px}
+.bar-sun{background:linear-gradient(90deg,var(--sp-sunshine),var(--sp-coral))}
+.bar-cot{background:linear-gradient(90deg,var(--cc-lav),var(--cc-sky))}
+.bar-pap{background:linear-gradient(90deg,var(--pc-red),var(--pc-sunny))}
+tbody th{
+  width:170px;font-family:var(--font-head);font-weight:600;font-size:13.5px;
+  color:var(--shell-ink);background:var(--shell-bg);white-space:nowrap;
+}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+td{color:var(--shell-ink-2);line-height:1.5}
+td strong{color:var(--shell-ink);font-weight:600}
+td code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;
+  background:var(--shell-bg-2);padding:1.5px 5px;border-radius:5px;color:var(--shell-ink);
+  white-space:nowrap;
+}
+.tag{
+  display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 9px;border-radius:var(--r-pill);margin-bottom:7px;
+}
+.tag-low{background:var(--sp-leaf);color:var(--sp-ink)}
+.tag-mid{background:var(--sp-sunshine);color:var(--sp-ink)}
+.tag-high{background:var(--sp-coral);color:var(--sp-ink)}
+.tbl-note{margin-top:14px;font-size:12.5px;color:var(--shell-ink-3);max-width:76ch}
+
+/* ══════════════════════════════════════════════════════════════════
+   RECOMMENDATION
+   ══════════════════════════════════════════════════════════════════ */
+.rec{
+  background:var(--shell-card);
+  border:1px solid var(--shell-line);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  box-shadow:0 8px 34px var(--shell-shadow);
+}
+.rec-top{
+  padding:34px 34px 30px;
+  background:
+    radial-gradient(620px 260px at 88% -30%, var(--sp-cream-2) 0%, transparent 70%),
+    linear-gradient(180deg,var(--shell-bg-2) 0%,var(--shell-card) 100%);
+  border-bottom:1px solid var(--shell-line);
+}
+.rec-flag{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--sp-sunshine);color:var(--sp-ink);
+  border:2.5px solid var(--sp-ink);border-radius:var(--r-pill);
+  box-shadow:3px 3px 0 var(--sp-ink);
+  font-family:var(--font-sun-display);font-weight:700;font-size:13px;
+  letter-spacing:.04em;padding:7px 16px;margin-bottom:20px;
+}
+.rec-top h2{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:800}
+.rec-top h2 span{color:var(--shell-accent)}
+.rec-top p{margin-top:14px;max-width:66ch;color:var(--shell-ink-2);font-size:15.5px}
+.rec-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:0}
+@media (max-width:840px){ .rec-cols{grid-template-columns:1fr} }
+.rec-why,.rec-cost{padding:32px 34px 36px}
+.rec-why{border-right:1px solid var(--shell-line)}
+@media (max-width:840px){ .rec-why{border-right:0;border-bottom:1px solid var(--shell-line)} }
+.rec-cost{background:var(--shell-bg)}
+.rec-h{
+  font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+.rec-h::after{content:"";flex:1;height:1px;background:var(--shell-line)}
+.rec-why .rec-h{color:var(--shell-accent)}
+.rec-cost .rec-h{color:var(--shell-ink-3)}
+.arg{margin-bottom:20px;padding-left:38px;position:relative}
+.arg:last-child{margin-bottom:0}
+.arg .n{
+  position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:var(--r-pill);
+  background:var(--shell-accent-soft);color:var(--shell-accent);
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;
+}
+.arg h4{font-size:15px;font-weight:700;margin-bottom:5px}
+.arg p{font-size:14px;color:var(--shell-ink-2);line-height:1.55}
+.arg code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+  background:var(--shell-bg-2);padding:1.5px 5px;border-radius:5px;color:var(--shell-ink);
+}
+.cost li{
+  font-size:13.5px;line-height:1.55;color:var(--shell-ink-2);
+  padding-left:22px;position:relative;margin-bottom:15px;
+}
+.cost li:last-child{margin-bottom:0}
+.cost li::before{content:"−";position:absolute;left:2px;top:-1px;color:var(--shell-accent);font-weight:800}
+.cost li b{color:var(--shell-ink);font-weight:700}
+.tiebreak{
+  margin-top:26px;padding:16px 18px;background:var(--shell-card);
+  border:1px dashed var(--shell-line);border-radius:var(--r-m);
+  font-size:13px;color:var(--shell-ink-2);line-height:1.55;
+}
+.tiebreak b{color:var(--shell-ink)}
+
+/* ══════════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════════ */
+footer{
+  border-top:1px solid var(--shell-line);
+  background:var(--shell-bg-2);
+  padding:44px 0 56px;margin-top:16px;
+}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px}
+.f-col h5{
+  font-family:var(--font-head);font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--shell-ink-3);margin-bottom:12px;
+}
+.f-col a{display:block;font-size:13.5px;text-decoration:none;padding:4px 0;font-weight:500}
+.f-col a:hover{text-decoration:underline}
+.f-col a code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--shell-ink-3);
+}
+.f-note{margin-top:30px;padding-top:22px;border-top:1px solid var(--shell-line);font-size:12.5px;color:var(--shell-ink-3)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>MindForge · Design direction review</span>
+    <h1>Three ways MindForge could <em>look</em>.</h1>
+    <p class="lede">
+      <strong>MindForge is an offline brain-training app built in Flutter.</strong> No accounts, no sign-in,
+      no network permission at all — every score, streak and setting lives on the device. It ships as a hub
+      that hosts many small games: <em>Stroop Rush</em> and <em>Schulte Grid</em> are built, a
+      <em>Daily Mix</em> stitches them together, and the roadmap is more games, not deeper ones.
+    </p>
+    <p class="lede">
+      Three complete design directions have been drawn against the same eight screens — home hub, game
+      detail, countdown, both games, results, stats and settings. Each one is a finished system with its
+      own tokens, type scale, motion rules and accessibility work, not a mood board.
+    </p>
+
+    <div class="facts">
+      <span class="fact"><b>Flutter</b> · one codebase</span>
+      <span class="fact"><b>Offline</b> · no network permission</span>
+      <span class="fact"><b>No accounts</b></span>
+      <span class="fact"><b>8 screens</b> mocked per direction</span>
+      <span class="fact"><b>2 games</b> shipped, more queued</span>
+      <span class="fact"><b>Light only</b> · none has dark mode</span>
+    </div>
+
+    <div class="decision">
+      <h2>The decision on this page</h2>
+      <p>
+        Pick one direction to build. All three are production-ready as specifications and all three are
+        internally accessible; they differ in what they make the product <em>feel</em> like, what they cost
+        to render on a cheap Android device, and how gracefully they absorb game number seven. Compare
+        below, then read the recommendation at the bottom — it argues for one and says plainly what
+        choosing it throws away.
+      </p>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════ OPTIONS ═══════════════════════════════ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">01 — The three directions</span>
+      <h2>Each card is drawn in its own system.</h2>
+      <p>
+        The border weight, corner radius, shadow language and typeface on every card below are taken
+        straight from that direction's tokens, so the card itself is a preview. Every hex shown is the real
+        value from the direction's <code>:root</code> — nothing here is an approximation.
+      </p>
+    </div>
+
+    <div class="options">
+
+      <!-- ─────────────── SUNBURST POP ─────────────── -->
+      <article class="opt opt--sun">
+        <div class="opt-head">
+          <span class="opt-rank">Direction 01</span>
+          <h3 class="opt-name">Sunburst Pop</h3>
+          <p class="opt-person">
+            Arcade-cabinet joy. Every surface is an ink-outlined object sitting <em>on top of</em> the page
+            — 3px border, hard offset shadow, no blur — and it visibly presses down when you touch it.
+          </p>
+        </div>
+        <div class="opt-body">
+
+          <div>
+            <span class="blk-t">Palette · real tokens</span>
+            <div class="sw-grid">
+              <div class="sw" style="--sw:var(--sp-cream)"><i></i><b>#FFF8EC</b><span>Cream page</span></div>
+              <div class="sw" style="--sw:var(--sp-cream-2)"><i></i><b>#FFEEDA</b><span>Inset wells</span></div>
+              <div class="sw" style="--sw:var(--sp-ink)"><i></i><b>#2B1B4D</b><span>Ink · 14.4:1</span></div>
+              <div class="sw" style="--sw:var(--sp-sunshine)"><i></i><b>#FFC53D</b><span>Sunshine · primary</span></div>
+              <div class="sw" style="--sw:var(--sp-coral)"><i></i><b>#FF6B5A</b><span>Coral · Stroop</span></div>
+              <div class="sw" style="--sw:var(--sp-turquoise)"><i></i><b>#22C7B8</b><span>Turquoise · Schulte</span></div>
+              <div class="sw" style="--sw:var(--sp-grape)"><i></i><b>#6A45E8</b><span>Grape · Daily Mix</span></div>
+              <div class="sw" style="--sw:var(--sp-leaf)"><i></i><b>#4CC86A</b><span>Leaf · success</span></div>
+              <div class="sw" style="--sw:var(--sp-tangerine)"><i></i><b>#FF9330</b><span>Tangerine · warning</span></div>
+            </div>
+          </div>
+
+          <div>
+            <span class="blk-t">Type pairing</span>
+            <div class="type-row">
+              <div class="type-item">
+                <span class="face" style="font-family:var(--font-sun-display)">Fredoka</span>
+                <span class="meta">Display · 600/700</span>
+              </div>
+              <div class="type-item">
+                <span class="face" style="font-family:var(--font-sun-body)">Nunito</span>
+                <span class="meta">Body · 700/800</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="two">
+            <div>
+              <span class="blk-t">Best for</span>
+              <ul class="bullets good">
+                <li>A toy you want to poke, not a tool you have to use — short sessions, reward loop as the product.</li>
+                <li>Broad, casual audiences: living rooms, commutes, waiting rooms.</li>
+                <li>Shipping games often — each takes a colour and a board, the shell never changes.</li>
+                <li>Surviving a 2-second store screenshot or the back row of a room.</li>
+              </ul>
+            </div>
+            <div>
+              <span class="blk-t">Watch out for</span>
+              <ul class="bullets bad">
+                <li>Data density: 3px borders and hard shadows eat vertical rhythm. Stats is already the tightest of the eight screens.</li>
+                <li>Loudness fatigue — great at 4 minutes, tiring at 40. There is no quiet register.</li>
+                <li>Fredoka blurs below ~12px, so every micro-label is uppercase and tracked, forever.</li>
+                <li>Any new gameplay colour must clear 4.5:1 on cream <em>and</em> claim an unused ink fill pattern.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="opt-links">
+            <a class="lnk" href="./sunburst-pop/app.html">App mockup <span class="arw">▸</span></a>
+            <a class="lnk" href="./sunburst-pop/system.html">Design system <span class="arw">▸</span></a>
+            <a class="lnk" href="./sunburst-pop/README.md">README <span class="arw">▸</span></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─────────────── COTTON CLOUD ─────────────── -->
+      <article class="opt opt--cot">
+        <div class="opt-head">
+          <span class="opt-rank">Direction 02</span>
+          <h3 class="opt-name">Cotton Cloud</h3>
+          <p class="opt-person">
+            Soft, calm, breathable cheer. Candy colour with grown-up manners — blurred colour blobs drift
+            behind frosted, pillowy cards, every layer floats, and there is not a single border anywhere in
+            the system.
+          </p>
+        </div>
+        <div class="opt-body">
+
+          <div>
+            <span class="blk-t">Palette · real tokens</span>
+            <div class="sw-grid">
+              <div class="sw" style="--sw:var(--cc-paper)"><i></i><b>#FBF7FF</b><span>Paper page</span></div>
+              <div class="sw" style="--sw:var(--cc-mist)"><i></i><b>#F3ECFB</b><span>Mist · sunken</span></div>
+              <div class="sw" style="--sw:var(--cc-plum)"><i></i><b>#4A3F5C</b><span>Plum · 9.2:1</span></div>
+              <div class="sw" style="--sw:var(--cc-lav)"><i></i><b>#B9A7FF</b><span>Lavender · accent</span></div>
+              <div class="sw" style="--sw:var(--cc-mint)"><i></i><b>#7FE3C4</b><span>Mint · success</span></div>
+              <div class="sw" style="--sw:var(--cc-peach)"><i></i><b>#FFB39B</b><span>Peach · warning</span></div>
+              <div class="sw" style="--sw:var(--cc-sky)"><i></i><b>#8FD3FF</b><span>Sky · info</span></div>
+              <div class="sw" style="--sw:var(--cc-blush)"><i></i><b>#FFD6E8</b><span>Blush · streak</span></div>
+              <div class="sw" style="--sw:var(--cc-lav-ink)"><i></i><b>#5B44C9</b><span>Lav ink · text</span></div>
+            </div>
+          </div>
+
+          <div>
+            <span class="blk-t">Type pairing</span>
+            <div class="type-row">
+              <div class="type-item">
+                <span class="face" style="font-family:var(--font-cot-display)">Quicksand</span>
+                <span class="meta">Headings + numerals · 500–700</span>
+              </div>
+              <div class="type-item">
+                <span class="face" style="font-family:var(--font-cot-body)">Manrope</span>
+                <span class="meta">Body · 400–800</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="two">
+            <div>
+              <span class="blk-t">Best for</span>
+              <ul class="bullets good">
+                <li>A restorative promise — train to feel clearer, not to beat a leaderboard.</li>
+                <li>Short daily sessions the app must never feel like a chore to open.</li>
+                <li>A platform look that hosts ten more games without a re-skin: the chrome is entirely shared.</li>
+                <li>A broad adult audience that loud gamification would push away.</li>
+              </ul>
+            </div>
+            <div>
+              <span class="blk-t">Watch out for</span>
+              <ul class="bullets bad">
+                <li>Blur and frost cost fill-rate. Drifting blobs plus <code>BackdropFilter</code> is real GPU work on cheap Android.</li>
+                <li>Low contrast is one careless step away — it already shipped once at 2.83:1. This palette has room for two text tones, not three.</li>
+                <li>Low-energy by design: no shouting register at all. A competitive ladder would feel limp, not calm.</li>
+                <li>32–52px shadow blur reads as padding, so specs that look right build cramped.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="opt-links">
+            <a class="lnk" href="./cotton-cloud/app.html">App mockup <span class="arw">▸</span></a>
+            <a class="lnk" href="./cotton-cloud/system.html">Design system <span class="arw">▸</span></a>
+            <a class="lnk" href="./cotton-cloud/README.md">README <span class="arw">▸</span></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─────────────── PAPER CRAYON ─────────────── -->
+      <article class="opt opt--pap">
+        <div class="opt-head">
+          <span class="opt-rank">Direction 03</span>
+          <h3 class="opt-name">Paper Crayon</h3>
+          <p class="opt-person">
+            A sketchbook come to life. Warm paper, ink outlines that wobble, crayon fills that streak,
+            washi tape holding cards to the page — hand-made without being childish, because every number
+            and paragraph is still set in Nunito.
+          </p>
+        </div>
+        <div class="opt-body">
+
+          <div>
+            <span class="blk-t">Palette · real tokens</span>
+            <div class="sw-grid">
+              <div class="sw" style="--sw:var(--pc-paper)"><i></i><b>#FDF6E3</b><span>Paper page</span></div>
+              <div class="sw" style="--sw:var(--pc-paper-white)"><i></i><b>#FFFCF2</b><span>Raised card</span></div>
+              <div class="sw" style="--sw:var(--pc-kraft)"><i></i><b>#E7D5AC</b><span>Kraft frame</span></div>
+              <div class="sw" style="--sw:var(--pc-graphite)"><i></i><b>#33302E</b><span>Graphite · 12.1:1</span></div>
+              <div class="sw" style="--sw:var(--pc-red)"><i></i><b>#E5544B</b><span>Crayon red</span></div>
+              <div class="sw" style="--sw:var(--pc-blue)"><i></i><b>#3D7DD8</b><span>Marker blue</span></div>
+              <div class="sw" style="--sw:var(--pc-grass)"><i></i><b>#58B368</b><span>Grass · success</span></div>
+              <div class="sw" style="--sw:var(--pc-sunny)"><i></i><b>#F2B705</b><span>Sunny · streaks</span></div>
+              <div class="sw" style="--sw:var(--pc-violet)"><i></i><b>#8A5FBF</b><span>Violet · brand</span></div>
+            </div>
+          </div>
+
+          <div>
+            <span class="blk-t">Type pairing</span>
+            <div class="type-row">
+              <div class="type-item">
+                <span class="face" style="font-family:var(--font-pap-hand);font-size:1.8rem">Caveat</span>
+                <span class="meta">Display hand · once per screen</span>
+              </div>
+              <div class="type-item">
+                <span class="face">Patrick Hand</span>
+                <span class="meta">Labels + HUD · 400</span>
+              </div>
+              <div class="type-item">
+                <span class="face" style="font-family:var(--font-pap-body);font-weight:800">Nunito</span>
+                <span class="meta">Everything you read · 400–900</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="two">
+            <div>
+              <span class="blk-t">Best for</span>
+              <ul class="bullets good">
+                <li>An app that should feel like a gift or a hobby, not a discipline tool. Nothing nags.</li>
+                <li>Letting each game keep its own character — wobble and rotation absorb wildly different boards.</li>
+                <li>A long-lived engine: hand-drawn shapes hide the seams when game #7 arrives with an odd aspect ratio.</li>
+                <li>Making "offline and free" read as warmth rather than as a missing feature.</li>
+              </ul>
+            </div>
+            <div>
+              <span class="blk-t">Watch out for</span>
+              <ul class="bullets bad">
+                <li>Handwriting hurts dense data — Caveat and Patrick Hand are banned from paragraphs and tables, so data screens drift to plain Nunito.</li>
+                <li>The 2.5px graphite outline is load-bearing for WCAG 1.4.11 on two Stroop chips. "Cleaning it up" breaks the core mechanic.</li>
+                <li>Caveat and Patrick Hand have thin script coverage — Cyrillic, Greek, Arabic and CJK go flat.</li>
+                <li>Wobble needs discipline: rotations only −1.5°…1.5°, never two adjacent cards at the same angle.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="opt-links">
+            <a class="lnk" href="./paper-crayon/app.html">App mockup <span class="arw">▸</span></a>
+            <a class="lnk" href="./paper-crayon/system.html">Design system <span class="arw">▸</span></a>
+            <a class="lnk" href="./paper-crayon/README.md">README <span class="arw">▸</span></a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ COMPARISON ═══════════════════════════════ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02 — Side by side</span>
+      <h2>Where they actually differ.</h2>
+      <p>
+        All three clear WCAG on text and non-text contrast, all three ship a colour-blind-safe gameplay
+        palette with a redundant shape or pattern channel, and none of them has a dark mode. Everything
+        below is a real difference, not a preference.
+      </p>
+    </div>
+
+    <div class="tbl-scroll">
+      <table>
+        <caption>Direction comparison · MindForge</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="col-bar" style="visibility:hidden"></span><span class="col-name">&nbsp;</span></th>
+            <th scope="col"><span class="col-bar bar-sun"></span><span class="col-name">Sunburst Pop</span></th>
+            <th scope="col"><span class="col-bar bar-cot"></span><span class="col-name">Cotton Cloud</span></th>
+            <th scope="col"><span class="col-bar bar-pap"></span><span class="col-name">Paper Crayon</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Personality</th>
+            <td><strong>Arcade cabinet.</strong> Loud, warm and physical, the way a chunky plastic toy is. Wins attention, loses subtlety.</td>
+            <td><strong>Calm studio.</strong> Nothing raises its voice — including the win screen. Grown-up, restorative, premium.</td>
+            <td><strong>Sketchbook.</strong> Generous and handmade; an art-directed activity book rather than an app.</td>
+          </tr>
+          <tr>
+            <th scope="row">Palette temperature</th>
+            <td><strong>Hot.</strong> Warm cream ground <code>#FFF8EC</code> under fully saturated pop hues, with a plum-black ink at 14.4:1.</td>
+            <td><strong>Cool.</strong> Lilac-white ground <code>#FBF7FF</code>, desaturated pastels, plum text at 9.2:1. The only cool direction.</td>
+            <td><strong>Warmest.</strong> Aged paper <code>#FDF6E3</code>, muted crayon fills, graphite text at 12.1:1. Yellowest ground of the three.</td>
+          </tr>
+          <tr>
+            <th scope="row">Shape language</th>
+            <td>3px ink border on <em>everything</em>. Radii 10–28. Hard offset shadows at zero blur (<code>3–10px</code>). Objects sit <em>on</em> the page.</td>
+            <td><strong>No border anywhere.</strong> Radii 10–40 plus pill. Diffuse coloured shadows up to 52px blur. Everything floats.</td>
+            <td>Wobbly asymmetric elliptical radii, 2–2.5px graphite outline, ±1.5° rotation, washi tape, zero-blur lift shadows.</td>
+          </tr>
+          <tr>
+            <th scope="row">Typography</th>
+            <td><strong>Two families.</strong> Fredoka 600/700 display + Nunito 700/800 body. Simplest bundle.</td>
+            <td><strong>Two families.</strong> Quicksand 500–700 for headings <em>and every numeral</em> + Manrope 400–800. Quicksand never below 15px.</td>
+            <td><strong>Three families.</strong> Caveat 700 display + Patrick Hand 400 labels + Nunito 400–900 for anything you actually read.</td>
+          </tr>
+          <tr>
+            <th scope="row">Motion</th>
+            <td>120 / 160 / 180 / 240ms on an overshoot ease. Every pressable surface physically presses 2–4px and shrinks to .97.</td>
+            <td>160 / 240 / 300ms, soft ease-out. Drifting background blobs, float-and-settle. Nothing snaps.</td>
+            <td>150 / 200 / 250ms "stamp" with overshoot. Resting tilt lives on the element, so reduce-motion collapses cleanly to zero.</td>
+          </tr>
+          <tr>
+            <th scope="row">Density</th>
+            <td><strong>Loosest.</strong> 20px gutter, 16px card gap. Borders plus hard shadows eat vertical rhythm — Stats is already the tight fit.</td>
+            <td><strong>Loose.</strong> 4–56px scale, but a 32px blur reads as extra padding: numbers that look right in a spec build cramped.</td>
+            <td><strong>Tightest for data</strong> — but only because dense screens fall back to plain Nunito and give the personality up to get the space.</td>
+          </tr>
+          <tr>
+            <th scope="row">Production risk</th>
+            <td><span class="tag tag-low">Low</span><br>No blur, no texture, no custom painting. The risks are fatigue and Fredoka under 12px, not rendering.</td>
+            <td><span class="tag tag-high">Highest</span><br>Frost plus drifting blobs needs a flatten-to-static fallback on the floor device, and the contrast slip has already happened once in build.</td>
+            <td><span class="tag tag-mid">Medium</span><br>The graphite outline is load-bearing for accessibility on the core mechanic, and handwriting limits localisation.</td>
+          </tr>
+          <tr>
+            <th scope="row">Flutter build effort</th>
+            <td><strong>Easiest by a wide margin.</strong> The whole look is one <code>BoxDecoration</code>: <code>Border.all(3)</code> plus a <code>BoxShadow</code> with <code>blurRadius: 0</code>. No shaders, no assets beyond two fonts.</td>
+            <td><strong>Hardest to make fast.</strong> Layered coloured <code>BoxShadow</code>s are cheap; <code>BackdropFilter</code> and blurred blobs are not. Budget a performance flag from day one.</td>
+            <td><strong>Middle.</strong> <code>Radius.elliptical</code> maps the wobble 1:1 and <code>Transform.rotate</code> the tilt, but the paper grain is a tiled asset over every surface, and three font families ship.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tbl-note">
+      All three bundle their fonts in <code>assets/fonts/</code> rather than using <code>google_fonts</code> —
+      MindForge has no network permission, so a font fetch in the first frame is not available to any of them.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ RECOMMENDATION ═══════════════════════════════ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03 — Recommendation</span>
+      <h2>If MindForge has to ship many small games from one codebase.</h2>
+    </div>
+
+    <div class="rec">
+      <div class="rec-top">
+        <span class="rec-flag">Build this one</span>
+        <h2>Ship <span>Sunburst Pop</span>.</h2>
+        <p>
+          The brief is a platform, not a title: two games today, more later, one Flutter codebase, one small
+          team, and a device floor that includes cheap Android. Sunburst Pop is the direction that costs the
+          least to render, the least to extend, and the least to get wrong — and it is the only one whose
+          identity survives a new game arriving without anyone touching the shell.
+        </p>
+      </div>
+
+      <div class="rec-cols">
+        <div class="rec-why">
+          <div class="rec-h">Why it wins the platform argument</div>
+
+          <div class="arg">
+            <span class="n">1</span>
+            <h4>The entire look is one <code>BoxDecoration</code>.</h4>
+            <p>
+              A border plus a zero-blur offset shadow is the cheapest decoration Flutter has — no
+              <code>BackdropFilter</code>, no tiled texture, no <code>CustomPainter</code>, no shader. On a
+              floor-spec Android device the chrome costs effectively nothing, which leaves the whole frame
+              budget for the game board, the only part that actually differs per game.
+            </p>
+          </div>
+
+          <div class="arg">
+            <span class="n">2</span>
+            <h4>A new game is one colour and one board.</h4>
+            <p>
+              The identity is carried by the border-and-shadow grammar, not by any particular hue. Stroop
+              Rush takes coral, Schulte takes turquoise, Daily Mix takes grape, and game #7 takes whatever
+              is unclaimed — with no change to the hub, the nav, the results screen or the theme.
+            </p>
+          </div>
+
+          <div class="arg">
+            <span class="n">3</span>
+            <h4>The contrast headroom is already banked.</h4>
+            <p>
+              Ink at 14.4:1 on cream means a new board colour is legible against the chrome before anyone
+              measures it. Cotton Cloud has room for exactly two text tones and proved it by shipping a
+              2.83:1 one; that is a contrast lint you would have to build and re-run for every new game.
+            </p>
+          </div>
+
+          <div class="arg">
+            <span class="n">4</span>
+            <h4>Two fonts, and neither is banned from anything.</h4>
+            <p>
+              Paper Crayon needs three families with two of them barred from data — so every new game's
+              stats screen quietly drifts back to plain Nunito and the personality thins out exactly where
+              the roadmap adds screens. Sunburst's two faces work everywhere in the app.
+            </p>
+          </div>
+        </div>
+
+        <div class="rec-cost">
+          <div class="rec-h">What you give up</div>
+          <ul class="cost">
+            <li>
+              <b>The quiet gear.</b> There is no calm register in this system. It is exhilarating for four
+              minutes and tiring for forty, so a long-form or meditative mode has nothing to shift into.
+              Cotton Cloud does, and that is a real loss if the roadmap goes that way.
+            </li>
+            <li>
+              <b>Data density.</b> Leaderboards and 30-day histories need a quieter card variant — drop to
+              the e1 elevation, thinner dividers — designed <em>before</em> you need it. Stats is already the
+              tightest of the eight screens.
+            </li>
+            <li>
+              <b>The adult read.</b> Cotton Cloud is the direction you put in front of a clinical or
+              corporate buyer. Sunburst reads as a toy, which is exactly what makes it work on a store
+              listing and exactly what loses that room.
+            </li>
+            <li>
+              <b>Charm you can't buy back later.</b> Paper Crayon is the one people screenshot and send to a
+              friend. Sunburst wins attention; it does not win affection, and that gap does not close with
+              polish.
+            </li>
+            <li>
+              <b>The cheapest path to dark mode.</b> None of the three has one, but Sunburst is the most
+              committed to light-and-warm — inverting it means re-deriving ink as a warm off-white and
+              shadows as deeper plum, which is a second system, not a toggle.
+            </li>
+            <li>
+              <b>Small-type freedom.</b> Fredoka goes mushy below ~12px, so every micro-label stays uppercase
+              with +14% tracking permanently. One contributor setting an 11px sentence-case label is a
+              visible regression.
+            </li>
+          </ul>
+
+          <div class="tiebreak">
+            <b>Honest tie-breakers.</b> If the product promise turns out to be <em>restorative</em> rather
+            than <em>rewarding</em> — long calm sessions, an adult audience that gamification repels — pick
+            <b>Cotton Cloud</b> and budget the GPU fallback on day one. If the pitch is charm and word of
+            mouth, and you can absorb a flatter look in non-Latin locales, pick <b>Paper Crayon</b> and treat
+            the load-bearing graphite outline as untouchable.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-col">
+        <h5>Sunburst Pop</h5>
+        <a href="./sunburst-pop/app.html">App mockup — 8 screens <code>app.html</code></a>
+        <a href="./sunburst-pop/system.html">Design system <code>system.html</code></a>
+        <a href="./sunburst-pop/README.md">Direction notes <code>README.md</code></a>
+      </div>
+      <div class="f-col">
+        <h5>Cotton Cloud</h5>
+        <a href="./cotton-cloud/app.html">App mockup — 8 screens <code>app.html</code></a>
+        <a href="./cotton-cloud/system.html">Design system <code>system.html</code></a>
+        <a href="./cotton-cloud/README.md">Direction notes <code>README.md</code></a>
+      </div>
+      <div class="f-col">
+        <h5>Paper Crayon</h5>
+        <a href="./paper-crayon/app.html">App mockup — 8 screens <code>app.html</code></a>
+        <a href="./paper-crayon/system.html">Design system <code>system.html</code></a>
+        <a href="./paper-crayon/README.md">Direction notes <code>README.md</code></a>
+      </div>
+    </div>
+    <p class="f-note">
+      MindForge — offline brain training, Flutter, no accounts, no network permission. Every hex on this page
+      is read from the matching direction's <code>:root</code> token block; nothing is sampled or guessed.
+      Screens covered by all three mockups: home hub, game detail, countdown, Stroop Rush, Schulte Grid,
+      results, stats, settings.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

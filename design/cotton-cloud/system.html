@@ -1,0 +1,1907 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Cotton Cloud — MindForge design system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* ============================================================
+   COTTON CLOUD — token layer (identical to app.html, plus the
+   two extension gameplay families). Every colour lives here: nothing
+   below :root holds a raw hex, rgb() or hsl() value. The keywords
+   `transparent` and `currentColor` are permitted below :root.
+   ============================================================ */
+:root{
+  /* --- paper & ink primitives --- */
+  --white:#FFFFFF;
+  --paper:#FBF7FF;
+  --mist:#F3ECFB;
+  --haze:#EDE4F7;
+  --plum:#4A3F5C;
+  --plum-70:#756989;
+  --plum-60:#766497;
+  --plum-45:#9C8FB5;
+  --plum-20:#CFC6DD;
+
+  /* --- pastel families: base / 200 lift / tint fill / ink text --- */
+  --mint:#7FE3C4;   --mint-200:#A9EED6;  --mint-tint:#E4FAF2;  --mint-ink:#0E7A5F;
+  --lav:#B9A7FF;    --lav-200:#C9BAFF;   --lav-tint:#EFEAFF;   --lav-ink:#5B44C9;
+  --peach:#FFB39B;  --peach-200:#FFC7B4; --peach-tint:#FFEDE6; --peach-ink:#A84C2C;
+  --sky:#8FD3FF;    --sky-200:#9FDCFF;   --sky-tint:#E6F5FF;   --sky-ink:#14618F;
+  --blush:#FFD6E8;  --blush-200:#FFE3EF; --blush-tint:#FFEFF6; --blush-ink:#B33A72;
+
+  /* --- deep fill tones. A pastel base cannot clear 3:1 against its own
+         haze track, so a fill, a ring stroke or a chart bar uses these
+         instead. lav / sky / peach / blush clear 3:1 on haze; mint clears
+         3:1 on white, the only ground the record bar ever sits on.
+         None of them is ever text. --- */
+  --lav-deep:#7B62E0;   --sky-deep:#2E86C8;
+  --mint-deep:#1E9E7D;  --mint-deep-200:#22A585;
+  --peach-deep:#D25936; --blush-deep:#C9548A;
+  --plum-track:#9E83BB;
+
+  /* --- gameplay palette: four shipped + two held for Blitz / N-Back --- */
+  --gp-red-soft:#FFD8DF;    --gp-red-pure:#F2546B;    --gp-red-ink:#B0203D;
+  --gp-blue-soft:#D6ECFF;   --gp-blue-pure:#3D9BE9;   --gp-blue-ink:#0F5C8C;
+  --gp-green-soft:#CFF4E5;  --gp-green-pure:#2ECC9B;  --gp-green-ink:#0B7355;
+  --gp-yellow-soft:#FFEEC2; --gp-yellow-pure:#FFC53D; --gp-yellow-ink:#6B4A00;
+  --gp-purple-soft:#E7DFFF; --gp-purple-pure:#A78BFA; --gp-purple-ink:#5A3EC8;
+  --gp-orange-soft:#FFE1D3; --gp-orange-pure:#FF9E7A; --gp-orange-ink:#7A3410;
+
+  /* --- alpha tokens --- */
+  --a-plum-04:rgba(74,63,92,.04);
+  --a-plum-06:rgba(74,63,92,.06);
+  --a-plum-08:rgba(74,63,92,.08);
+  --a-plum-10:rgba(74,63,92,.10);
+  --a-plum-14:rgba(74,63,92,.14);
+  --a-plum-20:rgba(74,63,92,.20);
+  --a-white-40:rgba(255,255,255,.40);
+  --a-white-60:rgba(255,255,255,.60);
+  --a-white-72:rgba(255,255,255,.72);
+  --a-white-86:rgba(255,255,255,.86);
+  --a-lav-38:rgba(185,167,255,.38);
+  --a-mint-42:rgba(127,227,196,.42);
+  --a-blush-45:rgba(255,214,232,.45);
+  --a-sky-40:rgba(143,211,255,.40);
+  --a-peach-40:rgba(255,179,155,.40);
+  --a-lav-65:rgba(185,167,255,.65);
+  --a-mint-65:rgba(127,227,196,.65);
+  --a-blush-65:rgba(255,214,232,.65);
+  --a-sky-65:rgba(143,211,255,.65);
+  --a-peach-65:rgba(255,179,155,.65);
+
+  /* --- blob gradients (the signature move) --- */
+  --blob-lav:radial-gradient(circle at 50% 50%, var(--lav) 0%, var(--a-lav-65) 45%, transparent 70%);
+  --blob-mint:radial-gradient(circle at 50% 50%, var(--mint) 0%, var(--a-mint-65) 45%, transparent 70%);
+  --blob-blush:radial-gradient(circle at 50% 50%, var(--blush) 0%, var(--a-blush-65) 45%, transparent 70%);
+  --blob-sky:radial-gradient(circle at 50% 50%, var(--sky) 0%, var(--a-sky-65) 45%, transparent 70%);
+
+  /* --- surface gradients --- */
+  --grad-primary:linear-gradient(135deg, var(--lav-200) 0%, var(--sky-200) 100%);
+  --grad-primary-wide:linear-gradient(104deg, var(--lav-200) 0%, var(--sky-200) 100%);
+  --grad-mint:linear-gradient(135deg, var(--mint-200) 0%, var(--sky-200) 100%);
+  --grad-blush:linear-gradient(135deg, var(--blush-200) 0%, var(--lav-200) 100%);
+  --grad-card:linear-gradient(160deg, var(--white) 0%, var(--paper) 100%);
+  --grad-frost:linear-gradient(160deg, var(--a-white-86) 0%, var(--a-white-60) 100%);
+  --grad-fill:linear-gradient(90deg, var(--lav-deep) 0%, var(--sky-deep) 100%);
+  --grad-fill-warm:linear-gradient(90deg, var(--peach-deep) 0%, var(--blush-deep) 100%);
+  --grad-bar:linear-gradient(180deg, var(--lav-deep) 0%, var(--sky-deep) 100%);
+  --grad-bar-best:linear-gradient(180deg, var(--mint-deep) 0%, var(--mint-deep-200) 100%);
+
+  /* --- semantic slots --- */
+  --surface:var(--paper);
+  --surface-raised:var(--white);
+  --surface-sunken:var(--mist);
+  --surface-frost:var(--a-white-72);
+  --text-primary:var(--plum);
+  --text-secondary:var(--plum-70);
+  --text-muted:var(--plum-60);
+  --furniture:var(--plum-45);
+  --accent:var(--lav-ink);
+  --accent-soft:var(--lav-tint);
+  --success:var(--mint-ink);
+  --warning:var(--peach-ink);
+  --danger:var(--gp-red-ink);
+  --focus-ring:var(--accent);
+  --track:var(--haze);
+  --track-off:var(--plum-track);
+  --fill-strong:var(--lav-deep);
+
+  /* --- elevation --- */
+  --sh-sm:0 2px 8px var(--a-plum-06);
+  --sh-md:0 8px 22px var(--a-plum-08);
+  --sh-lg:0 12px 32px var(--a-plum-10);
+  --sh-xl:0 22px 52px var(--a-plum-14);
+  --sh-pillow:inset 0 -2px 0 var(--a-white-60), 0 8px 22px var(--a-plum-08);
+  --sh-lav:0 10px 26px var(--a-lav-38);
+  --sh-mint:0 10px 26px var(--a-mint-42);
+
+  /* --- radii --- */
+  --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:26px; --r-xl:32px; --r-2xl:40px; --r-pill:999px;
+
+  /* --- spacing --- */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-7:32px; --s-8:40px; --s-9:56px;
+
+  /* --- motion --- */
+  --dur-quick:160ms; --dur-base:240ms; --dur-soft:300ms;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-soft:cubic-bezier(.34,1.18,.48,1);
+  --ease-both:cubic-bezier(.65,0,.35,1);
+
+  /* --- type --- */
+  --font-head:"Quicksand","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --font-body:"Manrope","Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:ui-monospace,"SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{max-width:100%}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  margin:0;background:var(--surface);color:var(--text-primary);
+  font-family:var(--font-body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent)}
+code{font-family:var(--font-mono);overflow-wrap:anywhere}
+pre.dart code{overflow-wrap:normal}
+:focus-visible{outline:3px solid var(--focus-ring);outline-offset:3px;border-radius:var(--r-sm)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* --- page blobs --- */
+.page-blobs{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.page-blobs i{position:absolute;display:block;border-radius:var(--r-pill);filter:blur(60px);opacity:.5}
+.pb1{width:560px;height:560px;top:-180px;left:-140px;background:var(--blob-lav);animation:drift1 28s var(--ease-both) infinite}
+.pb2{width:460px;height:460px;top:26%;right:-160px;background:var(--blob-blush);animation:drift2 33s var(--ease-both) infinite}
+.pb3{width:520px;height:520px;bottom:6%;left:-160px;background:var(--blob-mint);animation:drift3 38s var(--ease-both) infinite}
+.pb4{width:420px;height:420px;bottom:-140px;right:12%;background:var(--blob-sky);animation:drift2 30s var(--ease-both) infinite}
+@keyframes drift1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(70px,50px,0) scale(1.12)}}
+@keyframes drift2{0%,100%{transform:translate3d(0,0,0) scale(1.06)}50%{transform:translate3d(-56px,64px,0) scale(.93)}}
+@keyframes drift3{0%,100%{transform:translate3d(0,0,0) scale(.95)}50%{transform:translate3d(48px,-64px,0) scale(1.1)}}
+
+/* --- shell --- */
+.shell{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:0 var(--s-6) 120px}
+
+.topnav{
+  position:sticky;top:0;z-index:20;margin:0 auto;padding:var(--s-3) 0;
+  display:flex;justify-content:center;
+}
+.topnav ul{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:var(--s-1);margin:0;padding:6px;list-style:none;
+  background:var(--grad-frost);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-radius:var(--r-pill);box-shadow:var(--sh-md);
+}
+.topnav a{
+  display:block;padding:7px 14px;border-radius:var(--r-pill);text-decoration:none;
+  font-size:12.5px;font-weight:700;color:var(--text-secondary);letter-spacing:.01em;
+  transition:background var(--dur-base) var(--ease-out),color var(--dur-base) var(--ease-out);
+}
+.topnav a:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* --- hero --- */
+.hero{padding:var(--s-9) 0 var(--s-8);text-align:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:var(--s-2);
+  font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  background:var(--surface-frost);padding:8px 16px;border-radius:var(--r-pill);box-shadow:var(--sh-sm);
+}
+.eyebrow span{width:7px;height:7px;border-radius:var(--r-pill);background:var(--grad-primary)}
+.hero h1{
+  font-family:var(--font-head);font-weight:700;font-size:clamp(42px,7vw,72px);
+  line-height:1.04;letter-spacing:-.025em;margin:var(--s-5) 0 var(--s-4);
+}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--lav-ink),var(--sky-ink));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* forced-colors strips background images, which would erase clipped text */
+@media (forced-colors:active){
+  .hero h1 em{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:CanvasText}
+}
+.hero .lead{max-width:640px;margin:0 auto;font-size:19px;line-height:1.6;color:var(--text-secondary)}
+
+.choose{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--s-4);margin-top:var(--s-8);text-align:left}
+.choose > div{padding:var(--s-6);border-radius:var(--r-xl);box-shadow:var(--sh-md)}
+.choose .yes{background:var(--mint-tint)}
+.choose .no{background:var(--peach-tint)}
+.choose h3{font-family:var(--font-head);font-size:16px;font-weight:700;margin:0 0 var(--s-3);display:flex;align-items:center;gap:9px}
+.choose .yes h3{color:var(--success)} .choose .no h3{color:var(--warning)}
+.choose ul{margin:0;padding-left:20px;font-size:14.5px;line-height:1.65;color:var(--text-secondary)}
+.choose li + li{margin-top:6px}
+
+/* --- sections --- */
+section{padding-top:var(--s-9);scroll-margin-top:88px}
+.sec-head{max-width:760px;margin-bottom:var(--s-7)}
+.sec-num{
+  display:inline-block;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:var(--s-2);
+}
+.sec-head h2{font-family:var(--font-head);font-weight:700;font-size:34px;line-height:1.15;letter-spacing:-.02em;margin:0 0 var(--s-3)}
+.sec-head p{margin:0;font-size:16px;color:var(--text-secondary)}
+h3.sub-head{
+  font-family:var(--font-head);font-weight:700;font-size:19px;margin:var(--s-8) 0 var(--s-4);
+}
+h3.sub-head:first-of-type{margin-top:0}
+
+.panel{background:var(--grad-card);border-radius:var(--r-xl);box-shadow:var(--sh-md);padding:var(--s-6)}
+.note{
+  margin-top:var(--s-4);padding:var(--s-4) var(--s-5);border-radius:var(--r-lg);
+  background:var(--accent-soft);color:var(--text-primary);font-size:14px;line-height:1.6;
+}
+.note b{color:var(--accent)}
+
+/* --- swatch cards --- */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,206px),1fr));gap:var(--s-4)}
+.swatch{
+  border-radius:var(--r-lg);overflow:hidden;background:var(--surface-raised);box-shadow:var(--sh-md);
+  display:flex;flex-direction:column;
+}
+.swatch .fill{height:78px;display:block}
+.swatch .meta{padding:14px 16px 16px}
+.swatch .nm{font-family:var(--font-head);font-weight:700;font-size:15px;line-height:1.3}
+.swatch .hx{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);letter-spacing:.02em;margin-top:2px}
+.swatch .vr{font-family:var(--font-mono);font-size:11.5px;color:var(--accent);margin-top:6px;word-break:break-all}
+.swatch .role{font-size:12.5px;line-height:1.5;color:var(--text-secondary);margin-top:8px}
+.swatch .cr{
+  display:inline-block;margin-top:9px;padding:3px 9px;border-radius:var(--r-pill);
+  background:var(--mint-tint);color:var(--success);font-size:11px;font-weight:800;letter-spacing:.03em;
+}
+.swatch .cr.low{background:var(--peach-tint);color:var(--warning)}
+
+/* family strips */
+.fam{display:flex;flex-direction:column;gap:var(--s-3)}
+.fam-row{
+  display:grid;grid-template-columns:112px repeat(4,1fr);gap:var(--s-3);align-items:stretch;
+}
+.fam-name{
+  display:flex;flex-direction:column;justify-content:center;
+  font-family:var(--font-head);font-weight:700;font-size:16px;
+}
+.fam-name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11.5px;color:var(--text-muted);letter-spacing:.04em}
+.tone{
+  border-radius:var(--r-md);padding:14px 14px 12px;min-height:86px;
+  display:flex;flex-direction:column;justify-content:flex-end;box-shadow:var(--sh-sm);
+}
+.tone b{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.tone span{font-family:var(--font-mono);font-size:11.5px;margin-top:2px}
+.tone.on-dark{color:var(--white)}
+@media (max-width:720px){
+  .fam-row{grid-template-columns:1fr 1fr}
+  .fam-name{grid-column:1 / -1}
+}
+
+/* --- stroop table --- */
+.tablewrap{overflow-x:auto;border-radius:var(--r-lg);box-shadow:var(--sh-md);background:var(--surface-raised)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{padding:14px 16px;text-align:left;vertical-align:middle}
+thead th{
+  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
+  background:var(--surface-sunken);
+}
+tbody tr td{background:var(--surface-raised)}
+tbody tr:nth-child(even) td{background:var(--paper)}
+td .dot{display:inline-block;width:22px;height:22px;border-radius:var(--r-xs);vertical-align:-6px;margin-right:9px;box-shadow:var(--sh-sm)}
+td code{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)}
+.ratio{font-family:var(--font-mono);font-weight:700;font-size:13px}
+.pass{color:var(--success)} .caution{color:var(--warning)}
+.tag{display:inline-block;padding:3px 9px;border-radius:var(--r-pill);font-size:11px;font-weight:800;letter-spacing:.05em}
+.tag.aa{background:var(--mint-tint);color:var(--success)}
+.tag.lg{background:var(--sky-tint);color:var(--sky-ink)}
+.tag.nt{background:var(--peach-tint);color:var(--warning)}
+
+.stroop-demo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:var(--s-4);margin-top:var(--s-5)}
+.demo-card{background:var(--surface-raised);border-radius:var(--r-xl);box-shadow:var(--sh-md);padding:var(--s-6);text-align:center}
+.demo-card .label,.stimdemo .label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)}
+.demo-word{font-family:var(--font-head);font-weight:700;font-size:56px;line-height:1.1;letter-spacing:.02em;margin:10px 0}
+
+/* --- type scale --- */
+.type-row{
+  display:grid;grid-template-columns:1fr 260px;gap:var(--s-6);align-items:center;
+  padding:var(--s-5) 0;
+}
+.type-row + .type-row{box-shadow:inset 0 1px 0 var(--a-plum-06)}
+.type-spec{font-family:var(--font-mono);font-size:12px;line-height:1.7;color:var(--text-secondary)}
+.type-spec b{display:block;font-family:var(--font-body);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.t-display{font-family:var(--font-head);font-weight:700;font-size:76px;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.t-count{font-family:var(--font-head);font-weight:700;font-size:104px;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.t-h1{font-family:var(--font-head);font-weight:700;font-size:30px;line-height:1.18;letter-spacing:-.015em}
+.t-h2{font-family:var(--font-head);font-weight:700;font-size:22px;line-height:1.3;letter-spacing:-.01em}
+.t-h3{font-family:var(--font-head);font-weight:600;font-size:17px;line-height:1.35}
+.t-bodyl{font-size:16px;line-height:1.55;font-weight:500}
+.t-body{font-size:15px;line-height:1.55;font-weight:500}
+.t-bodys{font-size:13.5px;line-height:1.5;font-weight:500;color:var(--text-secondary)}
+.t-label{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--text-muted)}
+.t-num{font-family:var(--font-head);font-weight:700;font-size:19px;line-height:1.15;font-variant-numeric:tabular-nums}
+@media (max-width:720px){.type-row{grid-template-columns:1fr;gap:var(--s-3)}}
+
+/* --- scales --- */
+.scale-list{display:flex;flex-direction:column;gap:var(--s-3)}
+.scale-row{display:grid;grid-template-columns:104px 64px 1fr;gap:var(--s-5);align-items:center;font-size:13.5px}
+.scale-row code{font-family:var(--font-mono);font-size:12.5px;color:var(--accent)}
+.scale-bar{height:22px;border-radius:var(--r-pill);background:var(--grad-primary);box-shadow:var(--sh-sm)}
+.scale-row span{color:var(--text-secondary);font-size:13px}
+@media (max-width:720px){.scale-row{grid-template-columns:96px 60px;gap:var(--s-4)}.scale-row span{grid-column:1 / -1}}
+
+.radius-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:var(--s-4)}
+.radius-cell{background:var(--surface-raised);box-shadow:var(--sh-md);padding:var(--s-4);border-radius:var(--r-lg);text-align:center}
+.radius-demo{height:78px;background:var(--grad-primary);box-shadow:var(--sh-sm);margin-bottom:var(--s-3)}
+.radius-cell code{display:block;font-family:var(--font-mono);font-size:12px;color:var(--accent)}
+.radius-cell small{display:block;font-size:11.5px;color:var(--text-secondary);margin-top:3px}
+
+.elev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:var(--s-6)}
+.elev-cell{background:var(--surface-raised);border-radius:var(--r-xl);padding:var(--s-6) var(--s-4);text-align:center}
+.elev-cell code{display:block;font-family:var(--font-mono);font-size:12px;color:var(--accent);margin-bottom:4px}
+.elev-cell small{font-size:11.5px;color:var(--text-secondary);line-height:1.4;display:block}
+.e-sm{box-shadow:var(--sh-sm)} .e-md{box-shadow:var(--sh-md)} .e-lg{box-shadow:var(--sh-lg)}
+.e-xl{box-shadow:var(--sh-xl)} .e-lav{box-shadow:var(--sh-lav)} .e-mint{box-shadow:var(--sh-mint)}
+
+/* --- motion --- */
+.motion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--s-4)}
+.motion-card{background:var(--surface-raised);border-radius:var(--r-xl);box-shadow:var(--sh-md);padding:var(--s-5)}
+.motion-card h3{font-family:var(--font-head);font-weight:700;font-size:16px;margin:0 0 2px}
+.motion-card code{font-family:var(--font-mono);font-size:12px;color:var(--accent)}
+.motion-card p{font-size:13px;line-height:1.55;color:var(--text-secondary);margin:var(--s-3) 0 var(--s-4)}
+.track{height:44px;max-width:260px;border-radius:var(--r-pill);background:var(--surface-sunken);position:relative;overflow:hidden;padding:7px}
+.puck{
+  width:30px;height:30px;border-radius:var(--r-pill);background:var(--grad-primary);box-shadow:var(--sh-lav);
+  animation-duration:2.6s;animation-iteration-count:infinite;animation-name:slide;
+}
+@keyframes slide{
+  0%,6%{transform:translateX(0)}
+  44%,56%{transform:translateX(216px)}
+  94%,100%{transform:translateX(0)}
+}
+.ease-out .puck{animation-timing-function:var(--ease-out)}
+.ease-soft .puck{animation-timing-function:var(--ease-soft)}
+.ease-both .puck{animation-timing-function:var(--ease-both)}
+.curve{margin-top:var(--s-4);width:100%;height:96px;display:block}
+
+/* --- components --- */
+.comp{background:var(--grad-card);border-radius:var(--r-xl);box-shadow:var(--sh-md);padding:var(--s-6);margin-bottom:var(--s-5)}
+.comp > header{margin-bottom:var(--s-5)}
+.comp h3{font-family:var(--font-head);font-weight:700;font-size:18px;margin:0 0 4px}
+.comp header p{margin:0;font-size:13.5px;line-height:1.55;color:var(--text-secondary);max-width:62ch}
+.states{display:flex;flex-wrap:wrap;gap:var(--s-5)}
+.state{display:flex;flex-direction:column;gap:10px;min-width:0}
+.state > .cap{
+  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
+}
+.state.grow{flex:1 1 220px}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+  height:56px;padding:0 26px;border-radius:var(--r-pill);font-family:var(--font-head);
+  font-weight:700;font-size:16.5px;letter-spacing:.01em;white-space:nowrap;
+  transition:transform var(--dur-base) var(--ease-soft),box-shadow var(--dur-base) var(--ease-out);
+}
+.btn svg{width:18px;height:18px}
+.btn-primary{background:var(--grad-primary);color:var(--text-primary);box-shadow:var(--sh-lav),inset 0 -2px 0 var(--a-white-40)}
+.btn-secondary{background:var(--surface-raised);color:var(--accent);box-shadow:var(--sh-md)}
+.btn-ghost{background:transparent;color:var(--text-secondary)}
+.is-pressed.btn-primary{transform:scale(.975) translateY(1px);box-shadow:0 4px 12px var(--a-lav-38)}
+.is-pressed.btn-secondary{transform:scale(.975) translateY(1px);box-shadow:var(--sh-sm)}
+.is-pressed.btn-ghost{background:var(--accent-soft);color:var(--accent)}
+.is-disabled{opacity:.45;box-shadow:none;filter:saturate(.35)}
+.is-disabled.btn-primary{background:var(--surface-sunken);color:var(--text-muted)}
+
+/* game card */
+.gcard{
+  display:flex;align-items:center;gap:var(--s-4);padding:16px;border-radius:var(--r-lg);
+  background:var(--grad-card);box-shadow:var(--sh-md);width:100%;max-width:330px;
+}
+.gtile{width:56px;height:56px;border-radius:var(--r-md);flex:0 0 auto;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm)}
+.gtile-stroop{background:var(--grad-blush)} .gtile-lock{background:var(--surface-sunken);color:var(--text-muted)}
+.gc-txt{flex:1 1 auto;min-width:0}
+.gc-txt b{display:block;font-family:var(--font-head);font-weight:600;font-size:17px;line-height:1.35}
+.gc-txt span{display:block;font-size:12.5px;color:var(--text-secondary);line-height:1.45}
+.gc-best{text-align:right;flex:0 0 auto}
+.gc-best i{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.gc-best b{display:block;font-family:var(--font-head);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+.gcard.is-pressed{transform:scale(.985);box-shadow:var(--sh-sm)}
+.gcard.locked{background:var(--a-white-60);box-shadow:var(--sh-sm)}
+.gcard.locked .gc-txt b,.gcard.locked .gc-txt span{color:var(--text-muted)}
+.dots{display:flex;align-items:center}
+.dots i{display:block;width:16px;height:16px;border-radius:var(--r-pill);box-shadow:0 1px 3px var(--a-plum-14)}
+.dots i:nth-child(1){background:var(--gp-red-pure)}
+.dots i:nth-child(2){background:var(--gp-blue-pure);margin-left:-6px}
+.dots i:nth-child(3){background:var(--gp-yellow-pure);margin-left:-6px}
+
+/* segmented */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-2);padding:var(--s-2);background:var(--surface-sunken);border-radius:var(--r-pill);width:100%;max-width:300px}
+.seg span{
+  height:44px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-pill);
+  font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--text-primary);
+}
+.seg span.on{background:var(--surface-raised);color:var(--accent);font-weight:700;box-shadow:var(--sh-md)}
+.seg span.press{background:var(--a-white-60);color:var(--accent)}
+.seg.is-disabled span{color:var(--text-muted)}
+
+/* hud pill */
+.hud-pill{
+  display:inline-flex;flex-direction:column;align-items:center;padding:var(--s-3) var(--s-5);border-radius:var(--r-md);
+  background:var(--a-white-86);box-shadow:var(--sh-sm);min-width:96px;
+}
+.hud-pill i{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.hud-pill b{font-family:var(--font-head);font-weight:700;font-size:19px;line-height:1.15;font-variant-numeric:tabular-nums;margin-top:1px}
+.hp-peach{background:var(--peach-tint)} .hp-peach i,.hp-peach b{color:var(--warning)}
+.hp-mint{background:var(--mint-tint)} .hp-mint i,.hp-mint b{color:var(--success)}
+.hp-lav{background:var(--accent-soft)} .hp-lav i,.hp-lav b{color:var(--accent)}
+
+/* progress + ring */
+.pbar{width:100%;max-width:240px;height:10px;border-radius:var(--r-pill);background:var(--track);overflow:hidden}
+.pbar.slim{height:8px}
+.pbar i{display:block;height:100%;border-radius:var(--r-pill);background:var(--grad-fill)}
+.pbar.warm i{background:var(--grad-fill-warm)}
+.rings{display:flex;gap:var(--s-5);flex-wrap:wrap}
+.ring{position:relative;width:104px;height:104px;display:flex;align-items:center;justify-content:center}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:relative;font-family:var(--font-head);font-weight:700;font-size:28px;font-variant-numeric:tabular-nums}
+
+/* grid tiles */
+.tiles{display:flex;gap:var(--s-4);flex-wrap:wrap}
+.tile{
+  width:55px;height:55px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums;
+  background:var(--surface-raised);color:var(--text-primary);box-shadow:var(--sh-pillow);
+}
+.tile.found{background:var(--mint-tint);color:var(--success);box-shadow:none;font-weight:600}
+.tile.next{background:var(--accent-soft);color:var(--accent);box-shadow:var(--sh-lav),inset 0 0 0 2.5px var(--lav)}
+.tile.wrong{background:var(--gp-red-soft);color:var(--danger);box-shadow:0 8px 20px var(--a-plum-08)}
+
+/* toggle */
+.tog{width:54px;height:32px;border-radius:var(--r-pill);position:relative;background:var(--track-off);box-shadow:inset 0 1px 3px var(--a-plum-08)}
+.tog i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:var(--r-pill);background:var(--surface-raised);box-shadow:var(--sh-sm);display:block;transition:transform var(--dur-base) var(--ease-soft)}
+.tog.on{background:var(--grad-primary);box-shadow:inset 0 1px 3px var(--a-plum-08),0 4px 12px var(--a-lav-38)}
+.tog.on i{transform:translateX(22px)}
+.tog.is-disabled{opacity:.4;box-shadow:none}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:var(--s-2);height:34px;padding:0 var(--s-4);border-radius:var(--r-pill);font-size:12.5px;font-weight:800;letter-spacing:.01em}
+.badge svg{width:14px;height:14px}
+.b-best{background:var(--mint-tint);color:var(--success);box-shadow:var(--sh-mint)}
+.b-streak{background:var(--blush-tint);color:var(--blush-ink);box-shadow:var(--sh-sm)}
+.b-soon{background:var(--surface-sunken);color:var(--text-muted)}
+.b-warn{background:var(--peach-tint);color:var(--warning)}
+
+/* modal sheet */
+.sheet-stage{
+  position:relative;height:300px;border-radius:var(--r-xl);overflow:hidden;
+  background:var(--grad-primary);box-shadow:var(--sh-md);display:flex;align-items:flex-end;
+}
+.scrim{position:absolute;inset:0;background:var(--a-plum-20);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.sheet{
+  position:relative;width:100%;padding:12px 22px 24px;border-radius:var(--r-2xl) var(--r-2xl) 0 0;
+  background:var(--grad-card);box-shadow:0 -14px 40px var(--a-plum-14);
+}
+.grabber{width:44px;height:5px;border-radius:var(--r-pill);background:var(--furniture);margin:0 auto 18px}
+.sheet h4{font-family:var(--font-head);font-weight:700;font-size:22px;margin:0 0 6px;text-align:center}
+.sheet p{margin:0 0 18px;font-size:13.5px;color:var(--text-secondary);text-align:center}
+.sheet .row{display:flex;flex-direction:column;gap:10px}
+.sheet .btn{width:100%}
+
+/* bottom nav */
+.navbar{
+  display:flex;align-items:center;justify-content:space-around;padding:0 8px;height:66px;width:100%;max-width:340px;
+  border-radius:var(--r-2xl);background:var(--grad-frost);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:var(--sh-lg);
+}
+.navbar a{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:86px;height:50px;
+  border-radius:var(--r-md);text-decoration:none;color:var(--text-muted);
+  font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+}
+.navbar a svg{width:21px;height:21px}
+.navbar a.on{color:var(--accent);background:var(--accent-soft)}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--s-4)}
+.rule{padding:var(--s-5);border-radius:var(--r-lg);background:var(--surface-raised);box-shadow:var(--sh-sm)}
+.rule b{display:block;font-family:var(--font-head);font-weight:700;font-size:15px;margin-bottom:5px}
+.rule span{font-size:13.5px;line-height:1.6;color:var(--text-secondary)}
+.rule.do b{color:var(--success)} .rule.dont b{color:var(--danger)}
+
+/* code block */
+.codewrap{border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-lg);background:var(--surface-raised)}
+.codebar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:12px 20px;overflow:hidden;
+  background:var(--surface-sunken);font-family:var(--font-mono);font-size:12px;color:var(--text-primary);
+}
+.codebar span{width:9px;height:9px;border-radius:var(--r-pill)}
+.cb1{background:var(--gp-red-pure)} .cb2{background:var(--gp-yellow-pure)} .cb3{background:var(--gp-green-pure)}
+.codebar em{margin-left:auto;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-family:var(--font-body)}
+pre.dart{
+  margin:0;padding:var(--s-6);overflow-x:auto;font-family:var(--font-mono);
+  font-size:12.5px;line-height:1.75;color:var(--text-primary);tab-size:2;
+}
+pre.dart .c-com{color:var(--text-muted);font-style:italic}
+pre.dart .c-key{color:var(--lav-ink);font-weight:600}
+pre.dart .c-str{color:var(--mint-ink)}
+pre.dart .c-num{color:var(--peach-ink)}
+pre.dart .c-typ{color:var(--sky-ink)}
+pre.dart .c-ann{color:var(--blush-ink)}
+
+/* pause pill + countdown tag (the two chrome pills of a running game) */
+.pausepill{
+  display:inline-flex;align-items:center;gap:var(--s-2);height:44px;padding:0 var(--s-5);
+  border-radius:var(--r-pill);background:var(--surface-frost);color:var(--text-secondary);
+  font-size:12.5px;font-weight:700;box-shadow:var(--sh-sm);
+}
+.pausepill svg{width:14px;height:14px}
+.counttag{
+  display:inline-flex;align-items:center;gap:var(--s-2);height:34px;padding:0 14px;border-radius:var(--r-pill);
+  background:var(--a-white-86);box-shadow:var(--sh-sm);font-size:12.5px;font-weight:700;
+}
+.counttag i{width:9px;height:9px;border-radius:var(--r-pill);background:var(--gp-red-pure);display:block}
+
+/* stroop answer chip: silhouette + pure fill + stimulus-ink ring */
+.chipdemo{display:flex;flex-wrap:wrap;gap:var(--s-3)}
+.ansdemo{
+  display:flex;align-items:center;gap:var(--s-3);height:66px;padding:0 14px;border-radius:var(--r-lg);
+  box-shadow:var(--sh-pillow);
+}
+.ansdemo b{font-family:var(--font-head);font-size:16px;font-weight:700}
+.ansdemo .swatch{width:34px;height:34px;flex:0 0 auto;display:block}
+.ansdemo .swatch svg{
+  width:34px;height:34px;display:block;
+  fill:var(--sw-pure);stroke:var(--sw-ink);stroke-width:2.6;
+  filter:drop-shadow(0 3px 6px var(--a-plum-20));
+}
+.a-red{background:var(--gp-red-soft);color:var(--gp-red-ink);--sw-pure:var(--gp-red-pure);--sw-ink:var(--gp-red-ink)}
+.a-blue{background:var(--gp-blue-soft);color:var(--gp-blue-ink);--sw-pure:var(--gp-blue-pure);--sw-ink:var(--gp-blue-ink)}
+.a-green{background:var(--gp-green-soft);color:var(--gp-green-ink);--sw-pure:var(--gp-green-pure);--sw-ink:var(--gp-green-ink)}
+.a-yellow{background:var(--gp-yellow-soft);color:var(--gp-yellow-ink);--sw-pure:var(--gp-yellow-pure);--sw-ink:var(--gp-yellow-ink)}
+.a-purple{background:var(--gp-purple-soft);color:var(--gp-purple-ink);--sw-pure:var(--gp-purple-pure);--sw-ink:var(--gp-purple-ink)}
+.a-orange{background:var(--gp-orange-soft);color:var(--gp-orange-ink);--sw-pure:var(--gp-orange-pure);--sw-ink:var(--gp-orange-ink)}
+.stimdemo{position:relative;border-radius:var(--r-xl);background:var(--surface-raised);box-shadow:var(--sh-lg);padding:var(--s-6);text-align:center}
+.stimdemo .mark{position:absolute;top:12px;right:12px;width:26px;height:26px;display:block}
+.stimdemo .mark svg{width:26px;height:26px;display:block;fill:none;stroke:var(--gp-red-ink);stroke-width:2.6}
+
+.foot{margin-top:var(--s-9);padding-top:var(--s-6);text-align:center;font-size:13.5px;color:var(--text-secondary)}
+.foot a{font-weight:700;text-decoration:none}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="page-blobs" aria-hidden="true"><i class="pb1"></i><i class="pb2"></i><i class="pb3"></i><i class="pb4"></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <g id="i-play" fill="currentColor"><path d="M8.6 5.9c0-.8.9-1.3 1.6-.9l8 5.9c.6.4.6 1.4 0 1.8l-8 5.9c-.7.5-1.6 0-1.6-.9V5.9Z"/></g>
+  <g id="i-spark" fill="currentColor"><path d="M12 2.8c.3 3.6 1.9 5.4 5.5 5.9-3.6.6-5.2 2.4-5.5 6-.3-3.6-1.9-5.4-5.5-6 3.6-.5 5.2-2.3 5.5-5.9Z"/></g>
+  <g id="i-flame" fill="currentColor"><path d="M12 2.6c.4 2.6-.7 3.9-1.9 5.1-1.4 1.4-3 2.9-3 5.7A4.9 4.9 0 0 0 12 18.4a4.9 4.9 0 0 0 4.9-5c0-3.6-2.6-5.4-4.2-8.5-.2 1.8-1 2.7-1.8 3.4-.4-1.9.6-3.9 1.1-5.7Z"/></g>
+  <g id="i-lock" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="4.8" y="10.4" width="14.4" height="9.4" rx="3.4"/><path d="M8.4 10.4V8.2a3.6 3.6 0 0 1 7.2 0v2.2"/></g>
+  <g id="i-replay" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.9 12a7.9 7.9 0 1 1-2.6-5.85"/><path d="M20.3 4v4.4h-4.4"/></g>
+  <g id="i-grid" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3.6" y="3.6" width="7.4" height="7.4" rx="2.6"/><rect x="13" y="3.6" width="7.4" height="7.4" rx="2.6"/><rect x="3.6" y="13" width="7.4" height="7.4" rx="2.6"/><rect x="13" y="13" width="7.4" height="7.4" rx="2.6"/></g>
+  <g id="i-chart" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5.5 19.5v-6.2"/><path d="M12 19.5V5.2"/><path d="M18.5 19.5v-9"/></g>
+  <g id="i-sliders" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7.6h4.2M13.4 7.6H20M4 16.4h6.6M15.8 16.4H20"/><circle cx="10.8" cy="7.6" r="2.6"/><circle cx="13.2" cy="16.4" r="2.6"/></g>
+  <g id="i-check" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5.4 12.4 10 17l8.6-9.6"/></g>
+  <g id="i-x" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6.8 6.8 17.2 17.2M17.2 6.8 6.8 17.2"/></g>
+  <g id="i-pause" fill="currentColor"><rect x="7" y="5.4" width="3.6" height="13.2" rx="1.6"/><rect x="13.4" y="5.4" width="3.6" height="13.2" rx="1.6"/></g>
+  <g id="g-circle"><circle cx="12" cy="12" r="9.4"/></g>
+  <g id="g-square"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="3.6"/></g>
+  <g id="g-triangle" stroke-linejoin="round"><path d="M12 3 21.4 20.2H2.6Z"/></g>
+  <g id="g-diamond" stroke-linejoin="round"><path d="M12 2.5 21.5 12 12 21.5 2.5 12Z"/></g>
+  <g id="g-hex" stroke-linejoin="round"><path d="M12 2.6 20.1 7.3v9.4L12 21.4 3.9 16.7V7.3Z"/></g>
+  <g id="g-star" stroke-linejoin="round"><path d="M12 2.6l2.9 6.1 6.6.9-4.8 4.7 1.2 6.6L12 17.7l-5.9 3.2 1.2-6.6L2.5 9.6l6.6-.9Z"/></g>
+</defs></svg>
+
+<nav class="topnav" aria-label="Sections">
+  <ul>
+    <li><a href="#colour">Colour</a></li>
+    <li><a href="#stroop">Stroop palette</a></li>
+    <li><a href="#type">Type</a></li>
+    <li><a href="#space">Space &amp; radius</a></li>
+    <li><a href="#elevation">Elevation</a></li>
+    <li><a href="#motion">Motion</a></li>
+    <li><a href="#components">Components</a></li>
+    <li><a href="#flutter">Flutter</a></li>
+    <li><a href="app.html">← Screens</a></li>
+  </ul>
+</nav>
+
+<div class="shell">
+
+  <header class="hero">
+    <div class="eyebrow"><span></span>MindForge · Design direction 01</div>
+    <h1>Cotton <em>Cloud</em></h1>
+    <p class="lead">Soft, calm, breathable cheer. Candy colour with grown-up manners — the brain gym you
+      open to unwind, not to compete. Layers float on a lilac-white page, blurred colour drifts behind
+      frosted cards, and every corner is pillowy. Nothing shouts, including the win screen.</p>
+
+    <h2 class="sr-only">When to choose this direction</h2>
+    <div class="choose">
+      <div class="yes">
+        <h3><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><use href="#i-check"/></svg>Choose Cotton Cloud when</h3>
+        <ul>
+          <li>The product promise is <b>restorative</b> — train to feel clearer, not to beat someone.</li>
+          <li>Sessions are short and repeated daily; the app must never feel like a chore.</li>
+          <li>You want a platform look that survives ten more games without a re-skin.</li>
+          <li>The audience skews broad and adult, and loud gamification would repel them.</li>
+        </ul>
+      </div>
+      <div class="no">
+        <h3><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><use href="#i-x"/></svg>Choose something else when</h3>
+        <ul>
+          <li>You need <b>arcade adrenaline</b> — Cotton Cloud has no gear for shouting.</li>
+          <li>Screens must carry dense tables or many simultaneous numbers.</li>
+          <li>The device fleet is low-end: blur, frost and wide shadows cost fill-rate.</li>
+          <li>Brand requires a dark mode as a first-class surface, not an afterthought.</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================ COLOUR -->
+  <section id="colour">
+    <div class="sec-head">
+      <span class="sec-num">01 — Foundations</span>
+      <h2>Colour</h2>
+      <p>Two tiers. <b>Primitives</b> are named for what they are and never referenced by a widget.
+        <b>Semantic slots</b> are named for the job they do, and are the only names a screen is allowed
+        to use. Pastels fill; deepened inks carry text.</p>
+    </div>
+
+    <h3 class="sub-head">Paper &amp; ink</h3>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <span class="fill" style="background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--a-plum-08)"></span>
+        <div class="meta">
+          <div class="nm">Paper</div><div class="hx">#FBF7FF</div><div class="vr">--paper</div>
+          <p class="role">The ground of every screen. A lilac-tinted white, never pure white, so raised cards can still read as raised.</p>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--white);box-shadow:inset 0 0 0 1.5px var(--a-plum-08)"></span>
+        <div class="meta">
+          <div class="nm">Cloud</div><div class="hx">#FFFFFF</div><div class="vr">--white</div>
+          <p class="role">Raised surfaces only: cards, the Stroop stimulus, tiles. Its job is to be brighter than paper.</p>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--mist)"></span>
+        <div class="meta">
+          <div class="nm">Mist</div><div class="hx">#F3ECFB</div><div class="vr">--mist</div>
+          <p class="role">Sunken surfaces: the segmented-control trough, locked tiles, inactive chips.</p>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--haze)"></span>
+        <div class="meta">
+          <div class="nm">Haze</div><div class="hx">#EDE4F7</div><div class="vr">--haze</div>
+          <p class="role">Progress-bar and timer-bar tracks. One step deeper than mist so a 0&nbsp;% bar is still visible.</p>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--plum)"></span>
+        <div class="meta">
+          <div class="nm">Plum</div><div class="hx">#4A3F5C</div><div class="vr">--plum</div>
+          <p class="role">All primary text, all icons. A warm violet-charcoal — never true black, which would fight the pastels.</p>
+          <span class="cr">9.20:1 on paper</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--plum-70)"></span>
+        <div class="meta">
+          <div class="nm">Plum 70</div><div class="hx">#756989</div><div class="vr">--plum-70</div>
+          <p class="role">Secondary text: card subtitles, helper lines, sheet copy.</p>
+          <span class="cr">4.80:1 on paper</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--plum-45)"></span>
+        <div class="meta">
+          <div class="nm">Plum 45</div><div class="hx">#9C8FB5</div><div class="vr">--plum-45 → --furniture</div>
+          <p class="role">Non-text furniture only, alongside plum&nbsp;20: the battery outline, disabled glyph shapes. It was
+            once the muted <em>text</em> tone; at 2.83:1 it never earned that job and no longer has it.</p>
+          <span class="cr low">2.83:1 — never text</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--plum-60)"></span>
+        <div class="meta">
+          <div class="nm">Plum 60</div><div class="hx">#766497</div><div class="vr">--plum-60 → --text-muted</div>
+          <p class="role">Small-caps labels, axis ticks, inactive nav, hint lines. It sits only a hair off plum&nbsp;70 —
+            honest evidence that this palette has room for two text tones, not three. Use it for tone, never to hide text.</p>
+          <span class="cr">4.91:1 on paper · 4.51:1 on mist</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <span class="fill" style="background:var(--plum-20)"></span>
+        <div class="meta">
+          <div class="nm">Plum 20</div><div class="hx">#CFC6DD</div><div class="vr">--plum-20</div>
+          <p class="role">Non-text furniture only: the home indicator, the sheet grabber, the empty week dot.</p>
+          <span class="cr low">Never text</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-head">Pastel families</h3>
+    <p style="margin:0 0 var(--s-4);font-size:14.5px;color:var(--text-secondary);max-width:70ch">
+      Five families, four tones each. <b>Base</b> is the identity colour, <b>200</b> is the gradient lift,
+      <b>tint</b> is the safe fill behind text, and <b>ink</b> is the only tone allowed to be text.
+    </p>
+    <div class="fam">
+      <div class="fam-row">
+        <div class="fam-name">Mint<small>success, found</small></div>
+        <div class="tone" style="background:var(--mint)"><b>Base</b><span>#7FE3C4</span></div>
+        <div class="tone" style="background:var(--mint-200)"><b>200</b><span>#A9EED6</span></div>
+        <div class="tone" style="background:var(--mint-tint)"><b>Tint</b><span>#E4FAF2</span></div>
+        <div class="tone on-dark" style="background:var(--mint-ink)"><b>Ink</b><span>#0E7A5F</span></div>
+      </div>
+      <div class="fam-row">
+        <div class="fam-name">Lavender<small>accent, primary</small></div>
+        <div class="tone" style="background:var(--lav)"><b>Base</b><span>#B9A7FF</span></div>
+        <div class="tone" style="background:var(--lav-200)"><b>200</b><span>#C9BAFF</span></div>
+        <div class="tone" style="background:var(--lav-tint)"><b>Tint</b><span>#EFEAFF</span></div>
+        <div class="tone on-dark" style="background:var(--lav-ink)"><b>Ink</b><span>#5B44C9</span></div>
+      </div>
+      <div class="fam-row">
+        <div class="fam-name">Peach<small>time, warning</small></div>
+        <div class="tone" style="background:var(--peach)"><b>Base</b><span>#FFB39B</span></div>
+        <div class="tone" style="background:var(--peach-200)"><b>200</b><span>#FFC7B4</span></div>
+        <div class="tone" style="background:var(--peach-tint)"><b>Tint</b><span>#FFEDE6</span></div>
+        <div class="tone on-dark" style="background:var(--peach-ink)"><b>Ink</b><span>#A84C2C</span></div>
+      </div>
+      <div class="fam-row">
+        <div class="fam-name">Sky<small>info, focus</small></div>
+        <div class="tone" style="background:var(--sky)"><b>Base</b><span>#8FD3FF</span></div>
+        <div class="tone" style="background:var(--sky-200)"><b>200</b><span>#9FDCFF</span></div>
+        <div class="tone" style="background:var(--sky-tint)"><b>Tint</b><span>#E6F5FF</span></div>
+        <div class="tone on-dark" style="background:var(--sky-ink)"><b>Ink</b><span>#14618F</span></div>
+      </div>
+      <div class="fam-row">
+        <div class="fam-name">Blush<small>streak, delight</small></div>
+        <div class="tone" style="background:var(--blush)"><b>Base</b><span>#FFD6E8</span></div>
+        <div class="tone" style="background:var(--blush-200)"><b>200</b><span>#FFE3EF</span></div>
+        <div class="tone" style="background:var(--blush-tint)"><b>Tint</b><span>#FFEFF6</span></div>
+        <div class="tone on-dark" style="background:var(--blush-ink)"><b>Ink</b><span>#B33A72</span></div>
+      </div>
+    </div>
+    <div class="note">
+      <b>The one colour law.</b> A pastel base or 200 tone may be a fill, a gradient stop or a shadow —
+      never a text colour. Text on any pastel is either <code>--plum</code> or that family's own ink.
+      Every pairing shipped in the app clears 4.5:1.
+    </div>
+
+    <h3 class="sub-head">Semantic slots</h3>
+    <div class="swatch-grid">
+      <div class="swatch"><span class="fill" style="background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--a-plum-08)"></span>
+        <div class="meta"><div class="nm">surface</div><div class="hx">→ paper · #FBF7FF</div><div class="vr">--surface</div>
+        <p class="role">Scaffold background on every one of the eight screens.</p></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--surface-raised);box-shadow:inset 0 0 0 1.5px var(--a-plum-08)"></span>
+        <div class="meta"><div class="nm">surface-raised</div><div class="hx">→ white · #FFFFFF</div><div class="vr">--surface-raised</div>
+        <p class="role">Anything that floats: cards, tiles, sheets, the stimulus panel.</p></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--surface-sunken)"></span>
+        <div class="meta"><div class="nm">surface-sunken</div><div class="hx">→ mist · #F3ECFB</div><div class="vr">--surface-sunken</div>
+        <p class="role">Troughs and wells. The only inward-feeling surface in the system.</p></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--grad-frost);box-shadow:inset 0 0 0 1.5px var(--a-plum-08)"></span>
+        <div class="meta"><div class="nm">surface-frost</div><div class="hx">white @ 72&nbsp;% + blur 16</div><div class="vr">--surface-frost</div>
+        <p class="role">Glass over blobs: bottom nav, hero panels, the top rail. Always needs a blob behind it to earn its keep.</p></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--text-primary)"></span>
+        <div class="meta"><div class="nm">text-primary</div><div class="hx">→ plum · #4A3F5C</div><div class="vr">--text-primary</div>
+        <p class="role">Headings, numbers, primary-button labels.</p><span class="cr">9.20:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--text-secondary)"></span>
+        <div class="meta"><div class="nm">text-secondary</div><div class="hx">→ plum-70 · #756989</div><div class="vr">--text-secondary</div>
+        <p class="role">Subtitles and helper copy.</p><span class="cr">4.80:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--text-muted)"></span>
+        <div class="meta"><div class="nm">text-muted</div><div class="hx">→ plum-60 · #766497</div><div class="vr">--text-muted</div>
+        <p class="role">Small-caps labels, inactive nav, axis ticks, hint lines. Every one of them clears 4.5:1, because
+          "muted" is a tone, not a licence.</p><span class="cr">4.91:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--accent)"></span>
+        <div class="meta"><div class="nm">accent</div><div class="hx">→ lavender-ink · #5B44C9</div><div class="vr">--accent</div>
+        <p class="role">Every interactive affordance that is text or an icon: links, active nav, selected segment.</p><span class="cr">6.37:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--accent-soft)"></span>
+        <div class="meta"><div class="nm">accent-soft</div><div class="hx">→ lavender-tint · #EFEAFF</div><div class="vr">--accent-soft</div>
+        <p class="role">The selected/active fill behind accent text. Nav pill, next tile, how-to panel.</p></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--success)"></span>
+        <div class="meta"><div class="nm">success</div><div class="hx">→ mint-ink · #0E7A5F</div><div class="vr">--success</div>
+        <p class="role">Correct answers, found tiles, personal-best badge, record bar in the chart.</p><span class="cr">5.00:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--warning)"></span>
+        <div class="meta"><div class="nm">warning</div><div class="hx">→ peach-ink · #A84C2C</div><div class="vr">--warning</div>
+        <p class="role">Time pressure: the clock HUD pill and the draining timer bar. Never used for errors.</p><span class="cr">5.31:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--danger)"></span>
+        <div class="meta"><div class="nm">danger</div><div class="hx">→ gp-red-ink · #B0203D</div><div class="vr">--danger</div>
+        <p class="role">A wrong tap, and nothing else. Cotton Cloud has no destructive flows.</p><span class="cr">6.36:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--focus-ring)"></span>
+        <div class="meta"><div class="nm">focus-ring</div><div class="hx">→ lavender-ink · #5B44C9</div><div class="vr">--focus-ring</div>
+        <p class="role">3&nbsp;px ring, 3&nbsp;px offset, on every focusable node. Solid, not translucent: at 45&nbsp;% alpha it
+          composited to 2.08:1 and failed SC 1.4.11, and a focus ring you cannot see is not a focus ring.</p>
+        <span class="cr">6.37:1 on paper</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--grad-fill)"></span>
+        <div class="meta"><div class="nm">fill-strong</div><div class="hx">→ lavender-deep · #7B62E0</div><div class="vr">--fill-strong · --grad-fill</div>
+        <p class="role">Progress fills, the countdown ring stroke, chart bars. A pastel base is 1.4:1 against its own haze
+          track, so fills use the deep tones instead — 3.65:1 for lavender-deep, 3.18:1 for sky-deep.</p>
+        <span class="cr">3.65:1 on the haze track</span></div></div>
+      <div class="swatch"><span class="fill" style="background:var(--track-off)"></span>
+        <div class="meta"><div class="nm">track-off</div><div class="hx">→ plum-track · #9E83BB</div><div class="vr">--track-off</div>
+        <p class="role">The trough of a switch that is <em>off</em>, and nothing else. Haze gave the white knob a 1.23:1
+          boundary, which read as an empty pill rather than a state.</p>
+        <span class="cr">3.27:1 against the white knob</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================================ STROOP PALETTE -->
+  <section id="stroop">
+    <div class="sec-head">
+      <span class="sec-num">02 — The mechanic</span>
+      <h2>Stroop answer palette</h2>
+      <p>In Stroop Rush the colour <em>is</em> the question, so this palette is load-bearing in a way
+        the rest of the system is not. Each family ships three tones with a single, non-negotiable rule
+        about which tone may be used where.</p>
+    </div>
+
+    <div class="stroop-demo">
+      <div class="demo-card">
+        <span class="label">Stimulus — ink on raised</span>
+        <div class="demo-word" style="color:var(--gp-red-ink)">BLUE</div>
+        <span style="font-size:12.5px;color:var(--text-secondary)">Word BLUE, printed red · 6.73:1</span>
+      </div>
+      <div class="demo-card" style="text-align:left">
+        <span class="label">Answer — shaped chip + label on soft</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-3)">
+          <span class="ansdemo a-red"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-circle"/></svg></span><b>Red</b></span>
+          <span class="ansdemo a-blue"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-square"/></svg></span><b>Blue</b></span>
+          <span class="ansdemo a-green"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-triangle"/></svg></span><b>Green</b></span>
+          <span class="ansdemo a-yellow"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-diamond"/></svg></span><b>Yellow</b></span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-head">Colour-blind palette — on</h3>
+    <p style="margin:0 0 var(--s-4);font-size:14.5px;color:var(--text-secondary);max-width:70ch">
+      Rendered, not described. The shaped chip ships <b>always</b>; the setting adds the matching shape as a corner
+      mark on the stimulus panel, which is the only element in the game that otherwise carries a single channel.
+      Without it a deuteranope reads red&nbsp;ink and yellow&nbsp;ink as the same olive and roughly half of all
+      rounds are unwinnable — the answer buttons are fine either way, because each one says its own name.
+    </p>
+    <div class="stroop-demo">
+      <div class="stimdemo">
+        <span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-circle"/></svg></span>
+        <span class="label">Stimulus — setting on</span>
+        <div class="demo-word" style="color:var(--gp-red-ink)">BLUE</div>
+        <span style="font-size:12.5px;color:var(--text-secondary)">Circle = red. The word still lies; the ink no
+          longer depends on hue alone.</span>
+      </div>
+      <div class="demo-card" style="text-align:left">
+        <span class="label">All six shapes</span>
+        <div class="chipdemo" style="margin-top:var(--s-3)">
+          <span class="ansdemo a-red"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-circle"/></svg></span><b>Red</b></span>
+          <span class="ansdemo a-blue"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-square"/></svg></span><b>Blue</b></span>
+          <span class="ansdemo a-green"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-triangle"/></svg></span><b>Green</b></span>
+          <span class="ansdemo a-yellow"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-diamond"/></svg></span><b>Yellow</b></span>
+          <span class="ansdemo a-purple"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-hex"/></svg></span><b>Purple</b></span>
+          <span class="ansdemo a-orange"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-star"/></svg></span><b>Orange</b></span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-head">Tones and measured contrast</h3>
+    <div class="tablewrap">
+      <table>
+        <caption class="sr-only">Gameplay colour contrast ratios</caption>
+        <thead>
+          <tr>
+            <th scope="col">Family</th>
+            <th scope="col">Shape</th>
+            <th scope="col">Soft — button fill</th>
+            <th scope="col">Pure — identity chip</th>
+            <th scope="col">Ink — label &amp; stimulus</th>
+            <th scope="col">Ink on soft</th>
+            <th scope="col">Ink on raised</th>
+            <th scope="col">Pure on raised</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="dot" style="background:var(--gp-red-pure)"></span><b>Red</b></td>
+            <td>Circle</td>
+            <td><code>#FFD8DF</code></td><td><code>#F2546B</code></td><td><code>#B0203D</code></td>
+            <td><span class="ratio pass">5.17</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio pass">6.73</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio caution">3.36</span> <span class="tag lg">Large</span></td>
+          </tr>
+          <tr>
+            <td><span class="dot" style="background:var(--gp-blue-pure)"></span><b>Blue</b></td>
+            <td>Square</td>
+            <td><code>#D6ECFF</code></td><td><code>#3D9BE9</code></td><td><code>#0F5C8C</code></td>
+            <td><span class="ratio pass">5.91</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio pass">7.17</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio caution">2.97</span> <span class="tag nt">Non-text</span></td>
+          </tr>
+          <tr>
+            <td><span class="dot" style="background:var(--gp-green-pure)"></span><b>Green</b></td>
+            <td>Triangle</td>
+            <td><code>#CFF4E5</code></td><td><code>#2ECC9B</code></td><td><code>#0B7355</code></td>
+            <td><span class="ratio pass">4.93</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio pass">5.84</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio caution">2.05</span> <span class="tag nt">Non-text</span></td>
+          </tr>
+          <tr>
+            <td><span class="dot" style="background:var(--gp-yellow-pure)"></span><b>Yellow</b></td>
+            <td>Diamond</td>
+            <td><code>#FFEEC2</code></td><td><code>#FFC53D</code></td><td><code>#6B4A00</code></td>
+            <td><span class="ratio pass">7.01</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio pass">8.06</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio caution">1.58</span> <span class="tag nt">Non-text</span></td>
+          </tr>
+          <tr>
+            <td><span class="dot" style="background:var(--gp-purple-pure)"></span><b>Purple</b> <small style="color:var(--text-muted)">Blitz only</small></td>
+            <td>Hexagon</td>
+            <td><code>#E7DFFF</code></td><td><code>#A78BFA</code></td><td><code>#5A3EC8</code></td>
+            <td><span class="ratio pass">5.54</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio pass">7.10</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio caution">2.72</span> <span class="tag nt">Non-text</span></td>
+          </tr>
+          <tr>
+            <td><span class="dot" style="background:var(--gp-orange-pure)"></span><b>Orange</b> <small style="color:var(--text-muted)">Blitz only</small></td>
+            <td>Star</td>
+            <td><code>#FFE1D3</code></td><td><code>#FF9E7A</code></td><td><code>#7A3410</code></td>
+            <td><span class="ratio pass">7.29</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio pass">9.03</span> <span class="tag aa">AA</span></td>
+            <td><span class="ratio caution">2.01</span> <span class="tag nt">Non-text</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <b>Why the stimulus is drawn in ink, not pure.</b> A pure tone only clears 3:1 on white for red;
+      green and yellow sit at 2.05 and 1.58. If the giant word were drawn in pure, a Stroop round that
+      happened to pick yellow would be unreadable. So the rule is absolute: <b>colour words are always
+      ink</b> (5.84–9.03:1), and pure tones are only ever solid non-text blocks, where hue — not
+      luminance — carries identity. Hue is shared between the stimulus and its matching chip, which is
+      how people categorise colour anyway.
+    </div>
+    <div class="note" style="background:var(--mint-tint)">
+      <b>Redundant channels.</b> Adjacent pure tones separate by as little as 1.02:1 in luminance, so
+      colour alone can never be the answer. Three channels ship unconditionally: every answer button
+      carries its <b>name in text</b>, a <b>shape silhouette</b> (circle / square / triangle / diamond /
+      hexagon / star) and a ring in the family's <b>ink</b> — the exact tone the stimulus word is drawn in.
+      The <b>Colour-blind friendly palette</b> setting adds the matching shape as a corner mark on the
+      stimulus panel. Yellow and orange ink were deepened to <code>#6B4A00</code> and <code>#7A3410</code>
+      so red, yellow and orange separate by lightness, the one channel dichromacy leaves intact — under
+      deuteranopia the old #8A5D00 and #B0203D simulated to the same olive at 1.06:1.
+    </div>
+  </section>
+
+  <!-- ============================================ TYPE -->
+  <section id="type">
+    <div class="sec-head">
+      <span class="sec-num">03 — Foundations</span>
+      <h2>Typography</h2>
+      <p><b>Quicksand</b> — rounded geometric — carries every heading and every number, because rounded
+        terminals are the cheapest way to make data feel friendly. <b>Manrope</b> carries body and labels:
+        it has the tighter apertures you need at 12&nbsp;px and real tabular figures.</p>
+    </div>
+    <div class="panel">
+      <div class="type-row">
+        <div class="t-count">3</div>
+        <div class="type-spec"><b>Countdown</b>Quicksand 700 · 104/1.0 · −0.04em<br>The countdown numeral, and nothing else</div>
+      </div>
+      <div class="type-row">
+        <div class="t-display">1,540</div>
+        <div class="type-spec"><b>Display</b>Quicksand 700 · 76/1.0 · −0.035em<br>The final score on Results. One per run</div>
+      </div>
+      <div class="type-row">
+        <div class="t-h1">Ready to train?</div>
+        <div class="type-spec"><b>Heading 1</b>Quicksand 700 · 30/1.18 · −0.015em<br>One per screen, top-left</div>
+      </div>
+      <div class="type-row">
+        <div class="t-h2">Daily Mix</div>
+        <div class="type-spec"><b>Heading 2</b>Quicksand 700 · 22/1.30 · −0.01em<br>Hero cards, sheet titles</div>
+      </div>
+      <div class="type-row">
+        <div class="t-h3">Schulte Grid</div>
+        <div class="type-spec"><b>Heading 3</b>Quicksand 600 · 17/1.35<br>Game-card and settings-row titles</div>
+      </div>
+      <div class="type-row">
+        <div class="t-bodyl">Tap the colour it is printed in, never the word itself.</div>
+        <div class="type-spec"><b>Body large</b>Manrope 500 · 16/1.55<br>In-game instruction, sheet copy</div>
+      </div>
+      <div class="type-row">
+        <div class="t-body">Classic is the balanced pace most people start with.</div>
+        <div class="type-spec"><b>Body</b>Manrope 500 · 15/1.55<br>Default paragraph</div>
+      </div>
+      <div class="type-row">
+        <div class="t-bodys">Find 1 to 25, fast</div>
+        <div class="type-spec"><b>Body small</b>Manrope 500 · 13.5/1.50 · secondary<br>Card subtitles, helper lines</div>
+      </div>
+      <div class="type-row">
+        <div class="t-label">Your games</div>
+        <div class="type-spec"><b>Label</b>Manrope 800 · 11/1.40 · +0.13em · caps<br>Section eyebrows, HUD captions</div>
+      </div>
+      <div class="type-row">
+        <div class="t-num">0:12.4 · x7 · 6 / 25</div>
+        <div class="type-spec"><b>Numeric</b>Quicksand 700 · 19/1.15 · tabular<br>Every HUD value. Tabular figures stop the clock jittering.</div>
+      </div>
+    </div>
+    <div class="note">
+      Body line-height never drops below 1.5, and <b>no label is set below 11&nbsp;px</b> — that floor is
+      absolute, including HUD captions, chart labels and axis ticks, which is why tracking drops to
+      +0.08em where a pill is narrow rather than the size dropping to 9&nbsp;px. Quicksand's low
+      x-height means it must never be used under 15&nbsp;px — that is Manrope's job.
+    </div>
+  </section>
+
+  <!-- ============================================ SPACE + RADIUS -->
+  <section id="space">
+    <div class="sec-head">
+      <span class="sec-num">04 — Foundations</span>
+      <h2>Space &amp; radius</h2>
+      <p>A 4-point spine, and it binds component interiors as tightly as it binds block rhythm: there is no
+        14, 15, 18 or 13&nbsp;px padding anywhere in the screens. Screen gutter is the single named
+        exception at 22&nbsp;px, so a 5-column Schulte grid lands on whole pixels at 390&nbsp;pt. Radii
+        start high and go higher — the smallest corner in the system is 10&nbsp;px, and nothing anywhere
+        has a border.</p>
+    </div>
+
+    <h3 class="sub-head">Spacing scale</h3>
+    <div class="panel">
+      <div class="scale-list">
+        <div class="scale-row"><code>--s-1 · 4</code><div class="scale-bar" style="width:4px"></div><span>Icon-to-glyph nudges, chip inner gaps</span></div>
+        <div class="scale-row"><code>--s-2 · 8</code><div class="scale-bar" style="width:8px"></div><span>Gap between sibling pills, HUD gutter</span></div>
+        <div class="scale-row"><code>--s-3 · 12</code><div class="scale-bar" style="width:12px"></div><span>Card-list gap, answer-grid gutter</span></div>
+        <div class="scale-row"><code>--s-4 · 16</code><div class="scale-bar" style="width:16px"></div><span>Card inner padding, icon-to-text</span></div>
+        <div class="scale-row"><code>--s-5 · 20</code><div class="scale-bar" style="width:20px"></div><span>Block separation inside a screen</span></div>
+        <div class="scale-row"><code>--s-6 · 24</code><div class="scale-bar" style="width:24px"></div><span>Major block separation, hero padding</span></div>
+        <div class="scale-row"><code>--s-7 · 32</code><div class="scale-bar" style="width:32px"></div><span>Section break inside a scroll view</span></div>
+        <div class="scale-row"><code>--s-8 · 40</code><div class="scale-bar" style="width:40px"></div><span>Above a primary CTA</span></div>
+        <div class="scale-row"><code>--s-9 · 56</code><div class="scale-bar" style="width:56px"></div><span>Breathing room around a single focal element</span></div>
+        <div class="scale-row"><code>gutter · 22</code><div class="scale-bar" style="width:22px"></div><span>The one off-spine value: the screen gutter, so a 5-column Schulte grid lands on whole pixels at 390&nbsp;pt</span></div>
+      </div>
+    </div>
+
+    <h3 class="sub-head">Radius scale</h3>
+    <div class="radius-grid">
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-xs)"></div><code>--r-xs · 10</code><small>Chart bars, mini chips</small></div>
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-sm)"></div><code>--r-sm · 14</code><small>Colour chips, stat icons</small></div>
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-md)"></div><code>--r-md · 20</code><small>Grid tiles, HUD pills, nav pill</small></div>
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-lg)"></div><code>--r-lg · 26</code><small>Game cards, settings rows</small></div>
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-xl)"></div><code>--r-xl · 32</code><small>Panels, hero, chart card</small></div>
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-2xl)"></div><code>--r-2xl · 40</code><small>Bottom nav, sheet top corners</small></div>
+      <div class="radius-cell"><div class="radius-demo" style="border-radius:var(--r-pill)"></div><code>--r-pill · 999</code><small>Every button, chip and toggle</small></div>
+    </div>
+  </section>
+
+  <!-- ============================================ ELEVATION -->
+  <section id="elevation">
+    <div class="sec-head">
+      <span class="sec-num">05 — Foundations</span>
+      <h2>Elevation</h2>
+      <p>Shadows are wide, soft and <em>plum</em> — never grey, never black. Alpha never exceeds 14&nbsp;%.
+        Two accent shadows exist so a primary action can glow in its own colour instead of getting louder.</p>
+    </div>
+    <div class="elev-grid">
+      <div class="elev-cell e-sm"><code>--sh-sm</code><small>0 2 8 · plum 6&nbsp;%<br>Chips, small pills, inline icons</small></div>
+      <div class="elev-cell e-md"><code>--sh-md</code><small>0 8 22 · plum 8&nbsp;%<br>Cards, settings rows, panels</small></div>
+      <div class="elev-cell e-lg"><code>--sh-lg</code><small>0 12 32 · plum 10&nbsp;%<br>Bottom nav, stimulus panel</small></div>
+      <div class="elev-cell e-xl"><code>--sh-xl</code><small>0 22 52 · plum 14&nbsp;%<br>The device frame itself</small></div>
+      <div class="elev-cell e-lav"><code>--sh-lav</code><small>0 10 26 · lavender 38&nbsp;%<br>Primary button, next tile, Daily Mix</small></div>
+      <div class="elev-cell e-mint"><code>--sh-mint</code><small>0 10 26 · mint 42&nbsp;%<br>Personal-best badge, record bar</small></div>
+    </div>
+    <div class="note">
+      <b>--sh-pillow</b> adds <code>inset 0 -2px 0 white 60&nbsp;%</code> under any shadow to give tappable
+      surfaces a soft top-lit bulge. It is what makes an answer button feel pressable without a border.
+    </div>
+  </section>
+
+  <!-- ============================================ MOTION -->
+  <section id="motion">
+    <div class="sec-head">
+      <span class="sec-num">06 — Foundations</span>
+      <h2>Motion</h2>
+      <p>Things fade and drift; nothing snaps. Three durations, three curves, and a hard rule that motion
+        may decorate a state change but never <em>be</em> the state — every screen is identical and
+        complete with animation switched off.</p>
+    </div>
+    <div class="motion-grid">
+      <div class="motion-card ease-out">
+        <h3>Drift out</h3><code>240ms · cubic-bezier(.22, 1, .36, 1)</code>
+        <p>The default. Anything appearing, growing or settling: cards on entry, sheet presentation,
+          the found-tile fill.</p>
+        <div class="track"><div class="puck"></div></div>
+        <svg class="curve" viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M8 92 H112 M8 92 V8" stroke="var(--plum-20)" stroke-width="1.5" fill="none"/>
+          <path d="M8 92 C 31 8, 51 22, 112 8" stroke="var(--lav-ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="motion-card ease-soft">
+        <h3>Gentle overshoot</h3><code>300ms · cubic-bezier(.34, 1.18, .48, 1)</code>
+        <p>Reserved for reward: the personal-best badge, a streak increment, the countdown numeral.
+          A 18&nbsp;% overshoot — enough to feel alive, not enough to bounce.</p>
+        <div class="track"><div class="puck"></div></div>
+        <svg class="curve" viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M8 92 H112 M8 92 V8" stroke="var(--plum-20)" stroke-width="1.5" fill="none"/>
+          <path d="M8 92 C 43 -2, 58 2, 112 8" stroke="var(--blush-ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="motion-card ease-both">
+        <h3>Symmetric</h3><code>160ms · cubic-bezier(.65, 0, .35, 1)</code>
+        <p>Two-way state that must feel instant and reversible: toggle knob, segmented selection,
+          press-down scale. The only place 160&nbsp;ms is allowed.</p>
+        <div class="track"><div class="puck"></div></div>
+        <svg class="curve" viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M8 92 H112 M8 92 V8" stroke="var(--plum-20)" stroke-width="1.5" fill="none"/>
+          <path d="M8 92 C 76 92, 44 8, 112 8" stroke="var(--sky-ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="note">
+      <b>Reduce motion.</b> With the setting on — or the OS flag set — background blobs freeze, the next-tile
+      breathe stops, and every duration collapses to zero. The blobs remain visible as static colour, so
+      the screen never loses its identity; only the movement goes.
+    </div>
+  </section>
+
+  <!-- ============================================ COMPONENTS -->
+  <section id="components">
+    <div class="sec-head">
+      <span class="sec-num">07 — Library</span>
+      <h2>Components</h2>
+      <p>Fourteen components carry all eight screens. Every state below is rendered live, not described.
+        Pressed is shown as a static class so it survives a screenshot.</p>
+    </div>
+
+    <div class="comp">
+      <header><h3>Primary button</h3>
+        <p>One per screen, maximum. Gradient fill, plum label (5.5–6.6:1), lavender glow instead of a
+          darker colour. Pressed drops 2.5&nbsp;% and loses most of its glow.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Default</span><span class="btn btn-primary"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg>Start</span></div>
+        <div class="state"><span class="cap">Pressed</span><span class="btn btn-primary is-pressed"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg>Start</span></div>
+        <div class="state"><span class="cap">Disabled</span><span class="btn btn-primary is-disabled"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg>Start</span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Secondary button</h3>
+        <p>White pillow with accent text. Pairs under a primary on Results, and stands alone anywhere
+          the action is safe but not the point of the screen.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Default</span><span class="btn btn-secondary"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-replay"/></svg>Play again</span></div>
+        <div class="state"><span class="cap">Pressed</span><span class="btn btn-secondary is-pressed"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-replay"/></svg>Play again</span></div>
+        <div class="state"><span class="cap">Disabled</span><span class="btn btn-secondary is-disabled"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-replay"/></svg>Play again</span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Ghost button</h3>
+        <p>No fill until touched, then it borrows accent-soft. Used for End run, Skip and anything a player
+          should be able to ignore. Pause is <em>not</em> ghost — it is its own pill, below.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Default</span><span class="btn btn-ghost">Not now</span></div>
+        <div class="state"><span class="cap">Pressed</span><span class="btn btn-ghost is-pressed">Not now</span></div>
+        <div class="state"><span class="cap">Disabled</span><span class="btn btn-ghost is-disabled">Not now</span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Game card</h3>
+        <p>The unit the whole platform is built from. A tinted 56&nbsp;px tile, a 17&nbsp;px title, subtitle, and an
+          optional right-aligned best. Locked cards keep the same geometry and lose only elevation and
+          contrast — never a strikethrough or a grey wash.</p></header>
+      <div class="states">
+        <div class="state grow"><span class="cap">Default</span>
+          <span class="gcard"><span class="gtile gtile-stroop"><span class="dots"><i></i><i></i><i></i></span></span>
+            <span class="gc-txt"><b>Stroop Rush</b><span>Tap the colour, not the word</span></span>
+            <span class="gc-best"><i>Best</i><b>1,480</b></span></span></div>
+        <div class="state grow"><span class="cap">Pressed</span>
+          <span class="gcard is-pressed"><span class="gtile gtile-stroop"><span class="dots"><i></i><i></i><i></i></span></span>
+            <span class="gc-txt"><b>Stroop Rush</b><span>Tap the colour, not the word</span></span>
+            <span class="gc-best"><i>Best</i><b>1,480</b></span></span></div>
+        <div class="state grow"><span class="cap">Locked</span>
+          <span class="gcard locked"><span class="gtile gtile-lock"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lock"/></svg></span>
+            <span class="gc-txt"><b>N-Back</b><span>Coming soon</span></span></span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Difficulty segmented control</h3>
+        <p>A sunken pill trough with a floating white thumb. The thumb is the only element that moves;
+          it slides on the symmetric curve at 160&nbsp;ms so the choice feels instant.</p></header>
+      <div class="states">
+        <div class="state grow"><span class="cap">Classic selected</span>
+          <span class="seg"><span>Chill</span><span class="on">Classic</span><span>Blitz</span></span></div>
+        <div class="state grow"><span class="cap">Blitz pressed</span>
+          <span class="seg"><span>Chill</span><span class="on">Classic</span><span class="press">Blitz</span></span></div>
+        <div class="state grow"><span class="cap">Disabled</span>
+          <span class="seg is-disabled"><span>Chill</span><span class="on">Classic</span><span>Blitz</span></span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>HUD stat pill</h3>
+        <p>Three at a time, equal width, tabular figures. Colour is semantic: peach means a clock is
+          running out, mint means something is going well, lavender means "do this next". Neutral for
+          everything else.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Neutral</span><span class="hud-pill"><i>Score</i><b>1,240</b></span></div>
+        <div class="state"><span class="cap">Time — warning</span><span class="hud-pill hp-peach"><i>Time</i><b>0:23</b></span></div>
+        <div class="state"><span class="cap">Streak — success</span><span class="hud-pill hp-mint"><i>Streak</i><b>x7</b></span></div>
+        <div class="state"><span class="cap">Next — accent</span><span class="hud-pill hp-lav"><i>Next</i><b>7</b></span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Progress bar</h3>
+        <p>Two heights: 10&nbsp;px for the draining timer bar, 8&nbsp;px for the in-game progress track under a
+          HUD. Both are fully pill-capped on a haze track so an empty bar is still legible. The fill uses the
+          <b>deep</b> tones, not the pastel bases — <code>--grad-primary</code> is 1.43:1 against haze and you
+          could not see how full the bar was. Lavender→sky for progress you are making, peach→blush for time
+          you are losing.</p></header>
+      <div class="states">
+        <div class="state grow"><span class="cap">Empty · 10 px</span><span class="pbar"><i style="width:0%"></i></span></div>
+        <div class="state grow"><span class="cap">6 / 25 · 24 %</span><span class="pbar"><i style="width:24%"></i></span></div>
+        <div class="state grow"><span class="cap">Complete</span><span class="pbar"><i style="width:100%"></i></span></div>
+        <div class="state grow"><span class="cap">Time remaining · warm</span><span class="pbar warm"><i style="width:38%"></i></span></div>
+        <div class="state grow"><span class="cap">In-game track · 8 px</span><span class="pbar slim"><i style="width:24%"></i></span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Timer ring</h3>
+        <p>10&nbsp;px stroke, round caps, drawn anticlockwise from 12 o'clock on a <b>haze</b> track — the same
+          track the progress bar uses, and the same reason: the stroke has to clear 3:1 against it. Used on the
+          countdown and by any future game that needs a per-round clock. On the countdown screen the ring is
+          full at 3, and the three dots beneath it agree.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Full</span><div class="ring">
+          <svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="46" fill="none" stroke="var(--track)" stroke-width="10"/><circle cx="52" cy="52" r="46" fill="none" stroke="var(--fill-strong)" stroke-width="10" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="0"/></svg><b>3</b></div></div>
+        <div class="state"><span class="cap">62 %</span><div class="ring">
+          <svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="46" fill="none" stroke="var(--track)" stroke-width="10"/><circle cx="52" cy="52" r="46" fill="none" stroke="var(--fill-strong)" stroke-width="10" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="110"/></svg><b>2</b></div></div>
+        <div class="state"><span class="cap">18 % — warning</span><div class="ring">
+          <svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="46" fill="none" stroke="var(--track)" stroke-width="10"/><circle cx="52" cy="52" r="46" fill="none" stroke="var(--peach-deep)" stroke-width="10" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="237"/></svg><b>1</b></div></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Grid tile</h3>
+        <p>55&nbsp;px at a 12&nbsp;px gutter inside the board panel — Schulte's whole board, and the template
+          for any future tap-target grid. Found loses its shadow and sinks (it keeps full opacity: the .9 that
+          once sold the "sunken" read also dropped mint-ink to 4.06:1); next gains a lavender ring and breathes
+          at 2.4&nbsp;s; wrong flashes red-soft for one 240&nbsp;ms beat and returns to idle.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Idle</span><div class="tiles"><span class="tile">22</span></div></div>
+        <div class="state"><span class="cap">Found</span><div class="tiles"><span class="tile found">4</span></div></div>
+        <div class="state"><span class="cap">Next</span><div class="tiles"><span class="tile next">7</span></div></div>
+        <div class="state"><span class="cap">Wrong</span><div class="tiles"><span class="tile wrong">19</span></div></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Toggle switch</h3>
+        <p>54 × 32, knob 26. Off is a <b>track-off</b> trough with an inset shadow — 3.27:1 against the white
+          knob, where haze gave 1.23:1 and an off switch read as an empty pill; on is the primary gradient with a
+          lavender glow, so state reads at a glance without any text.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">On</span><span class="tog on" role="switch" tabindex="0" aria-checked="true" aria-label="Sound"><i></i></span></div>
+        <div class="state"><span class="cap">Off</span><span class="tog" role="switch" tabindex="0" aria-checked="false" aria-label="Reduce motion"><i></i></span></div>
+        <div class="state"><span class="cap">On · disabled</span><span class="tog on is-disabled" role="switch" aria-checked="true" aria-disabled="true" aria-label="Sound, unavailable"><i></i></span></div>
+        <div class="state"><span class="cap">Off · disabled</span><span class="tog is-disabled" role="switch" aria-checked="false" aria-disabled="true" aria-label="Haptics, unavailable"><i></i></span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Badge</h3>
+        <p>34&nbsp;px pill, tint fill, ink text, 800 weight — one height for every pill badge and chip in the
+          system, streak included. The personal-best badge is the only badge in the app allowed a coloured glow —
+          it is the loudest thing Cotton Cloud ever does.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Personal best</span><span class="badge b-best"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-spark"/></svg>New personal best</span></div>
+        <div class="state"><span class="cap">Streak</span><span class="badge b-streak"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg>4 day streak</span></div>
+        <div class="state"><span class="cap">Locked</span><span class="badge b-soon">Coming soon</span></div>
+        <div class="state"><span class="cap">Time low</span><span class="badge b-warn">10 seconds left</span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Pause pill &amp; run tag</h3>
+        <p>The two pieces of chrome a running game may show. The pause pill is 44&nbsp;px — it is the one control
+          a player reaches for mid-run under time pressure, so it never shrinks to fit; the run tag names the
+          game and difficulty on the countdown, with a live dot in the game's own pure tone.</p></header>
+      <div class="states">
+        <div class="state"><span class="cap">Pause</span><span class="pausepill"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pause"/></svg>Pause</span></div>
+        <div class="state"><span class="cap">Run tag</span><span class="counttag"><i></i>Stroop Rush · Classic</span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Modal sheet</h3>
+        <p>Rises from the bottom on the drift-out curve over a plum-20 scrim with a 3&nbsp;px blur. Corners
+          are <code>--r-2xl</code> at the top only, and it carries a grabber even when it is not draggable,
+          because that is what tells a thumb it can be dismissed.</p></header>
+      <div class="sheet-stage">
+        <span class="scrim"></span>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <h4>Paused</h4>
+          <p>Your run is held. The clock is stopped.</p>
+          <div class="row">
+            <span class="btn btn-primary"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg>Resume</span>
+            <span class="btn btn-ghost">End run</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <header><h3>Bottom navigation</h3>
+        <p>Three destinations, frosted glass, floating 22&nbsp;px clear of the screen edge so blobs pass
+          behind it. The active tab takes an accent-soft pill; the icon and label change colour together
+          so the state is never carried by colour alone.</p></header>
+      <div class="states">
+        <div class="state grow"><span class="cap">Play active</span>
+          <nav class="navbar">
+            <a href="#components" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-grid"/></svg>Play</a>
+            <a href="#components"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chart"/></svg>Stats</a>
+            <a href="#components"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sliders"/></svg>Settings</a>
+          </nav></div>
+        <div class="state grow"><span class="cap">Settings active</span>
+          <nav class="navbar">
+            <a href="#components"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-grid"/></svg>Play</a>
+            <a href="#components"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chart"/></svg>Stats</a>
+            <a href="#components" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sliders"/></svg>Settings</a>
+          </nav></div>
+      </div>
+    </div>
+
+    <h3 class="sub-head">Rules of thumb</h3>
+    <div class="rules">
+      <div class="rule do"><b>Do let blobs touch the edges</b><span>A blob must be clipped by the screen bounds. A fully visible circle reads as a graphic; a clipped one reads as atmosphere.</span></div>
+      <div class="rule dont"><b>Don't frost without a blob</b><span>Frosted glass over flat paper is just a slightly grey card. Frost is only earned where something colourful is behind it.</span></div>
+      <div class="rule do"><b>Do keep one gradient per screen</b><span>The Daily Mix card, the Start button, or the score — never two. The gradient is the loudest voice in the system.</span></div>
+      <div class="rule dont"><b>Don't add a border to fix contrast</b><span>There are no borders. If an edge is unclear, raise elevation or deepen the fill by one tone.</span></div>
+      <div class="rule do"><b>Do give every colour state a word</b><span>Found tiles, wrong taps and answer buttons all carry text or a glyph. Colour is a second channel, never the first.</span></div>
+      <div class="rule dont"><b>Don't let a game restyle the chrome</b><span>Games own the board area only. HUD, nav, sheets and buttons are the platform's, so game eleven costs no design.</span></div>
+      <div class="rule do"><b>Do give a board its own field</b><span>A grid of tiles floating on bare paper reads unfinished. Put it on a frosted panel with the rule printed underneath, and put a blob behind the panel so the frost is earned.</span></div>
+      <div class="rule dont"><b>Don't fill a track with a pastel</b><span>A base tone is 1.4:1 against haze. Fills, ring strokes and chart bars use the deep tones; the pastels stay where they belong, as surfaces.</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================ FLUTTER -->
+  <section id="flutter">
+    <div class="sec-head">
+      <span class="sec-num">08 — Handoff</span>
+      <h2>Flutter mapping</h2>
+      <p>The whole token layer as a single <code>ThemeExtension</code>. Drop this into
+        <code>lib/theme/mindforge_tokens.dart</code>, register it once in <code>ThemeData.extensions</code>,
+        and no widget in the app ever names a raw colour again.</p>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span class="cb1"></span><span class="cb2"></span><span class="cb3"></span>
+        lib/theme/mindforge_tokens.dart<em>Dart</em></div>
+<pre class="dart"><code>import 'dart:ui' show FontFeature;
+
+import 'package:flutter/material.dart';
+
+/// The non-colour channel that makes a Stroop answer identifiable.
+///
+/// Rendered as the chip's silhouette on every answer button, always, and as a
+/// corner mark on the stimulus panel when the colour-blind setting is on.
+/// Shape is the only channel that survives dichromacy intact.
+enum StroopShape { circle, square, triangle, diamond, hexagon, star }
+
+/// One Stroop answer colour, in the only three tones the game may use.
+///
+/// The tones are not interchangeable: [soft] fills, [pure] identifies, and
+/// [ink] is the sole tone permitted to be text.
+@immutable
+class StroopSwatch {
+  const StroopSwatch({
+    required this.soft,
+    required this.pure,
+    required this.ink,
+    required this.shape,
+  });
+
+  /// Pillowy button fill. Contrast against [ink] is at least 4.9:1.
+  final Color soft;
+
+  /// The identity chip: [pure] fill, [ink] outline, [shape] silhouette.
+  /// Non-text: identified by hue and form, never read.
+  final Color pure;
+
+  /// Label on [soft] and the giant stimulus word. At least 5.8:1 on white.
+  final Color ink;
+
+  /// Redundant, non-colour identity. See [StroopShape].
+  final StroopShape shape;
+
+  StroopSwatch lerp(StroopSwatch other, double t) =&gt; StroopSwatch(
+        soft: Color.lerp(soft, other.soft, t)!,
+        pure: Color.lerp(pure, other.pure, t)!,
+        ink: Color.lerp(ink, other.ink, t)!,
+        shape: t &lt; 0.5 ? shape : other.shape,
+      );
+
+  @override
+  bool operator ==(Object other) =&gt;
+      identical(this, other) ||
+      other is StroopSwatch &amp;&amp;
+          other.soft == soft &amp;&amp;
+          other.pure == pure &amp;&amp;
+          other.ink == ink &amp;&amp;
+          other.shape == shape;
+
+  @override
+  int get hashCode =&gt; Object.hash(soft, pure, ink, shape);
+}
+
+/// Gameplay palette. Stroop Rush draws four per round; Blitz draws six.
+@immutable
+class StroopPalette {
+  const StroopPalette({
+    required this.red,
+    required this.blue,
+    required this.green,
+    required this.yellow,
+    required this.purple,
+    required this.orange,
+  });
+
+  final StroopSwatch red;
+  final StroopSwatch blue;
+  final StroopSwatch green;
+  final StroopSwatch yellow;
+  final StroopSwatch purple;
+  final StroopSwatch orange;
+
+  /// Every swatch in deal order. Index is stable across builds so a seeded
+  /// round replays identically.
+  List&lt;StroopSwatch&gt; get all =&gt; [red, blue, green, yellow, purple, orange];
+
+  StroopPalette lerp(StroopPalette other, double t) =&gt; StroopPalette(
+        red: red.lerp(other.red, t),
+        blue: blue.lerp(other.blue, t),
+        green: green.lerp(other.green, t),
+        yellow: yellow.lerp(other.yellow, t),
+        purple: purple.lerp(other.purple, t),
+        orange: orange.lerp(other.orange, t),
+      );
+
+  @override
+  bool operator ==(Object other) =&gt;
+      identical(this, other) ||
+      other is StroopPalette &amp;&amp;
+          other.red == red &amp;&amp;
+          other.blue == blue &amp;&amp;
+          other.green == green &amp;&amp;
+          other.yellow == yellow &amp;&amp;
+          other.purple == purple &amp;&amp;
+          other.orange == orange;
+
+  @override
+  int get hashCode =&gt; Object.hash(red, blue, green, yellow, purple, orange);
+}
+
+/// Pillowy corner radii. Nothing in Cotton Cloud is squarer than [xs].
+abstract final class Radii {
+  static const double xs = 10;
+  static const double sm = 14;
+  static const double md = 20;
+  static const double lg = 26;
+  static const double xl = 32;
+  static const double xxl = 40;
+  static const BorderRadius pill = BorderRadius.all(Radius.circular(999));
+}
+
+/// The 4-point spacing spine, in logical pixels.
+///
+/// Component interiors obey it too: there is no 13, 14, 15 or 18 in the app.
+abstract final class Space {
+  static const double x1 = 4;
+  static const double x2 = 8;
+  static const double x3 = 12;
+  static const double x4 = 16;
+  static const double x5 = 20;
+  static const double x6 = 24;
+  static const double x7 = 32;
+  static const double x8 = 40;
+  static const double x9 = 56;
+
+  /// Screen gutter. The one deliberate off-spine value: it keeps a 5-column
+  /// Schulte grid on whole pixels at 390pt.
+  static const double gutter = 22;
+}
+
+/// Durations and curves. Collapse every duration to [none] under reduced motion.
+abstract final class Motion {
+  static const Duration none = Duration.zero;
+  static const Duration quick = Duration(milliseconds: 160);
+  static const Duration base = Duration(milliseconds: 240);
+  static const Duration soft = Duration(milliseconds: 300);
+
+  static const Curve driftOut = Cubic(0.22, 1, 0.36, 1);
+  static const Curve gentleOvershoot = Cubic(0.34, 1.18, 0.48, 1);
+  static const Curve symmetric = Cubic(0.65, 0, 0.35, 1);
+}
+
+/// Wide, soft, plum-tinted elevation. Alpha never exceeds 14%.
+abstract final class Elevation {
+  static const Color _plum = Color(0xFF4A3F5C);
+  static const Color _lavender = Color(0xFFB9A7FF);
+  static const Color _mint = Color(0xFF7FE3C4);
+
+  static List&lt;BoxShadow&gt; get sm =&gt; [
+        BoxShadow(color: _plum.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2)),
+      ];
+  static List&lt;BoxShadow&gt; get md =&gt; [
+        BoxShadow(color: _plum.withValues(alpha: 0.08), blurRadius: 22, offset: const Offset(0, 8)),
+      ];
+  static List&lt;BoxShadow&gt; get lg =&gt; [
+        BoxShadow(color: _plum.withValues(alpha: 0.10), blurRadius: 32, offset: const Offset(0, 12)),
+      ];
+  static List&lt;BoxShadow&gt; get xl =&gt; [
+        BoxShadow(color: _plum.withValues(alpha: 0.14), blurRadius: 52, offset: const Offset(0, 22)),
+      ];
+  static List&lt;BoxShadow&gt; get lavenderGlow =&gt; [
+        BoxShadow(color: _lavender.withValues(alpha: 0.38), blurRadius: 26, offset: const Offset(0, 10)),
+      ];
+  static List&lt;BoxShadow&gt; get mintGlow =&gt; [
+        BoxShadow(color: _mint.withValues(alpha: 0.42), blurRadius: 26, offset: const Offset(0, 10)),
+      ];
+}
+
+/// Cotton Cloud semantic tokens.
+///
+/// Read with [MindforgeTokens.of]. A widget that names a raw [Color] is a bug;
+/// the no-raw-values gate in CI fails the build for it.
+@immutable
+class MindforgeTokens extends ThemeExtension&lt;MindforgeTokens&gt; {
+  const MindforgeTokens({
+    required this.surface,
+    required this.surfaceRaised,
+    required this.surfaceSunken,
+    required this.surfaceTrack,
+    required this.surfaceTrackOff,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textMuted,
+    required this.hairlineFurniture,
+    required this.accent,
+    required this.accentSoft,
+    required this.fillStrong,
+    required this.success,
+    required this.successSoft,
+    required this.warning,
+    required this.warningSoft,
+    required this.danger,
+    required this.dangerSoft,
+    required this.info,
+    required this.infoSoft,
+    required this.delight,
+    required this.delightSoft,
+    required this.focusRing,
+    required this.gradientPrimary,
+    required this.gradientCard,
+    required this.gradientFill,
+    required this.stroop,
+  });
+
+  /// The single shipped theme. There is deliberately no dark variant:
+  /// Cotton Cloud's whole argument is a light, breathable page.
+  static const MindforgeTokens cottonCloud = MindforgeTokens(
+    surface: Color(0xFFFBF7FF),
+    surfaceRaised: Color(0xFFFFFFFF),
+    surfaceSunken: Color(0xFFF3ECFB),
+    surfaceTrack: Color(0xFFEDE4F7),
+    surfaceTrackOff: Color(0xFF9E83BB),
+    textPrimary: Color(0xFF4A3F5C),
+    textSecondary: Color(0xFF756989),
+    textMuted: Color(0xFF766497),
+    hairlineFurniture: Color(0xFFCFC6DD),
+    accent: Color(0xFF5B44C9),
+    accentSoft: Color(0xFFEFEAFF),
+    fillStrong: Color(0xFF7B62E0),
+    success: Color(0xFF0E7A5F),
+    successSoft: Color(0xFFE4FAF2),
+    warning: Color(0xFFA84C2C),
+    warningSoft: Color(0xFFFFEDE6),
+    danger: Color(0xFFB0203D),
+    dangerSoft: Color(0xFFFFD8DF),
+    info: Color(0xFF14618F),
+    infoSoft: Color(0xFFE6F5FF),
+    delight: Color(0xFFB33A72),
+    delightSoft: Color(0xFFFFEFF6),
+    focusRing: Color(0xFF5B44C9),
+    gradientPrimary: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFC9BAFF), Color(0xFF9FDCFF)],
+    ),
+    gradientCard: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFFFFFFF), Color(0xFFFBF7FF)],
+    ),
+    gradientFill: LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: [Color(0xFF7B62E0), Color(0xFF2E86C8)],
+    ),
+    stroop: StroopPalette(
+      red: StroopSwatch(
+          soft: Color(0xFFFFD8DF), pure: Color(0xFFF2546B), ink: Color(0xFFB0203D), shape: StroopShape.circle),
+      blue: StroopSwatch(
+          soft: Color(0xFFD6ECFF), pure: Color(0xFF3D9BE9), ink: Color(0xFF0F5C8C), shape: StroopShape.square),
+      green: StroopSwatch(
+          soft: Color(0xFFCFF4E5), pure: Color(0xFF2ECC9B), ink: Color(0xFF0B7355), shape: StroopShape.triangle),
+      yellow: StroopSwatch(
+          soft: Color(0xFFFFEEC2), pure: Color(0xFFFFC53D), ink: Color(0xFF6B4A00), shape: StroopShape.diamond),
+      purple: StroopSwatch(
+          soft: Color(0xFFE7DFFF), pure: Color(0xFFA78BFA), ink: Color(0xFF5A3EC8), shape: StroopShape.hexagon),
+      orange: StroopSwatch(
+          soft: Color(0xFFFFE1D3), pure: Color(0xFFFF9E7A), ink: Color(0xFF7A3410), shape: StroopShape.star),
+    ),
+  );
+
+  /// Page ground. Lilac-tinted white so [surfaceRaised] still reads as raised.
+  final Color surface;
+  final Color surfaceRaised;
+  final Color surfaceSunken;
+
+  /// Progress and timer track. One step deeper than [surfaceSunken].
+  final Color surfaceTrack;
+
+  /// The trough of a switch that is off. 3.27:1 against the white knob, which
+  /// [surfaceTrack] was not: at 1.23:1 an off switch read as an empty pill.
+  final Color surfaceTrackOff;
+
+  final Color textPrimary;
+  final Color textSecondary;
+
+  /// 4.91:1 on [surface]. Labels, axis ticks and hint lines — small and quiet,
+  /// but still readable. It is a tone, not a licence.
+  final Color textMuted;
+
+  /// Non-text furniture: home indicator, sheet grabber, battery outline.
+  final Color hairlineFurniture;
+
+  final Color accent;
+  final Color accentSoft;
+
+  /// Progress fills, ring strokes and chart bars. 3.65:1 against
+  /// [surfaceTrack]; a pastel base would be 1.4:1. Never text.
+  final Color fillStrong;
+
+  final Color success;
+  final Color successSoft;
+  final Color warning;
+  final Color warningSoft;
+  final Color danger;
+  final Color dangerSoft;
+
+  /// Sky ink. Reaction-time rows, informational stat icons.
+  final Color info;
+  final Color infoSoft;
+
+  /// Blush ink. The streak chip on Home and Stats, and nothing solemn.
+  final Color delight;
+  final Color delightSoft;
+
+  /// Drawn as a 3dp ring at 3dp offset. Solid, not translucent: at 45% alpha
+  /// it composited to 2.08:1 and failed SC 1.4.11. Unaffected by reduced motion.
+  final Color focusRing;
+
+  final LinearGradient gradientPrimary;
+  final LinearGradient gradientCard;
+
+  /// The only gradient allowed inside a progress track or a chart bar.
+  final LinearGradient gradientFill;
+
+  final StroopPalette stroop;
+
+  /// The tokens for the enclosing theme.
+  ///
+  /// Throws in debug if [MindforgeTokens] was never registered, which is always
+  /// a wiring bug rather than a recoverable condition.
+  static MindforgeTokens of(BuildContext context) {
+    final tokens = Theme.of(context).extension&lt;MindforgeTokens&gt;();
+    assert(tokens != null, 'MindforgeTokens missing from ThemeData.extensions.');
+    return tokens!;
+  }
+
+  @override
+  MindforgeTokens copyWith({
+    Color? surface,
+    Color? surfaceRaised,
+    Color? surfaceSunken,
+    Color? surfaceTrack,
+    Color? surfaceTrackOff,
+    Color? textPrimary,
+    Color? textSecondary,
+    Color? textMuted,
+    Color? hairlineFurniture,
+    Color? accent,
+    Color? accentSoft,
+    Color? fillStrong,
+    Color? success,
+    Color? successSoft,
+    Color? warning,
+    Color? warningSoft,
+    Color? danger,
+    Color? dangerSoft,
+    Color? info,
+    Color? infoSoft,
+    Color? delight,
+    Color? delightSoft,
+    Color? focusRing,
+    LinearGradient? gradientPrimary,
+    LinearGradient? gradientCard,
+    LinearGradient? gradientFill,
+    StroopPalette? stroop,
+  }) =&gt;
+      MindforgeTokens(
+        surface: surface ?? this.surface,
+        surfaceRaised: surfaceRaised ?? this.surfaceRaised,
+        surfaceSunken: surfaceSunken ?? this.surfaceSunken,
+        surfaceTrack: surfaceTrack ?? this.surfaceTrack,
+        surfaceTrackOff: surfaceTrackOff ?? this.surfaceTrackOff,
+        textPrimary: textPrimary ?? this.textPrimary,
+        textSecondary: textSecondary ?? this.textSecondary,
+        textMuted: textMuted ?? this.textMuted,
+        hairlineFurniture: hairlineFurniture ?? this.hairlineFurniture,
+        accent: accent ?? this.accent,
+        accentSoft: accentSoft ?? this.accentSoft,
+        fillStrong: fillStrong ?? this.fillStrong,
+        success: success ?? this.success,
+        successSoft: successSoft ?? this.successSoft,
+        warning: warning ?? this.warning,
+        warningSoft: warningSoft ?? this.warningSoft,
+        danger: danger ?? this.danger,
+        dangerSoft: dangerSoft ?? this.dangerSoft,
+        info: info ?? this.info,
+        infoSoft: infoSoft ?? this.infoSoft,
+        delight: delight ?? this.delight,
+        delightSoft: delightSoft ?? this.delightSoft,
+        focusRing: focusRing ?? this.focusRing,
+        gradientPrimary: gradientPrimary ?? this.gradientPrimary,
+        gradientCard: gradientCard ?? this.gradientCard,
+        gradientFill: gradientFill ?? this.gradientFill,
+        stroop: stroop ?? this.stroop,
+      );
+
+  @override
+  MindforgeTokens lerp(ThemeExtension&lt;MindforgeTokens&gt;? other, double t) {
+    if (other is! MindforgeTokens) return this;
+    return MindforgeTokens(
+      surface: Color.lerp(surface, other.surface, t)!,
+      surfaceRaised: Color.lerp(surfaceRaised, other.surfaceRaised, t)!,
+      surfaceSunken: Color.lerp(surfaceSunken, other.surfaceSunken, t)!,
+      surfaceTrack: Color.lerp(surfaceTrack, other.surfaceTrack, t)!,
+      surfaceTrackOff: Color.lerp(surfaceTrackOff, other.surfaceTrackOff, t)!,
+      textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
+      textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
+      textMuted: Color.lerp(textMuted, other.textMuted, t)!,
+      hairlineFurniture: Color.lerp(hairlineFurniture, other.hairlineFurniture, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
+      accentSoft: Color.lerp(accentSoft, other.accentSoft, t)!,
+      fillStrong: Color.lerp(fillStrong, other.fillStrong, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      successSoft: Color.lerp(successSoft, other.successSoft, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      warningSoft: Color.lerp(warningSoft, other.warningSoft, t)!,
+      danger: Color.lerp(danger, other.danger, t)!,
+      dangerSoft: Color.lerp(dangerSoft, other.dangerSoft, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      infoSoft: Color.lerp(infoSoft, other.infoSoft, t)!,
+      delight: Color.lerp(delight, other.delight, t)!,
+      delightSoft: Color.lerp(delightSoft, other.delightSoft, t)!,
+      focusRing: Color.lerp(focusRing, other.focusRing, t)!,
+      gradientPrimary: LinearGradient.lerp(gradientPrimary, other.gradientPrimary, t)!,
+      gradientCard: LinearGradient.lerp(gradientCard, other.gradientCard, t)!,
+      gradientFill: LinearGradient.lerp(gradientFill, other.gradientFill, t)!,
+      stroop: stroop.lerp(other.stroop, t),
+    );
+  }
+}
+
+/// Registration. Call once, in the composition root.
+///
+/// Manrope is the default family; every heading and every number is overridden
+/// to Quicksand here, so no widget has to remember which face it wants.
+ThemeData cottonCloudTheme() {
+  const tokens = MindforgeTokens.cottonCloud;
+  const head = 'Quicksand';
+  const displayXl = TextStyle(
+    fontFamily: head,
+    fontWeight: FontWeight.w700,
+    fontSize: 76,
+    height: 1,
+    letterSpacing: -2.66,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+  return ThemeData(
+    useMaterial3: true,
+    scaffoldBackgroundColor: tokens.surface,
+    fontFamily: 'Manrope',
+    colorScheme: const ColorScheme.light(
+      surface: Color(0xFFFBF7FF),
+      onSurface: Color(0xFF4A3F5C),
+      primary: Color(0xFF5B44C9),
+      onPrimary: Color(0xFFFFFFFF),
+      secondary: Color(0xFF0E7A5F),
+      error: Color(0xFFB0203D),
+    ),
+    textTheme: const TextTheme(
+      // Countdown numeral.
+      displayLarge: TextStyle(
+        fontFamily: head, fontWeight: FontWeight.w700, fontSize: 104, height: 1, letterSpacing: -4.16),
+      // Final score.
+      displayMedium: displayXl,
+      headlineLarge: TextStyle(
+        fontFamily: head, fontWeight: FontWeight.w700, fontSize: 30, height: 1.18, letterSpacing: -0.45),
+      headlineMedium: TextStyle(
+        fontFamily: head, fontWeight: FontWeight.w700, fontSize: 22, height: 1.30, letterSpacing: -0.22),
+      titleLarge: TextStyle(fontFamily: head, fontWeight: FontWeight.w600, fontSize: 17, height: 1.35),
+      // Every HUD value. Tabular figures stop the clock jittering.
+      titleMedium: TextStyle(
+        fontFamily: head,
+        fontWeight: FontWeight.w700,
+        fontSize: 19,
+        height: 1.15,
+        fontFeatures: [FontFeature.tabularFigures()],
+      ),
+      bodyLarge: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, height: 1.55),
+      bodyMedium: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, height: 1.55),
+      bodySmall: TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5, height: 1.5),
+      // Small-caps label. 11 is the floor; nothing is set below it.
+      labelSmall: TextStyle(fontWeight: FontWeight.w800, fontSize: 11, height: 1.4, letterSpacing: 1.43),
+    ),
+    extensions: const &lt;ThemeExtension&lt;dynamic&gt;&gt;[tokens],
+  );
+}</code></pre>
+    </div>
+
+    <div class="note">
+      <b>Bundle the fonts.</b> Quicksand and Manrope ship in <code>assets/fonts/</code> and are declared in
+      <code>pubspec.yaml</code> — never fetched with <code>google_fonts</code>. MindForge has no network
+      permission at all, and a font that silently falls back would break every number in the HUD.
+    </div>
+  </section>
+
+  <p class="foot">
+    Cotton Cloud · MindForge design system ·
+    <a href="app.html">See all eight screens →</a>
+  </p>
+</div>
+
+<script>
+/* Decorative Dart syntax highlighting. The page is complete and readable
+   with JS disabled — this only recolours text that is already there. */
+(function () {
+  var KEY = /^(abstract|assert|async|await|break|case|class|const|continue|default|do|else|enum|extends|external|factory|final|for|get|if|implements|import|in|interface|is|late|library|mixin|new|null|on|override|part|required|return|sealed|set|static|super|switch|this|throw|true|false|try|typedef|var|void|while|with|yield)$/;
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  document.querySelectorAll('pre.dart code').forEach(function (node) {
+    var src = node.textContent;
+    var re = /(\/\/\/?[^\n]*)|('(?:[^'\\\n]|\\.)*')|(@[A-Za-z_]\w*)|(\b0x[0-9A-Fa-f]+\b|\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)/g;
+    var out = '', last = 0, m;
+    while ((m = re.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      last = re.lastIndex;
+      if (m[1]) { out += '<span class="c-com">' + esc(m[1]) + '</span>'; }
+      else if (m[2]) { out += '<span class="c-str">' + esc(m[2]) + '</span>'; }
+      else if (m[3]) { out += '<span class="c-ann">' + esc(m[3]) + '</span>'; }
+      else if (m[4]) { out += '<span class="c-num">' + esc(m[4]) + '</span>'; }
+      else {
+        var w = m[5];
+        if (KEY.test(w)) { out += '<span class="c-key">' + esc(w) + '</span>'; }
+        else if (/^[A-Z]/.test(w)) { out += '<span class="c-typ">' + esc(w) + '</span>'; }
+        else { out += esc(w); }
+      }
+    }
+    out += esc(src.slice(last));
+    node.innerHTML = out;
+  });
+})();
+</script>
+</body>
+</html>

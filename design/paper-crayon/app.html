@@ -1,0 +1,1608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>MindForge — Paper Crayon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   MindForge · Paper Crayon
+   Every colour lives here. Nothing below :root may hold a raw hex.
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  color-scheme: light;
+
+  /* ─── crayon box (primitives) ─────────────────────────────── */
+  --paper:        #FDF6E3;
+  --graphite:     #33302E;
+  --crayon-red:   #E5544B;
+  --marker-blue:  #3D7DD8;
+  --grass:        #58B368;
+  --sunny:        #F2B705;
+  --violet:       #8A5FBF;
+
+  /* ─── paper family ────────────────────────────────────────── */
+  --paper-white:  #FFFCF2;
+  --paper-warm:   #F8EFD8;
+  --paper-shade:  #F0E4C6;
+  --kraft:        #E7D5AC;
+  --kraft-edge:   #C9B27F;
+
+  /* ─── ink family ──────────────────────────────────────────── */
+  --ink-soft:     #5E574E;
+  --ink-faint:    #736B5E;
+  --ink-ghost:    #C2B9A6;
+
+  /* ─── crayon inks (text-safe, ≥4.5:1 on paper) ────────────── */
+  --red-ink:      #BE382F;
+  --blue-ink:     #2A5FA8;
+  --green-ink:    #2D7A45;
+  --sunny-ink:    #8A6200;
+  --violet-ink:   #6F45A0;
+
+  /* ─── deep crayons: the Stroop stimulus is TEXT, so green and yellow
+         get a darker sibling. Large-text floor is 3:1; these clear it
+         with margin (4.59:1 and 4.12:1 on --surface-raised). ────────── */
+  --grass-deep:   #3F814B;
+  --gold-deep:    #A17300;
+
+  /* ─── crayon tints (large fills, wash of colour) ──────────── */
+  --red-tint:     #FBE3E0;
+  --blue-tint:    #E2ECFB;
+  --green-tint:   #E3F3E7;
+  --sunny-tint:   #FDF1D0;
+  --violet-tint:  #EFE7F8;
+
+  /* ─── alphas ──────────────────────────────────────────────── */
+  --ink-a05:  rgba(51,48,46,.05);
+  --ink-a08:  rgba(51,48,46,.08);
+  --ink-a12:  rgba(51,48,46,.12);
+  --ink-a18:  rgba(51,48,46,.18);
+  --ink-a28:  rgba(51,48,46,.28);
+  --ink-a45:  rgba(51,48,46,.45);
+  --ink-a70:  rgba(51,48,46,.70);
+  --paper-a30: rgba(255,252,242,.30);
+  --paper-a55: rgba(255,252,242,.55);
+  --paper-a85: rgba(255,252,242,.85);
+  --tape-sunny: rgba(242,183,5,.58);
+  --tape-cream: rgba(253,241,208,.62);
+  --tape-blue:  rgba(61,125,216,.34);
+  --tape-violet:rgba(138,95,191,.30);
+  /* reserved — declared for the Flutter transcription, not referenced by
+     any rule on this page: --kraft-edge, --paper-a85, --ink-a12,
+     --ring-blue, --glow-sunny, --r-leaf2. */
+  --ring-blue:  rgba(61,125,216,.32);
+  --glow-sunny: rgba(242,183,5,.45);
+
+  /* ─── semantic slots ──────────────────────────────────────── */
+  --surface:        var(--paper);
+  --surface-raised: var(--paper-white);
+  --surface-sunk:   var(--paper-warm);
+  --surface-deep:   var(--paper-shade);
+  --surface-frame:  var(--kraft);
+  --text-primary:   var(--graphite);
+  --text-secondary: var(--ink-soft);
+  --text-muted:     var(--ink-faint);
+  --text-disabled:  var(--ink-ghost);
+  --accent:         var(--violet);
+  --accent-ink:     var(--violet-ink);
+  --accent-tint:    var(--violet-tint);
+  --success:        var(--grass);
+  --success-ink:    var(--green-ink);
+  --warning:        var(--sunny);
+  --warning-ink:    var(--sunny-ink);
+  --danger:         var(--crayon-red);
+  --danger-ink:     var(--red-ink);
+  --focus-ring:     var(--marker-blue);
+  --stroke:         var(--graphite);
+  --stroke-soft:    var(--ink-a28);
+  --on-accent:      var(--paper-white);
+  --stim-red:       var(--crayon-red);
+  --stim-blue:      var(--marker-blue);
+  --stim-green:     var(--grass-deep);
+  --stim-yellow:    var(--gold-deep);
+
+  /* ─── paper grain ─────────────────────────────────────────── */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* ─── type ────────────────────────────────────────────────── */
+  --font-hand:  'Caveat', 'Bradley Hand', 'Chalkboard SE', ui-rounded, cursive;
+  --font-print: 'Patrick Hand', 'Chalkboard SE', 'Bradley Hand', ui-rounded, cursive;
+  --font-body:  'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* ─── spacing rhythm ──────────────────────────────────────── */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+
+  /* ─── wobble radii (fake hand-drawn outline) ──────────────── */
+  --r-leaf:  255px 15px 225px 15px / 15px 225px 15px 255px;
+  --r-stamp: 17px 6px 15px 8px / 8px 15px 6px 17px;
+  --r-leaf2: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  --r-blob:  30px 12px 28px 14px / 14px 28px 12px 30px;
+  --r-card:  20px 26px 18px 24px / 24px 18px 26px 20px;
+  --r-card2: 26px 18px 24px 20px / 18px 26px 20px 24px;
+  --r-tile:  10px 14px 11px 13px / 13px 11px 14px 10px;
+  --r-pill:  999px;
+
+  /* ─── drawn elevation ─────────────────────────────────────── */
+  --lift-0: none;
+  --lift-1: 0 2px 0 var(--ink-a18);
+  --lift-2: 0 3px 0 var(--ink-a28), 0 8px 16px -8px var(--ink-a28);
+  --lift-3: 0 5px 0 var(--ink-a45), 0 14px 24px -12px var(--ink-a45);
+  --stamp:  0 4px 0 var(--ink-a70);
+
+  /* ─── motion ──────────────────────────────────────────────── */
+  --dur-quick:150ms; --dur-base:200ms; --dur-stamp:250ms;
+  --ease-stamp: cubic-bezier(.2,1.5,.4,1);
+  --ease-out:   cubic-bezier(.22,.8,.3,1);
+
+  /* frame scale */
+  --fs: 1;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:focus-visible{outline:3px solid var(--focus-ring); outline-offset:2px}
+body{
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight:600;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    repeating-linear-gradient(0deg, var(--ink-a05) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--ink-a05) 0 1px, transparent 1px 28px);
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:99;
+  background-image: var(--noise); opacity:.055; mix-blend-mode:multiply;
+}
+
+/* ══════════════ PAGE CHROME ══════════════ */
+.wrap{max-width:1440px; margin:0 auto; padding:var(--s8) var(--s6) 96px}
+
+.masthead{position:relative; margin-bottom:var(--s8)}
+.kicker{
+  font-size:10px; font-weight:900; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-muted); margin:0 0 var(--s2)
+}
+.mast-title{
+  font-family:var(--font-hand); font-weight:700;
+  font-size:clamp(52px,8vw,86px); line-height:.92; margin:0; letter-spacing:.01em;
+  color:var(--text-primary); display:inline-block; position:relative;
+}
+/* The squiggle is a replaced element: with left+right+width:auto it takes its
+   width from the viewBox ratio and silently ignores `right`. Always size it. */
+.mast-title .ul{
+  position:absolute; left:-6px; right:auto; width:calc(100% + 16px);
+  bottom:-16px; height:16px; color:var(--danger);
+}
+.mast-lede{
+  font-size:17px; font-weight:600; line-height:1.55; color:var(--text-secondary);
+  max-width:56ch; margin:var(--s7) 0 0;
+}
+.mast-lede em{font-style:normal; color:var(--text-primary); font-weight:800}
+
+.mast-bar{
+  display:flex; flex-wrap:wrap; gap:var(--s5) var(--s7); align-items:flex-end;
+  justify-content:space-between; margin-top:var(--s6);
+}
+.swatches{display:flex; flex-wrap:wrap; gap:var(--s3); margin:0; padding:0; list-style:none}
+.swatch{display:flex; align-items:center; gap:10px; padding:7px 14px 7px 8px;
+  background:var(--surface-raised); border:2px solid var(--stroke); border-radius:var(--r-pill);
+  box-shadow:var(--lift-1)}
+.swatch .dot{
+  width:26px; height:26px; border:2px solid var(--stroke); flex:none;
+  border-radius:44% 56% 52% 48% / 55% 45% 55% 45%;
+}
+.swatch .txt{display:block}
+.swatch b{display:block; font-size:12px; font-weight:800; line-height:1.2; color:var(--text-primary)}
+.swatch .hex{display:block; font-size:10px; font-weight:700; color:var(--text-muted);
+  letter-spacing:.06em; font-variant-numeric:tabular-nums}
+.sw-paper .dot{background:var(--paper)}
+.sw-graphite .dot{background:var(--graphite)}
+.sw-red .dot{background:var(--crayon-red)}
+.sw-blue .dot{background:var(--marker-blue)}
+.sw-grass .dot{background:var(--grass)}
+.sw-sunny .dot{background:var(--sunny)}
+.sw-violet .dot{background:var(--violet)}
+
+.mast-link{
+  display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+  font-family:var(--font-print); font-size:20px; color:var(--text-primary);
+  background:var(--sunny); border:2.5px solid var(--stroke); border-radius:var(--r-blob);
+  padding:11px 20px; box-shadow:var(--stamp); transition:transform var(--dur-quick) var(--ease-stamp), box-shadow var(--dur-quick) var(--ease-out);
+}
+.mast-link:hover{transform:translateY(-2px) rotate(-1deg)}
+.mast-link:active{transform:translateY(4px); box-shadow:0 0 0 var(--ink-a70)}
+.mast-link svg{width:20px; height:14px; color:var(--text-primary)}
+
+/* ══════════════ GALLERY ══════════════ */
+.gallery{
+  display:grid; gap:72px var(--s7);
+  grid-template-columns:repeat(auto-fit, minmax(min(414px,100%), 1fr));
+  justify-items:center; align-items:start;
+}
+.slot{margin:0; display:flex; flex-direction:column; align-items:center; gap:var(--s5); width:100%}
+.holder{width:calc(414px * var(--fs)); height:calc(868px * var(--fs))}
+.cap{
+  width:min(414px,100%); position:relative;
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); padding:16px 18px 18px; box-shadow:var(--lift-2);
+  transform:rotate(-.5deg);
+}
+.slot:nth-child(even) .cap{transform:rotate(.6deg)}
+.cap-num{
+  position:absolute; top:-14px; left:16px; font-family:var(--font-print); font-size:17px;
+  background:var(--violet); color:var(--on-accent); border:2.5px solid var(--stroke);
+  border-radius:var(--r-stamp); padding:2px 12px; line-height:1.5;
+}
+.cap h2{display:block; font-family:var(--font-print); font-size:23px; font-weight:400; line-height:1.2; margin:6px 0 0}
+.cap span{display:block; font-size:13px; font-weight:600; line-height:1.5; color:var(--text-secondary); margin-top:5px}
+
+/* ══════════════ PHONE FRAME ══════════════ */
+.phone{
+  width:414px; height:868px; transform:scale(var(--fs)); transform-origin:top left;
+  background:var(--surface-frame); border:3px solid var(--stroke);
+  border-radius:56px; padding:12px;
+  box-shadow:0 22px 40px -18px var(--ink-a45), inset 0 0 0 2px var(--paper-a30);
+  position:relative;
+}
+.phone::after{ /* side button */
+  content:""; position:absolute; right:-6px; top:210px; width:5px; height:78px;
+  background:var(--surface-frame); border:3px solid var(--stroke); border-radius:0 6px 6px 0;
+}
+.screen{
+  width:390px; height:844px; border-radius:44px; overflow:hidden; position:relative;
+  background:var(--surface); display:flex; flex-direction:column;
+  border:2px solid var(--stroke);
+}
+.screen::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:40;
+  background-image:var(--noise); opacity:.05; mix-blend-mode:multiply;
+}
+
+/* status bar */
+.statusbar{
+  height:46px; flex:none; display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 30px 6px; color:var(--text-primary);
+}
+.sb-time{font-family:var(--font-print); font-size:17px; letter-spacing:.02em}
+.sb-icons{display:flex; align-items:center; gap:6px}
+.sb-icons svg{fill:currentColor; display:block}
+.ico-sig{width:19px;height:11px}
+.ico-wifi{width:17px;height:12px}
+.ico-bat{width:26px;height:12px}
+
+/* home indicator. On screens that end in a tab bar it carries the same sunk
+   band, so there is no tonal seam under the nav. */
+.homebar{height:26px; flex:none; display:flex; align-items:center; justify-content:center}
+.homebar.sunk{background:var(--surface-sunk)}
+.homebar i{display:block; width:136px; height:5px; border-radius:var(--r-pill); background:var(--ink-a45)}
+
+.scr{flex:1; min-height:0; display:flex; flex-direction:column; padding:0 20px; position:relative; overflow:hidden}
+
+/* ══════════════ SHARED ATOMS ══════════════ */
+.hand{font-family:var(--font-print); font-weight:400}
+.script{font-family:var(--font-hand); font-weight:700}
+.micro{font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted)}
+.num{font-family:var(--font-print); font-variant-numeric:tabular-nums; letter-spacing:.01em}
+
+.squig{display:block; width:100%; height:10px}
+.tape{
+  position:absolute; width:92px; height:27px; background:var(--tape-sunny);
+  border-top:1px solid var(--paper-a55); border-bottom:1px solid var(--ink-a08);
+  clip-path:polygon(4% 0,100% 5%,96% 100%,0 93%);
+  transform:rotate(-5deg); pointer-events:none;
+  filter:drop-shadow(0 1px 1px var(--ink-a08));
+}
+/* Sheen, not corrugation: a soft top highlight rolling into a shaded edge. */
+.tape::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,var(--paper-a30),transparent 40%,var(--ink-a05));
+}
+.tape.blue{background:var(--tape-blue)}
+.tape.violet{background:var(--tape-violet)}
+
+/* Colour-identity badge. Shape + fill pattern carry the same information the
+   hue does, so a player with a colour vision deficiency can still match ink to
+   answer. Red = solid circle · blue = hatched square · green = dotted triangle
+   · yellow = cross-hatched diamond. */
+.shape{display:block; width:26px; height:26px; flex:none}
+.shape .bg{fill:var(--surface-raised); stroke:var(--stroke); stroke-width:5; stroke-linejoin:round}
+.shape .mk{fill:none; stroke:var(--stroke); stroke-width:5; stroke-linecap:round}
+.shape .mkf{fill:var(--stroke); stroke:none}
+
+.card{
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-2); position:relative;
+}
+.card.alt{border-radius:var(--r-card2)}
+
+.sticker{
+  display:inline-flex; align-items:center; gap:6px; padding:4px 11px;
+  border:2.5px solid var(--stroke); border-radius:var(--r-stamp);
+  font-family:var(--font-print); font-size:17px; line-height:1.4; white-space:nowrap;
+  background:var(--warning); color:var(--text-primary); box-shadow:var(--lift-1);
+}
+.sticker.violet{background:var(--violet); color:var(--on-accent)}
+.sticker.grass{background:var(--grass)}
+.sticker.ghost{background:var(--surface-raised)}
+
+.btn{
+  font-family:var(--font-print); font-size:20px; line-height:1; font-weight:400;
+  border:2.5px solid var(--stroke); border-radius:var(--r-blob);
+  padding:15px 22px; cursor:pointer; display:inline-flex; align-items:center;
+  justify-content:center; gap:10px; box-shadow:var(--stamp);
+  transition:transform var(--dur-quick) var(--ease-stamp), box-shadow var(--dur-quick) var(--ease-out);
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(4px); box-shadow:0 0 0 var(--ink-a70)}
+.btn-primary{background:var(--accent); color:var(--on-accent)}
+.btn-secondary{background:var(--surface-raised); color:var(--text-primary)}
+.btn-ghost{background:transparent; color:var(--text-secondary); border-style:dashed; box-shadow:none}
+.btn-ghost:active{transform:translateY(2px); box-shadow:none}
+.btn-block{width:100%}
+
+/* bottom navigation */
+.nav{
+  flex:none; margin:0 -20px; padding:10px 22px 2px;
+  border-top:2.5px dashed var(--stroke-soft);
+  display:grid; grid-template-columns:repeat(3,1fr); background:var(--surface-sunk);
+}
+.nav-item{
+  appearance:none; background:transparent; border:0; padding:6px 0 8px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  font-family:var(--font-body); font-size:12px; font-weight:800; letter-spacing:.03em;
+  color:var(--text-muted);
+}
+.nav-item svg{width:24px; height:24px; display:block}
+.nav-item .ico{
+  width:40px; height:32px; display:flex; align-items:center; justify-content:center;
+  border-radius:var(--r-pill); position:relative;
+}
+.nav-item.is-active{color:var(--accent-ink)}
+.nav-item.is-active .ico{background:var(--accent-tint); border:2px solid var(--accent)}
+
+/* HUD pills */
+.hud{display:flex; gap:9px; align-items:stretch}
+.pill{
+  flex:1; background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-tile); padding:7px 10px 8px; text-align:center; box-shadow:var(--lift-1);
+}
+.pill .k{font-size:10px; font-weight:900; letter-spacing:.11em; text-transform:uppercase; color:var(--text-muted); display:block}
+.pill .v{font-family:var(--font-print); font-size:23px; line-height:1.15; display:block; margin-top:1px; font-variant-numeric:tabular-nums}
+.pill.hot{background:var(--sunny-tint)}
+.pill.hot .v{color:var(--warning-ink)}
+.pill.cool{background:var(--blue-tint)}
+.pill.cool .v{color:var(--blue-ink)}
+
+/* crayon progress bar */
+.bar{
+  height:14px; border:2.5px solid var(--stroke); border-radius:var(--r-pill);
+  background:var(--surface-deep); overflow:hidden; position:relative;
+}
+.bar i{
+  display:block; height:100%; background:var(--danger); border-right:2.5px solid var(--stroke);
+  background-image:repeating-linear-gradient(115deg,var(--paper-a30) 0 3px,transparent 3px 9px);
+}
+.bar.blue i{background-color:var(--marker-blue)}
+.bar.grass i{background-color:var(--success)}
+
+/* toggle switch */
+.tog{
+  width:60px; height:33px; flex:none; appearance:none; padding:0; cursor:pointer;
+  border:2.5px solid var(--stroke); border-radius:var(--r-pill);
+  background:var(--surface-deep); position:relative; box-shadow:inset 0 2px 0 var(--ink-a08);
+}
+.tog::before{content:""; position:absolute; inset:-6px -2px}  /* 45px touch target */
+.tog i{
+  position:absolute; top:2px; left:2px; width:25px; height:25px; border-radius:50%;
+  border:2.5px solid var(--stroke); background:var(--surface-raised);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform var(--dur-base) var(--ease-stamp);
+}
+.tog i svg{width:12px; height:12px; color:var(--text-muted)}
+.tog i .yes{display:none}
+.tog[aria-checked="true"]{background:var(--success)}
+.tog[aria-checked="true"] i{transform:translateX(27px)}
+.tog[aria-checked="true"] i .yes{display:block; color:var(--success-ink)}
+.tog[aria-checked="true"] i .no{display:none}
+
+/* ══════════════ 1 · HOME ══════════════ */
+.hero-row{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding-top:6px}
+.greet{font-size:13px; font-weight:800; color:var(--text-secondary); display:flex; align-items:center; gap:6px}
+.greet svg{width:15px; height:15px; color:var(--warning-ink)}
+.hero-h{font-family:var(--font-hand); font-weight:700; font-size:36px; line-height:1; margin:4px 0 0}
+.streak{transform:rotate(3deg); margin-top:4px; flex:none}
+.streak svg{width:13px; height:15px; color:var(--danger)}
+
+.daily{
+  margin-top:var(--s5); background:var(--accent); color:var(--on-accent);
+  border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-3);
+  padding:16px 16px 17px; display:flex; align-items:center; gap:12px;
+  transform:rotate(-.8deg); position:relative;
+}
+/* Tape over an accent card samples the violet and turns muddy, so it gets a
+   cream base of its own instead of a wash of whatever is behind it. */
+.daily .tape{top:-13px; left:26px; background:var(--tape-cream)}
+.daily-t{font-family:var(--font-print); font-size:26px; line-height:1.05}
+.daily-s{font-size:12px; font-weight:800; margin-top:3px; color:var(--on-accent); letter-spacing:.01em}
+.daily-go{
+  width:52px; height:52px; flex:none; border-radius:50%; background:var(--sunny);
+  border:2.5px solid var(--stroke); display:flex; align-items:center; justify-content:center;
+  box-shadow:0 3px 0 var(--ink-a70);
+}
+.daily-go svg{width:24px; height:18px; color:var(--text-primary)}
+
+.sec{display:flex; align-items:baseline; justify-content:space-between; margin:var(--s7) 0 var(--s3)}
+.sec-h{position:relative; font-family:var(--font-print); font-size:20px; line-height:1.1}
+.sec-h.sm{font-size:17px}
+.sec-h .ul{position:absolute; left:-2px; right:auto; width:calc(100% + 8px); bottom:-8px; height:9px; color:var(--marker-blue)}
+.sec-h.sm .ul{bottom:-7px; height:8px; color:var(--success-ink)}
+.sec-a{font-size:12px; font-weight:800; color:var(--text-muted)}
+
+.week{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:var(--s5);
+  padding:10px 12px; background:var(--surface-sunk);
+  border:2.5px dashed var(--stroke-soft); border-radius:var(--r-tile);
+}
+.week-dots{display:flex; gap:6px}
+.week-dots i{
+  width:25px; height:25px; border:2.5px solid var(--stroke-soft); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-style:normal;
+  font-size:10px; font-weight:900; color:var(--text-muted); background:var(--surface-raised);
+}
+.week-dots i.on{background:var(--warning); border-color:var(--stroke); color:var(--text-primary)}
+
+.gcard{
+  display:flex; align-items:center; gap:var(--s3); padding:var(--s4);
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-2); margin-bottom:var(--s3);
+  transform:rotate(-.5deg); position:relative;
+}
+.gcard.tilt{transform:rotate(.7deg); border-radius:var(--r-card2)}
+.gcard-thumb{
+  width:62px; height:62px; flex:none; border:2.5px solid var(--stroke);
+  border-radius:var(--r-tile); display:flex; align-items:center; justify-content:center;
+}
+.gcard-thumb.red{background:var(--red-tint)}
+.gcard-thumb.blue{background:var(--blue-tint)}
+.gcard-thumb.grey{background:var(--surface-deep)}
+.gcard-b{flex:1; min-width:0}
+.gcard-t{display:block; font-family:var(--font-print); font-size:20px; line-height:1.15}
+.gcard-s{display:block; font-size:12px; font-weight:700; color:var(--text-secondary); margin-top:3px}
+.gcard-r{text-align:right; flex:none}
+.gcard-r .micro{display:block}
+.gcard-r .v{display:block; font-family:var(--font-print); font-size:20px; line-height:1.1; margin-top:2px; font-variant-numeric:tabular-nums}
+.gcard.locked{
+  background:var(--surface-sunk); border-style:dashed; box-shadow:none; transform:rotate(-.3deg);
+}
+.gcard.locked .gcard-t{color:var(--text-secondary)}
+.gcard.locked .gcard-s{color:var(--text-muted)}
+
+.dots2{display:grid; grid-template-columns:1fr 1fr; gap:5px}
+.dots2 i{width:12px; height:12px; border-radius:50%; border:2px solid var(--stroke); display:block}
+.dots2 i:nth-child(1){background:var(--crayon-red)}
+.dots2 i:nth-child(2){background:var(--marker-blue)}
+.dots2 i:nth-child(3){background:var(--sunny)}
+.dots2 i:nth-child(4){background:var(--grass)}
+.mini-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:3px}
+.mini-grid i{width:10px; height:10px; border:2px solid var(--stroke); border-radius:3px; display:block}
+.mini-grid i.on{background:var(--marker-blue)}
+
+.home-foot{margin-top:auto; padding-bottom:var(--s3); text-align:center}
+.home-foot p{margin:0; font-size:12px; font-weight:700; color:var(--text-muted)}
+
+/* ══════════════ 2 · GAME DETAIL ══════════════ */
+.topbar{display:flex; align-items:center; gap:10px; padding:6px 0 2px; flex:none}
+.iconbtn{
+  width:38px; height:38px; flex:none; background:var(--surface-raised);
+  border:2.5px solid var(--stroke); border-radius:var(--r-tile); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--lift-1);
+  position:relative;
+}
+.iconbtn::before{content:""; position:absolute; inset:-3px}  /* 44px touch target */
+.iconbtn svg{width:17px; height:17px; color:var(--text-primary)}
+.topbar .scr-t{font-family:var(--font-print); font-weight:400; font-size:23px; margin:0; flex:1}
+
+.detail-hero{
+  margin-top:var(--s4); padding:var(--s5) 18px 18px; text-align:center; position:relative;
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-2); transform:rotate(-.6deg);
+}
+.detail-hero .tape{top:-13px; right:24px; transform:rotate(6deg)}
+.demo-word{font-family:var(--font-print); font-size:50px; line-height:1; color:var(--marker-blue); letter-spacing:.03em}
+.demo-cap{font-size:12px; font-weight:700; color:var(--text-muted); margin-top:8px; letter-spacing:.03em}
+.detail-title{font-family:var(--font-hand); font-weight:700; font-size:36px; line-height:1; margin:var(--s4) 0 0}
+.detail-sub{font-size:13px; font-weight:700; color:var(--text-secondary); margin:6px 0 0}
+
+.factrow{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); margin-top:var(--s4)}
+.fact{
+  background:var(--surface-sunk); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  padding:9px 6px 10px; text-align:center;
+}
+.fact .v{font-family:var(--font-print); font-size:20px; line-height:1.1; display:block; font-variant-numeric:tabular-nums}
+.fact .k{font-size:10px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); display:block; margin-top:3px}
+
+.seg-label{margin:var(--s7) 0 var(--s3); display:flex; align-items:center; justify-content:space-between}
+.seg{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+  background:var(--surface-deep); border:2.5px solid var(--stroke);
+  border-radius:var(--r-blob); padding:5px; box-shadow:inset 0 2px 0 var(--ink-a08);
+}
+.seg button{
+  appearance:none; background:transparent; border:2.5px solid transparent; cursor:pointer;
+  font-family:var(--font-print); font-size:20px; padding:9px 4px 10px; color:var(--text-secondary);
+  border-radius:var(--r-tile); min-height:44px;
+}
+.seg button[aria-pressed="true"]{
+  background:var(--surface-raised); border-color:var(--stroke); color:var(--text-primary);
+  box-shadow:0 2px 0 var(--ink-a45); transform:rotate(-1deg);
+}
+.seg-hint{font-size:13px; font-weight:700; color:var(--text-secondary); margin:var(--s3) 0 0; display:flex; gap:7px; align-items:flex-start; line-height:1.45}
+.seg-hint svg{width:15px; height:15px; flex:none; margin-top:1px; color:var(--accent-ink)}
+
+.howto{
+  margin-top:var(--s4); padding:var(--s3) 14px var(--s4); position:relative;
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card2); box-shadow:var(--lift-2); transform:rotate(.5deg);
+}
+.howto .tape{top:-13px; left:22px; transform:rotate(-6deg)}
+.howto .micro{display:block; margin-bottom:var(--s2)}
+.howto p{margin:0; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; color:var(--text-secondary); line-height:1.4}
+.howto p + p{margin-top:var(--s2)}
+.howto p b{
+  flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-print); font-weight:400; font-size:17px; color:var(--text-primary);
+  border:2.5px solid var(--stroke); border-radius:var(--r-stamp); background:var(--sunny-tint);
+}
+.howto p:nth-of-type(2) b{background:var(--blue-tint)}
+
+.detail-cta{margin-top:auto; padding-bottom:var(--s4)}
+.start-note{text-align:center; font-size:12px; font-weight:800; color:var(--text-muted); margin:var(--s3) 0 0; letter-spacing:.03em}
+
+/* ══════════════ 3 · COUNTDOWN ══════════════ */
+.count-wrap{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative}
+.count-ring{position:relative; width:250px; height:250px; display:flex; align-items:center; justify-content:center}
+.count-ring svg{position:absolute; inset:0; width:100%; height:100%; color:var(--danger)}
+/* The rest state lives on the element, not in the last keyframe, so killing
+   the animation cannot also kill the tilt. */
+.count-n{
+  font-family:var(--font-hand); font-weight:700; font-size:190px; line-height:.8; color:var(--accent-ink);
+  transform:rotate(-3deg);
+  animation:stampIn var(--dur-stamp) var(--ease-stamp) both;
+}
+.count-ready{font-family:var(--font-print); font-size:26px; margin:var(--s6) 0 0; color:var(--text-primary)}
+.count-sub{font-size:13px; font-weight:700; color:var(--text-secondary); margin:6px 0 0}
+.count-chip{margin-top:var(--s6)}
+/* Sparks belong to the ring, not to the flexed column, so the burst stays
+   centred on the ring whatever the copy underneath does. */
+.spark{position:absolute; border-radius:var(--r-pill); background:var(--sunny)}
+.count-ring .sp1{width:26px;height:5px;top:-16px;left:38px;transform:rotate(-28deg);background:var(--crayon-red)}
+.count-ring .sp2{width:20px;height:5px;top:104px;left:-28px;transform:rotate(14deg);background:var(--marker-blue)}
+.count-ring .sp3{width:24px;height:5px;top:-8px;right:34px;transform:rotate(26deg)}
+.count-ring .sp4{width:16px;height:5px;bottom:6px;right:-6px;transform:rotate(-18deg);background:var(--grass)}
+.count-ring .sp5{width:22px;height:5px;bottom:-14px;left:56px;transform:rotate(18deg);background:var(--violet)}
+.count-ring .sp6{width:14px;height:5px;top:168px;right:-18px;transform:rotate(-34deg);background:var(--crayon-red)}
+@keyframes stampIn{
+  0%{transform:scale(1.7) rotate(-8deg); opacity:0}
+  60%{opacity:1}
+  100%{transform:scale(1) rotate(-3deg); opacity:1}
+}
+.count-top{display:flex; align-items:center; justify-content:space-between; padding-top:6px}
+.count-top b{font-family:var(--font-print); font-weight:400; font-size:20px}
+
+/* ══════════════ 4 · STROOP ══════════════ */
+.play-instr{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-size:13px; font-weight:800; color:var(--text-secondary); margin:var(--s4) 0 0;
+}
+.play-instr svg{width:16px; height:16px; color:var(--danger)}
+.stim{
+  margin-top:var(--s3); flex:1; min-height:200px; max-height:320px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; position:relative; transform:rotate(-.7deg);
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-3);
+  background-image:repeating-linear-gradient(0deg,transparent 0 33px,var(--ink-a08) 33px 34px);
+}
+.stim .tape{top:-13px; left:50%; margin-left:-46px; transform:rotate(2deg)}
+/* The stimulus is TEXT, so it uses the deep stimulus ramp, not the chip fills:
+   grass 2.54:1 and sunny 1.77:1 miss even the 3:1 large-text floor. The 2px
+   graphite outline is a second, independent boundary — never remove it. */
+.stim-word{
+  font-family:var(--font-print); font-size:104px; line-height:1; letter-spacing:.04em;
+  color:var(--stim-red); text-shadow:3px 4px 0 var(--ink-a08);
+  -webkit-text-stroke:2px var(--stroke); paint-order:stroke fill;
+}
+.stim-word.ink-red{color:var(--stim-red)}
+.stim-word.ink-blue{color:var(--stim-blue)}
+.stim-word.ink-green{color:var(--stim-green)}
+.stim-word.ink-yellow{color:var(--stim-yellow)}
+.stim-mark{display:flex; align-items:center; gap:9px; margin-top:var(--s4)}
+.stim-hint{font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted)}
+.answers{display:grid; grid-template-columns:1fr 1fr; gap:var(--s3); margin-top:var(--s4)}
+.ans{
+  appearance:none; cursor:pointer; padding:9px 9px 10px; background:var(--surface-raised);
+  border:2.5px solid var(--stroke); border-radius:var(--r-tile); box-shadow:var(--stamp);
+  display:flex; flex-direction:column; gap:8px; align-items:stretch;
+  transition:transform var(--dur-quick) var(--ease-stamp), box-shadow var(--dur-quick) var(--ease-out);
+}
+.ans:active{transform:translateY(4px); box-shadow:0 0 0 var(--ink-a70)}
+.ans-chip{
+  height:72px; border:2.5px solid var(--stroke); border-radius:var(--r-tile); display:block;
+  position:relative;
+}
+.ans-chip .shape{position:absolute; top:7px; left:7px}
+.ans-label{font-family:var(--font-print); font-size:20px; line-height:1; text-align:center; color:var(--text-primary)}
+/* One fill pattern per answer, so shape and texture carry the identity too. */
+.ans.red .ans-chip{background-color:var(--crayon-red)}
+.ans.blue .ans-chip{
+  background-color:var(--marker-blue);
+  background-image:repeating-linear-gradient(122deg,var(--paper-a30) 0 4px,transparent 4px 11px);
+}
+.ans.green .ans-chip{
+  background-color:var(--grass);
+  background-image:radial-gradient(var(--paper-a55) 1.7px, transparent 1.8px);
+  background-size:11px 11px;
+}
+.ans.yellow .ans-chip{
+  background-color:var(--sunny);
+  background-image:repeating-linear-gradient(45deg,var(--ink-a08) 0 3px,transparent 3px 10px),
+                   repeating-linear-gradient(-45deg,var(--ink-a08) 0 3px,transparent 3px 10px);
+}
+.play-foot{margin-top:auto; padding-bottom:var(--s2); display:flex; align-items:center; justify-content:space-between}
+.play-foot span{font-size:10px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted)}
+
+/* ══════════════ 5 · SCHULTE ══════════════ */
+.next-strip{
+  display:flex; align-items:center; gap:10px; margin-top:var(--s4); padding:9px 12px;
+  background:var(--blue-tint); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+}
+.next-strip .k{font-size:10px; font-weight:900; letter-spacing:.13em; text-transform:uppercase; color:var(--blue-ink)}
+.next-strip .n{font-family:var(--font-print); font-size:26px; line-height:1; color:var(--blue-ink)}
+.next-strip .bar{flex:1}
+.next-strip .p{font-family:var(--font-print); font-size:17px; color:var(--text-secondary); font-variant-numeric:tabular-nums}
+
+/* The board is a sheet of paper taped to the page, anchored directly under the
+   FIND strip — not a grid floating between two voids. */
+.board{
+  margin-top:var(--s4); padding:var(--s4); flex:1; min-height:0; max-height:436px;
+  display:flex; position:relative; background:var(--surface-sunk);
+  border:2.5px solid var(--stroke); border-radius:var(--r-card);
+  box-shadow:var(--lift-2); transform:rotate(-.6deg);
+}
+.board .tape{top:-13px; left:24px; transform:rotate(-6deg)}
+.grid5{flex:1; display:grid; grid-template-columns:repeat(5,1fr); grid-auto-rows:1fr; gap:var(--s2)}
+.legend{
+  display:flex; align-items:center; gap:14px; margin-top:var(--s4);
+  font-size:12px; font-weight:800; color:var(--text-muted);
+}
+.legend > span{display:flex; align-items:center; gap:6px}
+.legend i{width:17px; height:17px; border:2.5px solid var(--stroke); border-radius:5px; display:block; position:relative; flex:none}
+.lg-found{background:var(--surface)}
+.lg-found::after{content:""; position:absolute; left:1px; right:1px; top:5px; height:2.5px; background:var(--success-ink); border-radius:var(--r-pill); transform:rotate(-10deg)}
+.lg-next{border-color:var(--marker-blue); background:var(--blue-tint)}
+.tile{
+  appearance:none; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  font-family:var(--font-print); font-size:23px; color:var(--text-primary); box-shadow:var(--lift-1);
+  position:relative; font-variant-numeric:tabular-nums;
+}
+.tile:nth-child(3n){border-radius:12px 9px 14px 10px / 10px 14px 9px 12px}
+.tile:nth-child(4n){border-radius:9px 13px 10px 14px / 14px 10px 13px 9px}
+/* A wash of colour across the board so a gameplay screen is not a beige grid. */
+.tile.wash-sun{background:var(--sunny-tint)}
+.tile.wash-violet{background:var(--violet-tint)}
+/* Found tiles SINK: page-coloured, no lift, muted numeral. The strike is drawn
+   in success-ink (4.89:1 on --surface), not the grass fill (2.06:1). */
+.tile.found{background:var(--surface); color:var(--text-muted); box-shadow:none}
+.tile.found::after{
+  content:""; position:absolute; left:16%; right:16%; top:52%; height:3px;
+  background:var(--success-ink); border-radius:var(--r-pill); transform:rotate(-9deg);
+}
+.tile.next{
+  background:var(--blue-tint); border-color:var(--marker-blue); border-width:3px;
+  color:var(--blue-ink); box-shadow:var(--lift-1); overflow:visible;
+}
+.tile.next .cue{
+  position:absolute; inset:-8px; color:var(--marker-blue); pointer-events:none;
+  animation:cueBreathe 1.8s var(--ease-out) infinite;
+}
+@keyframes cueBreathe{0%,100%{opacity:.55; transform:rotate(-1deg) scale(1)}50%{opacity:1; transform:rotate(1deg) scale(1.03)}}
+.schulte-foot{
+  margin-top:auto; margin-bottom:var(--s3); display:flex; align-items:center; gap:var(--s3);
+  padding:11px 13px; background:var(--sunny-tint); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card2); box-shadow:var(--lift-1); transform:rotate(.5deg);
+}
+.schulte-foot svg{width:18px; height:18px; flex:none; color:var(--warning-ink)}
+.schulte-foot p{margin:0; flex:1; font-size:12px; font-weight:700; color:var(--text-secondary); line-height:1.4}
+
+/* ══════════════ 6 · RESULTS ══════════════ */
+.res-top{position:relative; padding-top:var(--s6); text-align:center; flex:none}
+.confetti{position:absolute; inset:0; pointer-events:none}
+.confetti i{position:absolute; display:block; border-radius:var(--r-pill)}
+.c1{width:22px;height:5px;top:6px;left:18px;transform:rotate(-32deg);background:var(--crayon-red)}
+.c2{width:9px;height:9px;top:34px;left:52px;border-radius:50%;background:var(--marker-blue)}
+.c3{width:18px;height:5px;top:2px;left:104px;transform:rotate(22deg);background:var(--grass)}
+.c4{width:20px;height:5px;top:30px;right:96px;transform:rotate(-14deg);background:var(--sunny)}
+.c5{width:9px;height:9px;top:4px;right:44px;border-radius:50%;background:var(--violet)}
+.c6{width:16px;height:5px;top:40px;right:16px;transform:rotate(38deg);background:var(--crayon-red)}
+.res-h{font-family:var(--font-hand); font-weight:700; font-size:52px; line-height:1; margin:var(--s5) 0 0}
+.res-badge{margin-top:var(--s3); transform:rotate(-2.5deg)}
+.res-badge svg{width:15px; height:15px; color:var(--danger-ink)}
+
+.score-card{
+  margin-top:var(--s5); padding:var(--s5) 18px; text-align:center; position:relative;
+  flex:1; min-height:0; max-height:250px;
+  display:flex; flex-direction:column; justify-content:center;
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-3); transform:rotate(.7deg);
+}
+.score-card .tape{top:-13px; left:28px; transform:rotate(-7deg)}
+.score-k{font-size:10px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted)}
+.score-v{font-family:var(--font-print); font-size:76px; line-height:.95; margin-top:4px; color:var(--accent-ink); font-variant-numeric:tabular-nums}
+.score-game{font-size:12px; font-weight:800; color:var(--text-secondary); margin-top:8px}
+
+.res-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); margin-top:var(--s5)}
+.res-stat{
+  background:var(--surface-sunk); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  padding:12px 6px 12px; text-align:center;
+}
+.res-stat:nth-child(1){transform:rotate(-1.2deg)}
+.res-stat:nth-child(3){transform:rotate(1.2deg)}
+.res-stat .v{font-family:var(--font-print); font-size:23px; line-height:1.05; display:block; font-variant-numeric:tabular-nums}
+.res-stat .v .u{font-family:var(--font-body); font-size:12px; font-weight:800; letter-spacing:.02em}
+.res-stat .k{font-size:10px; font-weight:900; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); display:block; margin-top:5px; line-height:1.35}
+.res-stat.a .v{color:var(--success-ink)}
+.res-stat.b .v{color:var(--blue-ink)}
+/* A record is a record, not an error: sunny is the streak colour everywhere else. */
+.res-stat.c .v{color:var(--warning-ink)}
+.res-delta{
+  display:flex; align-items:center; justify-content:center; gap:8px; margin-top:var(--s3);
+  padding:9px 12px; background:var(--green-tint); border:2.5px solid var(--stroke);
+  border-radius:var(--r-tile); box-shadow:var(--lift-1); transform:rotate(-.7deg);
+  font-size:12px; font-weight:800; color:var(--text-secondary);
+}
+.res-delta b{font-family:var(--font-print); font-weight:400; font-size:20px; color:var(--success-ink)}
+.res-delta svg{width:15px; height:15px; flex:none; color:var(--success-ink)}
+.res-cta{margin-top:auto; padding-bottom:var(--s4); display:flex; flex-direction:column; gap:var(--s3)}
+
+/* ══════════════ 7 · STATS ══════════════ */
+.page-h{padding-top:var(--s2); padding-bottom:var(--s5); flex:none}
+.page-h .ph-t{font-family:var(--font-hand); font-weight:700; font-size:36px; line-height:1; margin:0; display:inline-block; position:relative}
+.page-h .ph-t .ul{position:absolute; left:0; right:auto; width:calc(100% + 8px); bottom:-9px; height:10px; color:var(--warning-ink)}
+.page-h p{margin:var(--s3) 0 0; font-size:13px; font-weight:700; color:var(--text-secondary)}
+
+.best-row{display:grid; grid-template-columns:1fr 1fr; gap:var(--s3); margin-top:var(--s5)}
+.best{
+  padding:13px 13px 14px; background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-2); position:relative;
+}
+.best:first-child{transform:rotate(-1deg)}
+.best:last-child{transform:rotate(1deg); border-radius:var(--r-card2)}
+.best .k{font-size:10px; font-weight:900; letter-spacing:.09em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:5px}
+.best .k i{width:9px; height:9px; border-radius:50%; border:2px solid var(--stroke); display:block}
+.best .k i.red{background:var(--crayon-red)}
+.best .k i.blue{background:var(--marker-blue)}
+.best .n{display:block; font-size:13px; font-weight:700; margin-top:8px; color:var(--text-secondary)}
+.best .v{display:block; font-family:var(--font-print); font-size:34px; line-height:1.05; margin-top:1px; font-variant-numeric:tabular-nums}
+
+/* Live personal data gets a solid outline and a lift. Dashed + lift-0 is
+   reserved for genuinely inert things (locked card, grouping strip). */
+.tally{display:grid; grid-template-columns:1fr 1fr; gap:var(--s3); margin-top:var(--s3)}
+.tally div{
+  display:flex; align-items:center; gap:9px; padding:11px 12px;
+  background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  box-shadow:var(--lift-1);
+}
+.tally div:first-child{transform:rotate(-.7deg)}
+.tally div:last-child{transform:rotate(.7deg)}
+.tally svg{width:19px; height:19px; flex:none; color:var(--accent-ink)}
+.tally .tv{display:block; flex:1; min-width:0}
+.tally b{font-family:var(--font-print); font-weight:400; font-size:20px; display:block; line-height:1.1; color:var(--text-primary); font-variant-numeric:tabular-nums}
+.tally .tv em{font-style:normal; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); display:block; margin-top:2px}
+
+.note{
+  display:flex; align-items:center; gap:10px; margin-top:var(--s3); padding:11px 13px; position:relative;
+  background:var(--sunny-tint); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  transform:rotate(-.6deg); box-shadow:var(--lift-1);
+}
+.note svg{width:18px; height:20px; flex:none; color:var(--danger)}
+.note b{font-family:var(--font-print); font-weight:400; font-size:20px; display:block; line-height:1.1}
+.note em{font-style:normal; font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-top:2px}
+
+.chart-card{
+  margin-top:var(--s5); padding:var(--s4) 14px var(--s3); background:var(--surface-raised);
+  border:2.5px solid var(--stroke); border-radius:var(--r-card2); box-shadow:var(--lift-2);
+  transform:rotate(.5deg); position:relative;
+}
+/* Left, where there is clearance — on the right it landed across the note card
+   above and read as one strip glued over two unrelated cards. */
+.chart-card .tape{top:-13px; left:20px; right:auto; transform:rotate(-6deg)}
+.chart-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px}
+.chart-head b{font-family:var(--font-print); font-weight:400; font-size:20px}
+.chart-head span{font-size:10px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted)}
+.chart{width:100%; height:auto; display:block; overflow:visible}
+.chart .bar-fill{fill:var(--violet-tint); stroke:var(--graphite); stroke-width:2.5}
+.chart .bar-best{fill:var(--sunny); stroke:var(--graphite); stroke-width:2.5}
+.chart .axis{stroke:var(--ink-a28); stroke-width:2.5; stroke-linecap:round}
+/* "Best" is one colour, and it is the record colour — not the error colour. */
+.chart .guide{stroke:var(--sunny-ink); stroke-width:2; stroke-dasharray:6 6; stroke-linecap:round}
+.chart .lbl{fill:var(--ink-faint); font-family:var(--font-body); font-size:10px; font-weight:800; text-anchor:middle}
+.chart .lbl.day{font-weight:600}
+.chart .val{fill:var(--graphite); font-family:var(--font-body); font-size:12px; font-weight:900; text-anchor:middle}
+.chart .guide-lbl{fill:var(--sunny-ink); font-family:var(--font-body); font-size:10px; font-weight:900; letter-spacing:.05em}
+
+/* ══════════════ 8 · SETTINGS ══════════════ */
+.set-group{margin-top:var(--s5); position:relative}
+.set-group > .micro{margin-bottom:var(--s2); display:block}
+.set-group > .tape{top:18px; left:-6px; transform:rotate(-7deg); z-index:1}
+.set-list{
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-2); overflow:hidden;
+}
+.set-group:first-of-type .set-list{transform:rotate(-.5deg)}
+.set-group:last-of-type .set-list{transform:rotate(.4deg); border-radius:var(--r-card2)}
+.set-row{
+  display:flex; align-items:center; gap:var(--s3); padding:var(--s3) 15px;
+  border-bottom:2px dashed var(--stroke-soft);
+}
+.set-row:last-child{border-bottom:0}
+.set-ico{
+  width:36px; height:36px; flex:none; border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  display:flex; align-items:center; justify-content:center;
+}
+.set-ico svg{width:17px; height:17px; color:var(--text-primary)}
+.set-ico.red{background:var(--red-tint)}
+.set-ico.blue{background:var(--blue-tint)}
+.set-ico.grass{background:var(--green-tint)}
+.set-ico.sunny{background:var(--sunny-tint)}
+.set-ico.violet{background:var(--violet-tint)}
+.set-b{flex:1; min-width:0}
+.set-t{display:block; font-size:15px; font-weight:800; line-height:1.25}
+.set-s{display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px}
+.set-v{font-family:var(--font-print); font-size:17px; color:var(--text-secondary)}
+.set-chev{width:9px; height:15px; flex:none; color:var(--text-muted)}
+/* The offline promise is the product's pitch, so it gets a sticky note and a
+   text colour a person can actually read (4.87:1, not 1.81:1). */
+.set-foot{
+  margin-top:auto; margin-bottom:var(--s3); padding:var(--s3) 14px; text-align:center;
+  background:var(--sunny-tint); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-1); transform:rotate(-.7deg);
+  position:relative;
+}
+.set-foot .tape{top:-13px; right:22px; transform:rotate(5deg)}
+.set-foot .script{font-size:26px; color:var(--text-primary); display:block; line-height:1.15}
+.set-foot small{font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted)}
+
+/* ══════════════ footnote ══════════════ */
+.pagefoot{
+  margin-top:88px; padding-top:26px; border-top:2.5px dashed var(--stroke-soft);
+  display:flex; flex-wrap:wrap; gap:var(--s4) var(--s7); align-items:center; justify-content:space-between;
+}
+.pagefoot p{margin:0; font-size:13px; font-weight:700; color:var(--text-secondary); max-width:62ch; line-height:1.6}
+.pagefoot .script{font-family:var(--font-hand); font-size:28px; color:var(--text-muted)}
+
+/* ══════════════ responsive ══════════════ */
+@media (max-width:900px){
+  .gallery{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  :root{--fs:.80}
+  .wrap{padding:var(--s6) var(--s4) 64px}
+  .gallery{gap:56px var(--s5)}
+}
+@media (max-width:430px){ :root{--fs:.70} }
+@media (max-width:370px){ :root{--fs:.60} }
+
+/* Collapse the duration, never the animation: `animation:none` also throws
+   away the 100% keyframe, and with it every resting transform. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-delay:0ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; transition-delay:0ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════════ MASTHEAD ══════════════ -->
+  <header class="masthead">
+    <p class="kicker">MindForge · design direction 01 of 03</p>
+    <h1 class="mast-title">Paper&nbsp;Crayon
+      <svg class="ul" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 11C48 4 96 13 143 8s96-8 153 3" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+    </h1>
+    <p class="mast-lede">A sketchbook come to life. Warm paper, wobbly ink outlines, crayon fills and washi
+      tape holding the cards to the page — <em>charming, tactile, and never childish</em>. Handwriting carries
+      the joy; Nunito carries every number, label and paragraph so the data stays honest.</p>
+
+    <div class="mast-bar">
+      <ul class="swatches">
+        <li class="swatch sw-paper"><span class="dot"></span><span class="txt"><b>Paper</b><span class="hex">#FDF6E3</span></span></li>
+        <li class="swatch sw-graphite"><span class="dot"></span><span class="txt"><b>Graphite</b><span class="hex">#33302E</span></span></li>
+        <li class="swatch sw-red"><span class="dot"></span><span class="txt"><b>Crayon red</b><span class="hex">#E5544B</span></span></li>
+        <li class="swatch sw-blue"><span class="dot"></span><span class="txt"><b>Marker blue</b><span class="hex">#3D7DD8</span></span></li>
+        <li class="swatch sw-grass"><span class="dot"></span><span class="txt"><b>Grass</b><span class="hex">#58B368</span></span></li>
+        <li class="swatch sw-sunny"><span class="dot"></span><span class="txt"><b>Sunny</b><span class="hex">#F2B705</span></span></li>
+        <li class="swatch sw-violet"><span class="dot"></span><span class="txt"><b>Violet</b><span class="hex">#8A5FBF</span></span></li>
+      </ul>
+      <a class="mast-link" href="system.html">
+        Open the system reference
+        <svg viewBox="0 0 60 24" aria-hidden="true">
+          <path d="M3 12c14-6 30 6 46 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M40 5l10 7-10 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════ GALLERY ══════════════ -->
+  <main class="gallery">
+
+    <!-- ───────── 1 · HOME ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="hero-row">
+            <div>
+              <p class="greet" style="margin:0">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+                Good evening
+              </p>
+              <p class="hero-h">Ready to train?</p>
+            </div>
+            <span class="sticker streak">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2c1 4-3 5-3 8a3 3 0 0 0 6 0c2 2 3 4 3 6a7 7 0 0 1-14 0c0-6 8-8 8-14z" fill="currentColor"/></svg>
+              4 day streak
+            </span>
+          </div>
+
+          <div class="daily">
+            <span class="tape"></span>
+            <div style="flex:1">
+              <div class="daily-t">Daily Mix</div>
+              <div class="daily-s">3 games, 4 minutes</div>
+            </div>
+            <span class="daily-go">
+              <svg viewBox="0 0 24 18" aria-hidden="true"><path d="M2 9h17" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M13 2.5 20.5 9 13 15.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+
+          <div class="week">
+            <span class="micro">This week</span>
+            <span class="week-dots" role="img" aria-label="Trained Monday to Thursday">
+              <i class="on" aria-hidden="true">M</i><i class="on" aria-hidden="true">T</i><i class="on" aria-hidden="true">W</i><i class="on" aria-hidden="true">T</i><i aria-hidden="true">F</i><i aria-hidden="true">S</i><i aria-hidden="true">S</i>
+            </span>
+          </div>
+
+          <div class="sec">
+            <span class="sec-h">Your games
+              <svg class="ul" viewBox="0 0 140 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 7c22-5 44 4 66-1s45-4 68 2" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>
+            </span>
+            <span class="sec-a">3 total</span>
+          </div>
+
+          <div class="gcard">
+            <span class="gcard-thumb red"><span class="dots2"><i></i><i></i><i></i><i></i></span></span>
+            <span class="gcard-b">
+              <span class="gcard-t">Stroop Rush</span>
+              <span class="gcard-s">Tap the colour, not the word</span>
+            </span>
+            <span class="gcard-r"><span class="micro">Best</span><span class="v">1,480</span></span>
+          </div>
+
+          <div class="gcard tilt">
+            <span class="gcard-thumb blue"><span class="mini-grid"><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i></span></span>
+            <span class="gcard-b">
+              <span class="gcard-t">Schulte Grid</span>
+              <span class="gcard-s">Find 1 to 25, fast</span>
+            </span>
+            <span class="gcard-r"><span class="micro">Best</span><span class="v">18.6s</span></span>
+          </div>
+
+          <div class="gcard locked">
+            <span class="gcard-thumb grey">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="color:var(--text-muted)"><rect x="4" y="10" width="16" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </span>
+            <span class="gcard-b">
+              <span class="gcard-t">N-Back</span>
+              <span class="gcard-s">Coming soon</span>
+            </span>
+            <span class="gcard-r"><span class="sticker ghost">Soon</span></span>
+          </div>
+
+          <div class="home-foot"><p>Everything works offline. No account, ever.</p></div>
+
+          <nav class="nav">
+            <button class="nav-item is-active" type="button" aria-current="page">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H10l-1.5 8.5 9.5-12H12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span>
+              Play
+            </button>
+            <button class="nav-item" type="button">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V4M19 20v-11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+              Stats
+            </button>
+            <button class="nav-item" type="button">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h7M15 8h6M3 16h11M19 16h2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12.5" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="16.5" cy="16" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></span>
+              Settings
+            </button>
+          </nav>
+        </div>
+        <div class="homebar sunk"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">01</span>
+        <h2>Home / game hub</h2>
+        <span>The platform layer: greeting, streak sticker, the violet Daily Mix CTA held down by washi tape, and three game cards — including the dashed, locked N-Back slot that proves new games can be added.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 2 · GAME DETAIL ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="topbar">
+            <button class="iconbtn" type="button" aria-label="Back">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <p class="scr-t">Stroop Rush</p>
+            <span class="sticker ghost">Best 1,480</span>
+          </div>
+
+          <div class="detail-hero">
+            <span class="tape blue"></span>
+            <div class="demo-word">RED</div>
+            <div class="demo-cap">the word says red — the ink is blue</div>
+            <p class="detail-title">Beat your brain</p>
+            <p class="detail-sub">Tap the colour, not the word</p>
+          </div>
+
+          <div class="factrow">
+            <div class="fact"><span class="v">1,480</span><span class="k">Best</span></div>
+            <div class="fact"><span class="v">92%</span><span class="k">Accuracy</span></div>
+            <div class="fact"><span class="v">640ms</span><span class="k">Avg react</span></div>
+          </div>
+
+          <div class="seg-label">
+            <span class="sec-h sm">Difficulty
+              <svg class="ul" viewBox="0 0 96 9" preserveAspectRatio="none" aria-hidden="true"><path d="M3 6c15-4 30 3 45-1s31-2 45 2" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+            </span>
+            <span class="sec-a">Tap to change</span>
+          </div>
+          <div class="seg" role="group" aria-label="Difficulty">
+            <button type="button" aria-pressed="false">Chill</button>
+            <button type="button" aria-pressed="true">Classic</button>
+            <button type="button" aria-pressed="false">Blitz</button>
+          </div>
+          <p class="seg-hint">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 11v6M12 7.2v.2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            Classic — 60 seconds, a wrong tap costs you the streak but not the clock.
+          </p>
+
+          <div class="howto">
+            <span class="tape blue"></span>
+            <span class="micro">How to play</span>
+            <p><b>1</b> A word appears, printed in a crayon colour.</p>
+            <p><b>2</b> Tap the colour of the ink — never the word.</p>
+          </div>
+
+          <div class="detail-cta">
+            <button class="btn btn-primary btn-block" type="button">Start</button>
+            <p class="start-note">Plays offline · no wifi needed</p>
+          </div>
+        </div>
+        <div class="homebar"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">02</span>
+        <h2>Game detail + difficulty</h2>
+        <span>The shared per-game template: a live rule demo, three real numbers, the Chill / Classic / Blitz segmented control with Classic stamped in, and one primary crayon button.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 3 · COUNTDOWN ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="count-top">
+            <b>Stroop Rush</b>
+            <button class="iconbtn" type="button" aria-label="Cancel">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5.5 18.5 18.5M18.5 5.5 5.5 18.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="count-wrap">
+            <div class="count-ring">
+              <i class="spark sp1"></i><i class="spark sp2"></i><i class="spark sp3"></i>
+              <i class="spark sp4"></i><i class="spark sp5"></i><i class="spark sp6"></i>
+              <svg viewBox="0 0 250 250" aria-hidden="true">
+                <path d="M125 14C63 16 18 56 20 116c2 62 56 104 118 100 54-4 92-46 90-104C226 58 184 16 122 18"
+                      fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                <path d="M129 30C74 32 36 66 38 120c2 56 50 92 106 89"
+                      fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+              </svg>
+              <span class="count-n">3</span>
+            </div>
+            <p class="count-ready hand">Get ready</p>
+            <p class="count-sub">Tap the colour, not the word</p>
+            <span class="sticker count-chip" style="transform:rotate(-2deg)">Classic</span>
+          </div>
+
+          <div class="home-foot" style="padding-bottom:22px"><p>Sound on · Haptics on</p></div>
+        </div>
+        <div class="homebar"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">03</span>
+        <h2>Countdown</h2>
+        <span>The stamp moment: a big Caveat “3” lands inside a hand-drawn crayon ring with “Get ready” beneath, while the chosen difficulty stays visible as a sticker.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 4 · STROOP GAMEPLAY ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="hud" style="margin-top:8px">
+            <div class="pill"><span class="k">Time</span><span class="v">0:23</span></div>
+            <div class="pill cool"><span class="k">Score</span><span class="v">1,240</span></div>
+            <div class="pill hot"><span class="k">Streak</span><span class="v">x7</span></div>
+          </div>
+
+          <div class="bar" style="margin-top:12px"><i style="width:38%"></i></div>
+
+          <p class="play-instr">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4 4 7 6.6 7 10a7 7 0 0 1-14 0c0-3.4 3-6 7-10z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+            Tap the colour, not the word
+          </p>
+
+          <div class="stim">
+            <span class="tape violet"></span>
+            <span class="stim-word ink-red">BLUE</span>
+            <span class="stim-mark">
+              <svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><circle class="bg" cx="30" cy="30" r="24"/><circle class="mkf" cx="30" cy="30" r="12"/></svg>
+              <span class="stim-hint">what colour is the ink?</span>
+            </span>
+          </div>
+
+          <div class="answers">
+            <button class="ans red" type="button"><span class="ans-chip"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><circle class="bg" cx="30" cy="30" r="24"/><circle class="mkf" cx="30" cy="30" r="12"/></svg></span><span class="ans-label">Red</span></button>
+            <button class="ans blue" type="button"><span class="ans-chip"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><rect class="bg" x="7" y="7" width="46" height="46" rx="7"/><path class="mk" d="M15 41 41 15M23 49 49 23"/></svg></span><span class="ans-label">Blue</span></button>
+            <button class="ans green" type="button"><span class="ans-chip"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><path class="bg" d="M30 7 55 51H5z"/><circle class="mkf" cx="30" cy="29" r="4"/><circle class="mkf" cx="21" cy="43" r="4"/><circle class="mkf" cx="39" cy="43" r="4"/></svg></span><span class="ans-label">Green</span></button>
+            <button class="ans yellow" type="button"><span class="ans-chip"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><path class="bg" d="M30 5 55 30 30 55 5 30z"/><path class="mk" d="M17 30h26M30 17v26"/></svg></span><span class="ans-label">Yellow</span></button>
+          </div>
+
+          <div class="play-foot">
+            <span>Round 14</span>
+            <span>Classic</span>
+          </div>
+        </div>
+        <div class="homebar"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">04</span>
+        <h2>Stroop Rush gameplay</h2>
+        <span>The word BLUE printed in crayon red on ruled paper, with four swatch buttons whose printed names always match their fill — so the answer set stays readable without relying on colour alone.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 5 · SCHULTE GAMEPLAY ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="hud" style="margin-top:8px">
+            <div class="pill"><span class="k">Time</span><span class="v">0:12.4</span></div>
+            <div class="pill"><span class="k">Found</span><span class="v">6 / 25</span></div>
+            <div class="pill cool"><span class="k">Best</span><span class="v">18.6s</span></div>
+          </div>
+
+          <div class="next-strip">
+            <span class="k">Find</span>
+            <span class="n">7</span>
+            <span class="bar blue"><i style="width:24%"></i></span>
+            <span class="p">24%</span>
+          </div>
+
+          <div class="board">
+            <span class="tape"></span>
+            <div class="grid5">
+              <button class="tile" type="button">17</button>
+              <button class="tile found" type="button">3</button>
+              <button class="tile wash-sun" type="button">22</button>
+              <button class="tile" type="button">9</button>
+              <button class="tile wash-violet" type="button">14</button>
+
+              <button class="tile found" type="button">6</button>
+              <button class="tile" type="button">25</button>
+              <button class="tile wash-sun" type="button">11</button>
+              <button class="tile found" type="button">1</button>
+              <button class="tile wash-violet" type="button">20</button>
+
+              <button class="tile" type="button">13</button>
+              <button class="tile" type="button">8</button>
+              <button class="tile wash-sun" type="button">19</button>
+              <button class="tile found" type="button">4</button>
+              <button class="tile" type="button">24</button>
+
+              <button class="tile found" type="button">2</button>
+              <button class="tile wash-violet" type="button">16</button>
+              <button class="tile wash-sun" type="button">10</button>
+              <button class="tile" type="button">23</button>
+              <button class="tile next" type="button" aria-current="true">7
+                <svg class="cue" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 5C18 6 6 20 7 40c1 20 16 34 36 33 21-1 32-16 31-35C73 19 60 5 38 6" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>
+              </button>
+
+              <button class="tile wash-violet" type="button">21</button>
+              <button class="tile" type="button">12</button>
+              <button class="tile found" type="button">5</button>
+              <button class="tile" type="button">18</button>
+              <button class="tile wash-sun" type="button">15</button>
+            </div>
+          </div>
+
+          <div class="legend">
+            <span><i class="lg-found"></i> Found</span>
+            <span><i class="lg-next"></i> Next up</span>
+          </div>
+
+          <div class="schulte-foot">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+            <p>Keep your eyes in the middle — let the edges come to you.</p>
+            <span class="sticker ghost" style="transform:rotate(1.5deg)">Classic</span>
+          </div>
+        </div>
+        <div class="homebar"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">05</span>
+        <h2>Schulte Grid gameplay</h2>
+        <span>The same HUD and chrome hosting a completely different board: 25 scrambled tiles, 1–6 struck through in grass green, and 7 circled in marker blue as the next target.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 6 · RESULTS ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="res-top">
+            <span class="confetti" aria-hidden="true">
+              <i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><i class="c5"></i><i class="c6"></i>
+            </span>
+            <p class="res-h">Nice run!</p>
+            <span class="sticker res-badge">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.8 2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17l-5.6 3.1 1.2-6.3L3 9.4l6.3-.8z" fill="currentColor"/></svg>
+              New personal best
+            </span>
+          </div>
+
+          <div class="score-card">
+            <span class="tape"></span>
+            <div class="score-k">Final score</div>
+            <div class="score-v">1,240</div>
+            <div class="score-game">Stroop Rush · Classic</div>
+          </div>
+
+          <div class="res-stats">
+            <div class="res-stat a"><span class="v">92%</span><span class="k">Accuracy</span></div>
+            <div class="res-stat b"><span class="v">640<small class="u">ms</small></span><span class="k">Avg reaction</span></div>
+            <div class="res-stat c"><span class="v">x11</span><span class="k">Longest streak</span></div>
+          </div>
+
+          <div class="res-delta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <b>+180</b> over your last run
+          </div>
+
+          <div class="res-cta">
+            <button class="btn btn-primary btn-block" type="button">Play again</button>
+            <button class="btn btn-secondary btn-block" type="button">Home</button>
+          </div>
+        </div>
+        <div class="homebar"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">06</span>
+        <h2>Results</h2>
+        <span>Reward without noise: crayon confetti, a taped-down score card, a rotated “New personal best” sticker, and three honest stats set in Nunito rather than handwriting.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 7 · STATS ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="page-h">
+            <p class="ph-t">Stats
+              <svg class="ul" viewBox="0 0 110 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 7c18-5 36 4 54-1s34-3 50 2" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+            </p>
+            <p>All of it stored on this phone.</p>
+          </div>
+
+          <div class="best-row">
+            <div class="best">
+              <span class="k"><i class="red"></i> Personal best</span>
+              <span class="n">Stroop Rush</span>
+              <span class="v">1,480</span>
+            </div>
+            <div class="best">
+              <span class="k"><i class="blue"></i> Personal best</span>
+              <span class="n">Schulte Grid</span>
+              <span class="v">18.6s</span>
+            </div>
+          </div>
+
+          <div class="tally">
+            <div>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H10l-1.5 8.5 9.5-12H12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+              <span class="tv"><b>128</b><em>Games played</em></span>
+            </div>
+            <div>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 6.6V12l4 2.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+              <span class="tv"><b>3h 12m</b><em>Trained</em></span>
+            </div>
+          </div>
+
+          <div class="note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2c1 4-3 5-3 8a3 3 0 0 0 6 0c2 2 3 4 3 6a7 7 0 0 1-14 0c0-6 8-8 8-14z" fill="currentColor"/></svg>
+            <span><b>4 day streak</b><em>Train tomorrow to make it five.</em></span>
+          </div>
+
+          <div class="chart-card">
+            <span class="tape"></span>
+            <div class="chart-head">
+              <b>Last 7 runs</b>
+              <span>Stroop Rush</span>
+            </div>
+            <svg class="chart" viewBox="0 0 334 186" role="img" aria-label="Bar chart of the last seven Stroop Rush scores: 780, 940, 1120, 860, 1310, 1180 and 1480.">
+              <line class="guide" x1="0" y1="34" x2="334" y2="34"/>
+              <text class="guide-lbl" x="0" y="26">BEST 1,480</text>
+
+              <rect class="bar-fill" x="2"   y="90"  width="30" height="62"  rx="7"/>
+              <rect class="bar-fill" x="52"  y="77"  width="30" height="75"  rx="7"/>
+              <rect class="bar-fill" x="102" y="63"  width="30" height="89"  rx="7"/>
+              <rect class="bar-fill" x="152" y="83"  width="30" height="69"  rx="7"/>
+              <rect class="bar-fill" x="202" y="48"  width="30" height="104" rx="7"/>
+              <rect class="bar-fill" x="252" y="58"  width="30" height="94"  rx="7"/>
+              <rect class="bar-best" x="302" y="34"  width="30" height="118" rx="7" transform="rotate(-1.4 317 93)"/>
+
+              <text class="val" x="317" y="28">1,480</text>
+              <line class="axis" x1="0" y1="153.5" x2="334" y2="153.5"/>
+
+              <text class="lbl" x="17"  y="170">780</text>
+              <text class="lbl" x="67"  y="170">940</text>
+              <text class="lbl" x="117" y="170">1120</text>
+              <text class="lbl" x="167" y="170">860</text>
+              <text class="lbl" x="217" y="170">1310</text>
+              <text class="lbl" x="267" y="170">1180</text>
+              <text class="lbl" x="317" y="170">1480</text>
+
+              <text class="lbl day" x="17"  y="183">Mon</text>
+              <text class="lbl day" x="67"  y="183">Tue</text>
+              <text class="lbl day" x="117" y="183">Wed</text>
+              <text class="lbl day" x="167" y="183">Thu</text>
+              <text class="lbl day" x="217" y="183">Fri</text>
+              <text class="lbl day" x="267" y="183">Sat</text>
+              <text class="lbl day" x="317" y="183">Sun</text>
+            </svg>
+          </div>
+
+          <nav class="nav" style="margin-top:auto">
+            <button class="nav-item" type="button">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H10l-1.5 8.5 9.5-12H12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span>
+              Play
+            </button>
+            <button class="nav-item is-active" type="button" aria-current="page">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V4M19 20v-11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+              Stats
+            </button>
+            <button class="nav-item" type="button">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h7M15 8h6M3 16h11M19 16h2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12.5" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="16.5" cy="16" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></span>
+              Settings
+            </button>
+          </nav>
+        </div>
+        <div class="homebar sunk"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">07</span>
+        <h2>Stats</h2>
+        <span>Where the direction has to behave: personal bests, lifetime tallies and a seven-run chart drawn in SVG — one violet hue, the record bar in sunny, every value set in Nunito.</span>
+      </figcaption>
+    </figure>
+
+    <!-- ───────── 8 · SETTINGS ───────── -->
+    <figure class="slot">
+      <div class="holder"><div class="phone"><div class="screen">
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">
+            <svg class="ico-sig" viewBox="0 0 19 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5.3" y="5" width="3" height="6" rx="1"/><rect x="10.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="15.9" y="0" width="3" height="11" rx="1"/></svg>
+            <svg class="ico-wifi" viewBox="0 0 17 12" aria-hidden="true"><path d="M1 3.9C3.1 2 5.7 1 8.5 1S13.9 2 16 3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.5 6.8C4.9 5.6 6.6 5 8.5 5s3.6.6 5 1.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.1 9.5c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1L8.5 11.9z"/></svg>
+            <svg class="ico-bat" viewBox="0 0 26 12" aria-hidden="true"><rect x="0.9" y="0.9" width="21" height="10.2" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="15" height="6" rx="1.8"/><path d="M23.7 4.2c1.1.4 1.1 3.2 0 3.6z"/></svg>
+          </span>
+        </div>
+
+        <div class="scr">
+          <div class="page-h">
+            <p class="ph-t">Settings
+              <svg class="ul" viewBox="0 0 160 10" preserveAspectRatio="none" aria-hidden="true"><path d="M3 7c26-5 52 4 78-1s48-3 76 2" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+            </p>
+            <p>Nothing here leaves your phone.</p>
+          </div>
+
+          <div class="set-group">
+            <span class="tape"></span>
+            <span class="micro">Feel</span>
+            <div class="set-list">
+              <div class="set-row">
+                <span class="set-ico sunny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h4L13 5v14L8 14.5H4z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></span>
+                <span class="set-b"><span class="set-t" id="set-sound">Sound</span><span class="set-s">Taps, ticks and the finish chime</span></span>
+                <button class="tog" type="button" role="switch" aria-checked="true" aria-labelledby="set-sound"><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button>
+              </div>
+              <div class="set-row">
+                <span class="set-ico violet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2.5" width="8" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2.3"/><path d="M3.5 9v6M20.5 9v6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></span>
+                <span class="set-b"><span class="set-t" id="set-haptics">Haptics</span><span class="set-s">A small buzz on every answer</span></span>
+                <button class="tog" type="button" role="switch" aria-checked="true" aria-labelledby="set-haptics"><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button>
+              </div>
+              <div class="set-row">
+                <span class="set-ico blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h5l3.5-6 4 12L18 12h3" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="set-b"><span class="set-t" id="set-motion">Reduce motion</span><span class="set-s">Turns off wobble and stamp effects</span></span>
+                <button class="tog" type="button" role="switch" aria-checked="false" aria-labelledby="set-motion"><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button>
+              </div>
+              <div class="set-row">
+                <span class="set-ico grass"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.4" fill="none" stroke="currentColor" stroke-width="2.3"/><path d="M12 2.6v18.8M5.4 5.4l13.2 13.2" fill="none" stroke="currentColor" stroke-width="2.3"/></svg></span>
+                <span class="set-b"><span class="set-t" id="set-cvd">Colour-blind palette</span><span class="set-s">Swaps green and yellow, adds a shape to every cue</span></span>
+                <button class="tog" type="button" role="switch" aria-checked="false" aria-labelledby="set-cvd"><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-group">
+            <span class="micro">App</span>
+            <div class="set-list">
+              <div class="set-row">
+                <span class="set-ico red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.4" fill="none" stroke="currentColor" stroke-width="2.3"/><path d="M2.8 12h18.4M12 2.6c4.6 4.8 4.6 14 0 18.8M12 2.6c-4.6 4.8-4.6 14 0 18.8" fill="none" stroke="currentColor" stroke-width="2.3"/></svg></span>
+                <span class="set-b"><span class="set-t">Language</span></span>
+                <span class="set-v">English</span>
+                <svg class="set-chev" viewBox="0 0 10 16" aria-hidden="true"><path d="M2 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="set-row">
+                <span class="set-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.4" fill="none" stroke="currentColor" stroke-width="2.3"/><path d="M12 11v6M12 7.2v.2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+                <span class="set-b"><span class="set-t">About MindForge</span><span class="set-s">Version 1.0 · offline forever</span></span>
+                <svg class="set-chev" viewBox="0 0 10 16" aria-hidden="true"><path d="M2 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-foot">
+            <span class="tape"></span>
+            <span class="script">Train your brain.</span>
+            <small>No wifi needed</small>
+          </div>
+
+          <nav class="nav">
+            <button class="nav-item" type="button">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H10l-1.5 8.5 9.5-12H12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span>
+              Play
+            </button>
+            <button class="nav-item" type="button">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V4M19 20v-11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+              Stats
+            </button>
+            <button class="nav-item is-active" type="button" aria-current="page">
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h7M15 8h6M3 16h11M19 16h2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12.5" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="16.5" cy="16" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></span>
+              Settings
+            </button>
+          </nav>
+        </div>
+        <div class="homebar sunk"><i></i></div>
+      </div></div></div>
+      <figcaption class="cap">
+        <span class="cap-num">08</span>
+        <h2>Settings</h2>
+        <span>Two grouped lists with crayon-tinted icon tiles and hand-drawn toggles that carry a tick or a cross inside the knob, so on/off never depends on colour alone.</span>
+      </figcaption>
+    </figure>
+
+  </main>
+
+  <footer class="pagefoot">
+    <p>Eight screens, one engine. Everything outside the board area — status bar, HUD, nav, cards, buttons —
+      is shared, so a new game only has to supply its board. Paper Crayon is the direction that makes an
+      offline, account-free app feel like a gift rather than a utility.</p>
+    <span class="script">— MindForge, 2026</span>
+  </footer>
+
+</div>
+
+<script>
+/* Trivial only: let the segmented control and toggles respond to a tap.
+   The page is complete and correct with JS disabled. */
+document.querySelectorAll('.seg').forEach(function (seg) {
+  seg.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+  });
+});
+document.querySelectorAll('.tog').forEach(function (t) {
+  t.addEventListener('click', function () {
+    t.setAttribute('aria-checked', t.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+  });
+});
+</script>
+</body>
+</html>

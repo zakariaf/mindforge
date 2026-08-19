@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>MindForge — Cotton Cloud screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* ============================================================
+   COTTON CLOUD — token layer.  Every colour in this document is
+   declared here and referenced with var() below. Nothing beneath
+   :root contains a raw hex, rgb() or hsl() value. The keywords
+   `transparent` and `currentColor` are permitted below :root.
+   ============================================================ */
+:root{
+  /* --- paper & ink primitives --- */
+  --white:#FFFFFF;
+  --paper:#FBF7FF;
+  --mist:#F3ECFB;
+  --haze:#EDE4F7;
+  --plum:#4A3F5C;
+  --plum-70:#756989;
+  --plum-60:#766497;
+  --plum-45:#9C8FB5;
+  --plum-20:#CFC6DD;
+
+  /* --- pastel families: base / 200 lift / tint fill / ink text --- */
+  --mint:#7FE3C4;   --mint-200:#A9EED6;  --mint-tint:#E4FAF2;  --mint-ink:#0E7A5F;
+  --lav:#B9A7FF;    --lav-200:#C9BAFF;   --lav-tint:#EFEAFF;   --lav-ink:#5B44C9;
+  --peach:#FFB39B;  --peach-200:#FFC7B4; --peach-tint:#FFEDE6; --peach-ink:#A84C2C;
+  --sky:#8FD3FF;    --sky-200:#9FDCFF;   --sky-tint:#E6F5FF;   --sky-ink:#14618F;
+  --blush:#FFD6E8;  --blush-200:#FFE3EF; --blush-tint:#FFEFF6; --blush-ink:#B33A72;
+
+  /* --- deep fill tones: the ONLY tones allowed to be a bar fill, a ring
+         stroke or a chart bar, because a pastel base cannot clear 3:1
+         against its own haze track (SC 1.4.11). Never text. --- */
+  --lav-deep:#7B62E0;   --sky-deep:#2E86C8;
+  --mint-deep:#189476;  --mint-deep-200:#22A585;
+  --peach-deep:#D25936; --blush-deep:#C9548A;
+  --plum-track:#9E83BB;
+
+  /* --- gameplay palette (Stroop answers + Schulte cues) --- */
+  --gp-red-soft:#FFD8DF;    --gp-red-pure:#F2546B;    --gp-red-ink:#B0203D;
+  --gp-blue-soft:#D6ECFF;   --gp-blue-pure:#3D9BE9;   --gp-blue-ink:#0F5C8C;
+  --gp-green-soft:#CFF4E5;  --gp-green-pure:#2ECC9B;  --gp-green-ink:#0B7355;
+  --gp-yellow-soft:#FFEEC2; --gp-yellow-pure:#FFC53D; --gp-yellow-ink:#6B4A00;
+
+  /* --- alpha tokens (shadows, veils, frost) --- */
+  --a-plum-04:rgba(74,63,92,.04);
+  --a-plum-06:rgba(74,63,92,.06);
+  --a-plum-08:rgba(74,63,92,.08);
+  --a-plum-10:rgba(74,63,92,.10);
+  --a-plum-14:rgba(74,63,92,.14);
+  --a-plum-20:rgba(74,63,92,.20);
+  --a-white-40:rgba(255,255,255,.40);
+  --a-white-60:rgba(255,255,255,.60);
+  --a-white-72:rgba(255,255,255,.72);
+  --a-white-86:rgba(255,255,255,.86);
+  --a-lav-38:rgba(185,167,255,.38);
+  --a-mint-42:rgba(127,227,196,.42);
+  --a-blush-45:rgba(255,214,232,.45);
+  --a-sky-40:rgba(143,211,255,.40);
+  --a-peach-40:rgba(255,179,155,.40);
+  --a-lav-65:rgba(185,167,255,.65);
+  --a-mint-65:rgba(127,227,196,.65);
+  --a-blush-65:rgba(255,214,232,.65);
+  --a-sky-65:rgba(143,211,255,.65);
+  --a-peach-65:rgba(255,179,155,.65);
+
+  /* --- blob gradients (the signature move) --- */
+  --blob-lav:radial-gradient(circle at 50% 50%, var(--lav) 0%, var(--a-lav-65) 45%, transparent 70%);
+  --blob-mint:radial-gradient(circle at 50% 50%, var(--mint) 0%, var(--a-mint-65) 45%, transparent 70%);
+  --blob-blush:radial-gradient(circle at 50% 50%, var(--blush) 0%, var(--a-blush-65) 45%, transparent 70%);
+  --blob-sky:radial-gradient(circle at 50% 50%, var(--sky) 0%, var(--a-sky-65) 45%, transparent 70%);
+  --blob-peach:radial-gradient(circle at 50% 50%, var(--peach) 0%, var(--a-peach-65) 45%, transparent 70%);
+
+  /* --- surface gradients --- */
+  --grad-primary:linear-gradient(135deg, var(--lav-200) 0%, var(--sky-200) 100%);
+  --grad-primary-wide:linear-gradient(104deg, var(--lav-200) 0%, var(--sky-200) 100%);
+  --grad-mint:linear-gradient(135deg, var(--mint-200) 0%, var(--sky-200) 100%);
+  --grad-blush:linear-gradient(135deg, var(--blush-200) 0%, var(--lav-200) 100%);
+  --grad-card:linear-gradient(160deg, var(--white) 0%, var(--paper) 100%);
+  --grad-frost:linear-gradient(160deg, var(--a-white-86) 0%, var(--a-white-60) 100%);
+  --grad-bezel:linear-gradient(150deg, var(--white) 0%, var(--mist) 100%);
+  --grad-fill:linear-gradient(90deg, var(--lav-deep) 0%, var(--sky-deep) 100%);
+  --grad-fill-warm:linear-gradient(90deg, var(--peach-deep) 0%, var(--blush-deep) 100%);
+  --grad-bar:linear-gradient(180deg, var(--lav-deep) 0%, var(--sky-deep) 100%);
+  --grad-bar-best:linear-gradient(180deg, var(--mint-deep) 0%, var(--mint-deep-200) 100%);
+
+  /* --- semantic slots --- */
+  --surface:var(--paper);
+  --surface-raised:var(--white);
+  --surface-sunken:var(--mist);
+  --text-primary:var(--plum);
+  --text-secondary:var(--plum-70);
+  --text-muted:var(--plum-60);
+  --furniture:var(--plum-45);
+  --accent:var(--lav-ink);
+  --accent-soft:var(--lav-tint);
+  --success:var(--mint-ink);
+  --warning:var(--peach-ink);
+  --danger:var(--gp-red-ink);
+  --focus-ring:var(--accent);
+  --track:var(--haze);
+  --track-off:var(--plum-track);
+  --fill-strong:var(--lav-deep);
+
+  /* --- elevation --- */
+  --sh-sm:0 2px 8px var(--a-plum-06);
+  --sh-md:0 8px 22px var(--a-plum-08);
+  --sh-lg:0 12px 32px var(--a-plum-10);
+  --sh-xl:0 22px 52px var(--a-plum-14);
+  --sh-pillow:inset 0 -2px 0 var(--a-white-60), 0 8px 22px var(--a-plum-08);
+  --sh-lav:0 10px 26px var(--a-lav-38);
+  --sh-mint:0 10px 26px var(--a-mint-42);
+
+  /* --- radii --- */
+  --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:26px; --r-xl:32px; --r-2xl:40px; --r-pill:999px;
+
+  /* --- spacing --- */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-7:32px; --s-8:40px; --s-9:56px;
+
+  /* --- motion --- */
+  --dur-quick:160ms; --dur-base:240ms; --dur-soft:300ms;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-soft:cubic-bezier(.34,1.18,.48,1);
+  --ease-both:cubic-bezier(.65,0,.35,1);
+
+  /* --- type --- */
+  --font-head:"Quicksand","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --font-body:"Manrope","Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{max-width:100%}
+body{
+  margin:0;
+  background:var(--surface);
+  color:var(--text-primary);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- page-level drifting blobs ---------- */
+.page-blobs{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.page-blobs i{position:absolute;display:block;border-radius:var(--r-pill);filter:blur(56px);opacity:.55}
+.pb1{width:520px;height:520px;top:-160px;left:-120px;background:var(--blob-lav);animation:drift1 26s var(--ease-both) infinite}
+.pb2{width:460px;height:460px;top:18%;right:-140px;background:var(--blob-blush);animation:drift2 31s var(--ease-both) infinite}
+.pb3{width:560px;height:560px;bottom:-200px;left:22%;background:var(--blob-mint);animation:drift3 36s var(--ease-both) infinite}
+.pb4{width:380px;height:380px;top:52%;left:-120px;background:var(--blob-sky);animation:drift2 29s var(--ease-both) infinite}
+@keyframes drift1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(60px,50px,0) scale(1.12)}}
+@keyframes drift2{0%,100%{transform:translate3d(0,0,0) scale(1.05)}50%{transform:translate3d(-50px,60px,0) scale(.94)}}
+@keyframes drift3{0%,100%{transform:translate3d(0,0,0) scale(.96)}50%{transform:translate3d(40px,-60px,0) scale(1.1)}}
+
+.wrap{position:relative;z-index:1;max-width:1420px;margin:0 auto;padding:var(--s-9) var(--s-6) 96px}
+
+/* ---------- page header ---------- */
+.masthead{max-width:760px;margin:0 auto var(--s-9);text-align:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:var(--s-2);
+  font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);background:var(--a-white-72);
+  padding:8px 16px;border-radius:var(--r-pill);box-shadow:var(--sh-sm);
+}
+.eyebrow span{width:7px;height:7px;border-radius:var(--r-pill);background:var(--grad-primary)}
+.masthead h1{
+  font-family:var(--font-head);font-weight:700;font-size:clamp(38px,6vw,58px);
+  line-height:1.08;letter-spacing:-.02em;margin:var(--s-5) 0 var(--s-3);
+}
+.masthead h1 em{font-style:normal;background:linear-gradient(120deg,var(--lav-ink),var(--sky-ink));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* forced-colors strips background images, which would erase clipped text */
+@media (forced-colors:active){
+  .masthead h1 em{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:CanvasText}
+}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.masthead p{margin:0 auto;max-width:560px;font-size:17px;line-height:1.6;color:var(--text-secondary)}
+
+.swatches{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--s-3);margin-top:var(--s-7)}
+.sw{
+  display:flex;align-items:center;gap:10px;background:var(--a-white-72);
+  padding:8px 16px 8px 8px;border-radius:var(--r-pill);box-shadow:var(--sh-sm);
+}
+.sw b{width:26px;height:26px;border-radius:var(--r-pill);box-shadow:var(--sh-sm)}
+.sw span{font-size:11px;font-weight:700;letter-spacing:.06em}
+.sw small{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.05em;margin-left:4px}
+.sw-paper b{background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--a-plum-10)}
+.sw-plum b{background:var(--plum)}
+.sw-mint b{background:var(--mint)}
+.sw-lav b{background:var(--lav)}
+.sw-peach b{background:var(--peach)}
+.sw-sky b{background:var(--sky)}
+.sw-blush b{background:var(--blush)}
+
+.jump{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--s-2);margin-top:var(--s-7)}
+.jump a{
+  font-size:12px;font-weight:700;color:var(--text-secondary);text-decoration:none;
+  padding:7px 14px;border-radius:var(--r-pill);background:var(--a-white-60);
+  transition:background var(--dur-base) var(--ease-out),color var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out);
+}
+.jump a:hover{background:var(--lav-tint);color:var(--accent);transform:translateY(-2px)}
+
+/* ============================================================
+   DEVICE FRAME
+   ============================================================ */
+.gallery{
+  display:grid;gap:72px var(--s-8);
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,412px),1fr));
+  justify-items:center;align-items:start;
+}
+.cell{margin:0;display:flex;flex-direction:column;align-items:center;width:100%}
+.stage{width:412px;height:866px}
+.device{
+  width:412px;height:866px;padding:11px;border-radius:55px;
+  background:var(--grad-bezel);
+  box-shadow:var(--sh-xl), 0 0 0 1px var(--a-plum-08), inset 0 2px 4px var(--a-white-86);
+  transform-origin:top left;
+}
+.screen{
+  position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;
+  background:var(--surface);color:var(--text-primary);isolation:isolate;
+  display:flex;flex-direction:column;
+}
+.caption{margin-top:var(--s-5);max-width:412px;text-align:center}
+.caption b{
+  display:block;font-family:var(--font-head);font-weight:700;font-size:17px;letter-spacing:-.01em;
+}
+.caption b i{font-style:normal;color:var(--accent);margin-right:8px}
+.caption p{margin:6px 0 0;font-size:13.5px;line-height:1.55;color:var(--text-secondary)}
+
+/* screen-local blobs */
+.sblobs{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.sblobs i{position:absolute;display:block;border-radius:var(--r-pill);filter:blur(40px);opacity:.60}
+.sblobs.strong i{opacity:.85;filter:blur(46px)}
+.b-lav{background:var(--blob-lav)} .b-mint{background:var(--blob-mint)}
+.b-blush{background:var(--blob-blush)} .b-sky{background:var(--blob-sky)}
+.b-peach{background:var(--blob-peach)}
+
+/* status bar */
+.sb{
+  position:relative;z-index:2;flex:0 0 auto;height:52px;padding:16px 30px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sb .t{font-size:15px;font-weight:700;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.sb .ic{display:flex;align-items:center;gap:var(--s-2);color:var(--text-primary)}
+.sig{display:flex;align-items:flex-end;gap:2px;height:11px}
+.sig i{display:block;width:3px;border-radius:1.5px;background:currentColor}
+.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}
+.sig i:nth-child(3){height:8.5px}.sig i:nth-child(4){height:11px}
+.bat{position:relative;width:24px;height:12px;border-radius:4px;box-shadow:inset 0 0 0 1.4px var(--furniture);display:flex;align-items:center;padding:2px}
+.bat::after{content:"";position:absolute;right:-3.5px;top:4px;width:2px;height:4px;border-radius:0 2px 2px 0;background:var(--furniture)}
+.bat i{display:block;height:100%;width:72%;border-radius:2px;background:currentColor}
+
+/* home indicator */
+.hi{position:relative;z-index:2;flex:0 0 auto;height:26px;display:flex;align-items:center;justify-content:center}
+.hi::after{content:"";width:136px;height:5px;border-radius:var(--r-pill);background:var(--a-plum-20)}
+
+/* screen body */
+.body{position:relative;z-index:2;flex:1 1 auto;min-height:0;padding:0 22px;display:flex;flex-direction:column}
+.body.pad-t{padding-top:8px}
+
+/* ============================================================
+   SHARED UI ATOMS
+   ============================================================ */
+.label{
+  font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--text-muted);
+}
+.h-xl{font-family:var(--font-head);font-weight:700;font-size:30px;line-height:1.18;letter-spacing:-.015em;margin:0}
+.h-lg{font-family:var(--font-head);font-weight:700;font-size:22px;line-height:1.3;letter-spacing:-.01em;margin:0}
+.h-md{font-family:var(--font-head);font-weight:600;font-size:17px;line-height:1.35;margin:0}
+.sub{font-size:13.5px;line-height:1.5;color:var(--text-secondary);margin:0}
+.num{font-family:var(--font-head);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+.card{background:var(--grad-card);border-radius:var(--r-xl);box-shadow:var(--sh-md)}
+.frost{background:var(--grad-frost);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:var(--s-2);height:34px;padding:0 var(--s-4);
+  border-radius:var(--r-pill);font-size:12.5px;font-weight:700;letter-spacing:.01em;
+}
+.chip svg{width:15px;height:15px;flex:0 0 auto}
+.chip-streak{background:var(--blush-tint);color:var(--blush-ink);box-shadow:var(--sh-sm)}
+
+.iconbtn{
+  width:44px;height:44px;border-radius:var(--r-pill);display:flex;align-items:center;justify-content:center;
+  background:var(--a-white-86);box-shadow:var(--sh-sm);color:var(--text-primary);flex:0 0 auto;
+}
+.iconbtn svg{width:20px;height:20px}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:var(--s-2);
+  height:56px;border-radius:var(--r-pill);font-family:var(--font-head);
+  font-weight:700;font-size:16.5px;letter-spacing:.01em;width:100%;
+  transition:transform var(--dur-base) var(--ease-soft),box-shadow var(--dur-base) var(--ease-out);
+}
+.btn svg{width:19px;height:19px}
+.btn-primary{background:var(--grad-primary);color:var(--text-primary);box-shadow:var(--sh-lav),inset 0 -2px 0 var(--a-white-40)}
+.btn-secondary{background:var(--a-white-86);color:var(--accent);box-shadow:var(--sh-md)}
+.btn-ghost{background:transparent;color:var(--text-secondary)}
+
+.tinybar{height:8px;border-radius:var(--r-pill);background:var(--track);overflow:hidden}
+.tinybar i{display:block;height:100%;border-radius:var(--r-pill);background:var(--grad-fill)}
+
+/* bottom nav */
+.nav{
+  position:relative;z-index:3;flex:0 0 auto;margin:0 22px 6px;height:66px;
+  border-radius:var(--r-2xl);display:flex;align-items:center;justify-content:space-around;
+  padding:0 8px;box-shadow:var(--sh-lg);
+}
+.nav a{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  width:88px;height:50px;border-radius:var(--r-md);text-decoration:none;
+  color:var(--text-muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  transition:color var(--dur-base) var(--ease-out),background var(--dur-base) var(--ease-out);
+}
+.nav a svg{width:21px;height:21px}
+.nav a.on{color:var(--accent);background:var(--lav-tint)}
+
+/* ============================================================
+   S1 — HOME
+   ============================================================ */
+.greet{padding-top:var(--s-2)}
+.week{margin-top:var(--s-5);padding:var(--s-4);border-radius:var(--r-lg);background:var(--a-white-72);box-shadow:var(--sh-sm)}
+.week > .label{display:block;margin-bottom:var(--s-2)}
+.days{display:flex;justify-content:space-between;gap:var(--s-2)}
+.days i{
+  flex:1 1 0;height:30px;border-radius:var(--r-pill);display:flex;align-items:center;justify-content:center;
+  font-style:normal;font-size:11.5px;font-weight:800;letter-spacing:.02em;
+  background:var(--surface-sunken);color:var(--text-muted);
+}
+.days i.on{background:var(--lav-200);color:var(--text-primary);box-shadow:0 4px 10px var(--a-lav-38)}
+.screen-foot{margin-top:auto;padding:var(--s-3) 0;text-align:center;font-size:11.5px;color:var(--text-muted)}
+.greet-top{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4)}
+.greet .h-xl{margin-top:var(--s-1)}
+
+.daily{
+  position:relative;margin-top:var(--s-5);padding:var(--s-6);border-radius:var(--r-xl);
+  background:var(--grad-primary-wide);box-shadow:var(--sh-lav),inset 0 -2px 0 var(--a-white-40);
+  display:flex;align-items:center;gap:var(--s-4);overflow:hidden;
+}
+.daily::after{
+  content:"";position:absolute;width:150px;height:150px;right:-72px;top:-84px;border-radius:var(--r-pill);
+  background:var(--a-white-40);filter:blur(2px);
+}
+.daily .txt{position:relative;flex:1 1 auto;min-width:0}
+.daily .h-lg{margin-bottom:2px}
+.daily .sub{color:var(--text-primary);opacity:.92;font-weight:600}
+.daily .go{
+  position:relative;width:52px;height:52px;border-radius:var(--r-pill);flex:0 0 auto;
+  background:var(--white);box-shadow:var(--sh-md);display:flex;align-items:center;justify-content:center;color:var(--accent);
+}
+.daily .go svg{width:20px;height:20px}
+
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:var(--s-6) 0 var(--s-2)}
+.sec-head .more{font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.04em}
+
+.glist{display:flex;flex-direction:column;gap:var(--s-3)}
+.gcard{
+  display:flex;align-items:center;gap:var(--s-4);padding:16px;border-radius:var(--r-lg);
+  background:var(--grad-card);box-shadow:var(--sh-md);
+  transition:transform var(--dur-base) var(--ease-soft),box-shadow var(--dur-base) var(--ease-out);
+}
+.gtile{
+  width:56px;height:56px;border-radius:var(--r-md);flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);
+}
+.gtile-stroop{background:var(--grad-blush)}
+.gtile-schulte{background:var(--grad-mint)}
+.gtile-lock{background:var(--surface-sunken)}
+.gc-txt{flex:1 1 auto;min-width:0}
+.gc-txt .h-md{margin-bottom:1px}
+.gc-txt .sub{font-size:12.5px}
+.gc-best{text-align:right;flex:0 0 auto}
+.gc-best .label{font-size:11px;letter-spacing:.08em;display:block;margin-bottom:1px}
+.gc-best .num{font-size:17px;color:var(--text-primary);display:block}
+.gcard.locked{background:var(--a-white-60);box-shadow:var(--sh-sm)}
+.gcard.locked .h-md,.gcard.locked .sub{color:var(--text-muted)}
+.gcard.locked .gtile{color:var(--text-muted)}
+
+/* stroop mini icon */
+.dots{display:flex;align-items:center}
+.dots i{display:block;width:17px;height:17px;border-radius:var(--r-pill);box-shadow:0 1px 3px var(--a-plum-14)}
+.dots i:nth-child(1){background:var(--gp-red-pure)}
+.dots i:nth-child(2){background:var(--gp-blue-pure);margin-left:-6px}
+.dots i:nth-child(3){background:var(--gp-yellow-pure);margin-left:-6px}
+/* schulte mini icon */
+.minigrid{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5px}
+.minigrid i{display:block;width:7px;height:7px;border-radius:2.5px;background:var(--a-white-72)}
+.minigrid i.on{background:var(--mint-ink)}
+
+/* ============================================================
+   S2 — GAME DETAIL
+   ============================================================ */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding-top:var(--s-2)}
+.hero{
+  margin-top:var(--s-6);padding:20px;border-radius:var(--r-xl);text-align:center;
+  background:var(--grad-frost);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:var(--sh-md);
+}
+.hero .badge-icon{
+  width:68px;height:68px;margin:0 auto var(--s-3);border-radius:var(--r-lg);
+  background:var(--grad-blush);box-shadow:var(--sh-lg);display:flex;align-items:center;justify-content:center;
+}
+.hero .badge-icon .dots i{width:23px;height:23px}
+.hero .badge-icon .dots i:nth-child(n+2){margin-left:-8px}
+.hero .h-xl{margin-bottom:4px}
+.hero .sub{font-size:14.5px}
+.hero-stats{display:flex;justify-content:center;gap:var(--s-2);margin-top:var(--s-4)}
+.stat-pill{
+  display:flex;flex-direction:column;align-items:center;gap:1px;padding:var(--s-3) var(--s-4);
+  border-radius:var(--r-md);background:var(--surface-raised);box-shadow:var(--sh-sm);
+}
+.stat-pill .label{font-size:11px;letter-spacing:.08em}
+.stat-pill .num{font-size:16px}
+
+.seg-wrap{margin-top:var(--s-6)}
+.seg{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-2);padding:var(--s-2);
+  background:var(--surface-sunken);border-radius:var(--r-pill);margin-top:var(--s-3);
+}
+.seg span{
+  height:44px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-pill);
+  font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--text-primary);
+  transition:all var(--dur-base) var(--ease-out);
+}
+.seg span.on{
+  background:var(--surface-raised);color:var(--accent);font-weight:700;
+  box-shadow:var(--sh-md);
+}
+.seg-note{margin-top:var(--s-2);font-size:12.5px;color:var(--text-secondary);text-align:center}
+
+.howto{margin-top:var(--s-5);padding:var(--s-4) var(--s-5);border-radius:var(--r-lg);background:var(--lav-tint)}
+.howto .label{color:var(--accent);margin-bottom:var(--s-2);display:block}
+.howto ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--s-2)}
+.howto li{display:flex;gap:var(--s-3);font-size:12.5px;line-height:1.5;color:var(--text-secondary)}
+.howto li b{
+  flex:0 0 auto;width:20px;height:20px;border-radius:var(--r-pill);margin-top:1px;
+  background:var(--white);color:var(--accent);font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.detail-foot{margin-top:auto;padding-bottom:var(--s-5)}
+
+/* ============================================================
+   S3 — COUNTDOWN
+   ============================================================ */
+.count-wrap{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s-6);padding-bottom:64px}
+.ring{position:relative;width:210px;height:210px;display:flex;align-items:center;justify-content:center}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.ring .halo{
+  position:absolute;inset:14px;border-radius:var(--r-pill);
+  background:var(--grad-frost);box-shadow:var(--sh-lg),inset 0 -3px 0 var(--a-white-60);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.ring .n{
+  position:relative;font-family:var(--font-head);font-weight:700;font-size:104px;line-height:1;
+  letter-spacing:-.04em;color:var(--text-primary);
+  animation:pop var(--dur-soft) var(--ease-soft) both;
+}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.86)}to{opacity:1;transform:none}}
+.count-txt{text-align:center}
+.count-txt .h-lg{margin-bottom:4px}
+.count-head{display:flex;align-items:center;justify-content:space-between;padding-top:var(--s-2)}
+.count-tag{
+  display:inline-flex;align-items:center;gap:var(--s-2);height:34px;padding:0 var(--s-4);border-radius:var(--r-pill);
+  background:var(--a-white-86);box-shadow:var(--sh-sm);font-size:12.5px;font-weight:700;
+}
+.count-tag i{width:9px;height:9px;border-radius:var(--r-pill);background:var(--gp-red-pure);display:block}
+
+/* keyboard focus — the one ring used everywhere */
+a:focus-visible,[role="switch"]:focus-visible,[role="radio"]:focus-visible{
+  outline:3px solid var(--focus-ring);outline-offset:3px;border-radius:var(--r-pill);
+}
+.count-dots{display:flex;gap:8px;justify-content:center;margin-top:var(--s-2)}
+.count-dots i{width:8px;height:8px;border-radius:var(--r-pill);background:var(--plum-20);display:block}
+.count-dots i.on{background:var(--lav);width:24px}
+
+/* ============================================================
+   S4 — STROOP GAMEPLAY
+   ============================================================ */
+.hud{display:flex;align-items:center;gap:var(--s-2);padding-top:var(--s-2)}
+.hud-pill{
+  flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0;
+  padding:var(--s-3) var(--s-2);border-radius:var(--r-md);background:var(--a-white-86);box-shadow:var(--sh-sm);
+}
+.hud-pill .label{font-size:11px;letter-spacing:.08em}
+.hud-pill .num{font-size:19px;line-height:1.15;margin-top:1px}
+.hud-pill.accent-mint{background:var(--mint-tint)}
+.hud-pill.accent-mint .num,.hud-pill.accent-mint .label{color:var(--mint-ink)}
+.hud-pill.accent-peach{background:var(--peach-tint)}
+.hud-pill.accent-peach .num,.hud-pill.accent-peach .label{color:var(--peach-ink)}
+.hud-pill.accent-lav{background:var(--lav-tint)}
+.hud-pill.accent-lav .num,.hud-pill.accent-lav .label{color:var(--accent)}
+
+.timerbar{margin-top:var(--s-3);height:10px;border-radius:var(--r-pill);background:var(--track);overflow:hidden}
+.timerbar i{display:block;height:100%;width:38%;border-radius:var(--r-pill);background:var(--grad-fill-warm)}
+
+.stimulus{
+  margin-top:auto;flex:0 0 auto;height:248px;border-radius:var(--r-2xl);
+  background:var(--surface-raised);box-shadow:var(--sh-lg),inset 0 -3px 0 var(--a-white-60);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s-3);
+  position:relative;overflow:hidden;
+}
+.stimulus .label{font-size:11px;letter-spacing:.12em}
+.stim-word{
+  font-family:var(--font-head);font-weight:700;font-size:72px;line-height:1;
+  letter-spacing:.02em;color:var(--gp-red-ink);
+  animation:driftup var(--dur-soft) var(--ease-out) both;
+}
+@keyframes driftup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.stim-hint{font-size:13px;font-weight:600;color:var(--text-muted)}
+
+.answers{margin-top:var(--s-5);margin-bottom:auto;display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.ans{
+  display:flex;align-items:center;gap:var(--s-3);height:82px;padding:0 var(--s-4);border-radius:var(--r-lg);
+  box-shadow:var(--sh-pillow);
+  transition:transform var(--dur-base) var(--ease-soft),box-shadow var(--dur-base) var(--ease-out);
+}
+/* The identity chip carries three channels at once: a shape silhouette
+   (survives dichromacy), the pure tone (hue identity) and a ring in the
+   exact ink the stimulus word is drawn in. */
+.ans .swatch{width:34px;height:34px;flex:0 0 auto;display:block}
+.ans .swatch svg{
+  width:34px;height:34px;display:block;
+  fill:var(--sw-pure);stroke:var(--sw-ink);stroke-width:2.6;
+  filter:drop-shadow(0 3px 6px var(--a-plum-20));
+}
+.ans .nm{font-family:var(--font-head);font-weight:700;font-size:17px;letter-spacing:.01em}
+.ans-red{background:var(--gp-red-soft);color:var(--gp-red-ink);--sw-pure:var(--gp-red-pure);--sw-ink:var(--gp-red-ink)}
+.ans-blue{background:var(--gp-blue-soft);color:var(--gp-blue-ink);--sw-pure:var(--gp-blue-pure);--sw-ink:var(--gp-blue-ink)}
+.ans-green{background:var(--gp-green-soft);color:var(--gp-green-ink);--sw-pure:var(--gp-green-pure);--sw-ink:var(--gp-green-ink)}
+.ans-yellow{background:var(--gp-yellow-soft);color:var(--gp-yellow-ink);--sw-pure:var(--gp-yellow-pure);--sw-ink:var(--gp-yellow-ink)}
+.play-foot{padding-bottom:var(--s-4);display:flex;justify-content:center}
+.pause{
+  display:inline-flex;align-items:center;gap:var(--s-2);height:44px;padding:0 var(--s-5);border-radius:var(--r-pill);
+  background:var(--a-white-72);color:var(--text-secondary);font-size:12.5px;font-weight:700;box-shadow:var(--sh-sm);
+}
+.pause svg{width:14px;height:14px}
+
+/* ============================================================
+   S5 — SCHULTE GAMEPLAY
+   ============================================================ */
+
+.sboard{
+  margin:var(--s-7) 0 auto;padding:var(--s-3);border-radius:var(--r-2xl);
+  background:var(--grad-frost);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:var(--sh-lg);display:flex;flex-direction:column;gap:var(--s-3);
+}
+.sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s-3)}
+.sboard-rule{
+  align-self:center;font-size:12.5px;font-weight:700;letter-spacing:.01em;color:var(--text-secondary);
+}
+.tile{
+  aspect-ratio:1/1;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums;
+  background:var(--surface-raised);color:var(--text-primary);box-shadow:var(--sh-pillow);
+  transition:transform var(--dur-base) var(--ease-soft);
+}
+.tile.found{background:var(--mint-tint);color:var(--mint-ink);box-shadow:none;font-weight:600}
+.tile.next{
+  background:var(--lav-tint);color:var(--accent);
+  box-shadow:var(--sh-lav),inset 0 0 0 2.5px var(--lav);
+  animation:breathe 2.4s var(--ease-both) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.sfoot{padding-bottom:var(--s-4);display:flex;align-items:center;justify-content:center;gap:var(--s-2)}
+
+/* ============================================================
+   S6 — RESULTS
+   ============================================================ */
+.res-head{text-align:center;padding-top:var(--s-6)}
+.pb-badge{
+  display:inline-flex;align-items:center;gap:var(--s-2);height:34px;padding:0 var(--s-4);border-radius:var(--r-pill);
+  background:var(--mint-tint);color:var(--success);font-size:12.5px;font-weight:800;letter-spacing:.02em;
+  box-shadow:var(--sh-mint);
+}
+.pb-badge svg{width:15px;height:15px}
+.res-score{
+  margin:var(--s-5) 0 0;font-family:var(--font-head);font-weight:700;font-size:76px;line-height:1;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums;color:var(--accent);
+}
+.res-scorelabel{margin-top:6px}
+.res-card{
+  margin-top:var(--s-7);padding:6px;border-radius:var(--r-xl);
+  background:var(--grad-frost);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:var(--sh-md);
+}
+.res-row{display:flex;align-items:center;gap:var(--s-3);padding:16px}
+.res-ic{
+  width:38px;height:38px;border-radius:var(--r-sm);flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+}
+.res-ic svg{width:19px;height:19px}
+.res-ic.i-mint{background:var(--mint-tint);color:var(--mint-ink)}
+.res-ic.i-sky{background:var(--sky-tint);color:var(--sky-ink)}
+.res-ic.i-peach{background:var(--peach-tint);color:var(--peach-ink)}
+.res-row .nm{flex:1 1 auto;font-size:14px;font-weight:600;color:var(--text-secondary)}
+.res-row .num{font-size:19px}
+.res-foot{margin-top:auto;padding-bottom:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)}
+
+/* ============================================================
+   S7 — STATS
+   ============================================================ */
+.stats-head{padding-top:var(--s-2);display:flex;align-items:flex-end;justify-content:space-between}
+.best-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-6)}
+.best{padding:var(--s-5);border-radius:var(--r-lg);box-shadow:var(--sh-md)}
+.best.b-stroop{background:var(--grad-blush)}
+.best.b-schulte{background:var(--grad-mint)}
+.best .label{color:var(--text-primary);font-size:11px;letter-spacing:.08em}
+.best .g{font-family:var(--font-head);font-weight:600;font-size:13.5px;margin:var(--s-2) 0 2px}
+.best .num{font-size:26px;display:block;line-height:1.1}
+
+.chart-card{margin-top:var(--s-6);padding:var(--s-5) var(--s-5) var(--s-4);border-radius:var(--r-xl);background:var(--grad-card);box-shadow:var(--sh-md)}
+.chart-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-4)}
+.chart-top .h-md{font-size:15px}
+.chart-sub{font-size:11.5px;margin-top:1px}
+.chart-top .delta{font-size:11.5px;font-weight:800;color:var(--mint-ink);background:var(--mint-tint);padding:var(--s-1) var(--s-2);border-radius:var(--r-pill)}
+.plot{position:relative;height:184px;padding-top:var(--s-5);display:flex;align-items:flex-end;gap:var(--s-2)}
+.gridlines{position:absolute;inset:20px 0 0 0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.gridlines i{display:block;height:1px;background:var(--a-plum-06)}
+.bar{position:relative;flex:1 1 0;height:100%}
+.bar u{
+  position:absolute;left:0;right:0;bottom:0;height:var(--h);
+  display:block;border-radius:var(--r-xs) var(--r-xs) 6px 6px;
+  background:var(--grad-bar);
+  box-shadow:0 4px 12px var(--a-lav-38);
+}
+.bar.best u{background:var(--grad-bar-best);box-shadow:var(--sh-mint)}
+.bar em{
+  position:absolute;left:-3px;right:-3px;bottom:var(--h);text-align:center;
+  font-style:normal;font-size:11px;font-weight:800;color:var(--text-muted);
+  font-variant-numeric:tabular-nums;margin-bottom:5px;letter-spacing:-.02em;line-height:1;
+}
+.bar.best em{color:var(--mint-ink)}
+.xaxis{display:flex;justify-content:space-between;margin-top:var(--s-2)}
+.xaxis span{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.06em}
+
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-top:var(--s-4)}
+.total{
+  display:flex;align-items:center;gap:var(--s-2);padding:var(--s-4) var(--s-3);border-radius:var(--r-lg);
+  background:var(--a-white-86);box-shadow:var(--sh-sm);
+}
+.total .ic{width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.total .ic svg{width:17px;height:17px}
+.total .ic.i-lav{background:var(--lav-tint);color:var(--accent)}
+.total .ic.i-peach{background:var(--peach-tint);color:var(--peach-ink)}
+.total .num{font-size:17px;display:block;line-height:1.15}
+.total .label{font-size:11px;letter-spacing:.04em;display:block}
+
+/* ============================================================
+   S8 — SETTINGS
+   ============================================================ */
+.set-group{margin-top:var(--s-5)}
+.set-group > .label{margin-left:var(--s-2)}
+.set-card{margin-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2)}
+.set-row{
+  display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);min-height:62px;
+  border-radius:var(--r-lg);background:var(--grad-card);box-shadow:var(--sh-sm);
+}
+.set-ic{width:38px;height:38px;border-radius:var(--r-sm);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.set-ic svg{width:19px;height:19px}
+.i-mint2{background:var(--mint-tint);color:var(--mint-ink)}
+.i-blush2{background:var(--blush-tint);color:var(--blush-ink)}
+.i-sky2{background:var(--sky-tint);color:var(--sky-ink)}
+.i-lav2{background:var(--lav-tint);color:var(--accent)}
+.i-peach2{background:var(--peach-tint);color:var(--peach-ink)}
+.set-txt{flex:1 1 auto;min-width:0}
+.set-txt .nm{display:block;font-size:14.5px;font-weight:600;line-height:1.3}
+.set-txt .hint{display:block;margin-top:1px;font-size:11.5px;color:var(--text-muted);line-height:1.4}
+.set-val{font-size:13.5px;font-weight:700;color:var(--text-secondary)}
+.set-row .chev{color:var(--text-muted);display:flex}
+.set-row .chev svg{width:17px;height:17px}
+
+.tog{
+  width:54px;height:32px;border-radius:var(--r-pill);flex:0 0 auto;position:relative;
+  background:var(--track-off);transition:background var(--dur-base) var(--ease-out);
+  box-shadow:inset 0 1px 3px var(--a-plum-08);
+}
+.tog i{
+  position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:var(--r-pill);
+  background:var(--white);box-shadow:var(--sh-sm);display:block;
+  transition:transform var(--dur-base) var(--ease-soft);
+}
+.tog.on{background:var(--grad-primary);box-shadow:inset 0 1px 3px var(--a-plum-08),0 4px 12px var(--a-lav-38)}
+.tog.on i{transform:translateX(22px)}
+
+.about-foot{margin-top:auto;padding-bottom:var(--s-5);text-align:center}
+.about-foot .sub{font-size:11.5px;color:var(--text-muted)}
+
+/* ============================================================
+   RESPONSIVE — scale the whole device, never scroll sideways
+   ============================================================ */
+@media (max-width:520px){
+  .wrap{padding:var(--s-7) var(--s-4) 64px}
+  .gallery{gap:56px var(--s-5)}
+  .stage{width:330px;height:693px}
+  .device{transform:scale(.8)}
+  .caption{max-width:330px}
+}
+@media (max-width:400px){
+  .stage{width:289px;height:607px}
+  .device{transform:scale(.70)}
+  .caption{max-width:300px}
+}
+@media (max-width:340px){
+  .stage{width:247px;height:520px}
+  .device{transform:scale(.60)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="page-blobs" aria-hidden="true">
+  <i class="pb1"></i><i class="pb2"></i><i class="pb3"></i><i class="pb4"></i>
+</div>
+
+<!-- reusable icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="i-flame" stroke="none" fill="currentColor">
+      <path d="M12 2.6c.4 2.6-.7 3.9-1.9 5.1-1.4 1.4-3 2.9-3 5.7A4.9 4.9 0 0 0 12 18.4a4.9 4.9 0 0 0 4.9-5c0-3.6-2.6-5.4-4.2-8.5-.2 1.8-1 2.7-1.8 3.4-.4-1.9.6-3.9 1.1-5.7Z"/>
+      <path d="M12 21.4a3.1 3.1 0 0 0 3.1-3.1c0-2-1.6-2.9-2.4-4.6-.5 1.6-1.7 2.1-2.6 3a3.1 3.1 0 0 0 1.9 4.7Z" opacity=".55"/>
+    </g>
+    <g id="i-play" fill="currentColor" stroke="none"><path d="M8.6 5.9c0-.8.9-1.3 1.6-.9l8 5.9c.6.4.6 1.4 0 1.8l-8 5.9c-.7.5-1.6 0-1.6-.9V5.9Z"/></g>
+    <g id="i-chev-l" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5 8 12l6.5 6.5"/></g>
+    <g id="i-chev-r" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5.5 16 12l-6.5 6.5"/></g>
+    <g id="i-lock" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.8" y="10.4" width="14.4" height="9.4" rx="3.4"/><path d="M8.4 10.4V8.2a3.6 3.6 0 0 1 7.2 0v2.2"/></g>
+    <g id="i-clock" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.4V12l3.1 1.9"/></g>
+    <g id="i-bolt" fill="currentColor" stroke="none"><path d="M13.4 2.6 6.2 13a.7.7 0 0 0 .6 1.1h3.7l-.9 7.2a.5.5 0 0 0 .9.35L17.8 11a.7.7 0 0 0-.6-1.1h-3.7l.8-6.9a.5.5 0 0 0-.9-.4Z"/></g>
+    <g id="i-target" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></g>
+    <g id="i-spark" fill="currentColor" stroke="none"><path d="M12 2.8c.3 3.6 1.9 5.4 5.5 5.9-3.6.6-5.2 2.4-5.5 6-.3-3.6-1.9-5.4-5.5-6 3.6-.5 5.2-2.3 5.5-5.9Z"/><path d="M18.6 14.4c.15 1.9 1 2.8 2.9 3.1-1.9.3-2.75 1.25-2.9 3.1-.15-1.85-1-2.8-2.9-3.1 1.9-.3 2.75-1.2 2.9-3.1Z" opacity=".6"/></g>
+    <g id="i-grid" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3.6" y="3.6" width="7.4" height="7.4" rx="2.6"/><rect x="13" y="3.6" width="7.4" height="7.4" rx="2.6"/><rect x="3.6" y="13" width="7.4" height="7.4" rx="2.6"/><rect x="13" y="13" width="7.4" height="7.4" rx="2.6"/></g>
+    <g id="i-chart" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5.5 19.5v-6.2"/><path d="M12 19.5V5.2"/><path d="M18.5 19.5v-9"/></g>
+    <g id="i-sliders" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7.6h4.2M13.4 7.6H20M4 16.4h6.6M15.8 16.4H20"/><circle cx="10.8" cy="7.6" r="2.6"/><circle cx="13.2" cy="16.4" r="2.6"/></g>
+    <g id="i-sound" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.6 9.4h3.1L11.8 6v12L7.7 14.6H4.6z"/><path d="M15 9.6a3.6 3.6 0 0 1 0 4.8"/><path d="M17.7 7.2a7 7 0 0 1 0 9.6"/></g>
+    <g id="i-vibe" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8.4" y="4.2" width="7.2" height="15.6" rx="2.5"/><path d="M4.6 9.6v4.8M19.4 9.6v4.8"/></g>
+    <g id="i-motion" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 8h8.6a2.5 2.5 0 1 0-2.5-2.5"/><path d="M3.6 12.4h10.6a2.6 2.6 0 1 1-2.6 2.6"/><path d="M3.6 16.8h4.6"/></g>
+    <g id="i-eye" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M2.6 12S6.4 5.9 12 5.9 21.4 12 21.4 12 17.6 18.1 12 18.1 2.6 12 2.6 12Z"/><circle cx="12" cy="12" r="2.9"/></g>
+    <g id="i-globe" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.2"/><path d="M3.9 12h16.2" stroke-linecap="round"/><path d="M12 3.8c2.3 2.3 3.5 5.1 3.5 8.2s-1.2 5.9-3.5 8.2c-2.3-2.3-3.5-5.1-3.5-8.2S9.7 6.1 12 3.8Z"/></g>
+    <g id="i-info" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M12 11.2v5"/><circle cx="12" cy="8.1" r="1.15" fill="currentColor" stroke="none"/></g>
+    <g id="i-home" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.9 10.6 12 4.3l8.1 6.3v8.2a1.5 1.5 0 0 1-1.5 1.5H5.4a1.5 1.5 0 0 1-1.5-1.5z"/></g>
+    <g id="i-replay" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.9 12a7.9 7.9 0 1 1-2.6-5.85"/><path d="M20.3 4v4.4h-4.4"/></g>
+    <g id="i-close" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6.8 6.8 17.2 17.2M17.2 6.8 6.8 17.2"/></g>
+    <g id="i-pause" fill="currentColor" stroke="none"><rect x="7" y="5.4" width="3.6" height="13.2" rx="1.6"/><rect x="13.4" y="5.4" width="3.6" height="13.2" rx="1.6"/></g>
+    <g id="i-check" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5.4 12.4 10 17l8.6-9.6"/></g>
+    <g id="i-hour" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 3.8h9.6M7.2 20.2h9.6"/><path d="M8 3.8v3.1c0 1.9 4 3.2 4 5.1s-4 3.2-4 5.1v3.1"/><path d="M16 3.8v3.1c0 1.9-4 3.2-4 5.1s4 3.2 4 5.1v3.1"/></g>
+    <g id="g-circle"><circle cx="12" cy="12" r="9.4"/></g>
+    <g id="g-square"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="3.6"/></g>
+    <g id="g-triangle" stroke-linejoin="round"><path d="M12 3 21.4 20.2H2.6Z"/></g>
+    <g id="g-diamond" stroke-linejoin="round"><path d="M12 2.5 21.5 12 12 21.5 2.5 12Z"/></g>
+    <g id="i-stack" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6 3.8 7.6 12 11.6l8.2-4z"/><path d="M3.8 12.2 12 16.2l8.2-4"/><path d="M3.8 16.6 12 20.6l8.2-4"/></g>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow"><span></span>MindForge · Design direction 01</div>
+    <h1>Cotton <em>Cloud</em></h1>
+    <p>Soft, calm, breathable cheer. Candy colour with grown-up manners — the brain gym you open to
+       unwind, not to compete. Everything floats; nothing shouts.</p>
+
+    <div class="swatches">
+      <div class="sw sw-paper"><b></b><span>Paper<small>#FBF7FF</small></span></div>
+      <div class="sw sw-plum"><b></b><span>Plum<small>#4A3F5C</small></span></div>
+      <div class="sw sw-mint"><b></b><span>Mint<small>#7FE3C4</small></span></div>
+      <div class="sw sw-lav"><b></b><span>Lavender<small>#B9A7FF</small></span></div>
+      <div class="sw sw-peach"><b></b><span>Peach<small>#FFB39B</small></span></div>
+      <div class="sw sw-sky"><b></b><span>Sky<small>#8FD3FF</small></span></div>
+      <div class="sw sw-blush"><b></b><span>Blush<small>#FFD6E8</small></span></div>
+    </div>
+
+    <nav class="jump" aria-label="Jump to screen">
+      <a href="#s1">Home</a><a href="#s2">Game detail</a><a href="#s3">Countdown</a>
+      <a href="#s4">Stroop</a><a href="#s5">Schulte</a><a href="#s6">Results</a>
+      <a href="#s7">Stats</a><a href="#s8">Settings</a>
+      <a href="system.html">Design system →</a>
+    </nav>
+  </header>
+
+  <div class="gallery">
+
+    <!-- ==================================================== 1. HOME -->
+    <figure class="cell" id="s1" aria-labelledby="s1-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-lav" style="width:300px;height:300px;top:-110px;left:-90px"></i>
+          <i class="b-blush" style="width:260px;height:260px;top:300px;right:-40px"></i>
+          <i class="b-mint" style="width:300px;height:300px;bottom:-120px;left:-70px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="greet">
+            <div class="greet-top">
+              <p class="sub">Good evening</p>
+              <span class="chip chip-streak"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg>4 day streak</span>
+            </div>
+            <h2 class="h-xl">Ready to train?</h2>
+          </div>
+
+          <div class="week">
+            <span class="label">This week</span>
+            <div class="days">
+              <i class="on">M</i><i class="on">T</i><i class="on">W</i><i class="on">T</i><i>F</i><i>S</i><i>S</i>
+            </div>
+          </div>
+
+          <div class="daily">
+            <div class="txt">
+              <h3 class="h-lg">Daily Mix</h3>
+              <p class="sub">3 games, 4 minutes</p>
+            </div>
+            <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg></span>
+          </div>
+
+          <div class="sec-head">
+            <span class="label">Your games</span>
+            <span class="more">All 3</span>
+          </div>
+
+          <div class="glist">
+            <div class="gcard">
+              <span class="gtile gtile-stroop"><span class="dots"><i></i><i></i><i></i></span></span>
+              <div class="gc-txt">
+                <h4 class="h-md">Stroop Rush</h4>
+                <p class="sub">Tap the colour, not the word</p>
+              </div>
+              <div class="gc-best"><span class="label">Best</span><span class="num">1,480</span></div>
+            </div>
+
+            <div class="gcard">
+              <span class="gtile gtile-schulte"><span class="minigrid"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span></span>
+              <div class="gc-txt">
+                <h4 class="h-md">Schulte Grid</h4>
+                <p class="sub">Find 1 to 25, fast</p>
+              </div>
+              <div class="gc-best"><span class="label">Best</span><span class="num">18.6s</span></div>
+            </div>
+
+            <div class="gcard locked">
+              <span class="gtile gtile-lock"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lock"/></svg></span>
+              <div class="gc-txt">
+                <h4 class="h-md">N-Back</h4>
+                <p class="sub">Coming soon</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="screen-foot">Everything works offline. No account, no ads.</p>
+        </div>
+
+        <nav class="nav frost">
+          <a href="#s1" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-grid"/></svg>Play</a>
+          <a href="#s7"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chart"/></svg>Stats</a>
+          <a href="#s8"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sliders"/></svg>Settings</a>
+        </nav>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s1-cap">
+        <b><i>01</i>Home / game hub</b>
+        <p>The platform layer: one gradient Daily Mix CTA, a stack of pillowy game cards that any future
+           game slots into, and a locked slot that still looks friendly rather than nagging.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 2. GAME DETAIL -->
+    <figure class="cell" id="s2" aria-labelledby="s2-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-blush" style="width:340px;height:340px;top:-130px;right:-120px"></i>
+          <i class="b-lav" style="width:280px;height:280px;top:150px;left:40px"></i>
+          <i class="b-sky" style="width:300px;height:300px;bottom:-130px;right:-90px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="topbar">
+            <span class="iconbtn"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chev-l"/></svg></span>
+            <span class="label">Game</span>
+            <span class="iconbtn"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info"/></svg></span>
+          </div>
+
+          <div class="hero">
+            <span class="badge-icon"><span class="dots"><i></i><i></i><i></i></span></span>
+            <h2 class="h-xl">Stroop Rush</h2>
+            <p class="sub">Tap the colour, not the word</p>
+            <div class="hero-stats">
+              <span class="stat-pill"><span class="label">Best</span><span class="num">1,480</span></span>
+              <span class="stat-pill"><span class="label">Streak</span><span class="num">4 days</span></span>
+            </div>
+          </div>
+
+          <div class="seg-wrap">
+            <span class="label">Difficulty</span>
+            <div class="seg" role="radiogroup" aria-label="Difficulty">
+              <span role="radio" aria-checked="false" tabindex="-1">Chill</span>
+              <span class="on" role="radio" aria-checked="true" tabindex="0">Classic</span>
+              <span role="radio" aria-checked="false" tabindex="-1">Blitz</span>
+            </div>
+            <p class="seg-note">Balanced pace — a good place to start.</p>
+          </div>
+
+          <div class="howto">
+            <span class="label">How to play</span>
+            <ul>
+              <li><b>1</b><span>A colour word appears in a different ink.</span></li>
+              <li><b>2</b><span>Tap the ink colour, never the word.</span></li>
+              <li><b>3</b><span>Answer 5 in a row to build a multiplier.</span></li>
+            </ul>
+          </div>
+
+          <div class="detail-foot">
+            <span class="btn btn-primary"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg>Start</span>
+          </div>
+        </div>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s2-cap">
+        <b><i>02</i>Game detail + difficulty</b>
+        <p>The shared game-brief template: frosted hero over drifting blobs, a pill segmented control with
+           Classic selected, and one unmissable gradient Start.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 3. COUNTDOWN -->
+    <figure class="cell" id="s3" aria-labelledby="s3-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs strong" aria-hidden="true">
+          <i class="b-lav" style="width:420px;height:420px;top:180px;left:-20px"></i>
+          <i class="b-blush" style="width:340px;height:340px;top:-90px;right:-120px"></i>
+          <i class="b-mint" style="width:360px;height:360px;bottom:-120px;right:-100px"></i>
+          <i class="b-sky" style="width:300px;height:300px;bottom:60px;left:-120px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="count-head">
+            <span class="count-tag"><i></i>Stroop Rush · Classic</span>
+            <span class="iconbtn"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg></span>
+          </div>
+
+          <div class="count-wrap">
+            <div class="ring">
+              <span class="halo"></span>
+              <svg viewBox="0 0 210 210" aria-hidden="true">
+                <circle cx="105" cy="105" r="97" fill="none" stroke="var(--track)" stroke-width="10"/>
+                <circle cx="105" cy="105" r="97" fill="none" stroke="var(--fill-strong)" stroke-width="10"
+                        stroke-linecap="round" stroke-dasharray="609.5" stroke-dashoffset="0"/>
+              </svg>
+              <span class="n">3</span>
+            </div>
+            <div class="count-txt">
+              <h2 class="h-lg">Get ready</h2>
+              <p class="sub">Tap the colour, not the word</p>
+              <div class="count-dots"><i class="on"></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s3-cap">
+        <b><i>03</i>Countdown</b>
+        <p>The one moment the system lets colour take the whole screen: four blurred blobs, a frosted disc,
+           and a number that drifts up rather than snaps.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 4. STROOP GAMEPLAY -->
+    <figure class="cell" id="s4" aria-labelledby="s4-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-peach" style="width:260px;height:260px;top:60px;right:-70px"></i>
+          <i class="b-sky" style="width:280px;height:280px;bottom:40px;left:-90px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="hud">
+            <span class="hud-pill accent-peach"><span class="label">Time</span><span class="num">0:23</span></span>
+            <span class="hud-pill"><span class="label">Score</span><span class="num">1,240</span></span>
+            <span class="hud-pill accent-mint"><span class="label">Streak</span><span class="num">x7</span></span>
+          </div>
+          <div class="timerbar"><i></i></div>
+
+          <div class="stimulus">
+            <span class="label">The word says</span>
+            <span class="stim-word">BLUE</span>
+            <span class="stim-hint">Tap the colour it is printed in</span>
+          </div>
+
+          <div class="answers">
+            <span class="ans ans-red"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-circle"/></svg></span><span class="nm">Red</span></span>
+            <span class="ans ans-blue"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-square"/></svg></span><span class="nm">Blue</span></span>
+            <span class="ans ans-green"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-triangle"/></svg></span><span class="nm">Green</span></span>
+            <span class="ans ans-yellow"><span class="swatch"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#g-diamond"/></svg></span><span class="nm">Yellow</span></span>
+          </div>
+
+          <div class="play-foot">
+            <span class="pause"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pause"/></svg>Pause</span>
+          </div>
+        </div>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s4-cap">
+        <b><i>04</i>Stroop Rush gameplay</b>
+        <p>The stimulus word reads BLUE but is printed in red. Answers are soft-tinted pills carrying a
+           shaped chip &mdash; silhouette, pure tone and a ring in the stimulus ink &mdash; <em>and</em> a text
+           label, so colour is never the only signal.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 5. SCHULTE GAMEPLAY -->
+    <figure class="cell" id="s5" aria-labelledby="s5-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-mint" style="width:280px;height:280px;top:-110px;left:-90px"></i>
+          <i class="b-lav" style="width:300px;height:300px;bottom:170px;right:-60px"></i>
+          <i class="b-sky" style="width:280px;height:280px;bottom:20px;left:-70px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="hud">
+            <span class="hud-pill accent-peach"><span class="label">Time</span><span class="num">0:12.4</span></span>
+            <span class="hud-pill accent-lav"><span class="label">Next</span><span class="num">7</span></span>
+            <span class="hud-pill"><span class="label">Found</span><span class="num">6 / 25</span></span>
+          </div>
+          <div class="tinybar" style="margin-top:var(--s-3)"><i style="width:24%"></i></div>
+
+          <div class="sboard">
+            <div class="sgrid">
+              <span class="tile">14</span><span class="tile found">3</span><span class="tile">22</span><span class="tile">8</span><span class="tile">19</span>
+              <span class="tile found">6</span><span class="tile">25</span><span class="tile">11</span><span class="tile found">1</span><span class="tile">17</span>
+              <span class="tile">20</span><span class="tile">9</span><span class="tile found">4</span><span class="tile">23</span><span class="tile">12</span>
+              <span class="tile found">2</span><span class="tile">16</span><span class="tile next">7</span><span class="tile">24</span><span class="tile">10</span>
+              <span class="tile">21</span><span class="tile">13</span><span class="tile">18</span><span class="tile found">5</span><span class="tile">15</span>
+            </div>
+            <span class="sboard-rule">Tap 1 &rarr; 25 in order</span>
+          </div>
+
+          <div class="sfoot">
+            <span class="pause"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pause"/></svg>Pause</span>
+          </div>
+        </div>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s5-cap">
+        <b><i>05</i>Schulte Grid gameplay</b>
+        <p>Same chrome, different board &mdash; the tiles sit on their own frosted panel with the rule
+           printed underneath. 1&ndash;6 have settled into the mint found state; 7 breathes in lavender
+           with a ring — motion as a hint, never as the information itself.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 6. RESULTS -->
+    <figure class="cell" id="s6" aria-labelledby="s6-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-mint" style="width:340px;height:340px;top:-120px;left:-90px"></i>
+          <i class="b-blush" style="width:300px;height:300px;top:260px;right:-60px"></i>
+          <i class="b-lav" style="width:340px;height:340px;bottom:-140px;left:20px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="res-head">
+            <span class="pb-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-spark"/></svg>New personal best</span>
+            <p class="res-score"><span class="sr-only">Final score </span>1,540</p>
+            <p class="sub res-scorelabel">Stroop Rush · Classic</p>
+            <h2 class="h-xl" style="margin-top:var(--s-4)">Nice run!</h2>
+          </div>
+
+          <div class="res-card">
+            <div class="res-row">
+              <span class="res-ic i-mint"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-target"/></svg></span>
+              <span class="nm">Accuracy</span><span class="num">92%</span>
+            </div>
+            <div class="res-row">
+              <span class="res-ic i-sky"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg></span>
+              <span class="nm">Avg reaction</span><span class="num">640ms</span>
+            </div>
+            <div class="res-row">
+              <span class="res-ic i-peach"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></span>
+              <span class="nm">Longest streak</span><span class="num">x11</span>
+            </div>
+          </div>
+
+          <div class="res-foot">
+            <span class="btn btn-primary"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-replay"/></svg>Play again</span>
+            <span class="btn btn-secondary"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-home"/></svg>Home</span>
+          </div>
+        </div>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s6-cap">
+        <b><i>06</i>Results</b>
+        <p>Celebration without confetti-spam: the score is the largest number in the app, the personal
+           best badge is a soft mint pill, and Play again is the screen's single gradient.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 7. STATS -->
+    <figure class="cell" id="s7" aria-labelledby="s7-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-sky" style="width:300px;height:300px;top:-120px;right:-110px"></i>
+          <i class="b-blush" style="width:280px;height:280px;top:300px;right:-60px"></i>
+          <i class="b-lav" style="width:300px;height:300px;bottom:-90px;left:-70px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <div class="stats-head">
+            <h2 class="h-xl">Stats</h2>
+            <span class="chip chip-streak"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg>4 day streak</span>
+          </div>
+
+          <div class="best-grid">
+            <div class="best b-stroop">
+              <span class="label">Personal best</span>
+              <div class="g">Stroop Rush</div>
+              <span class="num">1,480</span>
+            </div>
+            <div class="best b-schulte">
+              <span class="label">Personal best</span>
+              <div class="g">Schulte Grid</div>
+              <span class="num">18.6s</span>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-top">
+              <div>
+                <h3 class="h-md">Last 7 runs</h3>
+                <p class="sub chart-sub">Stroop Rush · score</p>
+              </div>
+              <span class="delta">Best yet</span>
+            </div>
+            <div class="plot">
+              <div class="gridlines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+              <div class="bar" style="--h:53%"><em>780</em><u></u></div>
+              <div class="bar" style="--h:63%"><em>940</em><u></u></div>
+              <div class="bar" style="--h:76%"><em>1,120</em><u></u></div>
+              <div class="bar" style="--h:58%"><em>860</em><u></u></div>
+              <div class="bar" style="--h:88%"><em>1,310</em><u></u></div>
+              <div class="bar" style="--h:80%"><em>1,180</em><u></u></div>
+              <div class="bar best" style="--h:100%"><em>1,480</em><u></u></div>
+            </div>
+            <div class="xaxis">
+              <span>Oldest</span><span>Latest</span>
+            </div>
+          </div>
+
+          <div class="totals">
+            <div class="total">
+              <span class="ic i-lav"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-stack"/></svg></span>
+              <span><span class="num">128</span><span class="label">Games played</span></span>
+            </div>
+            <div class="total">
+              <span class="ic i-peach"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-hour"/></svg></span>
+              <span><span class="num">3h 12m</span><span class="label">Trained</span></span>
+            </div>
+          </div>
+
+          <p class="screen-foot">Every run is stored on this device only.</p>
+        </div>
+
+        <nav class="nav frost">
+          <a href="#s1"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-grid"/></svg>Play</a>
+          <a href="#s7" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chart"/></svg>Stats</a>
+          <a href="#s8"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sliders"/></svg>Settings</a>
+        </nav>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s7-cap">
+        <b><i>07</i>Stats</b>
+        <p>Real data density without a dashboard smell: two pastel personal-best cards, a 7-run CSS bar
+           chart whose record run turns mint, and two quiet lifetime totals.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ==================================================== 8. SETTINGS -->
+    <figure class="cell" id="s8" aria-labelledby="s8-cap">
+      <div class="stage"><div class="device"><div class="screen">
+        <div class="sblobs" aria-hidden="true">
+          <i class="b-blush" style="width:300px;height:300px;top:-120px;left:-100px"></i>
+          <i class="b-mint" style="width:280px;height:280px;bottom:60px;right:-40px"></i>
+          <i class="b-lav" style="width:260px;height:260px;bottom:-110px;left:-80px"></i>
+        </div>
+        <div class="sb"><span class="t">9:41</span>
+          <span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 4.2A10.4 10.4 0 0 1 15 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.7 7A6.6 6.6 0 0 1 12.3 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.4" fill="currentColor"/></svg>
+            <span class="bat"><i></i></span></span>
+        </div>
+
+        <div class="body">
+          <h2 class="h-xl" style="padding-top:var(--s-2)">Settings</h2>
+
+          <div class="set-group">
+            <span class="label">Feel</span>
+            <div class="set-card">
+              <div class="set-row">
+                <span class="set-ic i-mint2"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sound"/></svg></span>
+                <span class="set-txt"><span class="nm">Sound</span><span class="hint">Taps, ticks and the finish chime</span></span>
+                <span class="tog on" role="switch" tabindex="0" aria-checked="true" aria-label="Sound"><i></i></span>
+              </div>
+              <div class="set-row">
+                <span class="set-ic i-blush2"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-vibe"/></svg></span>
+                <span class="set-txt"><span class="nm">Haptics</span><span class="hint">A light tap on every answer</span></span>
+                <span class="tog on" role="switch" tabindex="0" aria-checked="true" aria-label="Haptics"><i></i></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-group">
+            <span class="label">Accessibility</span>
+            <div class="set-card">
+              <div class="set-row">
+                <span class="set-ic i-sky2"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-motion"/></svg></span>
+                <span class="set-txt"><span class="nm">Reduce motion</span><span class="hint">Stops blobs and breathing tiles</span></span>
+                <span class="tog" role="switch" tabindex="0" aria-checked="false" aria-label="Reduce motion"><i></i></span>
+              </div>
+              <div class="set-row">
+                <span class="set-ic i-lav2"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-eye"/></svg></span>
+                <span class="set-txt"><span class="nm">Colour-blind friendly palette</span><span class="hint">Marks the stimulus word with its answer shape</span></span>
+                <span class="tog" role="switch" tabindex="0" aria-checked="false" aria-label="Colour-blind friendly palette"><i></i></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-group">
+            <span class="label">App</span>
+            <div class="set-card">
+              <div class="set-row">
+                <span class="set-ic i-peach2"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-globe"/></svg></span>
+                <span class="set-txt"><span class="nm">Language</span></span>
+                <span class="set-val">English</span>
+                <span class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chev-r"/></svg></span>
+              </div>
+              <div class="set-row">
+                <span class="set-ic i-lav2"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info"/></svg></span>
+                <span class="set-txt"><span class="nm">About MindForge</span></span>
+                <span class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chev-r"/></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-foot">
+            <p class="sub">Works entirely offline. No account, no ads.</p>
+          </div>
+        </div>
+
+        <nav class="nav frost">
+          <a href="#s1"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-grid"/></svg>Play</a>
+          <a href="#s7"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chart"/></svg>Stats</a>
+          <a href="#s8" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sliders"/></svg>Settings</a>
+        </nav>
+        <div class="hi"></div>
+      </div></div></div>
+      <figcaption class="caption" id="s8-cap">
+        <b><i>08</i>Settings</b>
+        <p>Grouped rows on floating cards, each with a tinted icon so the eye can scan by colour. Toggles
+           render their true states: Sound and Haptics on, both accessibility options off.</p>
+      </figcaption>
+    </figure>
+
+  </div>
+</div>
+
+<script>
+/* Smooth scroll for the jump nav — the page is complete without it. */
+document.querySelectorAll('.jump a[href^="#"], .nav a[href^="#"]').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    var el = document.querySelector(a.getAttribute('href'));
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+});
+</script>
+</body>
+</html>

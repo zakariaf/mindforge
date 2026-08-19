@@ -1,0 +1,1993 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Paper Crayon — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   MindForge · Paper Crayon — system reference
+   The :root block below is the single source of truth. It is byte-for-byte
+   the same block shipped in app.html and transcribed into MindforgeTokens.
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  color-scheme: light;
+
+  /* ─── crayon box (primitives) ─────────────────────────────── */
+  --paper:        #FDF6E3;
+  --graphite:     #33302E;
+  --crayon-red:   #E5544B;
+  --marker-blue:  #3D7DD8;
+  --grass:        #58B368;
+  --sunny:        #F2B705;
+  --violet:       #8A5FBF;
+
+  /* ─── paper family ────────────────────────────────────────── */
+  --paper-white:  #FFFCF2;
+  --paper-warm:   #F8EFD8;
+  --paper-shade:  #F0E4C6;
+  --kraft:        #E7D5AC;
+  --kraft-edge:   #C9B27F;
+
+  /* ─── ink family ──────────────────────────────────────────── */
+  --ink-soft:     #5E574E;
+  --ink-faint:    #736B5E;
+  --ink-ghost:    #C2B9A6;
+
+  /* ─── crayon inks (text-safe on paper) ────────────────────── */
+  --red-ink:      #BE382F;
+  --blue-ink:     #2A5FA8;
+  --green-ink:    #2D7A45;
+  --sunny-ink:    #8A6200;
+  --violet-ink:   #6F45A0;
+
+  /* ─── deep crayons: the Stroop stimulus is TEXT, so green and yellow
+         get a darker sibling. Large-text floor is 3:1; these clear it
+         with margin (4.59:1 and 4.12:1 on --surface-raised). ────────── */
+  --grass-deep:   #3F814B;
+  --gold-deep:    #A17300;
+
+  /* ─── crayon tints ────────────────────────────────────────── */
+  --red-tint:     #FBE3E0;
+  --blue-tint:    #E2ECFB;
+  --green-tint:   #E3F3E7;
+  --sunny-tint:   #FDF1D0;
+  --violet-tint:  #EFE7F8;
+
+  /* ─── alphas ──────────────────────────────────────────────── */
+  --ink-a05:  rgba(51,48,46,.05);
+  --ink-a08:  rgba(51,48,46,.08);
+  --ink-a12:  rgba(51,48,46,.12);
+  --ink-a18:  rgba(51,48,46,.18);
+  --ink-a28:  rgba(51,48,46,.28);
+  --ink-a45:  rgba(51,48,46,.45);
+  --ink-a70:  rgba(51,48,46,.70);
+  --paper-a30: rgba(255,252,242,.30);
+  --paper-a55: rgba(255,252,242,.55);
+  --paper-a85: rgba(255,252,242,.85);
+  --tape-sunny: rgba(242,183,5,.58);
+  --tape-cream: rgba(253,241,208,.62);
+  --tape-blue:  rgba(61,125,216,.34);
+  --tape-violet:rgba(138,95,191,.30);
+  /* reserved — declared for the Flutter transcription, not referenced by
+     any rule on this page: --kraft-edge, --paper-a85, --ink-a12,
+     --ring-blue, --glow-sunny, --r-leaf2. */
+  --ring-blue:  rgba(61,125,216,.32);
+  --glow-sunny: rgba(242,183,5,.45);
+
+  /* ─── semantic slots ──────────────────────────────────────── */
+  --surface:        var(--paper);
+  --surface-raised: var(--paper-white);
+  --surface-sunk:   var(--paper-warm);
+  --surface-deep:   var(--paper-shade);
+  --surface-frame:  var(--kraft);
+  --text-primary:   var(--graphite);
+  --text-secondary: var(--ink-soft);
+  --text-muted:     var(--ink-faint);
+  --text-disabled:  var(--ink-ghost);
+  --accent:         var(--violet);
+  --accent-ink:     var(--violet-ink);
+  --accent-tint:    var(--violet-tint);
+  --success:        var(--grass);
+  --success-ink:    var(--green-ink);
+  --warning:        var(--sunny);
+  --warning-ink:    var(--sunny-ink);
+  --danger:         var(--crayon-red);
+  --danger-ink:     var(--red-ink);
+  --focus-ring:     var(--marker-blue);
+  --stroke:         var(--graphite);
+  --stroke-soft:    var(--ink-a28);
+  --on-accent:      var(--paper-white);
+  --stim-red:       var(--crayon-red);
+  --stim-blue:      var(--marker-blue);
+  --stim-green:     var(--grass-deep);
+  --stim-yellow:    var(--gold-deep);
+
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  --font-hand:  'Caveat', 'Bradley Hand', 'Chalkboard SE', ui-rounded, cursive;
+  --font-print: 'Patrick Hand', 'Chalkboard SE', 'Bradley Hand', ui-rounded, cursive;
+  --font-body:  'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:  ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+
+  --r-leaf:  255px 15px 225px 15px / 15px 225px 15px 255px;
+  --r-stamp: 17px 6px 15px 8px / 8px 15px 6px 17px;
+  --r-leaf2: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  --r-blob:  30px 12px 28px 14px / 14px 28px 12px 30px;
+  --r-card:  20px 26px 18px 24px / 24px 18px 26px 20px;
+  --r-card2: 26px 18px 24px 20px / 18px 26px 20px 24px;
+  --r-tile:  10px 14px 11px 13px / 13px 11px 14px 10px;
+  --r-pill:  999px;
+
+  --lift-0: none;
+  --lift-1: 0 2px 0 var(--ink-a18);
+  --lift-2: 0 3px 0 var(--ink-a28), 0 8px 16px -8px var(--ink-a28);
+  --lift-3: 0 5px 0 var(--ink-a45), 0 14px 24px -12px var(--ink-a45);
+  --stamp:  0 4px 0 var(--ink-a70);
+
+  --dur-quick:150ms; --dur-base:200ms; --dur-stamp:250ms;
+  --ease-stamp: cubic-bezier(.2,1.5,.4,1);
+  --ease-out:   cubic-bezier(.22,.8,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+:focus-visible{outline:3px solid var(--focus-ring); outline-offset:2px}
+html{scroll-behavior:smooth}
+html,body{margin:0; padding:0}
+body{
+  background:var(--surface); color:var(--text-primary);
+  font-family:var(--font-body); font-weight:600; overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    repeating-linear-gradient(0deg, var(--ink-a05) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--ink-a05) 0 1px, transparent 1px 28px);
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:99;
+  background-image:var(--noise); opacity:.055; mix-blend-mode:multiply;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:var(--s8) var(--s6) 110px}
+
+/* ── shared atoms ── */
+.hand{font-family:var(--font-print); font-weight:400}
+.script{font-family:var(--font-hand); font-weight:700}
+.micro{font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted)}
+.mono{font-family:var(--font-mono); font-size:12px; font-weight:500; letter-spacing:-.01em}
+.card{background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-2)}
+/* Colour-identity badge: shape + fill pattern carry what the hue carries. */
+.shape{display:block; width:26px; height:26px; flex:none}
+.shape .bg{fill:var(--surface-raised); stroke:var(--stroke); stroke-width:5; stroke-linejoin:round}
+.shape .mk{fill:none; stroke:var(--stroke); stroke-width:5; stroke-linecap:round}
+.shape .mkf{fill:var(--stroke); stroke:none}
+.tape{
+  position:absolute; width:92px; height:27px; background:var(--tape-sunny);
+  border-top:1px solid var(--paper-a55); border-bottom:1px solid var(--ink-a08);
+  clip-path:polygon(4% 0,100% 5%,96% 100%,0 93%); transform:rotate(-5deg); pointer-events:none;
+  filter:drop-shadow(0 1px 1px var(--ink-a08));
+}
+/* Sheen, not corrugation. */
+.tape::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,var(--paper-a30),transparent 40%,var(--ink-a05))}
+.tape.cream{background:var(--tape-cream)}
+.tape.blue{background:var(--tape-blue)}
+.tape.violet{background:var(--tape-violet)}
+
+/* ── masthead ── */
+.kicker{font-size:11px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin:0 0 var(--s2)}
+.mast-title{
+  font-family:var(--font-hand); font-weight:700; font-size:clamp(50px,8vw,84px);
+  line-height:.92; margin:0; display:inline-block; position:relative;
+}
+/* A replaced element with left+right+width:auto takes its width from the
+   viewBox ratio and drops `right`. Always give the squiggle an explicit width. */
+.mast-title .ul{position:absolute; left:-6px; right:auto; width:calc(100% + 16px); bottom:-16px; height:16px; color:var(--danger)}
+.mast-lede{font-size:17px; line-height:1.62; color:var(--text-secondary); max-width:60ch; margin:var(--s7) 0 0}
+.mast-lede em{font-style:normal; color:var(--text-primary); font-weight:800}
+.backlink{
+  display:inline-flex; align-items:center; gap:9px; text-decoration:none; margin-top:var(--s5);
+  font-family:var(--font-print); font-size:18px; color:var(--text-primary);
+  background:var(--sunny); border:2.5px solid var(--stroke); border-radius:var(--r-blob);
+  padding:10px 18px; box-shadow:var(--stamp);
+  transition:transform var(--dur-quick) var(--ease-stamp), box-shadow var(--dur-quick) var(--ease-out);
+}
+.backlink:hover{transform:translateY(-2px) rotate(-1deg)}
+.backlink:active{transform:translateY(4px); box-shadow:0 0 0 var(--ink-a70)}
+.backlink svg{width:22px; height:14px}
+
+.toc{display:flex; flex-wrap:wrap; gap:9px; margin:var(--s7) 0 0; padding:0; list-style:none}
+.toc a{
+  display:block; text-decoration:none; font-size:13px; font-weight:800; color:var(--text-secondary);
+  background:var(--surface-raised); border:2.5px solid var(--stroke-soft); border-radius:var(--r-pill);
+  padding:7px 15px;
+}
+.toc a:hover{border-color:var(--stroke); color:var(--text-primary); background:var(--sunny-tint)}
+
+/* ── sections ── */
+section{margin-top:84px; scroll-margin-top:24px}
+.sec-head{display:flex; align-items:flex-end; gap:var(--s4); flex-wrap:wrap; margin-bottom:var(--s3)}
+.sec-no{
+  font-family:var(--font-print); font-size:16px; background:var(--accent); color:var(--on-accent);
+  border:2.5px solid var(--stroke); border-radius:var(--r-stamp); padding:2px 12px; line-height:1.5;
+  transform:rotate(-2deg);
+}
+.sec-head h2{font-family:var(--font-hand); font-weight:700; font-size:clamp(34px,4.6vw,48px); line-height:1; margin:0; position:relative}
+.sec-head h2 .ul{position:absolute; left:0; right:auto; width:calc(100% + 6px); bottom:-10px; height:11px; color:var(--marker-blue)}
+.sec-lede{font-size:15px; line-height:1.65; color:var(--text-secondary); max-width:74ch; margin:var(--s5) 0 var(--s6)}
+.sec-lede strong{color:var(--text-primary)}
+h3.sub{font-family:var(--font-print); font-weight:400; font-size:23px; margin:var(--s7) 0 var(--s4)}
+h3.sub:first-of-type{margin-top:0}
+
+.grid{display:grid; gap:var(--s4)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(232px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+
+/* ── colour swatch cards ── */
+.tok{padding:0; overflow:hidden; background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-2)}
+.tok .chip{height:78px; border-bottom:2.5px solid var(--stroke); position:relative}
+.tok .chip.ruled{background-image:repeating-linear-gradient(122deg,var(--paper-a30) 0 4px,transparent 4px 12px)}
+.tok .meta{padding:11px 13px 13px}
+.tok .nm{font-family:var(--font-print); font-size:19px; line-height:1.15}
+.tok .hx{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:4px}
+.tok .hx .mono{color:var(--text-secondary)}
+.tok .role{font-size:12px; font-weight:700; color:var(--text-secondary); line-height:1.45; margin-top:7px}
+.tok .var{display:block; margin-top:6px; padding:4px 7px; background:var(--surface-sunk); border-radius:6px; color:var(--text-secondary)}
+.ratio{
+  font-size:10px; font-weight:900; letter-spacing:.05em; padding:2px 7px; border-radius:var(--r-pill);
+  border:2px solid var(--stroke); background:var(--surface-sunk); white-space:nowrap;
+}
+.ratio.pass{background:var(--green-tint); color:var(--success-ink)}
+.ratio.large{background:var(--sunny-tint); color:var(--warning-ink)}
+.ratio.fail{background:var(--red-tint); color:var(--danger-ink)}
+
+.c-paper{background:var(--paper)} .c-graphite{background:var(--graphite)}
+.c-red{background:var(--crayon-red)} .c-blue{background:var(--marker-blue)}
+.c-grass{background:var(--grass)} .c-sunny{background:var(--sunny)} .c-violet{background:var(--violet)}
+.c-paper-white{background:var(--paper-white)} .c-paper-warm{background:var(--paper-warm)}
+.c-paper-shade{background:var(--paper-shade)} .c-kraft{background:var(--kraft)}
+.c-ink-soft{background:var(--ink-soft)} .c-ink-faint{background:var(--ink-faint)} .c-ink-ghost{background:var(--ink-ghost)}
+.c-red-ink{background:var(--red-ink)} .c-blue-ink{background:var(--blue-ink)} .c-green-ink{background:var(--green-ink)}
+.c-sunny-ink{background:var(--sunny-ink)} .c-violet-ink{background:var(--violet-ink)}
+.c-red-tint{background:var(--red-tint)} .c-blue-tint{background:var(--blue-tint)} .c-green-tint{background:var(--green-tint)}
+.c-sunny-tint{background:var(--sunny-tint)} .c-violet-tint{background:var(--violet-tint)}
+
+/* ── semantic slot rows ── */
+.slots{background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-2); overflow:hidden}
+.slot-row{display:flex; align-items:center; gap:var(--s4); padding:12px 15px; border-bottom:2px dashed var(--stroke-soft); flex-wrap:wrap}
+.slot-row:last-child{border-bottom:0}
+.slot-row .sw{width:44px; height:34px; flex:none; border:2.5px solid var(--stroke); border-radius:var(--r-tile)}
+.slot-row .id{flex:1 1 190px; min-width:0}
+.slot-row .id b{display:block; font-size:14px; font-weight:900}
+.slot-row .id .mono{display:block; color:var(--text-secondary); margin-top:2px}
+.slot-row .maps{flex:0 1 210px; font-size:12px; font-weight:700; color:var(--text-secondary)}
+.slot-row .use{flex:2 1 300px; font-size:13px; font-weight:600; color:var(--text-secondary); line-height:1.5}
+
+/* ── stroop palette ── */
+.stroop-grid{display:grid; gap:var(--s4); grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.sp{background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-2); padding:12px}
+.sp .fill{
+  height:74px; border:2.5px solid var(--stroke); border-radius:var(--r-tile); position:relative;
+}
+.sp .fill .shape{position:absolute; top:8px; left:8px}
+/* One pattern per answer — never the same hatch on all four. */
+.f-red{background-color:var(--crayon-red)}
+.f-blue{background-color:var(--marker-blue); background-image:repeating-linear-gradient(122deg,var(--paper-a30) 0 4px,transparent 4px 11px)}
+.f-green{background-color:var(--grass); background-image:radial-gradient(var(--paper-a55) 1.7px,transparent 1.8px); background-size:11px 11px}
+.f-yellow{background-color:var(--sunny);
+  background-image:repeating-linear-gradient(45deg,var(--ink-a08) 0 3px,transparent 3px 10px),
+                   repeating-linear-gradient(-45deg,var(--ink-a08) 0 3px,transparent 3px 10px)}
+.f-graphite{background-color:var(--graphite); background-image:radial-gradient(var(--paper-a30) 1.7px,transparent 1.8px); background-size:11px 11px}
+.f-redink{background-color:var(--red-ink)}
+.f-blueink{background-color:var(--blue-ink); background-image:repeating-linear-gradient(122deg,var(--paper-a30) 0 4px,transparent 4px 11px)}
+.f-violet{background-color:var(--violet)}
+.stim-demo{
+  display:flex; align-items:center; justify-content:center; gap:var(--s4); flex-wrap:wrap;
+  padding:var(--s5) var(--s4); background:var(--surface-raised);
+  border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-2);
+  background-image:repeating-linear-gradient(0deg,transparent 0 33px,var(--ink-a08) 33px 34px);
+}
+.stim-demo span{
+  font-family:var(--font-print); font-size:56px; line-height:1; letter-spacing:.04em;
+  -webkit-text-stroke:2px var(--stroke); paint-order:stroke fill;
+}
+.sd-red{color:var(--stim-red)} .sd-blue{color:var(--stim-blue)}
+.sd-green{color:var(--stim-green)} .sd-yellow{color:var(--stim-yellow)}
+.sp .lab{font-family:var(--font-print); font-size:20px; text-align:center; margin-top:9px}
+.sp dl{margin:10px 0 0; display:grid; grid-template-columns:1fr auto; gap:5px 8px; font-size:11px; font-weight:700}
+.sp dt{color:var(--text-secondary)}
+.sp dd{margin:0; text-align:right; font-variant-numeric:tabular-nums}
+.callout{
+  position:relative; margin-top:var(--s6); padding:18px 20px; background:var(--sunny-tint);
+  border:2.5px solid var(--stroke); border-radius:var(--r-card2); box-shadow:var(--lift-1);
+}
+.callout b{font-family:var(--font-print); font-weight:400; font-size:21px; display:block; margin-bottom:6px}
+.callout p{margin:0 0 8px; font-size:14px; line-height:1.6; color:var(--text-secondary)}
+.callout p:last-child{margin-bottom:0}
+
+/* ── typography specimens ── */
+.type-row{
+  display:flex; gap:var(--s5); align-items:baseline; padding:18px 0; border-bottom:2px dashed var(--stroke-soft);
+  flex-wrap:wrap;
+}
+.type-row:last-child{border-bottom:0}
+.type-spec{flex:0 0 210px}
+.type-spec b{display:block; font-size:13px; font-weight:900}
+.type-spec span{display:block; font-size:12px; font-weight:700; color:var(--text-secondary); margin-top:3px; line-height:1.5}
+.type-demo{flex:1 1 320px; min-width:0}
+.t-display{font-family:var(--font-hand); font-weight:700; font-size:36px; line-height:1}
+.t-verdict{font-family:var(--font-hand); font-weight:700; font-size:52px; line-height:1}
+.t-stim{font-family:var(--font-print); font-size:104px; line-height:1; letter-spacing:.04em;
+  color:var(--stim-green); -webkit-text-stroke:2px var(--stroke); paint-order:stroke fill}
+.t-titlesm{font-family:var(--font-print); font-size:20px; line-height:1.15}
+.t-sticker{font-family:var(--font-print); font-size:17px; line-height:1.4}
+.t-rowtitle{font-size:15px; font-weight:800; line-height:1.25}
+.t-numxl{font-family:var(--font-print); font-size:76px; line-height:.95; color:var(--accent-ink)}
+.t-title{font-family:var(--font-print); font-size:26px; line-height:1.15}
+.t-num{font-family:var(--font-print); font-size:23px; line-height:1.15; font-variant-numeric:tabular-nums}
+.t-heading{font-size:18px; font-weight:800; line-height:1.35}
+.t-body{font-size:15px; font-weight:600; line-height:1.5}
+.t-label{font-size:13px; font-weight:700; line-height:1.4; color:var(--text-secondary)}
+.t-caption{font-size:12px; font-weight:600; line-height:1.35; color:var(--text-secondary)}
+.t-micro{font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted)}
+
+/* ── scales ── */
+.scale-row{display:flex; align-items:center; gap:var(--s4); padding:10px 0; border-bottom:2px dashed var(--stroke-soft)}
+.scale-row:last-child{border-bottom:0}
+.scale-row .nm{flex:0 0 96px; font-size:13px; font-weight:900}
+.scale-row .px{flex:0 0 60px; font-size:12px; font-weight:700; color:var(--text-secondary); font-variant-numeric:tabular-nums}
+.scale-row .viz{flex:0 0 210px; display:flex; align-items:center}
+.scale-row .viz i{display:block; height:20px; background:var(--violet); border:2.5px solid var(--stroke); border-radius:4px}
+.scale-row .use{flex:1 1 220px; font-size:13px; font-weight:600; color:var(--text-secondary); line-height:1.5}
+
+.rad-item{padding:var(--s4); text-align:center; background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-1)}
+.rad-demo{height:118px; background:var(--violet-tint); border:2.5px solid var(--stroke); margin-bottom:11px}
+.rd-tile{border-radius:var(--r-tile)} .rd-card{border-radius:var(--r-card)} .rd-card2{border-radius:var(--r-card2)}
+.rd-blob{border-radius:var(--r-blob)} .rd-leaf{border-radius:var(--r-leaf)} .rd-stamp{border-radius:var(--r-stamp)}
+.rd-pill{border-radius:var(--r-pill)}
+.rad-item b{display:block; font-size:13px; font-weight:900}
+.rad-item .mono{display:block; color:var(--text-secondary); margin-top:4px; word-break:break-word}
+.rad-item span.u{display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-top:6px; line-height:1.45}
+
+.elev-item{padding:var(--s5); text-align:center; background:var(--surface-sunk); border:2.5px dashed var(--stroke-soft); border-radius:var(--r-card)}
+.elev-demo{height:74px; background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-tile); margin:0 auto 16px; max-width:180px}
+.e0{box-shadow:var(--lift-0)} .e1{box-shadow:var(--lift-1)} .e2{box-shadow:var(--lift-2)}
+.e3{box-shadow:var(--lift-3)} .es{box-shadow:var(--stamp)}
+.elev-item b{display:block; font-size:13px; font-weight:900}
+.elev-item .mono{display:block; color:var(--text-secondary); margin-top:4px}
+.elev-item span.u{display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-top:7px; line-height:1.45}
+
+/* ── motion ── */
+.motion-item{padding:var(--s5); background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card); box-shadow:var(--lift-1)}
+.track{height:34px; background:var(--surface-deep); border:2.5px solid var(--stroke); border-radius:var(--r-pill); position:relative; overflow:hidden; margin-bottom:12px}
+.track i{
+  position:absolute; top:2px; left:2px; width:26px; height:26px; border-radius:50%;
+  border:2.5px solid var(--stroke); background:var(--sunny);
+}
+.m-quick i{animation:slide var(--dur-quick) var(--ease-out) infinite alternate}
+.m-base i{animation:slide var(--dur-base) var(--ease-out) infinite alternate}
+.m-stamp i{animation:slide var(--dur-stamp) var(--ease-stamp) infinite alternate}
+@keyframes slide{from{left:2px}to{left:calc(100% - 33px)}}
+.motion-item b{display:block; font-size:14px; font-weight:900}
+.motion-item .mono{display:block; color:var(--text-secondary); margin-top:4px}
+.motion-item span.u{display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-top:8px; line-height:1.5}
+.curve{width:100%; height:auto; aspect-ratio:260/120; display:block; background:var(--surface-sunk); border:2.5px solid var(--stroke); border-radius:var(--r-tile)}
+.curve .grid-l{stroke:var(--ink-a18); stroke-width:1.5}
+.curve .path{stroke:var(--violet-ink); stroke-width:3.5; fill:none; stroke-linecap:round}
+
+/* ══════════════ COMPONENT GALLERY ══════════════ */
+.comp.span-all{grid-column:1 / -1}
+.comp{
+  background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card);
+  box-shadow:var(--lift-2); padding:18px 18px 20px; position:relative;
+}
+.comp > header{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:15px; flex-wrap:wrap}
+.comp > header b{font-family:var(--font-print); font-weight:400; font-size:21px}
+.comp > header span{font-size:11px; font-weight:700; color:var(--text-muted); max-width:34ch; text-align:right; line-height:1.4}
+.states{display:flex; flex-wrap:wrap; gap:var(--s4)}
+.state{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
+.state > .micro{order:2}
+.state-wide{flex:1 1 100%}
+
+.btn{
+  font-family:var(--font-print); font-size:20px; line-height:1; border:2.5px solid var(--stroke);
+  border-radius:var(--r-blob); padding:14px 24px; cursor:pointer; display:inline-flex; align-items:center;
+  justify-content:center; gap:10px; box-shadow:var(--stamp);
+  transition:transform var(--dur-quick) var(--ease-stamp), box-shadow var(--dur-quick) var(--ease-out);
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active,.btn.is-pressed{transform:translateY(4px); box-shadow:0 0 0 var(--ink-a70)}
+.btn-primary{background:var(--accent); color:var(--on-accent)}
+.btn-secondary{background:var(--surface-raised); color:var(--text-primary)}
+.btn-ghost{background:transparent; color:var(--text-secondary); border-style:dashed; box-shadow:none}
+.btn-ghost:active,.btn-ghost.is-pressed{transform:translateY(2px); box-shadow:none}
+.btn[disabled]{
+  background:var(--surface-deep); color:var(--text-disabled); border-color:var(--stroke-soft);
+  box-shadow:none; cursor:not-allowed; transform:none;
+}
+
+.gcard{
+  display:flex; align-items:center; gap:13px; padding:15px 14px; width:100%;
+  background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:var(--r-card); box-shadow:var(--lift-2); transform:rotate(-.5deg);
+  transition:transform var(--dur-quick) var(--ease-stamp), box-shadow var(--dur-quick) var(--ease-out);
+}
+.gcard.is-pressed{transform:rotate(-.5deg) translateY(3px); box-shadow:var(--lift-1)}
+.gcard.locked{background:var(--surface-sunk); border-style:dashed; box-shadow:none; transform:rotate(-.3deg)}
+.gcard-thumb{width:62px; height:62px; flex:none; border:2.5px solid var(--stroke); border-radius:var(--r-tile); display:flex; align-items:center; justify-content:center}
+.gcard-thumb.red{background:var(--red-tint)} .gcard-thumb.grey{background:var(--surface-deep)}
+.gcard-b{flex:1; min-width:0}
+.gcard-t{display:block; font-family:var(--font-print); font-size:20px; line-height:1.15}
+.gcard-s{display:block; font-size:12px; font-weight:700; color:var(--text-secondary); margin-top:3px}
+.gcard.locked .gcard-t{color:var(--text-secondary)}
+.gcard.locked .gcard-s{color:var(--text-muted)}
+.gcard-r{text-align:right; flex:none}
+.gcard-r .v{display:block; font-family:var(--font-print); font-size:20px; line-height:1.1; margin-top:2px; font-variant-numeric:tabular-nums}
+.dots2{display:grid; grid-template-columns:1fr 1fr; gap:5px}
+.dots2 i{width:12px; height:12px; border-radius:50%; border:2px solid var(--stroke); display:block}
+.dots2 i:nth-child(1){background:var(--crayon-red)} .dots2 i:nth-child(2){background:var(--marker-blue)}
+.dots2 i:nth-child(3){background:var(--sunny)} .dots2 i:nth-child(4){background:var(--grass)}
+
+.seg{
+  display:grid; grid-template-columns:repeat(3,1fr); background:var(--surface-deep);
+  border:2.5px solid var(--stroke); border-radius:var(--r-blob); padding:5px;
+  box-shadow:inset 0 2px 0 var(--ink-a08); width:min(330px,100%);
+}
+.seg button{
+  appearance:none; background:transparent; border:2.5px solid transparent; cursor:pointer;
+  font-family:var(--font-print); font-size:20px; padding:9px 4px 10px; color:var(--text-secondary);
+  border-radius:var(--r-tile); min-height:44px;
+}
+.seg button[aria-pressed="true"]{
+  background:var(--surface-raised); border-color:var(--stroke); color:var(--text-primary);
+  box-shadow:0 2px 0 var(--ink-a45); transform:rotate(-1deg);
+}
+.seg button[disabled]{color:var(--text-disabled); cursor:not-allowed}
+
+.pill{
+  background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  padding:7px 16px 8px; text-align:center; box-shadow:var(--lift-1); min-width:104px;
+}
+.pill .k{font-size:10px; font-weight:900; letter-spacing:.11em; text-transform:uppercase; color:var(--text-muted); display:block}
+.pill .v{font-family:var(--font-print); font-size:23px; line-height:1.15; display:block; margin-top:1px; font-variant-numeric:tabular-nums}
+.pill.hot{background:var(--sunny-tint)} .pill.hot .v{color:var(--warning-ink)}
+.pill.cool{background:var(--blue-tint)} .pill.cool .v{color:var(--blue-ink)}
+.pill.bad{background:var(--red-tint)} .pill.bad .v{color:var(--danger-ink)}
+
+.bar{height:14px; border:2.5px solid var(--stroke); border-radius:var(--r-pill); background:var(--surface-deep); overflow:hidden; width:100%}
+.bar i{display:block; height:100%; background:var(--danger); border-right:2.5px solid var(--stroke); background-image:repeating-linear-gradient(115deg,var(--paper-a30) 0 3px,transparent 3px 9px)}
+.bar.blue i{background-color:var(--marker-blue)} .bar.grass i{background-color:var(--success)}
+
+.ring-demo{width:118px; height:118px; position:relative; display:flex; align-items:center; justify-content:center}
+.ring-demo svg{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg)}
+.ring-track{fill:none; stroke:var(--surface-deep); stroke-width:9}
+.ring-edge{fill:none; stroke:var(--graphite); stroke-width:2.5}
+.ring-prog{fill:none; stroke:var(--crayon-red); stroke-width:9; stroke-linecap:round}
+.ring-demo .t{font-family:var(--font-print); font-size:26px; font-variant-numeric:tabular-nums}
+
+.tile{
+  width:66px; height:66px; display:flex; align-items:center; justify-content:center;
+  background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-tile);
+  font-family:var(--font-print); font-size:23px; box-shadow:var(--lift-1); position:relative;
+  font-variant-numeric:tabular-nums;
+}
+/* Found sinks to the page colour and loses its lift; the strike is drawn in
+   success-ink (4.89:1) because the grass fill only reaches 2.06:1. */
+.tile.found{background:var(--surface); color:var(--text-muted); box-shadow:none}
+.tile.found::after{content:""; position:absolute; left:16%; right:16%; top:52%; height:3px; background:var(--success-ink); border-radius:var(--r-pill); transform:rotate(-9deg)}
+.tile.next{background:var(--blue-tint); border-color:var(--marker-blue); border-width:3px; color:var(--blue-ink); overflow:visible}
+.tile.next .cue{position:absolute; inset:-8px; color:var(--marker-blue)}
+.tile.wrong{background:var(--red-tint); border-color:var(--crayon-red); border-width:3px; color:var(--danger-ink); transform:rotate(-3deg)}
+.tile.wrong .cue{position:absolute; inset:-7px; color:var(--danger)}
+
+.tog{
+  width:60px; height:33px; appearance:none; padding:0; cursor:pointer;
+  border:2.5px solid var(--stroke); border-radius:var(--r-pill);
+  background:var(--surface-deep); position:relative; box-shadow:inset 0 2px 0 var(--ink-a08);
+}
+.tog::before{content:""; position:absolute; inset:-6px -2px}  /* 45px touch target */
+.tog i{position:absolute; top:2px; left:2px; width:25px; height:25px; border-radius:50%; border:2.5px solid var(--stroke); background:var(--surface-raised); display:flex; align-items:center; justify-content:center; transition:transform var(--dur-base) var(--ease-stamp)}
+.tog i svg{width:12px; height:12px; color:var(--text-muted)}
+.tog i .yes{display:none}
+.tog[aria-checked="true"]{background:var(--success)}
+.tog[aria-checked="true"] i{transform:translateX(27px)}
+.tog[aria-checked="true"] i .yes{display:block; color:var(--success-ink)}
+.tog[aria-checked="true"] i .no{display:none}
+.tog[disabled]{background:var(--surface-sunk); border-color:var(--stroke-soft); box-shadow:none; cursor:not-allowed}
+.tog[disabled] i{border-color:var(--stroke-soft)} .tog[disabled] i svg{color:var(--text-disabled)}
+
+.badge{
+  display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border:2.5px solid var(--stroke);
+  border-radius:var(--r-stamp); font-family:var(--font-print); font-size:17px; line-height:1.4;
+  white-space:nowrap; background:var(--warning); box-shadow:var(--lift-1);
+}
+.badge svg{width:14px; height:14px}
+.badge.violet{background:var(--violet); color:var(--on-accent)}
+.badge.grass{background:var(--success)}
+.badge.ghost{background:var(--surface-raised)}
+.badge.off{background:var(--surface-sunk); border-color:var(--stroke-soft); color:var(--text-disabled); box-shadow:none}
+
+.sheet{
+  width:min(360px,100%); background:var(--surface-raised); border:2.5px solid var(--stroke);
+  border-radius:28px 22px 4px 4px / 26px 24px 4px 4px; box-shadow:var(--lift-3);
+  padding:12px 20px 20px; position:relative;
+}
+.sheet .grab{width:56px; height:5px; border-radius:var(--r-pill); background:var(--ink-a28); margin:0 auto 14px}
+.sheet h3{font-family:var(--font-print); font-weight:400; font-size:26px; margin:0}
+.sheet p{font-size:13px; font-weight:600; line-height:1.55; color:var(--text-secondary); margin:8px 0 18px}
+.sheet .row{display:flex; gap:10px}
+.sheet .row .btn{flex:1; font-size:18px; padding:12px 14px}
+
+.nav{
+  display:grid; grid-template-columns:repeat(3,1fr); background:var(--surface-sunk);
+  border:2.5px solid var(--stroke); border-radius:var(--r-tile); padding:10px 14px 4px;
+  width:min(360px,100%);
+}
+.nav-item{
+  appearance:none; background:transparent; border:0; padding:6px 0 8px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  font-size:12px; font-weight:800; color:var(--text-muted);
+}
+.nav-item svg{width:24px; height:24px}
+.nav-item .ico{width:40px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:var(--r-pill)}
+.nav-item.is-active{color:var(--accent-ink)}
+.nav-item.is-active .ico{background:var(--accent-tint); border:2px solid var(--accent)}
+
+/* ── code ── */
+.codewrap{
+  background:var(--surface-raised); border:2.5px solid var(--stroke); border-radius:var(--r-card);
+  box-shadow:var(--lift-2); overflow:hidden;
+}
+.codewrap header{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  padding:12px 16px; background:var(--surface-sunk); border-bottom:2.5px dashed var(--stroke-soft);
+}
+.codewrap header b{font-family:var(--font-print); font-weight:400; font-size:19px}
+.codewrap header span{font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted)}
+pre{margin:0; padding:18px 16px; overflow-x:auto; background:var(--surface-raised)}
+code{font-family:var(--font-mono); font-size:13px; line-height:1.65; color:var(--text-primary); white-space:pre}
+
+.pagefoot{
+  margin-top:96px; padding-top:26px; border-top:2.5px dashed var(--stroke-soft);
+  display:flex; flex-wrap:wrap; gap:var(--s4) var(--s7); align-items:center; justify-content:space-between;
+}
+.pagefoot p{margin:0; font-size:13px; font-weight:700; color:var(--text-secondary); max-width:64ch; line-height:1.6}
+.pagefoot .script{font-family:var(--font-hand); font-size:28px; color:var(--text-muted)}
+
+@media (max-width:640px){
+  .wrap{padding:var(--s6) var(--s4) 72px}
+  section{margin-top:60px}
+  .scale-row .viz{flex:0 0 120px}
+  .comp > header span{text-align:left}
+}
+/* Collapse the duration, never the animation: `animation:none` also throws
+   away the 100% keyframe, and with it every resting transform. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-delay:0ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; transition-delay:0ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="kicker">MindForge · system reference · direction 01 of 03</p>
+    <h1 class="mast-title">Paper&nbsp;Crayon
+      <svg class="ul" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 11C48 4 96 13 143 8s96-8 153 3" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+    </h1>
+    <p class="mast-lede">A sketchbook come to life. Warm paper, ink outlines that wobble, crayon fills that
+      streak, washi tape holding cards to the page. It is <em>hand-made, not childish</em> — the charm lives in
+      the shapes and the handwriting, while every number, label and paragraph is set in Nunito so the data
+      never pays for the personality.</p>
+    <a class="backlink" href="app.html">
+      <svg viewBox="0 0 60 24" aria-hidden="true">
+        <path d="M57 12C43 6 27 18 11 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <path d="M20 5 10 12l10 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to the 8 screens
+    </a>
+
+    <ul class="toc">
+      <li><a href="#personality">Personality</a></li>
+      <li><a href="#colour">Colour</a></li>
+      <li><a href="#stroop">Stroop palette</a></li>
+      <li><a href="#type">Typography</a></li>
+      <li><a href="#space">Spacing</a></li>
+      <li><a href="#radius">Radius</a></li>
+      <li><a href="#elevation">Elevation</a></li>
+      <li><a href="#motion">Motion</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#flutter">Flutter mapping</a></li>
+    </ul>
+  </header>
+
+  <main>
+
+  <!-- ══════════ 00 PERSONALITY ══════════ -->
+  <section id="personality">
+    <div class="sec-head">
+      <span class="sec-no">00</span>
+      <h2>Personality
+        <svg class="ul" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c32-6 64 5 96-1s66-4 98 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">MindForge is offline, account-free and free of ads. It has nothing to sell you, and
+      Paper Crayon is the direction that <strong>makes that feel like generosity rather than austerity</strong>.
+      It reads as a well-art-directed activity book: warm, unhurried, a little imperfect, and unmistakably
+      not a productivity dashboard.</p>
+
+    <div class="grid g2">
+      <div class="callout" style="background:var(--green-tint)">
+        <b>Choose this when…</b>
+        <p>• The app should feel like a <strong>gift or a hobby</strong>, not a discipline tool. Training your
+          brain is voluntary; the visual language should never nag.</p>
+        <p>• You want <strong>each game to keep its own character</strong>. Wobble, rotation and crayon fills
+          absorb wildly different board designs without the shell falling apart.</p>
+        <p>• The product is a long-lived <strong>engine</strong>. Hand-drawn shapes hide the seams when a new
+          game lands with an odd aspect ratio or an unusual control.</p>
+        <p>• You are competing on charm rather than features, and want people to screenshot it.</p>
+      </div>
+      <div class="callout" style="background:var(--red-tint)">
+        <b>Do not choose this when…</b>
+        <p>• The roadmap includes <strong>dense data</strong> — leaderboards, long histories, cohort tables.
+          Handwriting is banned from those, so the personality thins out exactly where you need it.</p>
+        <p>• You need a <strong>dark mode</strong>. Paper Crayon is deliberately single-theme: crayon on paper
+          inverted becomes chalk on slate, which is a different design system, not a variant.</p>
+        <p>• The audience skews clinical or corporate (cognitive assessment, clinician-facing).</p>
+        <p>• Localisation includes scripts <strong>Patrick Hand and Caveat do not cover</strong>. Plan a Nunito
+          fallback for the display face, and accept a flatter look in those locales.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:var(--s4)">
+      <b>The three moves that make it Paper Crayon</b>
+      <p><strong>1 · Wobble the outline.</strong> Every container gets a 2.5px graphite stroke and an
+        asymmetric multi-value <span class="mono">border-radius</span>, plus a rotation between −1.5° and 1.5°.
+        Never two adjacent cards at the same angle.</p>
+      <p><strong>2 · Tape it down.</strong> Anything that matters — the Daily Mix CTA, the stimulus card, the
+        score, the chart — is held to the page by a strip of translucent washi tape overlapping the top edge.</p>
+      <p><strong>3 · Draw the emphasis.</strong> Underlines, circles and arrows are inline SVG squiggles in a
+        crayon colour, never CSS borders. They are decoration only, and always <span class="mono">aria-hidden</span>.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 01 COLOUR ══════════ -->
+  <section id="colour">
+    <div class="sec-head">
+      <span class="sec-no">01</span>
+      <h2>Colour
+        <svg class="ul" viewBox="0 0 130 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c22-6 44 5 66-1s42-3 58 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Two tiers. <strong>Primitives</strong> are named after the crayon they came from and
+      never appear in a widget. <strong>Semantic slots</strong> are named after the job and are the only thing
+      UI code is allowed to reference. Every ratio below is measured against
+      <span class="mono">--surface</span> <span class="mono">#FDF6E3</span> unless stated.</p>
+
+    <h3 class="sub">Primitives — the crayon box</h3>
+    <div class="grid g3">
+      <div class="tok"><div class="chip c-paper"></div><div class="meta">
+        <div class="nm">Paper</div>
+        <div class="hx"><span class="mono">#FDF6E3</span><span class="ratio">base</span></div>
+        <div class="role">The page itself. Warm, slightly aged, never pure white.</div>
+        <span class="mono var">--paper</span></div></div>
+
+      <div class="tok"><div class="chip c-graphite"></div><div class="meta">
+        <div class="nm">Graphite</div>
+        <div class="hx"><span class="mono">#33302E</span><span class="ratio pass">12.14:1</span></div>
+        <div class="role">All body text and every drawn outline. Warm-black, not neutral.</div>
+        <span class="mono var">--graphite</span></div></div>
+
+      <div class="tok"><div class="chip c-red ruled"></div><div class="meta">
+        <div class="nm">Crayon red</div>
+        <div class="hx"><span class="mono">#E5544B</span><span class="ratio large">3.41:1</span></div>
+        <div class="role">Danger, the timer bar, Stroop red. Fills and graphics only.</div>
+        <span class="mono var">--crayon-red</span></div></div>
+
+      <div class="tok"><div class="chip c-blue ruled"></div><div class="meta">
+        <div class="nm">Marker blue</div>
+        <div class="hx"><span class="mono">#3D7DD8</span><span class="ratio large">3.80:1</span></div>
+        <div class="role">Focus ring, Schulte cues, Stroop blue.</div>
+        <span class="mono var">--marker-blue</span></div></div>
+
+      <div class="tok"><div class="chip c-grass ruled"></div><div class="meta">
+        <div class="nm">Grass</div>
+        <div class="hx"><span class="mono">#58B368</span><span class="ratio fail">2.41:1</span></div>
+        <div class="role">Success, toggle-on, found tiles. Always paired with a tick or a strike.</div>
+        <span class="mono var">--grass</span></div></div>
+
+      <div class="tok"><div class="chip c-sunny ruled"></div><div class="meta">
+        <div class="nm">Sunny</div>
+        <div class="hx"><span class="mono">#F2B705</span><span class="ratio fail">1.69:1</span></div>
+        <div class="role">Streaks, records, washi tape, Stroop yellow. Never behind small text.</div>
+        <span class="mono var">--sunny</span></div></div>
+
+      <div class="tok"><div class="chip c-violet ruled"></div><div class="meta">
+        <div class="nm">Violet</div>
+        <div class="hx"><span class="mono">#8A5FBF</span><span class="ratio large">4.36:1</span></div>
+        <div class="role">The brand. Primary buttons, active nav, the final score.</div>
+        <span class="mono var">--violet</span></div></div>
+    </div>
+
+    <h3 class="sub">Paper family — four steps of surface</h3>
+    <div class="grid g4">
+      <div class="tok"><div class="chip c-paper-white"></div><div class="meta">
+        <div class="nm">Paper white</div><div class="hx"><span class="mono">#FFFCF2</span></div>
+        <div class="role">Raised cards. Reads as a fresh sheet laid on the page.</div>
+        <span class="mono var">--paper-white</span></div></div>
+      <div class="tok"><div class="chip c-paper-warm"></div><div class="meta">
+        <div class="nm">Paper warm</div><div class="hx"><span class="mono">#F8EFD8</span></div>
+        <div class="role">Sunk areas: nav bar, grouped rows, secondary chips.</div>
+        <span class="mono var">--paper-warm</span></div></div>
+      <div class="tok"><div class="chip c-paper-shade"></div><div class="meta">
+        <div class="nm">Paper shade</div><div class="hx"><span class="mono">#F0E4C6</span></div>
+        <div class="role">Tracks, wells, disabled fills, found tiles.</div>
+        <span class="mono var">--paper-shade</span></div></div>
+      <div class="tok"><div class="chip c-kraft"></div><div class="meta">
+        <div class="nm">Kraft</div><div class="hx"><span class="mono">#E7D5AC</span></div>
+        <div class="role">The device bezel in mockups; card stock in-app.</div>
+        <span class="mono var">--kraft</span></div></div>
+    </div>
+
+    <h3 class="sub">Ink ramp &amp; crayon inks — the text-safe half of the palette</h3>
+    <p class="sec-lede" style="margin-top:0">Each crayon has a darker <em>ink</em> sibling. The crayon fills a
+      shape; the ink writes on paper. This is what keeps the system colourful without ever putting 3:1 text on
+      a page. All ratios are on <span class="mono">--surface</span>. Every one clears 4.5:1
+      <strong>except <span class="mono">--ink-ghost</span></strong>, which is bound to disabled controls only
+      and is exempt under WCAG 1.4.3. Each ink also clears 4.5:1 on its own tint, which is the only other
+      ground it is allowed to sit on.</p>
+    <div class="grid g3">
+      <div class="tok"><div class="chip c-ink-soft"></div><div class="meta">
+        <div class="nm">Ink soft</div><div class="hx"><span class="mono">#5E574E</span><span class="ratio pass">6.60:1</span></div>
+        <div class="role">Secondary text: subtitles, hints, helper copy.</div><span class="mono var">--ink-soft</span></div></div>
+      <div class="tok"><div class="chip c-ink-faint"></div><div class="meta">
+        <div class="nm">Ink faint</div><div class="hx"><span class="mono">#736B5E</span><span class="ratio pass">4.87:1</span></div>
+        <div class="role">Muted text: 10px eyebrows, HUD keys, axis labels.</div><span class="mono var">--ink-faint</span></div></div>
+      <div class="tok"><div class="chip c-ink-ghost"></div><div class="meta">
+        <div class="nm">Ink ghost</div><div class="hx"><span class="mono">#C2B9A6</span><span class="ratio fail">1.81:1</span></div>
+        <div class="role">Disabled only — content that is genuinely inert and exempt.</div><span class="mono var">--ink-ghost</span></div></div>
+
+      <div class="tok"><div class="chip c-red-ink"></div><div class="meta">
+        <div class="nm">Red ink</div><div class="hx"><span class="mono">#BE382F</span><span class="ratio pass">5.13:1</span></div>
+        <div class="role">Error text, the "best" guide line on charts.</div><span class="mono var">--red-ink</span></div></div>
+      <div class="tok"><div class="chip c-blue-ink"></div><div class="meta">
+        <div class="nm">Blue ink</div><div class="hx"><span class="mono">#2A5FA8</span><span class="ratio pass">5.90:1</span></div>
+        <div class="role">Schulte "next" numeral, informational values.</div><span class="mono var">--blue-ink</span></div></div>
+      <div class="tok"><div class="chip c-green-ink"></div><div class="meta">
+        <div class="nm">Green ink</div><div class="hx"><span class="mono">#2D7A45</span><span class="ratio pass">4.89:1</span></div>
+        <div class="role">Accuracy, confirmations, the toggle tick, the found-tile strike.</div><span class="mono var">--green-ink</span></div></div>
+      <div class="tok"><div class="chip c-sunny-ink"></div><div class="meta">
+        <div class="nm">Sunny ink</div><div class="hx"><span class="mono">#8A6200</span><span class="ratio pass">5.09:1</span></div>
+        <div class="role">Streak values on a sunny tint.</div><span class="mono var">--sunny-ink</span></div></div>
+      <div class="tok"><div class="chip c-violet-ink"></div><div class="meta">
+        <div class="nm">Violet ink</div><div class="hx"><span class="mono">#6F45A0</span><span class="ratio pass">6.42:1</span></div>
+        <div class="role">The final score, active nav label, brand text.</div><span class="mono var">--violet-ink</span></div></div>
+    </div>
+
+    <h3 class="sub">Tints — a crayon rubbed thin</h3>
+    <div class="grid g4">
+      <div class="tok"><div class="chip c-red-tint"></div><div class="meta"><div class="nm">Red tint</div>
+        <div class="hx"><span class="mono">#FBE3E0</span><span class="ratio pass">4.52:1</span></div>
+        <div class="role">Wrong-tile fill. Red ink on it clears 4.52:1.</div><span class="mono var">--red-tint</span></div></div>
+      <div class="tok"><div class="chip c-blue-tint"></div><div class="meta"><div class="nm">Blue tint</div>
+        <div class="hx"><span class="mono">#E2ECFB</span><span class="ratio pass">5.34:1</span></div>
+        <div class="role">Next-tile fill, "cool" HUD pill.</div><span class="mono var">--blue-tint</span></div></div>
+      <div class="tok"><div class="chip c-green-tint"></div><div class="meta"><div class="nm">Green tint</div>
+        <div class="hx"><span class="mono">#E3F3E7</span><span class="ratio pass">4.58:1</span></div>
+        <div class="role">Positive stat backgrounds.</div><span class="mono var">--green-tint</span></div></div>
+      <div class="tok"><div class="chip c-sunny-tint"></div><div class="meta"><div class="nm">Sunny tint</div>
+        <div class="hx"><span class="mono">#FDF1D0</span><span class="ratio pass">4.88:1</span></div>
+        <div class="role">Streak pill, sticky-note callouts.</div><span class="mono var">--sunny-tint</span></div></div>
+      <div class="tok"><div class="chip c-violet-tint"></div><div class="meta"><div class="nm">Violet tint</div>
+        <div class="hx"><span class="mono">#EFE7F8</span><span class="ratio pass">5.75:1</span></div>
+        <div class="role">Chart bars, active nav halo.</div><span class="mono var">--violet-tint</span></div></div>
+    </div>
+
+    <h3 class="sub">Semantic slots — the only names a widget may use</h3>
+    <p class="sec-lede" style="margin-top:0">All 22 of them, because a developer who can only see half the
+      table has no legal token for half the states they have to build. The pairing rule: <strong>every
+      <span class="mono">--*-ink</span> is the text-safe sibling of its crayon — use the crayon for fills and
+      graphics, the ink for glyphs and lines.</strong> The four Stroop stimulus slots
+      (<span class="mono">--stim-red</span> · <span class="mono">--stim-blue</span> ·
+      <span class="mono">--stim-green</span> · <span class="mono">--stim-yellow</span>) are documented in
+      section 02, where the reason they exist is.</p>
+    <div class="slots">
+      <div class="slot-row"><span class="sw" style="background:var(--surface)"></span>
+        <span class="id"><b>surface</b><span class="mono">--surface</span></span>
+        <span class="maps">→ <span class="mono">--paper</span></span>
+        <span class="use">Every screen background. Nothing else may be the ground.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--surface-raised)"></span>
+        <span class="id"><b>surface-raised</b><span class="mono">--surface-raised</span></span>
+        <span class="maps">→ <span class="mono">--paper-white</span></span>
+        <span class="use">Cards, sheets, tiles, list containers — anything with a drawn outline and a lift.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--surface-sunk)"></span>
+        <span class="id"><b>surface-sunk</b><span class="mono">--surface-sunk</span></span>
+        <span class="maps">→ <span class="mono">--paper-warm</span></span>
+        <span class="use">Bottom nav, grouped sub-rows, quiet chips.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--surface-deep)"></span>
+        <span class="id"><b>surface-deep</b><span class="mono">--surface-deep</span></span>
+        <span class="maps">→ <span class="mono">--paper-shade</span></span>
+        <span class="use">Wells that something moves inside: progress tracks, segmented control, toggle off.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--text-primary)"></span>
+        <span class="id"><b>text-primary</b><span class="mono">--text-primary</span></span>
+        <span class="maps">→ <span class="mono">--graphite</span></span>
+        <span class="use">Headings, values, body. 12.14:1 — the default for anything you must read.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--text-secondary)"></span>
+        <span class="id"><b>text-secondary</b><span class="mono">--text-secondary</span></span>
+        <span class="maps">→ <span class="mono">--ink-soft</span></span>
+        <span class="use">Subtitles and helper copy. 6.60:1.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--text-muted)"></span>
+        <span class="id"><b>text-muted</b><span class="mono">--text-muted</span></span>
+        <span class="maps">→ <span class="mono">--ink-faint</span></span>
+        <span class="use">10–11px eyebrows and HUD keys. 4.87:1 — the floor, deliberately.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--text-disabled)"></span>
+        <span class="id"><b>text-disabled</b><span class="mono">--text-disabled</span></span>
+        <span class="maps">→ <span class="mono">--ink-ghost</span></span>
+        <span class="use">Inert controls only. Never for information a user needs.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--accent)"></span>
+        <span class="id"><b>accent</b><span class="mono">--accent</span></span>
+        <span class="maps">→ <span class="mono">--violet</span></span>
+        <span class="use">One primary action per screen. Text on it uses <span class="mono">--on-accent</span> (4.58:1).</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--success)"></span>
+        <span class="id"><b>success</b><span class="mono">--success</span></span>
+        <span class="maps">→ <span class="mono">--grass</span></span>
+        <span class="use">Correct answer, toggle on, found tile. Always plus a tick or a strike.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--warning)"></span>
+        <span class="id"><b>warning</b><span class="mono">--warning</span></span>
+        <span class="maps">→ <span class="mono">--sunny</span></span>
+        <span class="use">Streaks, records, "time running out". Graphite text on it only.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--danger)"></span>
+        <span class="id"><b>danger</b><span class="mono">--danger</span></span>
+        <span class="maps">→ <span class="mono">--crayon-red</span></span>
+        <span class="use">Wrong answer, timer drain, destructive confirm. Text uses <span class="mono">--danger-ink</span>.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--focus-ring)"></span>
+        <span class="id"><b>focus-ring</b><span class="mono">--focus-ring</span></span>
+        <span class="maps">→ <span class="mono">--marker-blue</span></span>
+        <span class="use">3px ring + 2px offset on keyboard focus. Never removed, never restyled per screen.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--stroke)"></span>
+        <span class="id"><b>stroke</b><span class="mono">--stroke</span></span>
+        <span class="maps">→ <span class="mono">--graphite</span></span>
+        <span class="use">2.5px on every container. This single line is what makes the system read as drawn.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--surface-frame)"></span>
+        <span class="id"><b>surface-frame</b><span class="mono">--surface-frame</span></span>
+        <span class="maps">→ <span class="mono">--kraft</span></span>
+        <span class="use">Card stock: the device bezel in mockups, mounting board in-app. Never a text ground.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--accent-ink)"></span>
+        <span class="id"><b>accent-ink</b><span class="mono">--accent-ink</span></span>
+        <span class="maps">→ <span class="mono">--violet-ink</span></span>
+        <span class="use">Brand text on paper: the final score, the active nav label. 6.42:1.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--accent-tint)"></span>
+        <span class="id"><b>accent-tint</b><span class="mono">--accent-tint</span></span>
+        <span class="maps">→ <span class="mono">--violet-tint</span></span>
+        <span class="use">Large accent fills that still carry graphite text: chart bars, the active nav halo. 5.75:1.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--success-ink)"></span>
+        <span class="id"><b>success-ink</b><span class="mono">--success-ink</span></span>
+        <span class="maps">→ <span class="mono">--green-ink</span></span>
+        <span class="use">Every green <em>glyph and line</em>: the toggle tick, the found-tile strike, accuracy. 4.89:1.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--warning-ink)"></span>
+        <span class="id"><b>warning-ink</b><span class="mono">--warning-ink</span></span>
+        <span class="maps">→ <span class="mono">--sunny-ink</span></span>
+        <span class="use">Streak and record values, the chart's "best" guide. A record is never drawn in danger. 5.09:1.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--danger-ink)"></span>
+        <span class="id"><b>danger-ink</b><span class="mono">--danger-ink</span></span>
+        <span class="maps">→ <span class="mono">--red-ink</span></span>
+        <span class="use">Error text and the wrong-tile numeral. Wrong answers only — never a personal best. 5.13:1.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--stroke-soft)"></span>
+        <span class="id"><b>stroke-soft</b><span class="mono">--stroke-soft</span></span>
+        <span class="maps">→ <span class="mono">--ink-a28</span></span>
+        <span class="use"><strong>Decoration only.</strong> Dividers, dashed grouping strips, the nav's top edge. It composites to about 1.70:1, so it may never be a control's only boundary — anything tappable keeps the full <span class="mono">--stroke</span>.</span></div>
+      <div class="slot-row"><span class="sw" style="background:var(--on-accent)"></span>
+        <span class="id"><b>on-accent</b><span class="mono">--on-accent</span></span>
+        <span class="maps">→ <span class="mono">--paper-white</span></span>
+        <span class="use">The only text colour allowed on <span class="mono">--accent</span>. 4.58:1 at full opacity — never add alpha to it, the pairing has no headroom to spend.</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 02 STROOP PALETTE ══════════ -->
+  <section id="stroop">
+    <div class="sec-head">
+      <span class="sec-no">02</span>
+      <h2>Stroop answer palette
+        <svg class="ul" viewBox="0 0 280 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c46-6 92 5 138-1s90-4 136 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Stroop Rush is the one screen where colour <em>is</em> the mechanic, so these are not
+      decoration — they are the interface. The palette splits in two, and the split is the whole point.
+      An <strong>answer chip is a shape</strong>: it is enclosed by a 2.5px graphite outline, so WCAG 1.4.11 is
+      satisfied by the boundary and the fill can stay as loud as a crayon. The <strong>stimulus word is
+      text</strong>: no outline rescues a text contrast ratio, so green and yellow get their own deeper ink.
+      Ratios are measured against <span class="mono">--surface-raised</span>
+      <span class="mono">#FFFCF2</span>, the surface each one actually sits on.</p>
+
+    <h3 class="sub">Answer chips — fill, pattern and shape</h3>
+
+    <div class="stroop-grid">
+      <div class="sp">
+        <div class="fill f-red"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><circle class="bg" cx="30" cy="30" r="24"/><circle class="mkf" cx="30" cy="30" r="12"/></svg></div>
+        <div class="lab">Red</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#E5544B</dd>
+          <dt>vs raised card</dt><dd>3.59:1</dd>
+          <dt>Shape + pattern</dt><dd>Solid circle · flat fill</dd>
+          <dt>Label ink</dt><dd class="mono">#33302E</dd>
+        </dl>
+      </div>
+      <div class="sp">
+        <div class="fill f-blue"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><rect class="bg" x="7" y="7" width="46" height="46" rx="7"/><path class="mk" d="M15 41 41 15M23 49 49 23"/></svg></div>
+        <div class="lab">Blue</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#3D7DD8</dd>
+          <dt>vs raised card</dt><dd>3.99:1</dd>
+          <dt>Shape + pattern</dt><dd>Square · diagonal hatch</dd>
+          <dt>Label ink</dt><dd class="mono">#33302E</dd>
+        </dl>
+      </div>
+      <div class="sp">
+        <div class="fill f-green"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><path class="bg" d="M30 7 55 51H5z"/><circle class="mkf" cx="30" cy="29" r="4"/><circle class="mkf" cx="21" cy="43" r="4"/><circle class="mkf" cx="39" cy="43" r="4"/></svg></div>
+        <div class="lab">Green</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#58B368</dd>
+          <dt>vs raised card</dt><dd>2.54:1 · outline-carried</dd>
+          <dt>Shape + pattern</dt><dd>Triangle · dots</dd>
+          <dt>Label ink</dt><dd class="mono">#33302E</dd>
+        </dl>
+      </div>
+      <div class="sp">
+        <div class="fill f-yellow"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><path class="bg" d="M30 5 55 30 30 55 5 30z"/><path class="mk" d="M17 30h26M30 17v26"/></svg></div>
+        <div class="lab">Yellow</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#F2B705</dd>
+          <dt>vs raised card</dt><dd>1.77:1 · outline-carried</dd>
+          <dt>Shape + pattern</dt><dd>Diamond · cross-hatch</dd>
+          <dt>Label ink</dt><dd class="mono">#33302E</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>The outline is load-bearing — and it is not enough on its own</b>
+      <p><strong>Green (2.54:1) and yellow (1.77:1) do not clear 3:1 against the card they sit on.</strong>
+        That is a real finding, not a rounding error, and it is why every chip carries a
+        <span class="mono">2.5px --stroke</span> outline: WCAG 1.4.11 is satisfied by the graphite boundary at
+        12.76:1, not by the fill. The outline must never be softened, removed, or reduced below 2px for
+        "cleanliness". The same dependency applies to the timer bar, where the
+        <span class="mono">--danger</span> fill sits at 2.91:1 against its <span class="mono">--surface-deep</span>
+        track and is rescued only by the 2.5px graphite cap on the fill's leading edge.</p>
+      <p><strong>Hue alone cannot separate four answers.</strong> Simulated with the Viénot transform, a
+        deuteranope sees <span class="mono">#E5544B</span> as <span class="mono">#939342</span> and
+        <span class="mono">#58B368</span> as <span class="mono">#9F9F6B</span> — 1.18:1 apart, which is to say
+        identical. Every pair in the set lands under 3:1, and we searched: <em>no</em> four-hue set clears 3:1
+        between all six pairs under deuteranopia while staying legible on warm paper. So colour is not the
+        channel that carries the answer. <strong>Shape and pattern are</strong>, and they are printed on the
+        chip <em>and</em> on the stimulus so the match is shape-to-shape. Each chip also prints its own name in
+        graphite on paper white at 12.76:1.</p>
+    </div>
+
+    <h3 class="sub">Stimulus ramp — the word is text, so it needs its own inks</h3>
+    <div class="stim-demo">
+      <span class="sd-red">RED</span>
+      <span class="sd-blue">BLUE</span>
+      <span class="sd-green">GREEN</span>
+      <span class="sd-yellow">YELLOW</span>
+    </div>
+    <div class="grid g4" style="margin-top:var(--s4)">
+      <div class="tok"><div class="chip f-red"></div><div class="meta">
+        <div class="nm">Stim red</div><div class="hx"><span class="mono">#E5544B</span><span class="ratio large">3.59:1</span></div>
+        <div class="role">The crayon itself already clears the 3:1 large-text floor. Unchanged.</div>
+        <span class="mono var">--stim-red</span></div></div>
+      <div class="tok"><div class="chip f-blue"></div><div class="meta">
+        <div class="nm">Stim blue</div><div class="hx"><span class="mono">#3D7DD8</span><span class="ratio large">3.99:1</span></div>
+        <div class="role">Also unchanged — marker blue is already text-legal at 24px and up.</div>
+        <span class="mono var">--stim-blue</span></div></div>
+      <div class="tok"><div class="chip" style="background:var(--grass-deep)"></div><div class="meta">
+        <div class="nm">Stim green</div><div class="hx"><span class="mono">#3F814B</span><span class="ratio pass">4.59:1</span></div>
+        <div class="role">Grass at 2.54:1 misses even the large-text floor as text. This clears the body floor.</div>
+        <span class="mono var">--stim-green</span></div></div>
+      <div class="tok"><div class="chip" style="background:var(--gold-deep)"></div><div class="meta">
+        <div class="nm">Stim yellow</div><div class="hx"><span class="mono">#A17300</span><span class="ratio large">4.12:1</span></div>
+        <div class="role">Sunny at 1.77:1 is unusable as text. Deep gold keeps the hue and clears 3:1 by 37%.</div>
+        <span class="mono var">--stim-yellow</span></div></div>
+    </div>
+
+    <div class="callout" style="background:var(--blue-tint)">
+      <b>Rules for the stimulus</b>
+      <p>The stimulus is set at <strong>104px</strong>, which is large text, so the applicable floor is
+        <strong>3:1</strong> — but it is also the single most important element in the product, so it is drawn
+        with a <span class="mono">2px --stroke</span> outline as a second, independent boundary. Together
+        that is belt and braces: the fill clears the floor on its own <em>and</em> the glyph has a 12.76:1 edge.</p>
+      <p><strong>Never reuse the chip fills for the stimulus, and never use the stimulus ramp below 24px.</strong>
+        In Flutter the two live in separate lists — <span class="mono">stroopStimulus</span> and
+        <span class="mono">stroopAnswers</span> — precisely so they cannot be confused at a call site.</p>
+      <p>Beside the word sits the same shape badge the matching chip carries. That badge is the redundant
+        channel: naming the ink <em>is</em> the task, so the stimulus is the one place this design must not
+        rely on hue.</p>
+    </div>
+
+    <h3 class="sub">Colour-blind mode — what the Settings switch actually does</h3>
+    <div class="stroop-grid">
+      <div class="sp">
+        <div class="fill f-redink"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><circle class="bg" cx="30" cy="30" r="24"/><circle class="mkf" cx="30" cy="30" r="12"/></svg></div>
+        <div class="lab">Red</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#BE382F</dd>
+          <dt>vs raised card</dt><dd>5.39:1</dd>
+          <dt>Shape + pattern</dt><dd>Solid circle · flat fill</dd>
+          <dt>Label ink</dt><dd class="mono">#FFFCF2</dd>
+        </dl>
+      </div>
+      <div class="sp">
+        <div class="fill f-blueink"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><rect class="bg" x="7" y="7" width="46" height="46" rx="7"/><path class="mk" d="M15 41 41 15M23 49 49 23"/></svg></div>
+        <div class="lab">Blue</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#2A5FA8</dd>
+          <dt>vs raised card</dt><dd>6.20:1</dd>
+          <dt>Shape + pattern</dt><dd>Square · diagonal hatch</dd>
+          <dt>Label ink</dt><dd class="mono">#FFFCF2</dd>
+        </dl>
+      </div>
+      <div class="sp">
+        <div class="fill f-graphite"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><path class="bg" d="M30 7 55 51H5z"/><circle class="mkf" cx="30" cy="29" r="4"/><circle class="mkf" cx="21" cy="43" r="4"/><circle class="mkf" cx="39" cy="43" r="4"/></svg></div>
+        <div class="lab">Graphite</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#33302E</dd>
+          <dt>vs raised card</dt><dd>12.76:1</dd>
+          <dt>Shape + pattern</dt><dd>Triangle · dots</dd>
+          <dt>Label ink</dt><dd class="mono">#FFFCF2</dd>
+        </dl>
+      </div>
+      <div class="sp">
+        <div class="fill f-yellow"><svg class="shape" viewBox="0 0 60 60" aria-hidden="true"><path class="bg" d="M30 5 55 30 30 55 5 30z"/><path class="mk" d="M17 30h26M30 17v26"/></svg></div>
+        <div class="lab">Yellow</div>
+        <dl>
+          <dt>Fill</dt><dd class="mono">#F2B705</dd>
+          <dt>vs raised card</dt><dd>1.77:1 · outline-carried</dd>
+          <dt>Shape + pattern</dt><dd>Diamond · cross-hatch</dd>
+          <dt>Label ink</dt><dd class="mono">#33302E</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="callout" style="background:var(--green-tint)">
+      <b>Why this set, and what it does not claim</b>
+      <p>The old high-contrast set swapped green → violet and yellow → graphite. That was wrong: under
+        deuteranopia <span class="mono">--marker-blue</span> and <span class="mono">--violet</span> simulate to
+        1.07:1 of each other, so it traded a red/green collision for a blue/violet one. Violet is dropped from
+        the answer set entirely.</p>
+      <p>This set does not claim hue separation, because that is not achievable. What it maximises is
+        <strong>lightness</strong> separation — the four simulate to widely different luminances instead of
+        four muddy olives — and it keeps every fill at or above 5:1 against the card except sunny, which is
+        outline-carried as before. The <em>identification</em> still rides on shape, pattern and the printed
+        name, which are unaffected by any colour vision deficiency.</p>
+      <p>The Settings row reads <strong>"Colour-blind palette · Swaps green and yellow, adds a shape to every
+        cue"</strong>. Copy and behaviour must stay in step: if the shapes ever ship as always-on, the subtitle
+        changes with them.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 03 TYPE ══════════ -->
+  <section id="type">
+    <div class="sec-head">
+      <span class="sec-no">03</span>
+      <h2>Typography
+        <svg class="ul" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c32-6 64 5 96-1s66-4 98 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Three faces, one rule. <strong>Caveat</strong> is the loud handwriting and appears once
+      per screen at most. <strong>Patrick Hand</strong> is the everyday hand: titles, numerals, button labels —
+      short strings only. <strong>Nunito</strong> carries everything you actually read: paragraphs, subtitles,
+      list rows, stat labels, axis text. <em>No paragraph and no data table is ever set in handwriting.</em></p>
+
+    <div class="card" style="padding:6px 20px 10px">
+      <div class="type-row">
+        <div class="type-spec"><b>stimulus</b><span>Patrick Hand 400 · 104 / 104 · +0.04em<br>The Stroop word, and nothing else ever. Drawn from the stimulus ramp with a 2px graphite outline.</span></div>
+        <div class="type-demo"><div class="t-stim">GREEN</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>verdict</b><span>Caveat 700 · 52 / 52<br>The results headline. One per run.</span></div>
+        <div class="type-demo"><div class="t-verdict">Nice run!</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>display</b><span>Caveat 700 · 36 / 36 · +0.01em<br>Once per screen: the greeting, the Stats and Settings titles.</span></div>
+        <div class="type-demo"><div class="t-display">Ready to train?</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>numeral-xl</b><span>Patrick Hand 400 · 76 / 72 · tabular<br>The single number a screen exists for.</span></div>
+        <div class="type-demo"><div class="t-numxl">1,240</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>title</b><span>Patrick Hand 400 · 26 / 30<br>Screen titles, card titles, sheet headings.</span></div>
+        <div class="type-demo"><div class="t-title">Stroop Rush</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>numeral</b><span>Patrick Hand 400 · 23 / 26 · tabular<br>HUD values, best scores, grid tiles.</span></div>
+        <div class="type-demo"><div class="t-num">0:12.4 &nbsp; 1,480 &nbsp; x7 &nbsp; 18.6s</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>title-sm</b><span>Patrick Hand 400 · 20 / 23<br>Button labels, game-card titles, section headers, segmented control.</span></div>
+        <div class="type-demo"><div class="t-titlesm">Schulte Grid</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>heading</b><span>Nunito 800 · 18 / 24<br>Card and group headings inside a sheet.</span></div>
+        <div class="type-demo"><div class="t-heading">Colour-blind palette</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>sticker</b><span>Patrick Hand 400 · 17 / 24<br><strong>The handwriting floor.</strong> Stickers, badges, mode chips, the status-bar clock. Nothing handwritten is ever smaller.</span></div>
+        <div class="type-demo"><div class="t-sticker">4 day streak · Classic · Soon</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>row-title</b><span>Nunito 800 · 15 / 19<br>Settings rows and any label with a control beside it.</span></div>
+        <div class="type-demo"><div class="t-rowtitle">Reduce motion</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>body</b><span>Nunito 600 · 15 / 22<br>Sentences. The only style allowed to wrap to three lines.</span></div>
+        <div class="type-demo"><div class="t-body">Classic — 60 seconds, a wrong tap costs you the streak but not the clock. Everything is stored on this phone; there is nothing to sign in to.</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>label</b><span>Nunito 700 · 13 / 18<br>Game-card subtitles, secondary values.</span></div>
+        <div class="type-demo"><div class="t-label">Tap the colour, not the word</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>caption</b><span>Nunito 600 · 12 / 16<br>Helper text under a control.</span></div>
+        <div class="type-demo"><div class="t-caption">Turns off wobble and stamp effects</div></div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec"><b>micro</b><span>Nunito 900 · 10 / 12 · +0.14em · uppercase<br>HUD keys, eyebrows, chart axes. Colour <span class="mono">--text-muted</span> at 4.87:1.</span></div>
+        <div class="type-demo"><div class="t-micro">Final score · Longest streak · This week</div></div>
+      </div>
+    </div>
+
+    <div class="callout" style="background:var(--blue-tint)">
+      <b>Non-negotiables</b>
+      <p>• Every <span class="mono">font-family</span> declaration ends in a real fallback stack —
+        <span class="mono">cursive</span> for the two hands, <span class="mono">system-ui</span> for Nunito.
+        Bundle all three in the Flutter app; never fetch them at runtime.</p>
+      <p>• Numerals are always <span class="mono">tabular</span>. A HUD that jitters as the score ticks is a bug.</p>
+      <p>• <strong>Handwriting never goes below 17px.</strong> That is a hard floor with a name — the
+        <span class="mono">sticker</span> step above is the smallest handwritten size in the system. It also
+        never sets more than about four words, never carries an error message, and
+        <strong>never sets a paragraph or a data value</strong>: chart values, stat units, list-row titles and
+        anything you would put in a table are Nunito. If a string can grow with localisation, it belongs to
+        Nunito too.</p>
+      <p>• <strong>These are the only sizes</strong>, and they govern everything inside a phone screen.
+        (This reference page and the gallery are documentation <em>around</em> the product and use a wider web
+        scale on purpose — do not transcribe their sizes into the app.) Nunito: <span class="mono">10 · 12 · 13 · 15 · 18</span>.
+        Patrick Hand: <span class="mono">17 · 20 · 23 · 26 · 34 · 50 · 76 · 104</span>. Caveat:
+        <span class="mono">36 · 52 · 190</span>. There are no fractional steps — a 12.5px or a 14.5px in a diff
+        means someone eyeballed it, and the reviewer will find it before you do.</p>
+      <p>• Respect the OS text-scale setting up to 200%. Every screen in this system is laid out so the
+        handwriting can grow without clipping — the Stroop stimulus scales, it does not shrink to fit.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 04 SPACING ══════════ -->
+  <section id="space">
+    <div class="sec-head">
+      <span class="sec-no">04</span>
+      <h2>Spacing
+        <svg class="ul" viewBox="0 0 150 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c24-6 48 5 72-1s48-3 72 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">A 4px base with a deliberate gap between 24 and 32 — nothing sits at 28, because the
+      jump is what separates "inside a component" from "between sections". Screen gutter is fixed at
+      <strong>s5 / 20px</strong> on every screen, including gameplay.</p>
+    <div class="card" style="padding:8px 20px 12px">
+      <div class="scale-row"><span class="nm">s1</span><span class="px">4px</span><span class="viz"><i style="width:4px"></i></span><span class="use">Icon-to-label inside a chip; the hairline between a value and its unit.</span></div>
+      <div class="scale-row"><span class="nm">s2</span><span class="px">8px</span><span class="viz"><i style="width:8px"></i></span><span class="use">Grid-tile gap; gap between a swatch and its printed name.</span></div>
+      <div class="scale-row"><span class="nm">s3</span><span class="px">12px</span><span class="viz"><i style="width:12px"></i></span><span class="use">Answer-button gap; between stacked buttons in a sheet.</span></div>
+      <div class="scale-row"><span class="nm">s4</span><span class="px">16px</span><span class="viz"><i style="width:16px"></i></span><span class="use">Card inner padding; between a HUD and the element under it.</span></div>
+      <div class="scale-row"><span class="nm">s5</span><span class="px">20px</span><span class="viz"><i style="width:20px"></i></span><span class="use"><strong>Screen gutter.</strong> Also the gap between a section header and its content.</span></div>
+      <div class="scale-row"><span class="nm">s6</span><span class="px">24px</span><span class="viz"><i style="width:24px"></i></span><span class="use">Between two unrelated cards on the same screen.</span></div>
+      <div class="scale-row"><span class="nm">s7</span><span class="px">32px</span><span class="viz"><i style="width:32px"></i></span><span class="use">Between screen sections — "Your games" to the card list.</span></div>
+      <div class="scale-row"><span class="nm">s8</span><span class="px">40px</span><span class="viz"><i style="width:40px"></i></span><span class="use">Above a terminal CTA; around the countdown numeral.</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 05 RADIUS ══════════ -->
+  <section id="radius">
+    <div class="sec-head">
+      <span class="sec-no">05</span>
+      <h2>Radius
+        <svg class="ul" viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c20-6 40 5 60-1s38-3 56 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Every radius is asymmetric on both axes. That is the whole trick: a symmetric radius
+      reads as machined, a multi-value one reads as drawn. Pair each with a rotation between −1.5° and 1.5° and
+      never repeat the same radius twice in a vertical stack — alternate
+      <span class="mono">--r-card</span> and <span class="mono">--r-card2</span>.</p>
+    <div class="grid g3">
+      <div class="rad-item"><div class="rad-demo rd-tile"></div><b>r-tile</b>
+        <span class="mono">10px 14px 11px 13px / 13px 11px 14px 10px</span>
+        <span class="u">Grid tiles, HUD pills, icon squares, small wells.</span></div>
+      <div class="rad-item"><div class="rad-demo rd-card"></div><b>r-card</b>
+        <span class="mono">20px 26px 18px 24px / 24px 18px 26px 20px</span>
+        <span class="u">The default container. Odd-indexed cards in a list.</span></div>
+      <div class="rad-item"><div class="rad-demo rd-card2"></div><b>r-card2</b>
+        <span class="mono">26px 18px 24px 20px / 18px 26px 20px 24px</span>
+        <span class="u">The mirror. Even-indexed cards, so no two neighbours match.</span></div>
+      <div class="rad-item"><div class="rad-demo rd-blob"></div><b>r-blob</b>
+        <span class="mono">30px 12px 28px 14px / 14px 28px 12px 30px</span>
+        <span class="u">Buttons and the segmented control. Reads like a drawn capsule.</span></div>
+      <div class="rad-item"><div class="rad-demo rd-leaf"></div><b>r-leaf</b>
+        <span class="mono">255px 15px 225px 15px / 15px 225px 15px 255px</span>
+        <span class="u">The signature blob. Large decorative shapes only — at chip size the browser scales it back to a plain rectangle.</span></div>
+      <div class="rad-item"><div class="rad-demo rd-stamp"></div><b>r-stamp</b>
+        <span class="mono">17px 6px 15px 8px / 8px 15px 6px 17px</span>
+        <span class="u">The small-element version of r-leaf. Stickers, badges, counters.</span></div>
+      <div class="rad-item"><div class="rad-demo rd-pill"></div><b>r-pill</b>
+        <span class="mono">999px</span>
+        <span class="u">Only where a true capsule is functional: progress tracks, toggle bodies, the home indicator.</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 06 ELEVATION ══════════ -->
+  <section id="elevation">
+    <div class="sec-head">
+      <span class="sec-no">06</span>
+      <h2>Elevation
+        <svg class="ul" viewBox="0 0 160 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c26-6 52 5 78-1s52-3 76 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Paper Crayon does not blur. Depth is a <strong>hard offset shadow</strong> — the shadow
+      a cut-out casts on the page below — with at most a small soft halo underneath it. A blurred Material
+      elevation instantly makes the whole thing look like a filter applied to a normal app.</p>
+    <div class="callout" style="background:var(--red-tint); margin-top:0; margin-bottom:var(--s5)">
+      <b>Dashed + lift-0 means inert. Nothing else may borrow it.</b>
+      <p>A dashed <span class="mono">--stroke-soft</span> outline with no shadow is the system's word for
+        "you cannot act on this": the locked N-Back card, the grouping strip, a found tile. Live personal data
+        — lifetime tallies, personal bests, anything the player earned — always gets a solid
+        <span class="mono">--stroke</span> and a <span class="mono">lift-1</span>. Drawing someone's own
+        numbers in the disabled-slot language is the fastest way to make a working screen look broken.</p>
+    </div>
+    <div class="grid g3">
+      <div class="elev-item"><div class="elev-demo e0"></div><b>lift-0</b><span class="mono">none</span>
+        <span class="u">Flush with the page. <strong>Reserved</strong> for things that are genuinely inert: the locked game card, the "this week" grouping strip, a grid tile already found.</span></div>
+      <div class="elev-item"><div class="elev-demo e1"></div><b>lift-1</b><span class="mono">0 2px 0 ink-a18</span>
+        <span class="u">Resting: HUD pills, stickers, grid tiles, small chips.</span></div>
+      <div class="elev-item"><div class="elev-demo e2"></div><b>lift-2</b><span class="mono">0 3px 0 ink-a28, 0 8px 16px -8px</span>
+        <span class="u">The standard card. Game cards, list containers, the chart.</span></div>
+      <div class="elev-item"><div class="elev-demo e3"></div><b>lift-3</b><span class="mono">0 5px 0 ink-a45, 0 14px 24px -12px</span>
+        <span class="u">Hero: Daily Mix, the Stroop stimulus, the score card, modal sheets.</span></div>
+      <div class="elev-item"><div class="elev-demo es"></div><b>stamp</b><span class="mono">0 4px 0 ink-a70</span>
+        <span class="u">Buttons only. On press the shadow collapses to 0 and the button drops 4px — it gets stamped into the paper.</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 07 MOTION ══════════ -->
+  <section id="motion">
+    <div class="sec-head">
+      <span class="sec-no">07</span>
+      <h2>Motion
+        <svg class="ul" viewBox="0 0 130 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c22-6 44 5 66-1s42-3 58 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Three durations, two curves, one idea: things get <strong>stamped</strong> into place.
+      Nothing slides in from off-screen and nothing fades — a crayon either is on the paper or it is not.
+      Under <span class="mono">Reduce motion</span> every duration collapses to 0ms and the end state is
+      identical, so motion is never the thing carrying the meaning.</p>
+
+    <div class="grid g3">
+      <div class="motion-item"><div class="track m-quick"><i></i></div><b>quick</b><span class="mono">150ms · ease-out</span>
+        <span class="u">State flips you should not notice: press feedback, toggle knob, segment selection.</span></div>
+      <div class="motion-item"><div class="track m-base"><i></i></div><b>base</b><span class="mono">200ms · ease-out</span>
+        <span class="u">Content changes: a new Stroop word, a tile turning found, a HUD value stepping.</span></div>
+      <div class="motion-item"><div class="track m-stamp"><i></i></div><b>stamp</b><span class="mono">250ms · ease-stamp</span>
+        <span class="u">Arrivals worth celebrating: the countdown numeral, the score card, a new-best badge.</span></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:var(--s4)">
+      <div class="motion-item">
+        <svg class="curve" viewBox="0 0 260 120" role="img" aria-label="Ease-out curve: fast start, gentle settle.">
+          <line class="grid-l" x1="20" y1="100" x2="240" y2="100"/><line class="grid-l" x1="20" y1="20" x2="240" y2="20"/>
+          <line class="grid-l" x1="20" y1="20" x2="20" y2="100"/><line class="grid-l" x1="240" y1="20" x2="240" y2="100"/>
+          <path class="path" d="M20 100 C 68 36, 132 20, 240 20"/>
+        </svg>
+        <b style="margin-top:12px">ease-out</b><span class="mono">cubic-bezier(.22,.8,.3,1)</span>
+        <span class="u">The workhorse. Leaves fast, settles gently, never overshoots. Use it unless you have a reason not to.</span>
+      </div>
+      <div class="motion-item">
+        <svg class="curve" viewBox="0 0 260 120" role="img" aria-label="Ease-stamp curve: overshoots past the target then settles back.">
+          <line class="grid-l" x1="20" y1="100" x2="240" y2="100"/><line class="grid-l" x1="20" y1="20" x2="240" y2="20"/>
+          <line class="grid-l" x1="20" y1="20" x2="20" y2="100"/><line class="grid-l" x1="240" y1="20" x2="240" y2="100"/>
+          <path class="path" d="M20 100 C 60 40, 96 4, 150 10 C 190 14, 200 20, 240 20"/>
+        </svg>
+        <b style="margin-top:12px">ease-stamp</b><span class="mono">cubic-bezier(.2,1.5,.4,1)</span>
+        <span class="u">Overshoots ~8% then settles. Reserved for arrivals and press-release. Two stamps on screen at once is one too many.</span>
+      </div>
+    </div>
+
+    <div class="callout" style="background:var(--violet-tint); margin-top:var(--s4)">
+      <b>Haptics ride alongside</b>
+      <p>Every stamp fires a light impact on the commit frame — once, never per animation frame. Correct answer:
+        light. Wrong answer: light double-tap, <em>never</em> heavy. New personal best: medium, exactly one.
+        All of it behind the single <strong>Haptics</strong> switch in Settings, and all of it redundant with
+        sound and a visual change so that turning it off loses nothing.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 08 COMPONENTS ══════════ -->
+  <section id="components">
+    <div class="sec-head">
+      <span class="sec-no">08</span>
+      <h2>Components
+        <svg class="ul" viewBox="0 0 210 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c34-6 68 5 102-1s68-4 102 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Every component below is live — hover and press them. The <span class="micro">pressed</span>
+      specimens are pinned to their active state so you can compare without holding the mouse down.</p>
+
+    <div class="grid g2">
+
+      <div class="comp">
+        <header><b>Primary button</b><span>One per screen. Violet fill, graphite outline, stamp shadow.</span></header>
+        <div class="states">
+          <div class="state"><button class="btn btn-primary" type="button">Play again</button><span class="micro">Default</span></div>
+          <div class="state"><button class="btn btn-primary is-pressed" type="button">Play again</button><span class="micro">Pressed</span></div>
+          <div class="state"><button class="btn btn-primary" type="button" disabled>Play again</button><span class="micro">Disabled</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Secondary button</b><span>Same shape, paper fill. Pairs under a primary, never beside it.</span></header>
+        <div class="states">
+          <div class="state"><button class="btn btn-secondary" type="button">Home</button><span class="micro">Default</span></div>
+          <div class="state"><button class="btn btn-secondary is-pressed" type="button">Home</button><span class="micro">Pressed</span></div>
+          <div class="state"><button class="btn btn-secondary" type="button" disabled>Home</button><span class="micro">Disabled</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Ghost button</b><span>Dashed outline, no lift. Escape hatches and low-stakes actions.</span></header>
+        <div class="states">
+          <div class="state"><button class="btn btn-ghost" type="button">Skip</button><span class="micro">Default</span></div>
+          <div class="state"><button class="btn btn-ghost is-pressed" type="button">Skip</button><span class="micro">Pressed</span></div>
+          <div class="state"><button class="btn btn-ghost" type="button" disabled>Skip</button><span class="micro">Disabled</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>HUD stat pill</b><span>Fixed width, tabular numerals. Three per HUD, never four.</span></header>
+        <div class="states">
+          <div class="state"><span class="pill"><span class="k">Time</span><span class="v">0:23</span></span><span class="micro">Neutral</span></div>
+          <div class="state"><span class="pill cool"><span class="k">Score</span><span class="v">1,240</span></span><span class="micro">Informational</span></div>
+          <div class="state"><span class="pill hot"><span class="k">Streak</span><span class="v">x7</span></span><span class="micro">Hot streak</span></div>
+          <div class="state"><span class="pill bad"><span class="k">Time</span><span class="v">0:04</span></span><span class="micro">Running out</span></div>
+        </div>
+      </div>
+
+      <div class="comp span-all">
+        <header><b>Game card</b><span>The hub's atom. Rotation alternates down the list so no two neighbours agree.</span></header>
+        <div class="states">
+          <div class="state state-wide">
+            <div class="gcard">
+              <span class="gcard-thumb red"><span class="dots2"><i></i><i></i><i></i><i></i></span></span>
+              <span class="gcard-b"><span class="gcard-t">Stroop Rush</span><span class="gcard-s">Tap the colour, not the word</span></span>
+              <span class="gcard-r"><span class="micro">Best</span><span class="v">1,480</span></span>
+            </div>
+            <span class="micro">Default</span>
+          </div>
+          <div class="state state-wide">
+            <div class="gcard is-pressed">
+              <span class="gcard-thumb red"><span class="dots2"><i></i><i></i><i></i><i></i></span></span>
+              <span class="gcard-b"><span class="gcard-t">Stroop Rush</span><span class="gcard-s">Tap the colour, not the word</span></span>
+              <span class="gcard-r"><span class="micro">Best</span><span class="v">1,480</span></span>
+            </div>
+            <span class="micro">Pressed — card sinks 3px onto the page</span>
+          </div>
+          <div class="state state-wide">
+            <div class="gcard locked">
+              <span class="gcard-thumb grey">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="color:var(--text-muted)"><rect x="4" y="10" width="16" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </span>
+              <span class="gcard-b"><span class="gcard-t">N-Back</span><span class="gcard-s">Coming soon</span></span>
+              <span class="gcard-r"><span class="badge ghost">Soon</span></span>
+            </div>
+            <span class="micro">Locked — dashed outline, no lift, still legible</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Difficulty segmented control</b><span>Selection is a raised sticker, tilted −1°, not a colour fill.</span></header>
+        <div class="states">
+          <div class="state state-wide">
+            <div class="seg" role="group" aria-label="Difficulty">
+              <button type="button" aria-pressed="false">Chill</button>
+              <button type="button" aria-pressed="true">Classic</button>
+              <button type="button" aria-pressed="false">Blitz</button>
+            </div>
+            <span class="micro">Classic selected · live, tap it</span>
+          </div>
+          <div class="state state-wide">
+            <div class="seg" role="group" aria-label="Difficulty, unavailable">
+              <button type="button" aria-pressed="false" disabled>Chill</button>
+              <button type="button" aria-pressed="true" disabled>Classic</button>
+              <button type="button" aria-pressed="false" disabled>Blitz</button>
+            </div>
+            <span class="micro">Disabled — locked during a run</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Progress bar</b><span>Crayon streak inside a paper well. The 2.5px cap on the fill is the crayon's edge.</span></header>
+        <div class="states">
+          <div class="state state-wide"><span class="bar"><i style="width:38%"></i></span><span class="micro">Timer draining · danger</span></div>
+          <div class="state state-wide"><span class="bar blue"><i style="width:24%"></i></span><span class="micro">Schulte progress · 6 of 25</span></div>
+          <div class="state state-wide"><span class="bar grass"><i style="width:100%"></i></span><span class="micro">Complete</span></div>
+          <div class="state state-wide"><span class="bar"><i style="width:0"></i></span><span class="micro">Empty</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Timer ring</b><span>For modes where the clock is the whole tension. Graphite edge, crayon arc.</span></header>
+        <div class="states">
+          <div class="state">
+            <span class="ring-demo">
+              <svg viewBox="0 0 118 118" aria-hidden="true">
+                <circle class="ring-track" cx="59" cy="59" r="46"/>
+                <circle class="ring-edge" cx="59" cy="59" r="51"/>
+                <circle class="ring-edge" cx="59" cy="59" r="41"/>
+                <circle class="ring-prog" cx="59" cy="59" r="46" stroke-dasharray="289" stroke-dashoffset="101"/>
+              </svg>
+              <span class="t">0:23</span>
+            </span>
+            <span class="micro">65% remaining</span>
+          </div>
+          <div class="state">
+            <span class="ring-demo">
+              <svg viewBox="0 0 118 118" aria-hidden="true">
+                <circle class="ring-track" cx="59" cy="59" r="46"/>
+                <circle class="ring-edge" cx="59" cy="59" r="51"/>
+                <circle class="ring-edge" cx="59" cy="59" r="41"/>
+                <circle class="ring-prog" cx="59" cy="59" r="46" stroke-dasharray="289" stroke-dashoffset="260"/>
+              </svg>
+              <span class="t" style="color:var(--danger-ink)">0:04</span>
+            </span>
+            <span class="micro">Final seconds</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp span-all">
+        <header><b>Grid tile</b><span>The Schulte atom, and the template for any future board game. Found tiles recede — they sink to the page colour and lose their lift, so the eye lands on what is still in play.</span></header>
+        <div class="states">
+          <div class="state"><span class="tile">17</span><span class="micro">Idle</span></div>
+          <div class="state"><span class="tile found">3</span><span class="micro">Found — sinks to the page, struck in success-ink</span></div>
+          <div class="state"><span class="tile next">7
+            <svg class="cue" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 5C18 6 6 20 7 40c1 20 16 34 36 33 21-1 32-16 31-35C73 19 60 5 38 6" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>
+          </span><span class="micro">Next — circled in marker</span></div>
+          <div class="state"><span class="tile wrong">12
+            <svg class="cue" viewBox="0 0 80 80" aria-hidden="true"><path d="M13 13 30 30M50 50 67 67M67 13 50 30M30 50 13 67" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+          </span><span class="micro">Wrong — crossed out, shakes once</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Toggle switch</b><span>A real <span class="mono">role="switch"</span> button: focusable, keyboard-operable, <span class="mono">aria-checked</span> flipped in step with the knob. The knob carries a tick or a cross, so state never depends on colour, and a −6px inset pseudo-element takes the touch target to 45px without changing the drawn 60×33.</span></header>
+        <div class="states">
+          <div class="state"><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Example switch, on"><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button><span class="micro">On</span></div>
+          <div class="state"><button class="tog" type="button" role="switch" aria-checked="false" aria-label="Example switch, off"><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button><span class="micro">Off</span></div>
+          <div class="state"><button class="tog" type="button" role="switch" aria-checked="false" aria-label="Example switch, unavailable" disabled><i><svg class="yes" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="no" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg></i></button><span class="micro">Disabled</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Badge / sticker</b><span>Always rotated. A badge that sits straight is a chip, not a sticker.</span></header>
+        <div class="states">
+          <div class="state"><span class="badge" style="transform:rotate(-2.5deg)">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="color:var(--danger-ink)"><path d="m12 2.8 2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17l-5.6 3.1 1.2-6.3L3 9.4l6.3-.8z" fill="currentColor"/></svg>
+            New personal best</span><span class="micro">Record</span></div>
+          <div class="state"><span class="badge" style="transform:rotate(3deg)">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="color:var(--danger)"><path d="M13 2c1 4-3 5-3 8a3 3 0 0 0 6 0c2 2 3 4 3 6a7 7 0 0 1-14 0c0-6 8-8 8-14z" fill="currentColor"/></svg>
+            4 day streak</span><span class="micro">Streak</span></div>
+          <div class="state"><span class="badge violet" style="transform:rotate(-1.5deg)">Classic</span><span class="micro">Selected mode</span></div>
+          <div class="state"><span class="badge ghost" style="transform:rotate(1.5deg)">Soon</span><span class="micro">Neutral</span></div>
+          <div class="state"><span class="badge off" style="transform:rotate(-1deg)">Locked</span><span class="micro">Disabled</span></div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Modal sheet</b><span>Straight top corners, wobbly bottom — like a page slid up from underneath.</span></header>
+        <div class="states">
+          <div class="state state-wide">
+            <div class="sheet">
+              <div class="grab"></div>
+              <h3>Leave the run?</h3>
+              <p>Your score so far will not be saved, and the 4 day streak stays safe either way.</p>
+              <div class="row">
+                <button class="btn btn-secondary" type="button">Stay</button>
+                <button class="btn btn-primary" type="button">Leave</button>
+              </div>
+            </div>
+            <span class="micro">Presented · scrim is graphite at 45%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <header><b>Bottom navigation</b><span>Three destinations, forever. Active state is a tinted halo plus a colour change.</span></header>
+        <div class="states">
+          <div class="state state-wide">
+            <nav class="nav">
+              <button class="nav-item is-active" type="button" aria-current="page">
+                <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H10l-1.5 8.5 9.5-12H12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span>Play</button>
+              <button class="nav-item" type="button">
+                <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V4M19 20v-11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>Stats</button>
+              <button class="nav-item" type="button">
+                <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h7M15 8h6M3 16h11M19 16h2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12.5" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="16.5" cy="16" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></span>Settings</button>
+            </nav>
+            <span class="micro">Play active</span>
+          </div>
+          <div class="state state-wide">
+            <nav class="nav">
+              <button class="nav-item" type="button">
+                <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H10l-1.5 8.5 9.5-12H12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span>Play</button>
+              <button class="nav-item is-active" type="button" aria-current="page">
+                <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V4M19 20v-11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>Stats</button>
+              <button class="nav-item" type="button">
+                <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h7M15 8h6M3 16h11M19 16h2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12.5" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="16.5" cy="16" r="2.6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></span>Settings</button>
+            </nav>
+            <span class="micro">Stats active</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 09 FLUTTER ══════════ -->
+  <section id="flutter">
+    <div class="sec-head">
+      <span class="sec-no">09</span>
+      <h2>Flutter mapping
+        <svg class="ul" viewBox="0 0 230 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8c38-6 76 5 114-1s74-4 110 3" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+    <p class="sec-lede">Drop this into <span class="mono">lib/theme/mindforge_tokens.dart</span>. It is the same
+      two-tier structure as the CSS: private primitives at the top, public semantic slots below, and a
+      <span class="mono">MindforgeTokens.of(context)</span> that asserts rather than returning null. Once it is
+      in place, <strong>no widget file should contain a raw <span class="mono">Color</span>,
+      <span class="mono">Duration</span>, <span class="mono">Curve</span> or <span class="mono">BorderRadius</span></strong>
+      — the same discipline this page enforces by keeping every hex inside <span class="mono">:root</span>.</p>
+
+    <div class="codewrap">
+      <header><b>lib/theme/mindforge_tokens.dart</b><span>Dart · ThemeExtension · Flutter ≥ 3.22</span></header>
+      <pre><code>import 'package:flutter/material.dart';
+
+// ── Tier 1 · primitives ──────────────────────────────────────────────
+// Named after the crayon. Private: no widget may reference these.
+const _paper       = Color(0xFFFDF6E3);
+const _paperWhite  = Color(0xFFFFFCF2);
+const _paperWarm   = Color(0xFFF8EFD8);
+const _paperShade  = Color(0xFFF0E4C6);
+const _kraft       = Color(0xFFE7D5AC);
+
+const _graphite    = Color(0xFF33302E);
+const _inkSoft     = Color(0xFF5E574E);
+const _inkFaint    = Color(0xFF736B5E);
+const _inkGhost    = Color(0xFFC2B9A6);
+
+const _crayonRed   = Color(0xFFE5544B);
+const _markerBlue  = Color(0xFF3D7DD8);
+const _grass       = Color(0xFF58B368);
+const _sunny       = Color(0xFFF2B705);
+const _violet      = Color(0xFF8A5FBF);
+
+const _redInk      = Color(0xFFBE382F);
+const _blueInk     = Color(0xFF2A5FA8);
+const _greenInk    = Color(0xFF2D7A45);
+const _sunnyInk    = Color(0xFF8A6200);
+const _violetInk   = Color(0xFF6F45A0);
+
+// Deep crayons. The Stroop stimulus is TEXT: a chip fill is rescued by its
+// graphite outline, a glyph is not. 4.59:1 and 4.12:1 on _paperWhite.
+const _grassDeep   = Color(0xFF3F814B);
+const _goldDeep    = Color(0xFFA17300);
+
+const _redTint     = Color(0xFFFBE3E0);
+const _blueTint    = Color(0xFFE2ECFB);
+const _greenTint   = Color(0xFFE3F3E7);
+const _sunnyTint   = Color(0xFFFDF1D0);
+const _violetTint  = Color(0xFFEFE7F8);
+
+/// Hand-drawn radii. Asymmetric on both axes — that asymmetry is the
+/// entire "drawn, not printed" illusion. Never replace with a uniform one.
+abstract final class MindforgeRadii {
+  static const tile  = BorderRadius.only(
+    topLeft: Radius.elliptical(10, 13), topRight: Radius.elliptical(14, 11),
+    bottomRight: Radius.elliptical(11, 14), bottomLeft: Radius.elliptical(13, 10),
+  );
+  static const card  = BorderRadius.only(
+    topLeft: Radius.elliptical(20, 24), topRight: Radius.elliptical(26, 18),
+    bottomRight: Radius.elliptical(18, 26), bottomLeft: Radius.elliptical(24, 20),
+  );
+  /// Mirror of [card]. Alternate the two down a list so no two
+  /// neighbouring cards share a silhouette.
+  static const cardAlt = BorderRadius.only(
+    topLeft: Radius.elliptical(26, 18), topRight: Radius.elliptical(18, 26),
+    bottomRight: Radius.elliptical(24, 20), bottomLeft: Radius.elliptical(20, 24),
+  );
+  static const blob  = BorderRadius.only(
+    topLeft: Radius.elliptical(30, 14), topRight: Radius.elliptical(12, 28),
+    bottomRight: Radius.elliptical(28, 12), bottomLeft: Radius.elliptical(14, 30),
+  );
+  static const stamp = BorderRadius.only(
+    topLeft: Radius.elliptical(17, 8), topRight: Radius.elliptical(6, 15),
+    bottomRight: Radius.elliptical(15, 6), bottomLeft: Radius.elliptical(8, 17),
+  );
+  static const pill  = BorderRadius.all(Radius.circular(999));
+}
+
+/// Tier 2 · semantic slots. The only colour vocabulary widgets may use.
+@immutable
+final class MindforgeTokens extends ThemeExtension&lt;MindforgeTokens&gt; {
+  const MindforgeTokens({
+    required this.surface,
+    required this.surfaceRaised,
+    required this.surfaceSunk,
+    required this.surfaceDeep,
+    required this.surfaceFrame,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textMuted,
+    required this.textDisabled,
+    required this.accent,
+    required this.accentInk,
+    required this.accentTint,
+    required this.success,
+    required this.successInk,
+    required this.warning,
+    required this.warningInk,
+    required this.danger,
+    required this.dangerInk,
+    required this.focusRing,
+    required this.stroke,
+    required this.onAccent,
+    required this.stroopAnswers,
+    required this.stroopStimulus,
+    required this.space,
+    required this.strokeWidth,
+    required this.durQuick,
+    required this.durBase,
+    required this.durStamp,
+  });
+
+  // ── surfaces ──
+  final Color surface;        // page ground
+  final Color surfaceRaised;  // cards, sheets, tiles
+  final Color surfaceSunk;    // nav bar, grouped rows
+  final Color surfaceDeep;    // tracks, wells, found tiles
+  final Color surfaceFrame;   // kraft card stock
+
+  // ── text ──
+  final Color textPrimary;    // 12.14:1 on surface
+  final Color textSecondary;  //  6.60:1
+  final Color textMuted;      //  4.87:1 — the floor for 10px labels
+  final Color textDisabled;   //  inert controls only
+
+  // ── meaning ──
+  final Color accent;      final Color accentInk;  final Color accentTint;
+  final Color success;     final Color successInk;
+  final Color warning;     final Color warningInk;
+  final Color danger;      final Color dangerInk;
+  final Color focusRing;   final Color stroke;     final Color onAccent;
+
+  /// Stroop Rush answer *fills* — the chips. Green (2.54:1) and yellow
+  /// (1.77:1) do NOT clear 3:1 against [surfaceRaised]; the 2.5px [stroke]
+  /// outline is what satisfies WCAG 1.4.11, so it is load-bearing and must
+  /// never be removed. Colour is never the sole cue either: every chip prints
+  /// its own name and carries a shape badge plus its own fill pattern.
+  final ({Color red, Color blue, Color green, Color yellow}) stroopAnswers;
+
+  /// Stroop Rush stimulus *inks* — the word itself. A glyph gets no rescue
+  /// from an outline, so green and yellow are the deep siblings here. Large
+  /// text only (never below 24px), and never interchangeable with
+  /// [stroopAnswers]: they are separate fields precisely so a call site
+  /// cannot confuse them.
+  final ({Color red, Color blue, Color green, Color yellow}) stroopStimulus;
+
+  // ── metrics ──
+  /// 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40. Nothing sits at 28. A record rather
+  /// than a List so the field is deeply immutable and reads at the call site
+  /// as `tokens.space.s4` instead of `tokens.space[3]`.
+  final ({double s1, double s2, double s3, double s4,
+          double s5, double s6, double s7, double s8}) space;
+  final double strokeWidth;   // 2.5 — the drawn outline
+
+  // ── motion ──
+  final Duration durQuick;    // 150ms · state flips
+  final Duration durBase;     // 200ms · content changes
+  final Duration durStamp;    // 250ms · celebrated arrivals
+
+  static const Curve easeOut   = Cubic(0.22, 0.8, 0.3, 1);
+  static const Curve easeStamp = Cubic(0.2, 1.5, 0.4, 1);
+
+  /// Paper Crayon is deliberately single-theme: crayon inverted is chalk,
+  /// which is a different system, not a dark variant.
+  static const MindforgeTokens light = MindforgeTokens(
+    surface:        _paper,
+    surfaceRaised:  _paperWhite,
+    surfaceSunk:    _paperWarm,
+    surfaceDeep:    _paperShade,
+    surfaceFrame:   _kraft,
+    textPrimary:    _graphite,
+    textSecondary:  _inkSoft,
+    textMuted:      _inkFaint,
+    textDisabled:   _inkGhost,
+    accent:         _violet,
+    accentInk:      _violetInk,
+    accentTint:     _violetTint,
+    success:        _grass,
+    successInk:     _greenInk,
+    warning:        _sunny,
+    warningInk:     _sunnyInk,
+    danger:         _crayonRed,
+    dangerInk:      _redInk,
+    focusRing:      _markerBlue,
+    stroke:         _graphite,
+    onAccent:       _paperWhite,
+    stroopAnswers:  (red: _crayonRed, blue: _markerBlue, green: _grass,     yellow: _sunny),
+    stroopStimulus: (red: _crayonRed, blue: _markerBlue, green: _grassDeep, yellow: _goldDeep),
+    space:          (s1: 4, s2: 8, s3: 12, s4: 16, s5: 20, s6: 24, s7: 32, s8: 40),
+    strokeWidth:    2.5,
+    durQuick:       Duration(milliseconds: 150),
+    durBase:        Duration(milliseconds: 200),
+    durStamp:       Duration(milliseconds: 250),
+  );
+
+  /// Colour-blind mode. Violet is deliberately NOT in this set: under
+  /// deuteranopia _markerBlue and _violet simulate to 1.07:1 of each other,
+  /// so the old green→violet swap traded a red/green collision for a
+  /// blue/violet one. No four-hue set is separable under deuteranopia — this
+  /// one maximises *lightness* separation instead, and identification rides
+  /// on the shape badge and the printed name, which no colour vision
+  /// deficiency touches.
+  static const ({Color red, Color blue, Color green, Color yellow})
+      stroopAnswersHighContrast =
+      (red: _redInk, blue: _blueInk, green: _graphite, yellow: _sunny);
+
+  /// Reads the tokens off [context]. Asserts instead of returning null so a
+  /// missing extension fails loudly in debug rather than silently in release.
+  static MindforgeTokens of(BuildContext context) {
+    final tokens = Theme.of(context).extension&lt;MindforgeTokens&gt;();
+    assert(tokens != null, 'MindforgeTokens missing from ThemeData.extensions');
+    return tokens ?? light;
+  }
+
+  // Hard offset shadows only. Paper Crayon does not blur its elevation.
+  static const List&lt;BoxShadow&gt; lift1 = [
+    BoxShadow(color: Color(0x2E33302E), offset: Offset(0, 2)),
+  ];
+  static const List&lt;BoxShadow&gt; lift2 = [
+    BoxShadow(color: Color(0x4733302E), offset: Offset(0, 3)),
+    BoxShadow(color: Color(0x4733302E), offset: Offset(0, 8), blurRadius: 16, spreadRadius: -8),
+  ];
+  static const List&lt;BoxShadow&gt; lift3 = [
+    BoxShadow(color: Color(0x7333302E), offset: Offset(0, 5)),
+    BoxShadow(color: Color(0x7333302E), offset: Offset(0, 14), blurRadius: 24, spreadRadius: -12),
+  ];
+  /// Buttons only. On press this collapses to nothing and the button
+  /// translates down 4px — it gets stamped into the paper.
+  static const List&lt;BoxShadow&gt; stampShadow = [
+    BoxShadow(color: Color(0xB333302E), offset: Offset(0, 4)),
+  ];
+
+  @override
+  MindforgeTokens copyWith({
+    Color? surface, Color? surfaceRaised, Color? surfaceSunk, Color? surfaceDeep,
+    Color? surfaceFrame, Color? textPrimary, Color? textSecondary, Color? textMuted,
+    Color? textDisabled, Color? accent, Color? accentInk, Color? accentTint,
+    Color? success, Color? successInk, Color? warning, Color? warningInk,
+    Color? danger, Color? dangerInk, Color? focusRing, Color? stroke, Color? onAccent,
+    ({Color red, Color blue, Color green, Color yellow})? stroopAnswers,
+    ({Color red, Color blue, Color green, Color yellow})? stroopStimulus,
+    ({double s1, double s2, double s3, double s4,
+      double s5, double s6, double s7, double s8})? space,
+    double? strokeWidth,
+    Duration? durQuick, Duration? durBase, Duration? durStamp,
+  }) {
+    return MindforgeTokens(
+      surface: surface ?? this.surface,
+      surfaceRaised: surfaceRaised ?? this.surfaceRaised,
+      surfaceSunk: surfaceSunk ?? this.surfaceSunk,
+      surfaceDeep: surfaceDeep ?? this.surfaceDeep,
+      surfaceFrame: surfaceFrame ?? this.surfaceFrame,
+      textPrimary: textPrimary ?? this.textPrimary,
+      textSecondary: textSecondary ?? this.textSecondary,
+      textMuted: textMuted ?? this.textMuted,
+      textDisabled: textDisabled ?? this.textDisabled,
+      accent: accent ?? this.accent,
+      accentInk: accentInk ?? this.accentInk,
+      accentTint: accentTint ?? this.accentTint,
+      success: success ?? this.success,
+      successInk: successInk ?? this.successInk,
+      warning: warning ?? this.warning,
+      warningInk: warningInk ?? this.warningInk,
+      danger: danger ?? this.danger,
+      dangerInk: dangerInk ?? this.dangerInk,
+      focusRing: focusRing ?? this.focusRing,
+      stroke: stroke ?? this.stroke,
+      onAccent: onAccent ?? this.onAccent,
+      stroopAnswers: stroopAnswers ?? this.stroopAnswers,
+      stroopStimulus: stroopStimulus ?? this.stroopStimulus,
+      space: space ?? this.space,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      durQuick: durQuick ?? this.durQuick,
+      durBase: durBase ?? this.durBase,
+      durStamp: durStamp ?? this.durStamp,
+    );
+  }
+
+  @override
+  MindforgeTokens lerp(covariant MindforgeTokens? other, double t) {
+    if (other == null) return this;
+    Color c(Color a, Color b) => Color.lerp(a, b, t)!;
+    return MindforgeTokens(
+      surface: c(surface, other.surface),
+      surfaceRaised: c(surfaceRaised, other.surfaceRaised),
+      surfaceSunk: c(surfaceSunk, other.surfaceSunk),
+      surfaceDeep: c(surfaceDeep, other.surfaceDeep),
+      surfaceFrame: c(surfaceFrame, other.surfaceFrame),
+      textPrimary: c(textPrimary, other.textPrimary),
+      textSecondary: c(textSecondary, other.textSecondary),
+      textMuted: c(textMuted, other.textMuted),
+      textDisabled: c(textDisabled, other.textDisabled),
+      accent: c(accent, other.accent),
+      accentInk: c(accentInk, other.accentInk),
+      accentTint: c(accentTint, other.accentTint),
+      success: c(success, other.success),
+      successInk: c(successInk, other.successInk),
+      warning: c(warning, other.warning),
+      warningInk: c(warningInk, other.warningInk),
+      danger: c(danger, other.danger),
+      dangerInk: c(dangerInk, other.dangerInk),
+      focusRing: c(focusRing, other.focusRing),
+      stroke: c(stroke, other.stroke),
+      onAccent: c(onAccent, other.onAccent),
+      stroopAnswers: t &lt; 0.5 ? stroopAnswers : other.stroopAnswers,
+      stroopStimulus: t &lt; 0.5 ? stroopStimulus : other.stroopStimulus,
+      space: t &lt; 0.5 ? space : other.space,
+      strokeWidth: strokeWidth + (other.strokeWidth - strokeWidth) * t,
+      durQuick: t &lt; 0.5 ? durQuick : other.durQuick,
+      durBase: t &lt; 0.5 ? durBase : other.durBase,
+      durStamp: t &lt; 0.5 ? durStamp : other.durStamp,
+    );
+  }
+
+  // ThemeData compares its extensions by value. Without these, a rebuilt but
+  // identical token set invalidates the whole theme on every frame it is
+  // constructed. Records have value equality, so they drop straight in.
+  List&lt;Object?&gt; get _props =&gt; &lt;Object?&gt;[
+        surface, surfaceRaised, surfaceSunk, surfaceDeep, surfaceFrame,
+        textPrimary, textSecondary, textMuted, textDisabled,
+        accent, accentInk, accentTint, success, successInk,
+        warning, warningInk, danger, dangerInk, focusRing, stroke, onAccent,
+        stroopAnswers, stroopStimulus, space, strokeWidth,
+        durQuick, durBase, durStamp,
+      ];
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! MindforgeTokens) return false;
+    final a = _props, b = other._props;
+    for (var i = 0; i &lt; a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode =&gt; Object.hashAll(_props);
+}
+
+/// The single place ThemeData is built. Fonts are bundled assets — never
+/// fetched at runtime, because MindForge must work with the radio off.
+/// Requires Flutter &gt;= 3.22: `background` and `onBackground` were required
+/// named arguments of the const [ColorScheme] constructor until they were
+/// deprecated there. On 3.16–3.21 add `background: _paper, onBackground:
+/// _graphite,` below with an `// ignore: deprecated_member_use`.
+ThemeData buildPaperCrayonTheme() {
+  const t = MindforgeTokens.light;
+  const scheme = ColorScheme(
+    brightness: Brightness.light,
+    primary: _violet,       onPrimary: _paperWhite,
+    secondary: _markerBlue, onSecondary: _paperWhite,
+    error: _crayonRed,      onError: _paperWhite,
+    surface: _paper,        onSurface: _graphite,
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: scheme,
+    scaffoldBackgroundColor: t.surface,
+    fontFamily: 'Nunito',
+    extensions: const [t],
+    textTheme: const TextTheme(
+      // display  — Caveat, once per screen
+      displayLarge:  TextStyle(fontFamily: 'Caveat', fontWeight: FontWeight.w700, fontSize: 44, height: 1.00),
+      // numeral-xl — Patrick Hand, the one number a screen exists for
+      displayMedium: TextStyle(fontFamily: 'PatrickHand', fontSize: 76, height: 0.95),
+      // title      — Patrick Hand, short strings only
+      titleLarge:    TextStyle(fontFamily: 'PatrickHand', fontSize: 26, height: 1.15),
+      // numeral    — HUD values, tabular
+      titleMedium:   TextStyle(fontFamily: 'PatrickHand', fontSize: 23, height: 1.13),
+      // heading / body / label / caption / micro — Nunito, always
+      titleSmall:    TextStyle(fontWeight: FontWeight.w800, fontSize: 18, height: 1.33),
+      bodyLarge:     TextStyle(fontWeight: FontWeight.w600, fontSize: 15, height: 1.47),
+      bodyMedium:    TextStyle(fontWeight: FontWeight.w700, fontSize: 13, height: 1.38),
+      bodySmall:     TextStyle(fontWeight: FontWeight.w600, fontSize: 12, height: 1.33),
+      labelSmall:    TextStyle(fontWeight: FontWeight.w900, fontSize: 10, height: 1.20, letterSpacing: 1.4),
+    ),
+  );
+}</code></pre>
+    </div>
+
+    <div class="callout" style="background:var(--green-tint); margin-top:var(--s5)">
+      <b>How to keep it honest in the codebase</b>
+      <p>• Add a policy test that greps <span class="mono">lib/</span> outside
+        <span class="mono">lib/theme/</span> for <span class="mono">Color(0x</span>,
+        <span class="mono">Colors.</span>, <span class="mono">Duration(</span>,
+        <span class="mono">Curves.</span> and <span class="mono">fontSize:</span>. If it matches, the build
+        fails. That test is the whole reason this token layer survives contact with a deadline.</p>
+      <p>• Bundle <span class="mono">Caveat</span>, <span class="mono">PatrickHand</span> and
+        <span class="mono">Nunito</span> in <span class="mono">pubspec.yaml</span>. Do not use
+        <span class="mono">google_fonts</span> — an offline app must not have a network dependency in its
+        first frame.</p>
+      <p>• Read reduce-motion from <span class="mono">MediaQuery.disableAnimationsOf(context)</span> as well
+        as the in-app switch, and collapse all three durations to <span class="mono">Duration.zero</span>.
+        The end state must be pixel-identical — put the resting transform on the widget, never in the last
+        keyframe, or turning motion off also turns the tilt off.</p>
+      <p>• The mockups in <span class="mono">app.html</span> are fixed 390×844 boxes with
+        <span class="mono">overflow:hidden</span>; the build is not. No
+        <span class="mono">MediaQuery.withClampedTextScaling</span>, no <span class="mono">FittedBox</span>
+        and no <span class="mono">TextOverflow.ellipsis</span> to make the Stroop stimulus or a Settings row
+        fit — the board reflows at the largest system text scale, it does not clip. The design-review sweep
+        includes a largest-text-scale pass on Stroop and Settings specifically.</p>
+      <p>• Add <span class="mono">stroopStimulus</span> to the same policy test as the raw-colour grep: any
+        widget that reads <span class="mono">stroopAnswers</span> to paint the stimulus word, or
+        <span class="mono">stroopStimulus</span> to paint a chip, is a contrast bug that no linter will
+        catch on its own.</p>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="pagefoot">
+    <p>Paper Crayon is one of three directions for MindForge. It is the one that trades a little data density
+      for a lot of warmth — pick it if you want people to feel invited, not measured.</p>
+    <span class="script">— MindForge, 2026</span>
+  </footer>
+
+</div>
+
+<script>
+/* Trivial only: the segmented controls and toggles respond to a tap so the
+   states can be compared live. The page is complete with JS disabled. */
+document.querySelectorAll('.seg').forEach(function (seg) {
+  if (seg.querySelector('button[disabled]')) return;
+  seg.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+  });
+});
+document.querySelectorAll('.tog:not([disabled])').forEach(function (t) {
+  t.addEventListener('click', function () {
+    t.setAttribute('aria-checked', t.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+  });
+});
+</script>
+</body>
+</html>

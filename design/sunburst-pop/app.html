@@ -1,0 +1,1427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>MindForge — Sunburst Pop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MINDFORGE — SUNBURST POP
+   Every colour lives on :root. Nothing below :root uses a hex.
+   ============================================================ */
+:root{
+  /* ---- primitives -------------------------------------- */
+  --cream:#FFF8EC;
+  --cream-2:#FFEEDA;
+  --cream-3:#F6E3C6;
+  --paper:#FFFFFF;
+  --ink:#2B1B4D;
+  --ink-2:#5A4A7D;
+  --ink-3:#8E80AE;
+  --sunshine:#FFC53D;
+  --sunshine-deep:#F2A81E;
+  --coral:#FF6B5A;
+  --coral-deep:#E8452F;
+  --turquoise:#22C7B8;
+  --turquoise-deep:#12A79A;
+  --grape:#6A45E8;
+  --grape-pop:#7C5CFF;
+  --leaf:#4CC86A;
+  --leaf-deep:#2FA64F;
+  --tangerine:#FF9330;
+  --dot:#F2DFC0;
+
+  /* ---- gameplay (Stroop) palette ------------------------ */
+  --play-red:#D81E2C;
+  --play-blue:#1F6BE0;
+  --play-green:#157A39;
+  --play-yellow:#F5B301;
+  --play-purple:#6A45E8;
+  --play-orange:#C24409;
+  --play-pink:#C2185B;
+
+  /* ---- colour-blind answer palette (Settings → ON) ------ */
+  --cb-blue:#1F6BE0;
+  --cb-yellow:#F5B301;
+  --cb-orange:#C24409;
+  --cb-pink:#C2185B;
+
+  /* ---- semantic slots ----------------------------------- */
+  --surface:var(--cream);
+  --surface-sunk:var(--cream-2);
+  --surface-raised:var(--paper);
+  --surface-invert:var(--ink);
+  --text-primary:var(--ink);
+  --text-secondary:var(--ink-2);
+  --text-invert:var(--cream);
+  --text-disabled:var(--ink-3);
+  --border:var(--ink);
+  --accent:var(--sunshine);
+  --accent-2:var(--grape);
+  --success:var(--leaf);
+  --warning:var(--tangerine);
+  --danger:var(--play-red);
+  --focus:var(--grape-pop);
+
+  /* ---- shape -------------------------------------------- */
+  --bw:3px;
+  --r-sm:10px;
+  --r-md:16px;
+  --r-lg:22px;
+  --r-xl:28px;
+  --r-pill:999px;
+  --sh-0:none;
+  --sh-1:3px 3px 0 var(--ink);
+  --sh-2:5px 5px 0 var(--ink);
+  --sh-3:8px 8px 0 var(--ink);
+  --sh-4:10px 10px 0 var(--ink);
+
+  /* ---- motion ------------------------------------------- */
+  --dur-tap:120ms;
+  --dur-state:160ms;
+  --dur-move:180ms;
+  --dur-celebrate:240ms;
+  --ease-pop:cubic-bezier(.2,1.5,.4,1);
+  --ease-out:cubic-bezier(.2,.8,.2,1);
+  --ease-inout:cubic-bezier(.6,0,.3,1);
+
+  /* ---- type --------------------------------------------- */
+  --display:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Avenir Next","Segoe UI",system-ui,sans-serif;
+
+  /* ---- frame -------------------------------------------- */
+  --k:1;
+  --phone-w:428px;
+  --phone-h:882px;
+}
+
+/* The Settings switch. Turning it on re-points the four answer slots onto a
+   palette whose worst deuteranope pair is far apart, and swaps the fill
+   patterns with them. One class, no widget knows about it. */
+.cvd{
+  --play-red:var(--cb-pink);
+  --play-green:var(--cb-orange);
+  --play-blue:var(--cb-blue);
+  --play-yellow:var(--cb-yellow);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  color:var(--text-primary);
+  background-color:var(--cream-2);
+  background-image:radial-gradient(var(--dot) 2.2px, transparent 2.3px);
+  background-size:24px 24px;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none !important;transition:none !important}
+}
+
+/* ============================================================
+   PAGE CHROME
+   ============================================================ */
+.wrap{max-width:1480px;margin:0 auto;padding:40px 24px 90px}
+
+.masthead{
+  position:relative;overflow:hidden;
+  background:var(--sunshine);
+  border:var(--bw) solid var(--border);
+  border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);
+  padding:34px 32px 30px;
+  margin-bottom:56px;
+}
+.masthead .rays{
+  position:absolute;left:76%;top:-380px;width:900px;height:900px;
+  transform:translateX(-50%);
+  background:repeating-conic-gradient(from 0deg at 50% 50%, var(--sunshine-deep) 0deg 6deg, transparent 6deg 13deg);
+  opacity:.55;pointer-events:none;
+}
+.masthead > *{position:relative}
+.brandline{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logomark{
+  width:34px;height:34px;border:var(--bw) solid var(--border);border-radius:11px;
+  background:var(--coral);box-shadow:var(--sh-1);
+  display:grid;place-items:center;flex:none;
+}
+.logomark span{width:11px;height:11px;background:var(--cream);border-radius:3px;display:block}
+.brandline b{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.01em}
+/* ink, not ink-2: the ray disc composites under this line at narrow widths */
+.brandline i{font-style:normal;font-size:13px;font-weight:700;color:var(--ink)}
+h1.sysname{
+  font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:.95;
+  font-size:clamp(44px,7vw,82px);
+  text-shadow:4px 4px 0 var(--paper), 8px 8px 0 var(--ink);
+}
+.tagline{
+  font-size:clamp(15px,1.6vw,19px);font-weight:700;max-width:56ch;margin-top:22px;line-height:1.45;
+}
+.tagline em{font-style:normal;background:var(--paper);border:var(--bw) solid var(--border);
+  border-radius:var(--r-pill);padding:1px 10px;display:inline-block;box-shadow:2px 2px 0 var(--ink)}
+
+.swatches{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.sw{
+  display:flex;align-items:center;gap:9px;
+  background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  padding:5px 14px 5px 5px;box-shadow:var(--sh-1);
+}
+.sw i{width:26px;height:26px;border-radius:var(--r-pill);border:var(--bw) solid var(--border);display:block;flex:none}
+.sw b{font-family:var(--display);font-weight:600;font-size:13px}
+.sw s{text-decoration:none;font-size:11px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.sw-cream i{background:var(--cream)} .sw-ink i{background:var(--ink)}
+.sw-sun i{background:var(--sunshine)} .sw-coral i{background:var(--coral)}
+.sw-turq i{background:var(--turquoise)} .sw-grape i{background:var(--grape)}
+.sw-leaf i{background:var(--leaf)}
+
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 40px}
+.jump a{
+  font-family:var(--display);font-weight:600;font-size:.8125rem;text-decoration:none;color:var(--ink);
+  background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  padding:7px 14px;box-shadow:var(--sh-1);
+  transition:transform var(--dur-tap) var(--ease-pop), box-shadow var(--dur-tap) var(--ease-pop), background var(--dur-tap) linear;
+}
+.jump a:hover{background:var(--sunshine);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.jump a:active{transform:translate(2px,2px) scale(.97);box-shadow:1px 1px 0 var(--ink)}
+.jump a:focus-visible{outline:none;box-shadow:var(--sh-1),0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+
+/* ============================================================
+   GALLERY + DEVICE FRAME
+   ============================================================ */
+.gallery{
+  display:grid;gap:56px 30px;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));
+  align-items:start;
+}
+.fig{display:block}
+.slot{position:relative;width:100%;height:calc(var(--phone-h) * var(--k) + 12px)}
+.phone{
+  position:absolute;top:0;left:50%;
+  transform:translateX(-50%) scale(var(--k));
+  transform-origin:top center;
+  width:var(--phone-w);
+  padding:13px;
+  background:var(--paper);
+  border:var(--bw) solid var(--border);
+  border-radius:50px;
+  box-shadow:var(--sh-3);
+}
+.screen{
+  box-sizing:content-box;
+  position:relative;width:390px;height:844px;
+  border:var(--bw) solid var(--border);border-radius:36px;
+  background:var(--surface);overflow:hidden;
+  font-size:15px;line-height:1.35;
+}
+.island{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:104px;height:26px;border-radius:var(--r-pill);background:var(--ink);z-index:30;
+}
+.hi{
+  position:absolute;bottom:9px;left:50%;transform:translateX(-50%);
+  width:138px;height:5px;border-radius:var(--r-pill);background:var(--ink);z-index:30;
+}
+
+/* status bar */
+.sb{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:none;position:relative;z-index:25}
+.sb .t{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.sb .r{display:flex;align-items:center;gap:7px}
+.sig{display:flex;align-items:flex-end;gap:2px;height:11px}
+.sig i{width:3px;background:var(--ink);border-radius:1px;display:block}
+.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}
+.sig i:nth-child(3){height:9px}.sig i:nth-child(4){height:11px}
+.wifi{color:var(--ink);display:block}
+.batt{width:24px;height:12px;border:2px solid var(--ink);border-radius:4px;position:relative;display:block}
+.batt::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;background:var(--ink);border-radius:0 2px 2px 0}
+.batt i{position:absolute;inset:1.5px;width:70%;background:var(--ink);border-radius:2px;display:block}
+
+/* app scaffold */
+.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden}
+.pane{flex:1;min-height:0;overflow:hidden auto}
+
+figcaption{margin-top:20px;padding-left:2px}
+figcaption .cnum{
+  display:inline-grid;place-items:center;width:30px;height:30px;
+  font-family:var(--display);font-weight:700;font-size:13px;
+  background:var(--ink);color:var(--cream);border-radius:9px;margin-right:10px;vertical-align:-9px;
+}
+figcaption h2{display:inline;font-family:var(--display);font-weight:600;font-size:1.25rem;letter-spacing:-.01em}
+figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2);font-weight:600;max-width:42ch}
+
+/* ============================================================
+   SHARED UI ATOMS (inside the phones)
+   ============================================================ */
+.dsp{font-family:var(--display);font-weight:700;letter-spacing:-.01em}
+.num{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.lab{font-family:var(--display);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.sub{font-size:13.5px;font-weight:700;color:var(--ink-2);line-height:1.35}
+
+.surf{
+  background:var(--surface-raised);
+  border:var(--bw) solid var(--border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);
+}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-.01em;
+  background:var(--sunshine);color:var(--ink);
+  border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);padding:15px 20px;cursor:pointer;
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop);
+}
+.btn:active{transform:translate(4px,4px) scale(.98);box-shadow:1px 1px 0 var(--ink)}
+.btn:focus-visible{outline:none;box-shadow:var(--sh-2),0 0 0 3px var(--cream),0 0 0 7px var(--focus)}
+.btn--leaf{background:var(--leaf)}
+.btn--sec{background:var(--paper)}
+.btn--ghost{
+  background:transparent;box-shadow:none;border-color:transparent;
+  text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px;
+}
+.btn--ghost:active{transform:translate(2px,2px) scale(.98);box-shadow:none}
+.btn--lg{padding:18px 20px;font-size:21px;border-radius:var(--r-xl)}
+.iconbtn{
+  width:48px;height:48px;flex:none;display:grid;place-items:center;
+  background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:15px;
+  box-shadow:var(--sh-1);color:var(--ink);cursor:pointer;
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop);
+}
+.iconbtn:active{transform:translate(2px,2px) scale(.97);box-shadow:1px 1px 0 var(--ink)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  padding:7px 14px;box-shadow:var(--sh-1);
+  font-family:var(--display);font-weight:600;font-size:14px;
+}
+.chip--sun{background:var(--sunshine)}
+
+/* ------------------------------------------------------------
+   THE PRESS RULE — every pressable surface, no exceptions.
+   e2 surfaces move 4px, e1 surfaces move 2px, both keep 1px of
+   shadow, and everything shrinks a touch so the tap feels springy.
+   ------------------------------------------------------------ */
+.ans,.tile,.gcard,.daily,.seg-i,.tab,.chip,.sw-toggle,.bestcard{
+  transition:transform var(--dur-tap) var(--ease-pop),box-shadow var(--dur-tap) var(--ease-pop);
+}
+.ans:active,.gcard:active,.daily:active,.bestcard:active{
+  transform:translate(4px,4px) scale(.98);box-shadow:1px 1px 0 var(--ink);
+}
+.tile:active,.chip:active,.seg-i:active,.tab:active,.sw-toggle:active{
+  transform:translate(2px,2px) scale(.97);box-shadow:1px 1px 0 var(--ink);
+}
+.ans:focus-visible,.gcard:focus-visible,.daily:focus-visible{
+  outline:none;box-shadow:var(--sh-2),0 0 0 3px var(--cream),0 0 0 7px var(--focus);
+}
+.tile:focus-visible,.chip:focus-visible,.seg-i:focus-visible,.tab:focus-visible,.sw-toggle:focus-visible{
+  outline:none;box-shadow:var(--sh-1),0 0 0 3px var(--cream),0 0 0 7px var(--focus);
+}
+
+/* bottom nav */
+.tabs{
+  flex:none;height:90px;display:flex;align-items:flex-start;justify-content:space-around;
+  padding:9px 14px 0;background:var(--surface-raised);border-top:var(--bw) solid var(--border);
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;gap:4px;width:88px;
+  padding:7px 0 6px;border-radius:var(--r-md);color:var(--ink-2);
+  border:var(--bw) solid transparent;
+}
+.tab span{font-family:var(--display);font-weight:600;font-size:11.5px;letter-spacing:.01em}
+.tab.on{background:var(--sunshine);color:var(--ink);border-color:var(--border);box-shadow:var(--sh-1)}
+.tab svg{display:block}
+
+/* header with rays */
+.hdr{position:relative;flex:none;overflow:hidden;border-bottom:var(--bw) solid var(--border)}
+.hdr .rays{
+  position:absolute;left:50%;top:-330px;width:720px;height:720px;transform:translateX(-50%);
+  background:repeating-conic-gradient(from 0deg at 50% 50%, var(--sunshine-deep) 0deg 5deg, transparent 5deg 12deg);
+  opacity:.5;pointer-events:none;
+}
+.hdr .dots{
+  position:absolute;inset:0;opacity:.16;pointer-events:none;
+  background-image:radial-gradient(var(--ink) 1.6px, transparent 1.7px);background-size:15px 15px;
+}
+.hdr > .in{position:relative;padding:6px 20px 22px}
+
+/* ============================================================
+   1. HOME
+   ============================================================ */
+.home-hdr{background:var(--sunshine)}
+.brandrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.wordmark{display:flex;align-items:center;gap:8px}
+.wordmark i{
+  width:26px;height:26px;border:var(--bw) solid var(--border);border-radius:9px;background:var(--coral);
+  display:grid;place-items:center;
+}
+.wordmark i b{width:8px;height:8px;background:var(--cream);border-radius:2px;display:block}
+.wordmark span{font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:-.01em}
+/* ink, not ink-2: sunshine + rays + dots composite to 3.2:1 under ink-2 */
+.greet{font-size:14px;font-weight:800;color:var(--ink);letter-spacing:.02em}
+.ask{font-family:var(--display);font-weight:700;font-size:33px;line-height:1.02;letter-spacing:-.025em;margin:2px 0 16px}
+
+.body-pad{padding:16px 20px 0;display:flex;flex-direction:column;gap:16px}
+
+.daily{
+  display:flex;align-items:center;gap:14px;
+  background:var(--grape);color:var(--text-invert);
+  border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);
+  padding:17px 16px;position:relative;overflow:hidden;
+}
+.daily .dl{flex:1}
+.daily .ct{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.015em;line-height:1.1;margin-top:0}
+.daily p{font-size:13px;font-weight:700;margin-top:3px}
+.daily .go{
+  width:48px;height:48px;flex:none;border-radius:var(--r-pill);background:var(--sunshine);
+  border:var(--bw) solid var(--border);box-shadow:var(--sh-1);display:grid;place-items:center;color:var(--ink);
+}
+.seclab{display:flex;align-items:baseline;justify-content:space-between;margin-top:4px}
+.seclab b{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.01em}
+.seclab s{text-decoration:none;font-size:12px;font-weight:800;color:var(--ink-2)}
+
+.gcard{
+  display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;
+  background:var(--coral);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);padding:15px 16px;
+}
+.gcard--turq{background:var(--turquoise)}
+.gcard .gt{flex:1;min-width:0}
+.gcard .ct{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.015em;line-height:1.1;margin-top:0;color:var(--ink)}
+.gcard p{font-size:13px;font-weight:700;margin-top:2px;color:var(--ink)}
+.bestpill{
+  display:inline-flex;align-items:center;gap:6px;margin-top:9px;
+  background:var(--cream);border:2px solid var(--border);border-radius:var(--r-pill);
+  padding:3px 10px;font-family:var(--display);font-weight:600;font-size:12.5px;
+}
+.bestpill s{text-decoration:none;font-size:10px;letter-spacing:.12em;font-weight:600;color:var(--ink-2)}
+.gart{
+  width:64px;height:64px;flex:none;border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  background:var(--cream);box-shadow:var(--sh-1);display:grid;place-items:center;padding:8px;
+}
+.gart .quad{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;height:100%}
+.gart .quad i{border-radius:5px;border:2px solid var(--border);display:block}
+.gart .quad i:nth-child(1){background:var(--play-red)}
+.gart .quad i:nth-child(2){background:var(--play-blue)}
+.gart .quad i:nth-child(3){background:var(--play-green)}
+.gart .quad i:nth-child(4){background:var(--play-yellow)}
+.gart .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:100%;height:100%}
+.gart .mini i{border:1.5px solid var(--border);border-radius:3px;background:var(--cream-2);display:grid;place-items:center;
+  font-family:var(--display);font-weight:600;font-size:10px;color:var(--ink-2)}
+.gart .mini i.on{background:var(--turquoise);color:var(--ink)}
+
+.locked{
+  display:flex;align-items:center;gap:12px;
+  background:var(--cream-2);border:var(--bw) dashed var(--border);border-radius:var(--r-lg);
+  padding:14px 15px;
+}
+.locked .lk{
+  width:44px;height:44px;flex:none;border:var(--bw) solid var(--border);border-radius:14px;
+  background:var(--cream-3);display:grid;place-items:center;color:var(--ink-2);
+}
+.locked .ct{font-family:var(--display);font-weight:600;font-size:19px;color:var(--ink-2);letter-spacing:-.01em;margin-top:0}
+/* "Coming soon" is a status, not a disabled control label — ink-2, never ink-3 */
+.locked p{font-size:12.5px;font-weight:800;color:var(--ink-2);margin-top:1px}
+
+/* ============================================================
+   2. GAME DETAIL
+   ============================================================ */
+.topbar{display:flex;align-items:center;gap:12px;padding:2px 20px 16px}
+.topbar .tt{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.hero{
+  position:relative;overflow:hidden;
+  background:var(--coral);border:var(--bw) solid var(--border);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);padding:20px 20px 20px;
+}
+/* .08, not .14: ink text on the coral+dots composite needs 4.5:1 */
+.hero .dots{position:absolute;inset:0;opacity:.08;background-image:radial-gradient(var(--ink) 1.6px,transparent 1.7px);background-size:14px 14px}
+.hero > *{position:relative}
+.hero .kicker{font-family:var(--display);font-weight:600;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.hero .ht{font-family:var(--display);font-weight:700;font-size:38px;line-height:.98;letter-spacing:-.03em;margin:6px 0 6px}
+.hero p{font-size:15px;font-weight:800;margin-bottom:14px}
+/* the game's answer palette, shown the way it is played — hue AND pattern */
+.swatchrow{display:flex;gap:8px}
+.swatchrow i{width:38px;height:38px;border-radius:12px;border:var(--bw) solid var(--border);box-shadow:2px 2px 0 var(--ink);display:block}
+
+.statrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.statbox{background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-1);padding:12px 14px}
+.statbox s{text-decoration:none;display:block;font-family:var(--display);font-weight:600;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.statbox b{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block;margin-top:3px}
+/* ink-2 is for paper and cream only — on a saturated fill the label goes ink */
+.statbox.sun s{color:var(--ink)}
+.statbox.sun{background:var(--sunshine)}
+
+.seg{
+  display:flex;gap:6px;background:var(--cream-2);border:var(--bw) solid var(--border);
+  border-radius:var(--r-pill);padding:6px;
+}
+.seg-i{
+  flex:1;text-align:center;padding:13px 0;border-radius:var(--r-pill);
+  font-family:var(--display);font-weight:600;font-size:16px;color:var(--ink-2);
+  border:var(--bw) solid transparent;cursor:pointer;
+}
+.seg-i.on{background:var(--sunshine);color:var(--ink);border-color:var(--border);box-shadow:2px 2px 0 var(--ink);transform:translate(-1px,-1px)}
+
+/* ============================================================
+   3. COUNTDOWN
+   ============================================================ */
+.count{position:absolute;inset:0;background:var(--grape);display:flex;flex-direction:column;overflow:hidden}
+.count .rays{
+  position:absolute;left:50%;top:50%;width:1000px;height:1000px;transform:translate(-50%,-50%);
+  background:repeating-conic-gradient(from 0deg at 50% 50%, var(--grape-pop) 0deg 6deg, transparent 6deg 14deg);
+  opacity:.55;pointer-events:none;
+}
+.count .cin{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
+.bigring{
+  width:238px;height:238px;border-radius:var(--r-pill);background:var(--sunshine);
+  border:var(--bw) solid var(--border);box-shadow:var(--sh-4);
+  display:grid;place-items:center;
+}
+.bigring b{font-family:var(--display);font-weight:700;font-size:132px;line-height:1;letter-spacing:-.04em;margin-top:-6px}
+.count .ready{
+  font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:-.01em;color:var(--cream);
+  text-shadow:4px 4px 0 var(--ink);
+}
+.count .cgame{
+  position:relative;display:flex;align-items:center;justify-content:space-between;padding:2px 20px 0;
+}
+.count .cgame .nm{font-family:var(--display);font-weight:600;font-size:16px;color:var(--cream)}
+.count .dotsrow{position:relative;display:flex;gap:10px;justify-content:center;padding-bottom:52px}
+.count .dotsrow i{width:14px;height:14px;border-radius:var(--r-pill);border:var(--bw) solid var(--ink);background:var(--grape-pop);display:block}
+.count .dotsrow i.on{background:var(--sunshine)}
+
+/* ============================================================
+   4. STROOP GAMEPLAY
+   ============================================================ */
+/* The per-game colour block that owns the top of both play screens. Only
+   ink-outlined objects sit on it, never small text, so the ray + dot layers
+   can run at full strength without touching a contrast floor. */
+.playband{position:relative;flex:none;overflow:hidden;border-bottom:var(--bw) solid var(--border);padding-top:2px}
+.playband--stroop{background:var(--coral)}
+.playband--schulte{background:var(--turquoise)}
+.playband > *{position:relative}
+.playband .rays{
+  position:absolute;left:50%;top:-330px;width:720px;height:720px;transform:translateX(-50%);
+  opacity:.45;pointer-events:none;
+}
+.playband--stroop .rays{background:repeating-conic-gradient(from 0deg at 50% 50%, var(--coral-deep) 0deg 5deg, transparent 5deg 12deg)}
+.playband--schulte .rays{background:repeating-conic-gradient(from 0deg at 50% 50%, var(--turquoise-deep) 0deg 5deg, transparent 5deg 12deg)}
+.playband .dots{
+  position:absolute;inset:0;opacity:.16;pointer-events:none;
+  background-image:radial-gradient(var(--ink) 1.6px, transparent 1.7px);background-size:15px 15px;
+}
+.trackwrap{padding:0 20px 14px}
+
+.hud{display:flex;gap:8px;padding:2px 20px 12px}
+.hstat{
+  flex:1;background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  box-shadow:var(--sh-1);padding:7px 10px 8px;text-align:center;
+}
+.hstat s{text-decoration:none;display:block;font-family:var(--display);font-weight:600;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.hstat b{display:block;font-family:var(--display);font-weight:700;font-size:22px;line-height:1.15;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:1px}
+.hstat.streak{background:var(--sunshine)}
+.hstat.streak s{color:var(--ink)}
+
+.track{display:block;height:16px;border:var(--bw) solid var(--border);border-radius:var(--r-pill);background:var(--cream-2);overflow:hidden}
+.track i{
+  display:block;height:100%;border-right:var(--bw) solid var(--border);
+  background-image:repeating-linear-gradient(45deg,var(--turquoise) 0 9px,var(--turquoise-deep) 9px 18px);
+}
+.track i.coral{background-image:repeating-linear-gradient(45deg,var(--coral) 0 9px,var(--coral-deep) 9px 18px)}
+
+.stim{
+  position:relative;overflow:hidden;
+  background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);padding:52px 16px 58px;text-align:center;
+}
+.stim .dots{position:absolute;inset:0;opacity:.14;background-image:radial-gradient(var(--ink) 1.6px,transparent 1.7px);background-size:16px 16px}
+.stim .ask{position:relative;font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-2);line-height:1.3;margin:0 0 18px}
+
+/* ------------------------------------------------------------
+   ANSWER FILL PATTERNS — the second, non-hue channel.
+   Every answer colour owns one pattern, drawn in ink, and it is
+   painted on BOTH the answer key and the stimulus glyph itself.
+   Red and green collapse to the same olive under deuteranopia and
+   to the same grey in a screenshot; stripe and dot never do.
+   ------------------------------------------------------------ */
+.pat{background-color:var(--play)}
+.pat--solid{background-image:linear-gradient(var(--play),var(--play))}
+.pat--stripe{background-image:repeating-linear-gradient(45deg,var(--play) 0 5px,var(--ink) 5px 9px)}
+.pat--dot{background-image:radial-gradient(var(--ink) 2.6px,var(--play) 2.7px);background-size:10px 10px}
+.pat--ring{background-image:repeating-radial-gradient(circle at 50% 50%,var(--play) 0 4px,var(--ink) 4px 7px)}
+
+/* Two registered copies of the same glyph: the outline pass underneath (drawn
+   purely from text-shadow, which is why the effective contrast is always
+   ink-on-paper at 14.4:1) and the pattern-filled pass on top. They must be two
+   elements — a text-shadow paints OVER a background-clip:text fill, so a single
+   element would ink over its own pattern. */
+.word{
+  position:relative;font-family:var(--display);font-weight:700;font-size:78px;line-height:1;letter-spacing:.01em;
+  color:var(--play);
+}
+.word .wout{
+  position:absolute;left:0;top:0;width:100%;color:transparent;
+  text-shadow:
+    3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),
+    2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),
+    8px 8px 0 var(--ink);
+}
+.word .win{position:relative;display:block;color:var(--play)}
+@supports (background-clip:text) or (-webkit-background-clip:text){
+  .word .win.pat{-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+}
+.play--red{--play:var(--play-red)}
+.play--blue{--play:var(--play-blue)}
+.play--green{--play:var(--play-green)}
+.play--yellow{--play:var(--play-yellow)}
+
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ans{
+  height:92px;display:flex;align-items:stretch;overflow:hidden;cursor:pointer;
+  background:var(--play);
+  border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);
+  font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.01em;
+}
+.ans .key{width:56px;flex:none;border-right:var(--bw) solid var(--border)}
+.ans .lb{flex:1;display:grid;place-items:center}
+.ans--red{color:var(--paper)}
+.ans--blue{color:var(--paper)}
+.ans--green{color:var(--paper)}
+.ans--yellow{color:var(--ink)}
+
+/* play pane: content sits optically centred in the space that is left */
+.playfill{height:100%;padding:0 20px 26px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.playfill > *{position:relative}
+.playfill .wdots{
+  position:absolute;inset:0;opacity:.14;pointer-events:none;
+  background-image:radial-gradient(var(--ink) 1.6px,transparent 1.7px);background-size:16px 16px;
+}
+.playfill--stroop{background:var(--surface-sunk);padding-top:20px}
+.playfill--schulte{background:var(--turquoise);padding-top:20px}
+
+/* ============================================================
+   5. SCHULTE GAMEPLAY
+   ============================================================ */
+.nextpill{
+  display:flex;align-items:center;gap:8px;background:var(--sunshine);
+  border:var(--bw) solid var(--border);border-radius:var(--r-pill);box-shadow:var(--sh-1);
+  padding:7px 16px 7px 12px;
+}
+.nextpill s{text-decoration:none;font-family:var(--display);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.nextpill b{font-family:var(--display);font-weight:700;font-size:22px;line-height:1;letter-spacing:-.02em}
+
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.tile{
+  aspect-ratio:1/1;display:grid;place-items:center;cursor:pointer;
+  background:var(--cream);border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  box-shadow:var(--sh-1);
+  font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+}
+/* recede by changing the fill, never by fading the element — element opacity
+   would take the 3px ink border down with it, and the border is the brand */
+.tile.found{background:var(--turquoise-deep);color:var(--ink);box-shadow:none;transform:translate(2px,2px)}
+.tile.next{
+  background:var(--sunshine);box-shadow:var(--sh-2),0 0 0 2px var(--cream),0 0 0 5px var(--ink);
+  transform:scale(1.02);
+}
+
+/* ============================================================
+   6. RESULTS
+   ============================================================ */
+.res-hdr{background:var(--leaf)}
+.pbadge{
+  display:inline-flex;align-items:center;gap:8px;transform:rotate(-2.5deg);
+  background:var(--sunshine);border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  box-shadow:var(--sh-2);padding:8px 16px;
+  font-family:var(--display);font-weight:600;font-size:15px;
+}
+.scoreslab{
+  background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);padding:18px 20px 20px;text-align:center;
+}
+.scoreslab s{text-decoration:none;font-family:var(--display);font-weight:600;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-2)}
+.scoreslab b{
+  display:block;font-family:var(--display);font-weight:700;font-size:76px;line-height:.95;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;margin-top:4px;
+  text-shadow:5px 5px 0 var(--sunshine);
+}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tri{
+  background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-md);
+  box-shadow:var(--sh-1);padding:11px 8px 12px;text-align:center;
+}
+.tri s{text-decoration:none;display:block;font-family:var(--display);font-weight:600;font-size:10px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);line-height:1.3}
+.tri b{display:block;font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;margin-top:4px}
+.tri:nth-child(1){background:var(--turquoise)}
+.tri:nth-child(3){background:var(--coral)}
+/* on a saturated fill the label is ink — ink-2 drops to 2.8:1 on coral */
+.tri:nth-child(1) s,.tri:nth-child(3) s{color:var(--ink)}
+
+/* ============================================================
+   7. STATS
+   ============================================================ */
+.stats-hdr{background:var(--turquoise)}
+.bestcard{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border:var(--bw) solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-2);
+  padding:13px 15px;background:var(--coral);
+}
+.bestcard.turq{background:var(--turquoise)}
+.bestcard .bl b{display:block;font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:-.01em}
+.bestcard .bl s{text-decoration:none;font-family:var(--display);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.bestcard .bv{
+  font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;
+  background:var(--cream);border:var(--bw) solid var(--border);border-radius:14px;box-shadow:2px 2px 0 var(--ink);
+  padding:4px 12px;
+}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.chart{
+  background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);padding:14px 15px 12px;
+}
+.chart .ch{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.chart .ch b{font-family:var(--display);font-weight:600;font-size:15px}
+.chart .ch s{text-decoration:none;font-size:11px;font-weight:800;color:var(--ink-2)}
+/* bar height is value/10.5 from a true zero baseline — the .axis border-top
+   below is the zero line, so no bar can overstate its run */
+.bars{display:flex;align-items:flex-end;justify-content:space-between;gap:7px;height:164px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.bar u{text-decoration:none;font-family:var(--display);font-weight:600;font-size:10px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bar i{
+  width:100%;display:block;border:var(--bw) solid var(--border);border-radius:8px 8px 3px 3px;
+  background-image:repeating-linear-gradient(45deg,var(--coral) 0 8px,var(--coral-deep) 8px 16px);
+  box-shadow:2px 2px 0 var(--ink);
+}
+.bar.top i{background-image:repeating-linear-gradient(45deg,var(--sunshine) 0 8px,var(--sunshine-deep) 8px 16px)}
+.bar em{font-style:normal;font-family:var(--display);font-weight:600;font-size:10px;color:var(--ink-2)}
+.axis{border-top:var(--bw) solid var(--border);margin-top:6px;padding-top:7px;display:flex;justify-content:space-between}
+.axis s{text-decoration:none;font-size:10.5px;font-weight:800;color:var(--ink-2)}
+
+/* ============================================================
+   8. SETTINGS
+   ============================================================ */
+.set-hdr{background:var(--grape)}
+.setgroup{background:var(--surface-raised);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);overflow:hidden}
+/* ink, not cream-3: a 1.1:1 divider is no divider at all */
+.srow{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:var(--bw) solid var(--ink)}
+.srow:last-child{border-bottom:0}
+.srow .si{
+  width:36px;height:36px;flex:none;border:2px solid var(--border);border-radius:11px;display:grid;place-items:center;
+  background:var(--cream-2);color:var(--ink);
+}
+.srow .sl{flex:1;font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:-.005em}
+/* the colour-blind palette is a real swap, so the row shows what it swaps to */
+.cbprev{display:flex;gap:5px;margin-top:7px}
+.cbprev i{width:24px;height:16px;border:2px solid var(--ink);border-radius:5px;display:block}
+.srow .sv{font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink-2)}
+.sw-toggle{
+  width:66px;height:34px;flex:none;border:var(--bw) solid var(--border);border-radius:var(--r-pill);
+  background:var(--cream-2);position:relative;display:flex;align-items:center;cursor:pointer;
+  box-shadow:inset 2px 2px 0 var(--cream-3);
+}
+.sw-toggle b{
+  position:absolute;top:1px;left:1px;width:26px;height:26px;border-radius:var(--r-pill);
+  background:var(--paper);border:var(--bw) solid var(--border);
+  transition:left var(--dur-move) var(--ease-pop);
+}
+.sw-toggle s{
+  text-decoration:none;position:absolute;right:7px;font-family:var(--display);font-weight:600;font-size:10px;
+  letter-spacing:.08em;color:var(--ink-2);
+}
+.sw-toggle.on{background:var(--leaf);box-shadow:none}
+.sw-toggle.on b{left:33px}
+.sw-toggle.on s{right:auto;left:9px;color:var(--ink)}
+.setfoot{text-align:center;padding:14px 10px 20px;margin-top:auto}
+.setfoot b{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink-2)}
+/* the product tagline is marketing copy, not a disabled control label */
+.setfoot p{font-size:12px;font-weight:800;color:var(--ink-2);margin-top:3px}
+
+/* ============================================================
+   RESPONSIVE FRAME SCALE — the page itself never scrolls sideways
+   ============================================================ */
+@media (max-width:900px){ .gallery{gap:48px 24px} }
+@media (max-width:560px){ :root{--k:.80} .wrap{padding:26px 16px 70px} .masthead{padding:26px 20px 24px} }
+@media (max-width:420px){ :root{--k:.68} }
+@media (max-width:360px){ :root{--k:.60} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= MASTHEAD ================= -->
+  <header class="masthead">
+    <div class="rays" aria-hidden="true"></div>
+    <div class="brandline">
+      <span class="logomark" aria-hidden="true"><span></span></span>
+      <b>MindForge</b>
+      <i>Train your brain. No wifi needed.</i>
+    </div>
+    <h1 class="sysname">Sunburst<br>Pop</h1>
+    <p class="tagline">Arcade-cabinet joy for an offline brain gym. Chunky ink outlines, hard shadows, buttons that
+      visibly <em>press down</em> — a platform loud enough to host any game, with every game keeping its own colour.</p>
+    <div class="swatches" aria-label="Core palette">
+      <span class="sw sw-cream"><i></i><b>Cream</b><s>#FFF8EC</s></span>
+      <span class="sw sw-ink"><i></i><b>Ink</b><s>#2B1B4D</s></span>
+      <span class="sw sw-sun"><i></i><b>Sunshine</b><s>#FFC53D</s></span>
+      <span class="sw sw-coral"><i></i><b>Coral</b><s>#FF6B5A</s></span>
+      <span class="sw sw-turq"><i></i><b>Turquoise</b><s>#22C7B8</s></span>
+      <span class="sw sw-grape"><i></i><b>Grape</b><s>#6A45E8</s></span>
+      <span class="sw sw-leaf"><i></i><b>Leaf</b><s>#4CC86A</s></span>
+    </div>
+  </header>
+
+  <nav class="jump" aria-label="Jump to a screen">
+    <a href="#s1">01 Home</a><a href="#s2">02 Game detail</a><a href="#s3">03 Countdown</a>
+    <a href="#s4">04 Stroop Rush</a><a href="#s5">05 Schulte Grid</a><a href="#s6">06 Results</a>
+    <a href="#s7">07 Stats</a><a href="#s8">08 Settings</a>
+  </nav>
+
+  <div class="gallery">
+
+  <!-- ============================================================
+       01 — HOME
+       ============================================================ -->
+  <figure class="fig" id="s1">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="hdr home-hdr">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="in">
+            <div class="brandrow">
+              <span class="wordmark"><i aria-hidden="true"><b></b></i><span>MindForge</span></span>
+              <span class="chip" style="padding:6px 12px" tabindex="0">
+                <svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true"><path d="M9 1.6c3.7 3.1 5.5 6.1 5.5 8.9a5.5 5.5 0 0 1-11 0c0-1.7.6-3.2 1.9-4.6.1 1.3.6 2.2 1.4 2.7C6.2 6.3 6.9 3.9 9 1.6z" fill="var(--coral)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>4 day streak</span>
+            </div>
+            <p class="greet">Good evening</p>
+            <p class="ask">Ready to train?</p>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="body-pad">
+            <div class="daily" tabindex="0">
+              <div class="dl">
+                <p class="ct">Daily Mix</p>
+                <p>3 games, 4 minutes</p>
+              </div>
+              <span class="go" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+
+            <div class="seclab"><b>Your games</b><s>2 unlocked</s></div>
+
+            <div class="gcard" tabindex="0">
+              <div class="gt">
+                <p class="ct">Stroop Rush</p>
+                <p>Tap the colour, not the word</p>
+                <span class="bestpill"><s>BEST</s>1,480</span>
+              </div>
+              <span class="gart" aria-hidden="true"><span class="quad"><i></i><i></i><i></i><i></i></span></span>
+            </div>
+
+            <div class="gcard gcard--turq" tabindex="0">
+              <div class="gt">
+                <p class="ct">Schulte Grid</p>
+                <p>Find 1 to 25, fast</p>
+                <span class="bestpill"><s>BEST</s>18.6s</span>
+              </div>
+              <span class="gart" aria-hidden="true"><span class="mini">
+                <i>7</i><i class="on">1</i><i>4</i><i>9</i><i>2</i><i class="on">6</i><i>3</i><i>8</i><i>5</i>
+              </span></span>
+            </div>
+
+            <div class="locked">
+              <span class="lk" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <rect x="3.5" y="8.5" width="13" height="9" rx="2.5" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M6.6 8.5V6.4a3.4 3.4 0 0 1 6.8 0v2.1" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <div><p class="ct">N-Back</p><p>Coming soon</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <span class="tab on">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <rect x="2.5" y="2.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+              <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+              <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+              <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+            </svg><span>Play</span>
+          </span>
+          <span class="tab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            </svg><span>Stats</span>
+          </span>
+          <span class="tab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+              <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+            </svg><span>Settings</span>
+          </span>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">01</span><h2>Home / game hub</h2>
+      <p>Each game owns a colour block. Sunburst header, streak chip, Daily Mix CTA and a locked slot that shows the engine is built to grow.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       02 — GAME DETAIL + DIFFICULTY
+       ============================================================ -->
+  <figure class="fig" id="s2">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="topbar">
+          <span class="iconbtn" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 6.5 10l6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="tt">Stroop Rush</span>
+        </div>
+
+        <div class="pane">
+          <div style="padding:0 20px 26px;display:flex;flex-direction:column;gap:16px;height:100%">
+            <div class="hero">
+              <div class="dots" aria-hidden="true"></div>
+              <p class="kicker">Reaction · Focus</p>
+              <p class="ht">Stroop<br>Rush</p>
+              <p>Tap the colour, not the word</p>
+              <div class="swatchrow" aria-hidden="true"><i class="pat pat--stripe play--red"></i><i class="pat pat--solid play--blue"></i><i class="pat pat--dot play--green"></i><i class="pat pat--ring play--yellow"></i></div>
+            </div>
+
+            <div class="statrow">
+              <div class="statbox sun"><s>Your best</s><b>1,480</b></div>
+              <div class="statbox"><s>Games played</s><b>128</b></div>
+            </div>
+
+            <div>
+              <p class="lab" style="color:var(--ink-2);margin-bottom:10px">Difficulty</p>
+              <div class="seg" role="group" aria-label="Difficulty">
+                <span class="seg-i" tabindex="0">Chill</span>
+                <span class="seg-i on" aria-current="true" tabindex="0">Classic</span>
+                <span class="seg-i" tabindex="0">Blitz</span>
+              </div>
+            </div>
+
+            <div class="daily" style="background:var(--surface-raised);color:var(--ink)" tabindex="0">
+              <div class="dl">
+                <p class="ct" style="font-size:19px">Daily Mix</p>
+                <p style="color:var(--ink-2)">3 games, 4 minutes</p>
+              </div>
+              <span class="go" style="background:var(--grape);color:var(--cream)" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+
+            <button class="btn btn--lg btn--leaf" type="button" style="width:100%;margin-top:auto">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Play
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">02</span><h2>Game detail + difficulty</h2>
+      <p>The game's own colour takes the hero. Chill / Classic / Blitz is one chunky segmented control — Classic sits raised and sunshine-filled.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       03 — COUNTDOWN
+       ============================================================ -->
+  <figure class="fig" id="s3">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="count">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="sb" style="color:var(--cream)">
+            <span class="t">9:41</span>
+            <span class="r">
+              <span class="sig" aria-hidden="true" style="--ink:var(--cream)"><i></i><i></i><i></i><i></i></span>
+              <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true" style="color:var(--cream)">
+                <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+                <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+              </svg>
+              <span class="batt" aria-hidden="true" style="--ink:var(--cream)"><i></i></span>
+            </span>
+          </div>
+
+          <div class="cgame">
+            <span class="nm">Stroop Rush · Classic</span>
+            <span class="iconbtn" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+
+          <div class="cin">
+            <div class="bigring"><b>3</b></div>
+            <p class="ready">Get ready</p>
+          </div>
+
+          <div class="dotsrow" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true" style="background:var(--cream)"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">03</span><h2>Countdown</h2>
+      <p>Full-bleed grape ray burst and one enormous numeral. The hand-off from menu to game is loud on purpose — it resets attention.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       04 — STROOP RUSH GAMEPLAY
+       ============================================================ -->
+  <figure class="fig" id="s4">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="topbar" style="padding-bottom:10px">
+          <span class="iconbtn" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tt" style="flex:1">Stroop Rush</span>
+          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0">Classic</span>
+        </div>
+
+        <div class="playband playband--stroop">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="hud">
+            <span class="hstat"><s>Time</s><b>0:23</b></span>
+            <span class="hstat"><s>Score</s><b>1,240</b></span>
+            <span class="hstat streak"><s>Streak</s><b>x7</b></span>
+          </div>
+          <div class="trackwrap">
+            <span class="track"><i class="coral" style="width:57%"></i></span>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="playfill playfill--stroop" style="gap:16px">
+            <div class="wdots" aria-hidden="true"></div>
+            <div class="stim">
+              <div class="dots" aria-hidden="true"></div>
+              <p class="ask">Tap the colour, not the word</p>
+              <p class="word play--red"><span class="wout" aria-hidden="true">BLUE</span><span class="win pat pat--stripe">BLUE</span></p>
+            </div>
+
+            <div class="answers">
+              <span class="ans ans--red play--red" tabindex="0"><span class="key pat pat--stripe" aria-hidden="true"></span><span class="lb">Red</span></span>
+              <span class="ans ans--blue play--blue" tabindex="0"><span class="key pat pat--solid" aria-hidden="true"></span><span class="lb">Blue</span></span>
+              <span class="ans ans--green play--green" tabindex="0"><span class="key pat pat--dot" aria-hidden="true"></span><span class="lb">Green</span></span>
+              <span class="ans ans--yellow play--yellow" tabindex="0"><span class="key pat pat--ring" aria-hidden="true"></span><span class="lb">Yellow</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">04</span><h2>Stroop Rush gameplay</h2>
+      <p>The word BLUE, printed in red, outlined in ink so the hue never has to carry contrast alone — and striped in ink, because red and green collapse to one olive under deuteranopia. Every answer key wears the same pattern as its colour.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       05 — SCHULTE GRID GAMEPLAY
+       ============================================================ -->
+  <figure class="fig" id="s5">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="topbar" style="padding-bottom:10px">
+          <span class="iconbtn" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tt" style="flex:1">Schulte Grid</span>
+          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0">Classic</span>
+        </div>
+
+        <div class="playband playband--schulte">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="hud">
+            <span class="hstat"><s>Time</s><b>0:12.4</b></span>
+            <span class="hstat"><s>Found</s><b>6 / 25</b></span>
+            <span class="hstat streak"><s>Next</s><b>7</b></span>
+          </div>
+          <div class="trackwrap">
+            <span class="track"><i style="width:24%"></i></span>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="playfill playfill--schulte">
+            <div class="wdots" aria-hidden="true"></div>
+            <div class="grid5">
+              <span class="tile" tabindex="0">14</span><span class="tile found">3</span><span class="tile" tabindex="0">22</span><span class="tile" tabindex="0">9</span><span class="tile" tabindex="0">17</span>
+              <span class="tile found">6</span><span class="tile" tabindex="0">25</span><span class="tile" tabindex="0">11</span><span class="tile found">1</span><span class="tile" tabindex="0">20</span>
+              <span class="tile" tabindex="0">19</span><span class="tile" tabindex="0">8</span><span class="tile" tabindex="0">15</span><span class="tile found">4</span><span class="tile" tabindex="0">12</span>
+              <span class="tile found">2</span><span class="tile" tabindex="0">23</span><span class="tile next" tabindex="0">7</span><span class="tile" tabindex="0">18</span><span class="tile" tabindex="0">10</span>
+              <span class="tile" tabindex="0">21</span><span class="tile" tabindex="0">13</span><span class="tile found">5</span><span class="tile" tabindex="0">24</span><span class="tile" tabindex="0">16</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">05</span><h2>Schulte Grid gameplay</h2>
+      <p>Same shell, different board — and the board is turquoise, because Schulte owns turquoise everywhere else. Found tiles sink flat into the deep tone, the next tile lifts with a double ink ring: state without relying on hue.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       06 — RESULTS
+       ============================================================ -->
+  <figure class="fig" id="s6">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="hdr res-hdr">
+          <div class="rays" aria-hidden="true" style="opacity:.55;background:repeating-conic-gradient(from 0deg at 50% 50%, var(--leaf-deep) 0deg 5deg, transparent 5deg 12deg)"></div>
+          <div class="in" style="padding-top:10px;padding-bottom:26px;text-align:center">
+            <p class="lab" style="color:var(--ink)">Stroop Rush · Classic</p>
+            <p class="ask" style="font-size:42px;margin:8px 0 16px">Nice run!</p>
+            <span class="pbadge">
+              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true"><path d="M9.5 1.6 11.9 6.6 17.4 7.4 13.4 11.2 14.4 16.7 9.5 14.1 4.6 16.7 5.6 11.2 1.6 7.4 7.1 6.6z" fill="var(--paper)" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/></svg>New personal best</span>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div style="padding:20px 20px 26px;display:flex;flex-direction:column;justify-content:center;gap:16px;height:100%">
+            <div class="scoreslab">
+              <s>Final score</s>
+              <b>1,240</b>
+            </div>
+
+            <div class="trio">
+              <span class="tri"><s>Accuracy</s><b>92%</b></span>
+              <span class="tri"><s>Avg reaction</s><b>640<em style="font-size:14px;font-style:normal">ms</em></b></span>
+              <span class="tri"><s>Longest streak</s><b>x11</b></span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
+              <button class="btn btn--lg btn--leaf" type="button">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Play again
+              </button>
+              <button class="btn btn--sec" type="button">Home</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">06</span><h2>Results</h2>
+      <p>Score set in a white slab with a sunshine drop-shadow, the personal-best badge tilted like a fairground sticker, three supporting stats.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       07 — STATS
+       ============================================================ -->
+  <figure class="fig" id="s7">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="hdr stats-hdr">
+          <div class="dots" aria-hidden="true"></div>
+          <div class="in" style="padding-top:10px;padding-bottom:18px">
+            <p class="greet" style="color:var(--ink)">All time</p>
+            <p class="ask" style="margin-bottom:0">Stats</p>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="body-pad" style="gap:16px">
+            <div class="bestcard">
+              <span class="bl"><s>Best score</s><b>Stroop Rush</b></span>
+              <span class="bv">1,480</span>
+            </div>
+            <div class="bestcard turq">
+              <span class="bl"><s>Best time</s><b>Schulte Grid</b></span>
+              <span class="bv">18.6s</span>
+            </div>
+
+            <div class="duo">
+              <div class="statbox"><s>Games played</s><b>128</b></div>
+              <div class="statbox"><s>Time trained</s><b>3h 12m</b></div>
+            </div>
+
+            <div class="chart">
+              <div class="ch"><b>Last 7 runs</b><s>Stroop Rush · best 1,480</s></div>
+              <div class="bars">
+                <span class="bar"><u>780</u><i style="height:74px"></i></span>
+                <span class="bar"><u>940</u><i style="height:90px"></i></span>
+                <span class="bar"><u>1120</u><i style="height:107px"></i></span>
+                <span class="bar"><u>860</u><i style="height:82px"></i></span>
+                <span class="bar"><u>1310</u><i style="height:125px"></i></span>
+                <span class="bar"><u>1180</u><i style="height:112px"></i></span>
+                <span class="bar top"><u>1480</u><i style="height:141px"></i></span>
+              </div>
+              <div class="axis"><s>Oldest</s><s>Latest</s></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <span class="tab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <rect x="2.5" y="2.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+              <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+              <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+              <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+            </svg><span>Play</span>
+          </span>
+          <span class="tab on">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            </svg><span>Stats</span>
+          </span>
+          <span class="tab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="6.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+              <circle cx="14" cy="15.5" r="2.8" fill="var(--paper)" stroke="currentColor" stroke-width="2.6"/>
+            </svg><span>Settings</span>
+          </span>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">07</span><h2>Stats</h2>
+      <p>Bests get their game's colour, lifetime totals stay neutral, and the seven-run chart is pure CSS — striped bars with their own hard shadow.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       08 — SETTINGS
+       ============================================================ -->
+  <figure class="fig" id="s8">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t">9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="hdr set-hdr">
+          <div class="rays" aria-hidden="true" style="opacity:.3;background:repeating-conic-gradient(from 0deg at 50% 50%, var(--grape-pop) 0deg 5deg, transparent 5deg 12deg)"></div>
+          <div class="in" style="padding-top:10px;padding-bottom:18px">
+            <p class="greet" style="color:var(--cream)">MindForge</p>
+            <p class="ask" style="margin-bottom:0;color:var(--cream)">Settings</p>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="body-pad" style="gap:16px;height:100%">
+            <div class="setgroup">
+              <div class="srow">
+                <span class="si" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 6.5h3L10 3v12L6 11.5H3z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M13 6.2a4 4 0 0 1 0 5.6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                </span>
+                <span class="sl">Sound</span>
+                <span class="sw-toggle on" role="img" aria-label="Sound on" tabindex="0"><s>ON</s><b></b></span>
+              </div>
+              <div class="srow">
+                <span class="si" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="5.5" y="2.5" width="7" height="13" rx="2.2" stroke="currentColor" stroke-width="3"/><path d="M2.5 7v4M15.5 7v4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                </span>
+                <span class="sl">Haptics</span>
+                <span class="sw-toggle on" role="img" aria-label="Haptics on" tabindex="0"><s>ON</s><b></b></span>
+              </div>
+              <div class="srow">
+                <span class="si" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M9 5.2V9l2.6 2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                </span>
+                <span class="sl">Reduce motion</span>
+                <span class="sw-toggle" role="img" aria-label="Reduce motion off" tabindex="0"><s>OFF</s><b></b></span>
+              </div>
+              <div class="srow">
+                <span class="si" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M9 2.8v12.4" stroke="currentColor" stroke-width="3"/><path d="M9 2.8a6.2 6.2 0 0 1 0 12.4z" fill="currentColor"/></svg>
+                </span>
+                <span class="sl" style="font-size:15px;line-height:1.2">Colour-blind<br>friendly palette
+                  <span class="cbprev cvd" role="img" aria-label="Preview: blue, yellow, orange, pink, each with its own ink fill pattern">
+                    <i class="pat pat--solid play--blue"></i><i class="pat pat--ring play--yellow"></i><i class="pat pat--dot play--green"></i><i class="pat pat--stripe play--red"></i>
+                  </span>
+                </span>
+                <span class="sw-toggle" role="img" aria-label="Colour-blind friendly palette off" tabindex="0"><s>OFF</s><b></b></span>
+              </div>
+            </div>
+
+            <div class="setgroup">
+              <div class="srow">
+                <span class="si" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M2.8 9h12.4M9 2.8c1.8 2 2.7 4 2.7 6.2S10.8 13.2 9 15.2C7.2 13.2 6.3 11.2 6.3 9S7.2 4.8 9 2.8z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="sl">Language</span>
+                <span class="sv">English</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="color:var(--ink-2)"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="srow">
+                <span class="si" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="3"/><path d="M9 8v4.2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="9" cy="5.6" r="1.2" fill="currentColor"/></svg>
+                </span>
+                <span class="sl">About MindForge</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="color:var(--ink-2)"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+
+            <div class="setfoot">
+              <b>MindForge</b>
+              <p>Train your brain. No wifi needed.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <span class="tab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <rect x="2.5" y="2.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+              <rect x="12.5" y="2.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+              <rect x="2.5" y="12.5" width="7" height="7" rx="2.2" fill="currentColor"/>
+              <rect x="12.5" y="12.5" width="7" height="7" rx="2.2" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+            </svg><span>Play</span>
+          </span>
+          <span class="tab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M4 18V11M11 18V4M18 18v-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            </svg><span>Stats</span>
+          </span>
+          <span class="tab on">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M3 6.5h16M3 15.5h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="6.5" r="2.8" fill="var(--sunshine)" stroke="currentColor" stroke-width="2.6"/>
+              <circle cx="14" cy="15.5" r="2.8" fill="var(--sunshine)" stroke="currentColor" stroke-width="2.6"/>
+            </svg><span>Settings</span>
+          </span>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">08</span><h2>Settings</h2>
+      <p>Toggles are chunky arcade switches that print ON / OFF inside the track, so state survives greyscale, colour-blindness and a squint test. The colour-blind row previews exactly what it swaps in — blue, yellow, orange, pink, each keeping its ink fill pattern.</p></figcaption>
+  </figure>
+
+  </div><!-- /gallery -->
+</div>
+
+<script>
+/* Trivial only: the page is complete with JS off. Adds a press-down feel to
+   anchor chips on keyboard activation, matching the :active rule. */
+document.querySelectorAll('.jump a').forEach(function (a) {
+  a.addEventListener('keydown', function (e) { if (e.key === 'Enter') { a.style.transform = 'translate(2px,2px)'; } });
+  a.addEventListener('keyup', function () { a.style.transform = ''; });
+});
+</script>
+</body>
+</html>
