@@ -15,7 +15,6 @@ const kAllowedDirectDependencies = <String>{
   // runtime
   'flutter_riverpod', // state and DI (CLAUDE.md); used from E02 on
   'drift', // on-device store, E02
-  'sqlite3_flutter_libs', // the bundled SQLite the store runs on, E02
   'path_provider', // where the database file lives, E02
   'go_router', // the single router, E08
   'clock', // the injected Clock; DateTime.now() in domain code is a defect
@@ -24,6 +23,24 @@ const kAllowedDirectDependencies = <String>{
   'very_good_analysis', // the lint floor, T01.5
   'build_runner', // drift codegen, E02
   'drift_dev', // drift codegen, E02
+};
+
+/// Transitive packages whose presence in the lock is explained, measured and
+/// accepted, mapped to the chain that drags them in.
+///
+/// An entry here is not an exemption from the offline promise — that promise is
+/// enforced at the **import** level by `test/policy/banned_imports_test.dart`,
+/// which is the check that actually decides whether a network code path can run.
+/// This map exists so a name in the lock is either banned or explained, never
+/// merely tolerated.
+const kExplainedTransitives = <String, String>{
+  'web_socket_channel':
+      'measured with `flutter pub deps --style=compact` on 2026-08-19: reached '
+          'by riverpod 3.4.2 -> test 1.31.0 -> shelf_web_socket 3.0.0, and by '
+          'the build_runner dev tool. Riverpod 3 declares package:test as a '
+          'regular dependency because it ships test utilities in the main '
+          'package. Nothing under lib/ imports it, so it tree-shakes out of the '
+          'release binary; banned_imports_test.dart is what proves that.',
 };
 
 /// Packages that break a stated `CLAUDE.md` product constraint, mapped to the
@@ -35,14 +52,21 @@ const kBannedPackages = <String, String>{
   'web_socket_channel': 'CLAUDE.md: fully offline — no network code at all',
   'google_fonts': 'CLAUDE.md: bundled fonts — runtime font fetching is a '
       'network call',
-  'firebase_': 'CLAUDE.md: no analytics, no crash reporting, no accounts',
-  'sentry': 'CLAUDE.md: no analytics, no crash reporting',
   'google_mobile_ads': 'CLAUDE.md: no ads, no IAP',
   'in_app_purchase': 'CLAUDE.md: no ads, no IAP',
   'posthog': 'CLAUDE.md: no analytics — zero telemetry packages',
   'mixpanel': 'CLAUDE.md: no analytics — zero telemetry packages',
   'amplitude': 'CLAUDE.md: no analytics — zero telemetry packages',
   'device_info_plus': 'CLAUDE.md: no analytics — no user data leaves the device',
+};
+
+/// Banned package **families**, matched by prefix. Kept separate from
+/// [kBannedPackages] because prefix-matching an ordinary name produces false
+/// positives — `http_parser` and `http_multi_server` are not `package:http`,
+/// and a gate that cries wolf gets an `// ignore:` instead of a fix.
+const kBannedPackagePrefixes = <String, String>{
+  'firebase_': 'CLAUDE.md: no analytics, no crash reporting, no accounts',
+  'sentry': 'CLAUDE.md: no analytics, no crash reporting',
 };
 
 void main() {
@@ -122,15 +146,37 @@ void main() {
           .toSet();
 
       final offenders = <String>[];
-      for (final entry in kBannedPackages.entries) {
-        for (final name in resolved) {
-          if (name == entry.key || name.startsWith(entry.key)) {
-            offenders.add('$name — ${entry.value}');
+      for (final name in resolved) {
+        if (kExplainedTransitives.containsKey(name)) continue;
+
+        final exact = kBannedPackages[name];
+        if (exact != null) offenders.add('$name — $exact');
+
+        for (final family in kBannedPackagePrefixes.entries) {
+          if (name.startsWith(family.key)) {
+            offenders.add('$name — ${family.value}');
           }
         }
       }
 
       expect(offenders, isEmpty, reason: offenders.join('\n'));
+    });
+
+    test('every explained transitive is still actually in the lock', () {
+      final resolved = RegExp(r'^  ([a-z_0-9]+):', multiLine: true)
+          .allMatches(lock.readAsStringSync())
+          .map((m) => m.group(1)!)
+          .toSet();
+
+      final stale =
+          kExplainedTransitives.keys.where((k) => !resolved.contains(k));
+      expect(
+        stale,
+        isEmpty,
+        reason: 'these packages left the resolved graph, so their measured '
+            'explanation is now a decoy that would silently re-admit them: '
+            '$stale. Delete the entry.',
+      );
     });
 
     test('cupertino_icons is absent', () {
