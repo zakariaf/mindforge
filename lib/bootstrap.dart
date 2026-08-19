@@ -1,7 +1,16 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/app.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/core/result.dart';
+import 'package:mindforge/data/daos/settings_dao.dart';
+import 'package:mindforge/data/data_providers.dart';
+import 'package:mindforge/data/db/app_database.dart';
+import 'package:mindforge/data/db/connection.dart';
+import 'package:mindforge/data/log_sink.dart';
+import 'package:mindforge/data/repositories/settings_repository.dart';
 import 'package:mindforge/theme/font_licences.dart';
 
 /// Starts MindForge.
@@ -10,20 +19,31 @@ import 'package:mindforge/theme/font_licences.dart';
 /// preference: the crash net is installed before anything that can throw, and
 /// nothing above it may be reordered without moving code out from under it.
 ///
-/// Three things `app-startup-and-bootstrap` describes are deliberately absent
-/// until the epic that owns them lands:
-/// * a durable on-device crash sink — there is nowhere to write one until E02
-///   opens the database, so the handlers report to the console;
-/// * the root `WidgetsBindingObserver` that flushes on background — there is no
-///   durable state to flush until E02;
-/// * reading the persisted locale before the first frame — there is no
-///   persisted locale until E02 and no locale controller until E04.
+/// One bounded read runs before `runApp`, and it is the only thing E02 adds to
+/// the sequence. `MaterialApp` must be built with the persisted locale on the
+/// **first** frame: if the locale arrived through an `AsyncValue`, a Persian
+/// user's cold start would paint an English LTR frame and then flip to Persian
+/// RTL — a visible, unmistakable defect. The same argument applies to E06's
+/// reduce-motion toggle, which must be honoured by the first transition rather
+/// than by the second. `async-safety` rule 9 forbids *unbounded* work here; a
+/// single-row read from a local file is bounded, and that is the whole
+/// justification.
+///
+/// Two things `app-startup-and-bootstrap` describes are still deliberately
+/// absent:
+/// * a durable on-device crash sink — `DebugLogSink` reports to the console,
+///   and replacing it is a one-line provider override once a crash log exists;
+/// * the root `WidgetsBindingObserver` that flushes on background — every write
+///   is already durable by the time it returns, so there is nothing to flush.
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
   // The restore callback is discarded on purpose: the app never uninstalls its
   // own crash net.
   installErrorHandlers();
   registerSunburstFontLicences();
+
+  final database = AppDatabase(openDatabaseConnection());
+  final initialSettings = await _readInitialSettings(database);
 
   runApp(
     ProviderScope(
@@ -32,8 +52,31 @@ Future<void> bootstrap() async {
       // schedule. Returning null disables the retry entirely so a failure
       // surfaces once, immediately, instead of flickering.
       retry: (count, error) => null,
+      overrides: [
+        appDatabaseProvider.overrideWithValue(database),
+        initialAppSettingsProvider.overrideWithValue(initialSettings),
+      ],
       child: const MindForgeApp(),
     ),
+  );
+}
+
+/// Reads the persisted settings once, falling back to the defaults.
+///
+/// The `Err` arm falls back to `AppSettings.defaults()` rather than propagating,
+/// so a broken store still boots into a usable app. A player with a corrupt
+/// database should get English and sound on, not a black screen.
+Future<AppSettings> _readInitialSettings(AppDatabase database) async {
+  final repository = SettingsRepository(
+    database: database,
+    dao: SettingsDao(database),
+    clock: const Clock(),
+    logSink: const DebugLogSink(),
+  );
+
+  return (await repository.read()).fold(
+    onOk: (settings) => settings,
+    onErr: (_) => const AppSettings.defaults(),
   );
 }
 

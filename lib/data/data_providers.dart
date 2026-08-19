@@ -1,0 +1,143 @@
+// specify_nonobvious_property_types wants an explicit type on every provider
+// below. Riverpod 3 does not export the concrete family types
+// (StreamProviderFamily and friends live behind src/internals.dart), so the
+// annotation cannot be written at all for half of these, and the ecosystem
+// relies on inference by design. The value type is spelled explicitly in every
+// generic argument instead, which is where it actually matters.
+// ignore_for_file: specify_nonobvious_property_types
+
+import 'package:clock/clock.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/core/game_stats.dart';
+import 'package:mindforge/core/id_generator.dart';
+import 'package:mindforge/core/result.dart';
+import 'package:mindforge/core/run_metric.dart';
+import 'package:mindforge/core/run_record.dart';
+import 'package:mindforge/core/run_scope.dart';
+import 'package:mindforge/core/streak_status.dart';
+import 'package:mindforge/data/daos/runs_dao.dart';
+import 'package:mindforge/data/daos/settings_dao.dart';
+import 'package:mindforge/data/data_failure.dart';
+import 'package:mindforge/data/db/app_database.dart';
+import 'package:mindforge/data/log_sink.dart';
+import 'package:mindforge/data/repositories/run_repository.dart';
+import 'package:mindforge/data/repositories/settings_repository.dart';
+import 'package:mindforge/data/uuid_id_generator.dart';
+
+/// The live database.
+///
+/// A **throwing placeholder**: a forgotten override must fail loudly at the
+/// first read, not quietly construct a second real database inside a test.
+/// `bootstrap()` overrides it; every test overrides it with
+/// `NativeDatabase.memory()`.
+final appDatabaseProvider = Provider<AppDatabase>((ref) {
+  throw UnimplementedError(
+    'appDatabaseProvider was read without an override. Override it in '
+    'lib/bootstrap.dart for the app, or with '
+    'AppDatabase(NativeDatabase.memory()) in a test.',
+  );
+});
+
+/// The settings row as it was read **before** the first frame.
+///
+/// A throwing placeholder for the same reason. `bootstrap()` awaits one bounded
+/// read and overrides this, so `MaterialApp` can be built with the persisted
+/// locale already resolved — an `AsyncValue` here would paint an English LTR
+/// frame and then flip to Persian RTL on a Persian user's cold start.
+final initialAppSettingsProvider = Provider<AppSettings>((ref) {
+  throw UnimplementedError(
+    'initialAppSettingsProvider was read without an override. bootstrap() '
+    'sets it from SettingsRepository.read() before runApp.',
+  );
+});
+
+/// The one time seam. Self-defaults, so only tests override it.
+final clockProvider = Provider<Clock>((ref) => const Clock());
+
+/// The one id seam.
+final idGeneratorProvider = Provider<IdGenerator>(
+  (ref) => const UuidIdGenerator(),
+);
+
+/// Where the data layer reports a handled failure.
+final logSinkProvider = Provider<LogSink>((ref) => const DebugLogSink());
+
+/// Which `gameId`s this build ships.
+///
+/// A placeholder that accepts nothing until E07's registry overrides it. It
+/// refuses rather than accepts, so a run written against an unregistered game
+/// fails in a test rather than in a user's history.
+final registeredGameIdsProvider = Provider<Set<String>>((ref) => const {});
+
+/// Single-table queries over `settings`. Not exposed above the repository.
+final settingsDaoProvider = Provider<SettingsDao>(
+  (ref) => SettingsDao(ref.watch(appDatabaseProvider)),
+);
+
+/// Single-table queries over `runs`. Not exposed above the repository.
+final runsDaoProvider = Provider<RunsDao>(
+  (ref) => RunsDao(ref.watch(appDatabaseProvider)),
+);
+
+/// The single settings write path.
+final settingsRepositoryProvider = Provider<SettingsRepository>(
+  (ref) => SettingsRepository(
+    database: ref.watch(appDatabaseProvider),
+    dao: ref.watch(settingsDaoProvider),
+    clock: ref.watch(clockProvider),
+    logSink: ref.watch(logSinkProvider),
+  ),
+);
+
+/// The single run write path, and the source of every derived number.
+final runRepositoryProvider = Provider<RunRepository>(
+  (ref) => RunRepository(
+    database: ref.watch(appDatabaseProvider),
+    dao: ref.watch(runsDaoProvider),
+    clock: ref.watch(clockProvider),
+    idGenerator: ref.watch(idGeneratorProvider),
+    logSink: ref.watch(logSinkProvider),
+    isRegisteredGameId: ref.watch(registeredGameIdsProvider).contains,
+  ),
+);
+
+/// The current settings, re-emitting after every committed write.
+///
+/// Seeded with [initialAppSettingsProvider] so there is no loading frame at
+/// all: the value read before `runApp` is already correct.
+final StreamProvider<AppSettings> settingsProvider =
+    StreamProvider<AppSettings>(
+      (ref) => ref.watch(settingsRepositoryProvider).watch(),
+    );
+
+/// The best score in one scope.
+final personalBestProvider = StreamProvider.autoDispose
+    .family<Result<RunMetric?, DataFailure>, RunScope>(
+      (ref, scope) => ref.watch(runRepositoryProvider).watchPersonalBest(scope),
+    );
+
+/// The best score for every game that has any run.
+///
+/// Unscoped, and therefore **not** a family: it is one `GROUP BY` behind Home's
+/// BEST pills.
+final allBestsProvider =
+    StreamProvider.autoDispose<Map<String, Result<RunMetric?, DataFailure>>>(
+      (ref) => ref.watch(runRepositoryProvider).watchBestsByGame(),
+    );
+
+/// The aggregate numbers for one scope.
+final runStatsProvider = StreamProvider.autoDispose.family<GameStats, RunScope>(
+  (ref, scope) => ref.watch(runRepositoryProvider).watchStats(scope),
+);
+
+/// The recent-runs series for one scope.
+final chartSeriesProvider = StreamProvider.autoDispose
+    .family<List<RunRecord>, RunScope>(
+      (ref, scope) => ref.watch(runRepositoryProvider).watchChartSeries(scope),
+    );
+
+/// The daily streak.
+final streakProvider = StreamProvider.autoDispose<StreakStatus>(
+  (ref) => ref.watch(runRepositoryProvider).watchStreak(),
+);
