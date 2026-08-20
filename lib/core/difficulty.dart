@@ -7,6 +7,12 @@
 /// the shell instead of a property of the game, so `GameDefinition` owns the
 /// length and this enum owns the name.
 ///
+/// **It carries no lock flag either.** Whether a difficulty is available is a
+/// property of the GAME, not of the difficulty: Schulte Grid may ship without
+/// Blitz while Stroop Rush has all three. `GameDefinition.difficulties` answers
+/// it, `UnsupportedDifficulty` is what a bad combination returns, and a global
+/// `isLocked` here would be a third answer contradicting both.
+///
 /// The `name` is what is persisted — the `runs` table joins on it — and the
 /// [labelKey] is what is rendered. They are deliberately different strings: a
 /// translation edit must never move a join key, and an ARB key rename must
