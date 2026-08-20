@@ -159,7 +159,10 @@ void main() {
         ),
         hapticGateway: gateway,
       );
-      await tester.pumpAndSettle();
+      // Timed pumps, never pumpAndSettle: it runs to the ten-minute timeout on
+      // anything indefinite, and half a second is well past both the route
+      // transition and the celebration.
+      await tester.pump(const Duration(milliseconds: 500));
 
       // .last: MaterialApp brings its own Navigator, so the one pumped here is
       // the inner of two.
@@ -173,7 +176,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(gateway.played, <HapticVerb>[HapticVerb.heavyImpact]);
     });

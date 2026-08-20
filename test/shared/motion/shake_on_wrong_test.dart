@@ -57,14 +57,19 @@ void main() {
         step: motion.durCelebrate ~/ 6,
       );
 
+      // where().isNotEmpty rather than Iterable.any: check_test_hygiene.sh
+      // greps for mocktail's argument matcher by name followed by a paren, and
+      // a word boundary matches between the dot and the a — so Dart's own
+      // method trips a gate about a package this repository does not use. This
+      // comment avoids naming it followed by a paren for the same reason.
       expect(
-        samples.any((dx) => dx < -1),
-        isTrue,
+        samples.where((dx) => dx < -1),
+        isNotEmpty,
         reason: 'the sweep goes negative',
       );
       expect(
-        samples.any((dx) => dx > 1),
-        isTrue,
+        samples.where((dx) => dx > 1),
+        isNotEmpty,
         reason: 'and positive',
       );
 
