@@ -175,3 +175,26 @@ class HalftonePainter extends CustomPainter {
   @override
   bool shouldRepaint(HalftonePainter old) => old.scene != scene;
 }
+
+/// A [HalftoneScene] painted behind something, announcing nothing.
+///
+/// The four places that paint one — the header, the play band, the hero panel
+/// and the countdown — all wrapped the same three widgets around it:
+/// `ExcludeSemantics` so a screen reader never meets a texture, a
+/// `RepaintBoundary` because the thing in front repaints on scroll, and the
+/// `CustomPaint` itself. Three of the four were written out; the fourth would
+/// have been.
+class HalftoneLayer extends StatelessWidget {
+  /// Paints [scene].
+  const HalftoneLayer({required this.scene, super.key});
+
+  /// What to paint.
+  final HalftoneScene scene;
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: RepaintBoundary(
+      child: CustomPaint(painter: HalftonePainter(scene)),
+    ),
+  );
+}

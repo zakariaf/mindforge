@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
 import 'package:mindforge/features/shell/widgets/halftone_dots.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/routing/routes.dart';
@@ -116,20 +116,14 @@ class _CountdownScreenState extends ConsumerState<CountdownScreen> {
             // THE BURST IS BEHIND THE SAFE AREA, not inside it. The fill and
             // its texture reach y=0; the content does not.
             Positioned.fill(
-              child: ExcludeSemantics(
-                child: RepaintBoundary(
-                  child: CustomPaint(
-                    painter: HalftonePainter(
-                      HalftoneScene(
-                        // No dot lattice here — `.count` has the burst alone.
-                        ink: null,
-                        ray: colours.countdownRay,
-                        origin: RayOrigin.centre,
-                        spokeDegrees: 6,
-                        pitchDegrees: 14,
-                      ),
-                    ),
-                  ),
+              child: HalftoneLayer(
+                scene: HalftoneScene(
+                  // No dot lattice here — `.count` has the burst alone.
+                  ink: null,
+                  ray: colours.countdownRay,
+                  origin: RayOrigin.centre,
+                  spokeDegrees: 6,
+                  pitchDegrees: 14,
                 ),
               ),
             ),
@@ -159,7 +153,7 @@ class _CountdownScreenState extends ConsumerState<CountdownScreen> {
                                 ref
                                     .watch(gameStringsProvider)(definition)
                                     .title,
-                                _difficultyLabel(
+                                difficultyLabel(
                                   l10n,
                                   widget.config.difficulty,
                                 ),
@@ -300,14 +294,6 @@ class _CountdownScreenState extends ConsumerState<CountdownScreen> {
       ),
     );
   }
-
-  /// The ARB label for [difficulty].
-  String _difficultyLabel(AppLocalizations l10n, Difficulty difficulty) =>
-      switch (difficulty) {
-        Difficulty.chill => l10n.difficultyChill,
-        Difficulty.classic => l10n.difficultyClassic,
-        Difficulty.blitz => l10n.difficultyBlitz,
-      };
 }
 
 /// How much wider the ring is than the numeral it holds.

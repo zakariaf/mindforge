@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/result_stat.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
+import 'package:mindforge/features/shell/widgets/equal_row.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
 import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/l10n/score_formatter_provider.dart';
@@ -68,7 +69,7 @@ class ResultsScreen extends ConsumerWidget {
               Text(
                 l10n.gameAndDifficulty(
                   ref.watch(gameStringsProvider)(definition).title,
-                  _difficultyLabel(l10n, config.difficulty),
+                  difficultyLabel(l10n, config.difficulty),
                 ),
                 textAlign: TextAlign.center,
                 style: type.sectionLabel.copyWith(color: colours.textPrimary),
@@ -113,21 +114,14 @@ class ResultsScreen extends ConsumerWidget {
                 // gives the trio turquoise, paper and coral in reading order,
                 // and a cell that picked its colour from its label would
                 // re-order itself the day a game reports different stats.
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      for (final (index, stat) in outcome.stats.indexed) ...[
-                        if (index > 0) const SizedBox(width: 10),
-                        Expanded(
-                          child: _StatCell(
-                            stat: stat,
-                            tone: _toneAt(index),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                EqualRow(
+                  // 10, not the duo's 12: three cells in the same pane need the
+                  // points back. app.html: `.trio{gap:10px}`.
+                  gap: 10,
+                  children: <Widget>[
+                    for (final (index, stat) in outcome.stats.indexed)
+                      _StatCell(stat: stat, tone: _toneAt(index)),
+                  ],
                 ),
               const SizedBox(height: 24),
               PopButton(
@@ -167,14 +161,6 @@ ResultStatTone _toneAt(int index) => switch (index) {
   2 => ResultStatTone.warm,
   _ => ResultStatTone.paper,
 };
-
-/// The ARB label for [difficulty].
-String _difficultyLabel(AppLocalizations l10n, Difficulty difficulty) =>
-    switch (difficulty) {
-      Difficulty.chill => l10n.difficultyChill,
-      Difficulty.classic => l10n.difficultyClassic,
-      Difficulty.blitz => l10n.difficultyBlitz,
-    };
 
 /// One cell of the results trio.
 class _StatCell extends ConsumerWidget {

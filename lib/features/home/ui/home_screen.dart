@@ -8,6 +8,7 @@ import 'package:mindforge/features/home/widgets/locked_game_slot.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/section_heading.dart';
 import 'package:mindforge/features/shell/widgets/shell_pane.dart';
 import 'package:mindforge/features/shell/widgets/wordmark.dart';
 import 'package:mindforge/games/game_definition.dart';
@@ -86,35 +87,12 @@ class HomeScreen extends ConsumerWidget {
       children: <Widget>[
         const _DailyMix(),
         const SizedBox(height: 18),
-        // app.html: `.seclab` is a baseline-aligned row, the heading at
-        // the start edge and the count at the end. Not a title and a
-        // caption stacked: the count belongs BESIDE the thing it counts.
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: <Widget>[
-            // The HEADING gives way, not the count. "Deine Spiele" and
-            // "2 freigeschaltet" together are wider than 350 in German,
-            // and a truncated count would state the wrong number.
-            Expanded(
-              child: Text(
-                l10n.yourGamesTitle,
-                style: type.sectionTitle.copyWith(
-                  color: colours.textPrimary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              l10n.gamesUnlocked(
-                hub.unlockedCount,
-                ref.watch(localeNumbersProvider).count(hub.unlockedCount),
-              ),
-              style: type.sectionCount.copyWith(
-                color: colours.textSecondary,
-              ),
-            ),
-          ],
+        SectionHeading(
+          title: l10n.yourGamesTitle,
+          trailing: l10n.gamesUnlocked(
+            hub.unlockedCount,
+            ref.watch(localeNumbersProvider).count(hub.unlockedCount),
+          ),
         ),
         const SizedBox(height: 12),
         for (final game in hub.games) ...<Widget>[

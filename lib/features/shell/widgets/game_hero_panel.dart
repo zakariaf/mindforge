@@ -66,16 +66,12 @@ class GameHeroPanel extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-            child: ExcludeSemantics(
-              child: CustomPaint(
-                painter: HalftonePainter(
-                  const HalftoneScene(
-                    ink: null,
-                    ray: null,
-                    pitch: dotPitch,
-                  ).copyInk(colours.heroDots),
-                ),
-              ),
+            child: HalftoneLayer(
+              scene: const HalftoneScene(
+                ink: null,
+                ray: null,
+                pitch: dotPitch,
+              ).copyInk(colours.heroDots),
             ),
           ),
           Padding(

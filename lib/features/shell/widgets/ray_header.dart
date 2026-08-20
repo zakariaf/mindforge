@@ -76,14 +76,8 @@ class RayHeader extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             Positioned.fill(
-              child: ExcludeSemantics(
-                child: RepaintBoundary(
-                  child: CustomPaint(
-                    painter: HalftonePainter(
-                      HalftoneScene(ink: colours.headerDots, ray: rays),
-                    ),
-                  ),
-                ),
+              child: HalftoneLayer(
+                scene: HalftoneScene(ink: colours.headerDots, ray: rays),
               ),
             ),
             // SafeArea for the top inset only: a header is the thing under the

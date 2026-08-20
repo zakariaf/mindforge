@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mindforge/features/shell/widgets/halftone_dots.dart';
+import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
-import 'package:mindforge/theme/sunburst_shape.dart';
 
 /// The coloured strip above a board.
 ///
@@ -11,6 +10,11 @@ import 'package:mindforge/theme/sunburst_shape.dart';
 /// border, same safe area — which is the engine claim this whole epic exists to
 /// make. A band that took a raw `Color` would let a game contribute a fill the
 /// palette never approved.
+///
+/// It IS a [RayHeader] with a different inset. The two were written out
+/// separately and were the same fill, the same 3px ink bottom border, the same
+/// clipped texture stack and the same top-only safe area — and a header that
+/// gained a fix the band did not is exactly what a duplicate costs.
 ///
 /// The ray sweep and the dot lattice sit at full strength here because, as
 /// `app.html` says of this strip, only ink-outlined objects are drawn on it and
@@ -34,39 +38,12 @@ class PlayBand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
-    final shape = SunburstShape.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colours.accentFor(accent, GameColourRole.base),
-        border: Border(
-          bottom: BorderSide(color: colours.border, width: shape.borderWidth),
-        ),
-      ),
-      child: ClipRect(
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(
-              child: ExcludeSemantics(
-                child: RepaintBoundary(
-                  child: CustomPaint(
-                    painter: HalftonePainter(
-                      HalftoneScene(
-                        ink: colours.headerDots,
-                        ray: colours.bandRayFor(accent),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SafeArea(
-              bottom: false,
-              child: Padding(padding: contentInset, child: child),
-            ),
-          ],
-        ),
-      ),
+    return RayHeader(
+      fill: colours.accentFor(accent, GameColourRole.base),
+      rays: colours.bandRayFor(accent),
+      padding: contentInset,
+      child: child,
     );
   }
 }

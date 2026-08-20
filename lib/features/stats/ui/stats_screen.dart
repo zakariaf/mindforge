@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/features/shell/widgets/best_card.dart';
+import 'package:mindforge/features/shell/widgets/equal_row.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/section_heading.dart';
 import 'package:mindforge/features/shell/widgets/shell_pane.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/features/stats/application/stats_notifier.dart';
@@ -86,34 +88,26 @@ class StatsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
         ],
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(
-                child: StatBox(
-                  label: l10n.gamesPlayed,
-                  value: numbers.count(stats.gamesPlayed),
+        EqualRow(
+          children: <Widget>[
+            StatBox(
+              label: l10n.gamesPlayed,
+              value: numbers.count(stats.gamesPlayed),
+            ),
+            StatBox(
+              label: l10n.timeTrained,
+              value: l10n.durationHoursMinutes(
+                numbers.count(
+                  stats.timeTrainedMs ~/ Duration.millisecondsPerHour,
+                ),
+                numbers.count(
+                  stats.timeTrainedMs %
+                      Duration.millisecondsPerHour ~/
+                      Duration.millisecondsPerMinute,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: StatBox(
-                  label: l10n.timeTrained,
-                  value: l10n.durationHoursMinutes(
-                    numbers.count(
-                      stats.timeTrainedMs ~/ Duration.millisecondsPerHour,
-                    ),
-                    numbers.count(
-                      stats.timeTrainedMs %
-                          Duration.millisecondsPerHour ~/
-                          Duration.millisecondsPerMinute,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         const _Chart(),
@@ -163,37 +157,15 @@ class _Chart extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  l10n.lastNRuns(
-                    stats.series.length,
-                    numbers.count(stats.series.length),
-                  ),
-                  style: type.sectionTitle.copyWith(
-                    color: colours.textPrimary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Flexible, so a long game name wraps instead of pushing the
-              // heading off the start edge.
-              Flexible(
-                child: Text(
-                  l10n.chartSubtitle(
-                    ref.watch(gameStringsProvider)(game).title,
-                    formatter.format(game.scoreFormat, bestValue),
-                  ),
-                  textAlign: TextAlign.end,
-                  style: type.sectionCount.copyWith(
-                    color: colours.textSecondary,
-                  ),
-                ),
-              ),
-            ],
+          SectionHeading(
+            title: l10n.lastNRuns(
+              stats.series.length,
+              numbers.count(stats.series.length),
+            ),
+            trailing: l10n.chartSubtitle(
+              ref.watch(gameStringsProvider)(game).title,
+              formatter.format(game.scoreFormat, bestValue),
+            ),
           ),
           const SizedBox(height: 14),
           RunBarChart(

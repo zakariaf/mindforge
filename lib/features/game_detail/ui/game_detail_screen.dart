@@ -11,11 +11,13 @@ import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/play/application/seeded_random_provider.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
+import 'package:mindforge/features/shell/widgets/equal_row.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/l10n/score_formatter_provider.dart';
@@ -130,7 +132,7 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
                 DifficultySegmented(
                   labels: <String>[
                     for (final difficulty in offered)
-                      _labelFor(l10n, difficulty),
+                      difficultyLabel(l10n, difficulty),
                   ],
                   selectedIndex: offered.indexOf(chosen),
                   onSelected: (index) =>
@@ -164,18 +166,6 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
       ),
     );
   }
-
-  /// The ARB label for [difficulty].
-  ///
-  /// A switch over the ENUM, not over a game id: `Difficulty` carries the key
-  /// and gen-l10n cannot look one up at runtime, so this is the same sanctioned
-  /// shape as `game_strings.dart`.
-  String _labelFor(AppLocalizations l10n, Difficulty difficulty) =>
-      switch (difficulty) {
-        Difficulty.chill => l10n.difficultyChill,
-        Difficulty.classic => l10n.difficultyClassic,
-        Difficulty.blitz => l10n.difficultyBlitz,
-      };
 }
 
 /// The two numbers under the hero: this game's best, and how often it was
@@ -198,37 +188,26 @@ class _StatDuo extends ConsumerWidget {
     final stats = ref.watch(runStatsProvider(scope)).value;
     final best = ref.watch(allBestsProvider).value?[definition.id.value];
 
-    // IntrinsicHeight, so the two boxes match even when one label wraps to a
-    // second line in German and the other does not. Inside a ListView a
-    // stretched Row alone has no height to stretch to.
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: StatBox(
-              label: l10n.yourBest,
-              value: switch (best) {
-                Ok(:final value) when value != null =>
-                  ref
-                      .watch(scoreFormatterProvider)
-                      .format(definition.scoreFormat, value.value),
-                // An em dash, not a zero, and not a locale-formatted one: it is
-                // punctuation, not a number.
-                Ok() || Err() || null => '—',
-              },
-              tone: StatBoxTone.accent,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: StatBox(
-              label: l10n.gamesPlayed,
-              value: numbers.count(stats?.gamesPlayed ?? 0),
-            ),
-          ),
-        ],
-      ),
+    return EqualRow(
+      children: <Widget>[
+        StatBox(
+          label: l10n.yourBest,
+          value: switch (best) {
+            Ok(:final value) when value != null =>
+              ref
+                  .watch(scoreFormatterProvider)
+                  .format(definition.scoreFormat, value.value),
+            // An em dash, not a zero, and not a locale-formatted one: it is
+            // punctuation, not a number.
+            Ok() || Err() || null => '—',
+          },
+          tone: StatBoxTone.accent,
+        ),
+        StatBox(
+          label: l10n.gamesPlayed,
+          value: numbers.count(stats?.gamesPlayed ?? 0),
+        ),
+      ],
     );
   }
 }
