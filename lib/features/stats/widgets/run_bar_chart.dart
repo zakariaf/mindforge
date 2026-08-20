@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
@@ -192,6 +193,7 @@ class RunBarChart extends StatelessWidget {
   const RunBarChart({
     required this.bars,
     required this.semanticLabel,
+    required this.accent,
     super.key,
   });
 
@@ -200,6 +202,14 @@ class RunBarChart extends StatelessWidget {
 
   /// What a screen reader hears instead of the drawing.
   final String semanticLabel;
+
+  /// Whose runs these are.
+  ///
+  /// **Read off the definition, never assumed.** The bars were painted in one
+  /// game's hue for every game, so a Schulte chart — a game whose whole
+  /// identity elsewhere is turquoise — drew coral bars under a turquoise BEST
+  /// card. The screen already held the definition and simply was not asking it.
+  final GameAccent accent;
 
   /// The band's height. `app.html`: `.bars{height:164px}`.
   static const double bandHeight = 164;
@@ -228,8 +238,8 @@ class RunBarChart extends StatelessWidget {
     );
 
     final ordinary = BarScene(
-      fill: colours.gameStroop,
-      stripe: colours.gameStroopDeep,
+      fill: colours.accentFor(accent, GameColourRole.base),
+      stripe: colours.accentFor(accent, GameColourRole.deep),
       ink: colours.border,
       borderWidth: shape.borderWidth,
       shadow: shape.eChip,

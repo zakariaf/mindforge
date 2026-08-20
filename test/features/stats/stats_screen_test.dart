@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/game_id.dart';
@@ -355,6 +357,35 @@ void main() {
         ],
       );
       expect(bars.where((bar) => bar.isBest).single.ratio, closeTo(1, 1e-9));
+    });
+  });
+
+  group('the chart wears the game own colour', () {
+    testWidgets('and not the first game in the registry', (tester) async {
+      // A CHART PAINTED IN ONE GAME'S HUE FOR EVERY GAME. The bars were
+      // hardcoded to Stroop's coral, so a Schulte chart — a game whose entire
+      // identity elsewhere is turquoise — drew coral bars under a turquoise
+      // BEST card. The screen already holds the definition; it just was not
+      // asking it.
+      await pumpStats(tester);
+
+      await tester.scrollUntilVisible(
+        find.byType(RunBarChart),
+        160,
+        scrollable: find.byType(Scrollable).last,
+      );
+
+      final chart = tester.widget<RunBarChart>(find.byType(RunBarChart));
+      final charted =
+          ProviderScope.containerOf(
+                tester.element(find.byType(RunBarChart)),
+              )
+              .read(gameRegistryProvider)
+              .firstWhere(
+                (game) => game.id.value == 'fixture_alpha',
+              );
+
+      expect(chart.accent, charted.accent);
     });
   });
 }
