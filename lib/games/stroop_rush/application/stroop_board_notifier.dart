@@ -59,7 +59,6 @@ final class StroopBoardNotifier extends Notifier<StroopBoardState> {
     );
 
     _shownAt = ref.read(clockProvider).now();
-
     return StroopBoardState(
       rounds: rounds,
       index: 0,
@@ -71,6 +70,19 @@ final class StroopBoardNotifier extends Notifier<StroopBoardState> {
       isColourBlindPalette: isColourBlind,
     );
   }
+
+  /// The board is on screen and the round in front of the player starts now.
+  ///
+  /// **Not the run phase, which this notifier is fenced from.** The board is
+  /// BUILT at `start()` — the run notifier subscribes to it inside its own
+  /// build — which is before the 3-2-1, so anchoring the reaction clock there
+  /// banked the whole countdown into the first answer. Resuming from a pause
+  /// routes back through the countdown while the board stays alive underneath
+  /// it, so it banked the pause too, up to the sixty-second clamp.
+  ///
+  /// The widget knows when it is on screen; that is a rendering fact, not a
+  /// run-phase read, and it is the one the reaction clock actually wants.
+  void markShown() => _shownAt = ref.read(clockProvider).now();
 
   /// The player tapped the key at [optionIndex].
   ///
@@ -216,13 +228,16 @@ final stroopBoardSnapshotProvider = Provider.autoDispose
 
       return BoardSnapshot(
         hud: GameHud(
-          // TIME is the SHELL's clock, published with an empty value. The
-          // board does not know how long the run has been going and must not:
-          // a second timer is the thing rule 3 forbids.
+          // TIME is the SHELL's clock, and the slot SAYS SO. The board does
+          // not know how long the run has been going and must not: a second
+          // timer is the thing rule 3 forbids. Declaring the source is what
+          // makes the shell fill it — publishing a zero and a comment left the
+          // pill reading 0:00 for the whole run.
           leading: const HudSlot(
             labelKey: 'hudTime',
             canonicalValue: 0,
             format: StatFormat.duration,
+            source: HudSource.runClock,
           ),
           middle: HudSlot(
             labelKey: 'hudScore',

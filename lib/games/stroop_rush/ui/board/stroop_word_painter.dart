@@ -100,7 +100,7 @@ class StroopWordPainter extends CustomPainter {
       _inkStroke = Paint()
         ..color = scene.ink
         ..style = PaintingStyle.stroke
-        ..strokeWidth = scene.geometry.stripePitch / 2,
+        ..strokeWidth = scene.geometry.strokeWidthFor(scene.fill),
       _inkFill = Paint()..color = scene.ink,
       _outline = TextPainter(
         text: TextSpan(

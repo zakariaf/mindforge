@@ -60,6 +60,21 @@ final class PlayFillGeometry {
   /// One ring's painted width.
   final double ringBandWidth;
 
+  /// How wide the ink stroke is for [fill].
+  ///
+  /// Rings are a BAND and the theme gives that band its own token; stripes take
+  /// half their pitch, which is what makes ink and hue equal shares. The ring
+  /// band was being carried into every scene, compared in every `==` and then
+  /// never painted — rings drew at the stripe width, so changing the token
+  /// moved nothing but the repaint count.
+  ///
+  /// Resolved at construction rather than inside `paint()`, so no `Paint` is
+  /// mutated on a frame.
+  double strokeWidthFor(PlayFill fill) => switch (fill) {
+    PlayFill.ring => ringBandWidth,
+    PlayFill.solid || PlayFill.stripe || PlayFill.dot => stripePitch / 2,
+  };
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

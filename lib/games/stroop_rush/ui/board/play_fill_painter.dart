@@ -52,7 +52,7 @@ class PlayFillPainter extends CustomPainter {
       _inkStroke = Paint()
         ..color = scene.ink
         ..style = PaintingStyle.stroke
-        ..strokeWidth = scene.geometry.stripePitch / 2,
+        ..strokeWidth = scene.geometry.strokeWidthFor(scene.fill),
       _inkFill = Paint()..color = scene.ink;
 
   /// What to paint.

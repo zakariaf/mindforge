@@ -25,7 +25,7 @@ import 'package:mindforge/ui/halftone_dots.dart';
 /// locale, and the 2x2 grid mirrors for free because every inset in here is
 /// directional. The hard offset shadow does not mirror, and that is the theme's
 /// decision rather than this file's.
-class StroopBoard extends ConsumerWidget {
+class StroopBoard extends ConsumerStatefulWidget {
   /// Creates the board for [run].
   const StroopBoard({required this.run, super.key});
 
@@ -54,7 +54,7 @@ class StroopBoard extends ConsumerWidget {
   /// there is not, never less. Between the two it takes a share of the field
   /// rather than all of it, so the stimulus card is not squeezed to nothing by
   /// a grid that fits on its own terms.
-  static double _keyHeight(BuildContext context, double available) {
+  static double keyHeight(BuildContext context, double available) {
     final design = SunburstShape.of(context).answerKeyHeight;
 
     if (!available.isFinite) return design;
@@ -64,13 +64,36 @@ class StroopBoard extends ConsumerWidget {
     // first version divided nothing and handed 0.45 to each ROW, which let the
     // grid claim about nine tenths of a cramped field while the doc comment
     // promised the word would keep the majority.
-    final forGrid = (available - cardToGridGap) * gridShareWhenCramped;
+    final forGrid =
+        (available - StroopBoard.cardToGridGap) * gridShareWhenCramped;
 
     return ((forGrid - SunburstShape.space3) / 2).clamp(kPopMinTarget, design);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StroopBoard> createState() => _StroopBoardState();
+}
+
+class _StroopBoardState extends ConsumerState<StroopBoard> {
+  @override
+  void initState() {
+    super.initState();
+
+    // THE ROUND STARTS WHEN THE BOARD DOES. The notifier is built at the run's
+    // `start()`, three seconds before this widget mounts, and it mounts again
+    // after a pause — so the reaction clock is anchored here rather than there.
+    // Deferred one frame because the notifier may still be building while this
+    // widget's own first build runs.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      ref.read(stroopBoardNotifierProvider(widget.run).notifier).markShown();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final run = widget.run;
     final colours = SunburstColors.of(context);
     final state = ref.watch(stroopBoardNotifierProvider(run));
     final round = state.current;
@@ -91,7 +114,7 @@ class StroopBoard extends ConsumerWidget {
               scene: HalftoneScene(
                 ink: colours.boardDots,
                 ray: null,
-                pitch: fieldDotPitch,
+                pitch: StroopBoard.fieldDotPitch,
               ),
             ),
           ),
@@ -107,11 +130,14 @@ class StroopBoard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Flexible(child: _StimulusCard(state: state)),
-                const SizedBox(height: cardToGridGap),
+                const SizedBox(height: StroopBoard.cardToGridGap),
                 _AnswerGrid(
                   run: run,
                   state: state,
-                  keyHeight: _keyHeight(context, constraints.maxHeight),
+                  keyHeight: StroopBoard.keyHeight(
+                    context,
+                    constraints.maxHeight,
+                  ),
                 ),
               ],
             ),

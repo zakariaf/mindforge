@@ -32,12 +32,13 @@ void main() {
 
   late FakeFeedbackService feedback;
 
-  ProviderContainer containerWith({bool colourBlind = false}) {
+  ProviderContainer containerWith({bool colourBlind = false, Clock? clock}) {
     feedback = FakeFeedbackService();
 
     final container = ProviderContainer(
       overrides: [
         feedbackServiceProvider.overrideWithValue(feedback),
+        if (clock != null) clockProvider.overrideWithValue(clock),
         // The board reads the palette from settings ONCE, at build. Seeded
         // here rather than left to bootstrap, which is what a real launch
         // would do.
@@ -433,6 +434,41 @@ void main() {
         container.read(stroopBoardSnapshotProvider(config)).totalReactionMs,
         1000,
         reason: 'four correct answers at 250ms each',
+      );
+    });
+  });
+
+  group('the reaction clock', () {
+    test('runs from when the board says it is on screen, not from build', () {
+      // THE BOARD IS BUILT AT `start()`, which is before the 3-2-1 — the run
+      // notifier subscribes to it inside its own build. Anchoring the reaction
+      // clock there banked the whole countdown into the first round's reaction,
+      // and after a pause it banked the pause too, because resuming routes back
+      // through the countdown while the board stays alive under it.
+      //
+      // The board widget knows when it is on screen. That is not the run phase,
+      // which it is still fenced from.
+      // A clock the test moves by hand, so the spans are exact rather than
+      // whatever the machine took.
+      var now = DateTime.utc(2026);
+      final container = containerWith(clock: Clock(() => now));
+      final board = container.read(
+        stroopBoardNotifierProvider(config).notifier,
+      );
+
+      now = now.add(const Duration(seconds: 30));
+      board.markShown();
+      now = now.add(const Duration(milliseconds: 400));
+
+      final state = container.read(stroopBoardNotifierProvider(config));
+      final round = state.current!;
+
+      board.submit(round.options.indexOf(round.ink));
+
+      expect(
+        container.read(stroopBoardSnapshotProvider(config)).totalReactionMs,
+        400,
+        reason: 'the 30s before the board appeared were counted',
       );
     });
   });
