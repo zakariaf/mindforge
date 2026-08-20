@@ -164,19 +164,19 @@
   "@getReady": {
     "description": "The line under the countdown numeral. The numeral itself is a formatted number, never part of this string."
   },
-  "hudTime": "Time",
+  "hudTime": "TIME",
   "@hudTime": {
     "description": "HUD label above the elapsed or remaining clock."
   },
-  "hudScore": "Score",
+  "hudScore": "SCORE",
   "@hudScore": {
     "description": "HUD label above the running score."
   },
-  "hudStreak": "Streak",
+  "hudStreak": "STREAK",
   "@hudStreak": {
     "description": "HUD label above the combo multiplier."
   },
-  "hudFound": "Found",
+  "hudFound": "FOUND",
   "@hudFound": {
     "description": "HUD label above the found-tile count in Schulte Grid."
   },

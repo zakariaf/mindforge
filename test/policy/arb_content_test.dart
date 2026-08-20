@@ -180,4 +180,76 @@ void main() {
       }
     });
   });
+
+  group('the label roles app.html sets in caps', () {
+    // `text-transform:uppercase` is a CSS property with no Flutter equivalent,
+    // and `toUpperCase()` is banned in lib/ — it is locale-dependent (Turkish
+    // dotted i) and meaningless in Arabic script, which has no case at all.
+    // The convention this repo settled on is that the CASE IS AUTHORED: an
+    // uppercase English string in the ARB, and whatever the script does in
+    // `fa` and `ckb`, which is nothing.
+    //
+    // The four HUD labels missed it, and no test noticed until the play screen
+    // was put beside `screens/04-stroop-rush.png` on the simulator. This is
+    // that comparison, written down.
+    const capsInLatin = <String>{
+      'bestLabel', // .bestcard .bl s
+      'yourBest',
+      'gamesPlayed',
+      'difficultyTitle',
+      'gameStroopRushKicker', // .hero .kicker
+      'stroopPrompt', // .stim .ask
+      'finalScore', // .scoreslab s
+      'accuracyLabel', // .tri s
+      'avgReactionLabel',
+      'longestStreakLabel',
+      'bestScore', // .statbox s
+      'bestTime',
+      'timeTrained',
+      'hudTime', // .hstat s
+      'hudScore',
+      'hudStreak',
+      'hudFound',
+    };
+
+    for (final locale in <SupportedLocale>[
+      SupportedLocale.en,
+      SupportedLocale.de,
+    ]) {
+      test('are authored uppercase in ${locale.tag}', () {
+        final messages = messagesOf(locale);
+        final lowercase = capsInLatin
+            .where(messages.containsKey)
+            .where((key) => messages[key] != messages[key]!.toUpperCase())
+            .toList();
+
+        expect(
+          lowercase,
+          isEmpty,
+          reason:
+              'app.html draws these in caps and Flutter has no text-transform, '
+              'so the ARB carries the case',
+        );
+      });
+    }
+
+    test('and the Arabic-script locales are left alone', () {
+      // Not an oversight: `toUpperCase()` is the identity function on Arabic
+      // script, so asserting it there would assert nothing while looking like
+      // coverage. What IS asserted is that nobody transliterated them into
+      // Latin capitals to satisfy the rule above.
+      for (final locale in <SupportedLocale>[
+        SupportedLocale.fa,
+        SupportedLocale.ckb,
+      ]) {
+        final messages = messagesOf(locale);
+
+        expect(
+          messages['hudScore'],
+          isNot(matches(RegExp('[A-Za-z]'))),
+          reason: '${locale.tag} hudScore carries Latin letters',
+        );
+      }
+    });
+  });
 }
