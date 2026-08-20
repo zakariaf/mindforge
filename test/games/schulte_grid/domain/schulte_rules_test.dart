@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/games/schulte_grid/domain/schulte_rules.dart';
+import 'package:mindforge/games/schulte_grid/ui/schulte_grid_metrics.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 
 /// How big the grid is, and why Blitz is not offered.

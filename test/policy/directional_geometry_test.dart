@@ -63,6 +63,11 @@ const kNonMirroringShadowFile = 'lib/theme/sunburst_shape.dart';
 /// physical-side bug by never exercising the other direction.
 const kDirectionalityIslandFiles = <String>{
   'lib/features/settings/ui/language_sheet.dart',
+  // E10. Schulte Grid's grid is a coordinate space rather than a text flow:
+  // the scramble is uniform over positions, so mirroring it yields another
+  // scramble and nothing else, while making `cells[0]` stop meaning a screen
+  // position in half the app's locales. The chrome around it still mirrors.
+  'lib/games/schulte_grid/ui/schulte_board.dart',
 };
 
 /// The construct this file bans from production code, spelled without being

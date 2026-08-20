@@ -124,9 +124,23 @@ extension PumpApp on WidgetTester {
   }) async {
     late TextDirection resolved;
 
+    // THE PROVIDERS FOLLOW THE SAME LOCALE THE WIDGETS DO. `MaterialApp.locale`
+    // drives `Localizations`, but `localeProvider` — and therefore
+    // `LocaleNumbers`, the app's one formatter — resolves from settings. A
+    // harness that set only the first gave a tree whose CHROME was Persian and
+    // whose NUMBERS were Latin, which is a state the app itself can never be
+    // in, and it silently passed a Schulte board test that was checking
+    // exactly those numerals.
+    //
+    // A caller that pinned its own override wins: `withLocaleOverride` is only
+    // applied when the settings passed in carry none.
+    final localized = settings.localeOverride == null
+        ? settings.withLocaleOverride(localeCase.locale)
+        : settings;
+
     await pumpWidget(
       settingsScope(
-        settings: settings,
+        settings: localized,
         gateway: hapticGateway,
         // MediaQuery is layered ABOVE MaterialApp, and built with
         // MediaQueryData.fromView rather than a bare MediaQueryData():

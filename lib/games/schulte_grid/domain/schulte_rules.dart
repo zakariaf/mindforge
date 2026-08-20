@@ -44,13 +44,3 @@ const List<Difficulty> schulteDifficulties = <Difficulty>[
   Difficulty.chill,
   Difficulty.classic,
 ];
-
-/// One cell's side, for a [board]-wide grid of [size] columns with [gap]
-/// between them.
-///
-/// **The gaps are between the cells, not around them** — `size - 1` of them —
-/// which is the off-by-one that makes a hand-checked figure disagree with the
-/// screen. Lives beside the rules rather than in the board widget because it is
-/// the arithmetic that decides which difficulties exist.
-double schulteCell(double board, int size, double gap) =>
-    (board - gap * (size - 1)) / size;
