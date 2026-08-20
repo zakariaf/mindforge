@@ -120,7 +120,7 @@ void main() {
       final gesture = await tester.startGesture(
         tester.getCenter(find.byType(PopSurface)),
       );
-      addTearDown(() => gesture.up());
+      addTearDown(gesture.up);
       await tester.pump();
 
       expect(gateway.played, isEmpty);
@@ -169,9 +169,12 @@ void main() {
     });
 
     testWidgets('and a disabled surface never drives anything', (tester) async {
+      // It KEEPS a live callback: the point is that `enabled` gates the press,
+      // not that a null tap has nothing to call. A surface disabled only by
+      // dropping its callback would pass this while still buzzing.
       final gateway = FakeHapticGateway();
       await tester.pumpPopComponent(
-        surface(onTap: null, enabled: false),
+        surface(enabled: false),
         hapticGateway: gateway,
       );
 
