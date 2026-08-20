@@ -17,6 +17,8 @@ import 'package:mindforge/routing/app_router.dart';
 import 'package:mindforge/shared/feedback/haptic_gateway.dart';
 import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 
+import 'fake_save_run.dart';
+
 import 'harness.dart';
 import 'locale_cases.dart';
 
@@ -74,6 +76,7 @@ extension PumpShell on WidgetTester {
     Map<RunScope, GameStats> stats = const <RunScope, GameStats>{},
     StreakStatus streak = const StreakStatus.empty(),
     List<AppSettings>? settingsWrites,
+    FakeSaveRun? saveRun,
     Map<RunScope, List<RunRecord>> chartSeries =
         const <RunScope, List<RunRecord>>{},
   }) async {
@@ -137,6 +140,10 @@ extension PumpShell on WidgetTester {
                 .map((definition) => definition.id.value)
                 .toSet(),
           ),
+          // The run WRITE seam. Unseeded, finishing a run reaches the
+          // repository and opens a database — the deadlock again — and a test
+          // could not tell a run that saved from one that did not.
+          saveRunProvider.overrideWithValue((saveRun ?? FakeSaveRun()).call),
           hapticGatewayProvider.overrideWithValue(
             hapticGateway ?? FakeHapticGateway(),
           ),

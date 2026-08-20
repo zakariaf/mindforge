@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +15,9 @@ import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/ui/components/pop_button.dart';
 import 'package:mindforge/ui/components/pop_icon_button.dart';
+import 'package:mindforge/ui/components/pop_sheet.dart';
 import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 
 /// The screen a run happens in.
@@ -40,12 +44,20 @@ class PlayScaffold extends ConsumerWidget {
     final accent = colours.accentFor(definition.accent, GameColourRole.base);
 
     // The results screen is the shell's decision, made when the run ends —
-    // never the board's.
+    // never the board's. The pause SHEET is the same rule one step earlier:
+    // the notifier owns the phase and this listener is what puts a surface in
+    // front of the player when it changes.
     ref.listen(runNotifierProvider(config), (previous, next) {
       if (previous?.phase == next.phase) return;
-      if (next.phase != RunPhase.over) return;
 
-      context.go(Routes.results(config));
+      switch (next.phase) {
+        case RunPhase.over:
+          context.go(Routes.results(config));
+        case RunPhase.paused:
+          unawaited(_showPause(context, ref, config));
+        case RunPhase.idle || RunPhase.countdown || RunPhase.playing:
+          break;
+      }
     });
 
     return PopScope(
@@ -110,4 +122,65 @@ class PlayScaffold extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Puts the pause sheet in front of the player.
+///
+/// **It is not dismissible by tapping outside or by the back gesture.** A
+/// paused run has exactly two ways forward and both are on the sheet; a sheet
+/// that could be swiped away would leave the run paused behind it with no
+/// affordance to resume, which is how a Blitz round is lost to a stray gesture
+/// rather than to the game.
+Future<void> _showPause(
+  BuildContext context,
+  WidgetRef ref,
+  RunConfig config,
+) async {
+  final l10n = AppLocalizations.of(context);
+  final notifier = ref.read(runNotifierProvider(config).notifier);
+
+  await showModalBottomSheet<void>(
+    context: context,
+    isDismissible: false,
+    enableDrag: false,
+    builder: (sheetContext) => PopScope(
+      canPop: false,
+      child: PopSheet(
+        title: l10n.pauseTitle,
+        actions: <Widget>[
+          PopButton(
+            label: l10n.pauseResume,
+            size: PopButtonSize.large,
+            variant: PopButtonVariant.success,
+            expand: true,
+            onPressed: () {
+              // KEEP PLAYING RE-ENTERS THE COUNTDOWN. Resuming does not drop
+              // the player back into a live board with a running clock — they
+              // put the phone down for a reason, and 3-2-1 is how they get
+              // their attention back. The phase moves first and the sheet
+              // closes second, so there is never a frame with a live board
+              // under an open sheet.
+              notifier.keepPlaying();
+              Navigator.of(sheetContext).pop();
+              context.go(Routes.countdown(config));
+            },
+          ),
+          PopButton(
+            label: l10n.pauseQuit,
+            variant: PopButtonVariant.secondary,
+            expand: true,
+            onPressed: () {
+              // ABANDON, WHICH WRITES NOTHING AND RESETS. A run the player
+              // left does not go on the leaderboard and cannot beat a personal
+              // best — the outcome type has no field to hold a score — and it
+              // leaves no elapsed time behind for the next run to inherit.
+              notifier.abandon();
+              Navigator.of(sheetContext).pop();
+              context.go(Routes.gameDetail(config.gameId));
+            },
+          ),
+        ],
+      ),
+    ),
+  );
 }

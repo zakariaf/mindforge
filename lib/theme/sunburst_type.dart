@@ -61,6 +61,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.sectionTitle,
     required this.sectionCount,
     required this.chartValueLabel,
+    required this.countdownReady,
   });
 
   /// The Latin display face.
@@ -258,6 +259,13 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// name.
   final TextStyle chartValueLabel;
 
+  /// The "Get ready" line under the countdown ring.
+  ///
+  /// `app.html`: `.count .ready` — 30/700, `-.01em`. Its own step because the
+  /// scale had nothing at 30: [displayL] is 33 and [title] is 21, and rounding
+  /// to either changes the one line on the screen that is not a numeral.
+  final TextStyle countdownReady;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -336,6 +344,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       sectionTitle: arabic(sectionTitle, isDisplay: true),
       sectionCount: arabic(sectionCount, isDisplay: false),
       chartValueLabel: arabic(chartValueLabel, isDisplay: true),
+      countdownReady: arabic(countdownReady, isDisplay: true),
     );
   }
 
@@ -367,6 +376,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     sectionTitle,
     sectionCount,
     chartValueLabel,
+    countdownReady,
   ];
 
   @override
@@ -415,6 +425,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? sectionTitle,
     TextStyle? sectionCount,
     TextStyle? chartValueLabel,
+    TextStyle? countdownReady,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -443,6 +454,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     sectionTitle: sectionTitle ?? this.sectionTitle,
     sectionCount: sectionCount ?? this.sectionCount,
     chartValueLabel: chartValueLabel ?? this.chartValueLabel,
+    countdownReady: countdownReady ?? this.countdownReady,
   );
 
   @override
@@ -478,6 +490,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       sectionTitle: s(sectionTitle, other.sectionTitle),
       sectionCount: s(sectionCount, other.sectionCount),
       chartValueLabel: s(chartValueLabel, other.chartValueLabel),
+      countdownReady: s(countdownReady, other.countdownReady),
     );
   }
 
@@ -731,6 +744,15 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontSize: 10,
       height: 1.2,
       fontFeatures: _tabular,
+    ),
+    // .count .ready — 30/700, -.01em.
+    countdownReady: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 30,
+      height: 1.15,
+      letterSpacing: -0.3,
     ),
   );
 }

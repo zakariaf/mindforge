@@ -40,6 +40,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.chartBarRadiusBottom,
     required this.settingsChipRadius,
     required this.paletteSwatchRadius,
+    required this.countdownRing,
+    required this.countdownDot,
+    required this.countdownReadyShadow,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -189,6 +192,20 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// A palette swatch. `app.html`: `.cbprev i{border-radius:5px}`.
   final Radius paletteSwatchRadius;
 
+  /// The countdown ring's diameter. `app.html`: `.bigring{width:238px}`.
+  final double countdownRing;
+
+  /// One beat dot. `app.html`: `.count .dotsrow i{width:14px;height:14px}`.
+  final double countdownDot;
+
+  /// The hard ink shadow behind "Get ready".
+  ///
+  /// `app.html`: `.count .ready{text-shadow:4px 4px 0 var(--ink)}`. Four, not
+  /// the five the results score casts — a bigger word on a smaller type step
+  /// takes a shorter throw. **It does not mirror**, by the same light-source
+  /// rule as every box shadow in the app.
+  final Offset countdownReadyShadow;
+
   /// The ink edge on a surface drawn **inside** another surface.
   ///
   /// DERIVED: two logical pixels, not three. A segment inside its track and a
@@ -330,6 +347,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom,
     settingsChipRadius,
     paletteSwatchRadius,
+    countdownRing,
+    countdownDot,
+    countdownReadyShadow,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -385,6 +405,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Radius? chartBarRadiusBottom,
     Radius? settingsChipRadius,
     Radius? paletteSwatchRadius,
+    double? countdownRing,
+    double? countdownDot,
+    Offset? countdownReadyShadow,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -420,6 +443,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
     settingsChipRadius: settingsChipRadius ?? this.settingsChipRadius,
     paletteSwatchRadius: paletteSwatchRadius ?? this.paletteSwatchRadius,
+    countdownRing: countdownRing ?? this.countdownRing,
+    countdownDot: countdownDot ?? this.countdownDot,
+    countdownReadyShadow: countdownReadyShadow ?? this.countdownReadyShadow,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -467,6 +493,12 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       ),
       settingsChipRadius: r(settingsChipRadius, other.settingsChipRadius),
       paletteSwatchRadius: r(paletteSwatchRadius, other.paletteSwatchRadius),
+      countdownRing: d(countdownRing, other.countdownRing),
+      countdownDot: d(countdownDot, other.countdownDot),
+      countdownReadyShadow: o(
+        countdownReadyShadow,
+        other.countdownReadyShadow,
+      ),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -511,6 +543,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: Radius.circular(3),
     settingsChipRadius: Radius.circular(11),
     paletteSwatchRadius: Radius.circular(5),
+    countdownRing: 238,
+    countdownDot: 14,
+    countdownReadyShadow: Offset(4, 4),
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,
