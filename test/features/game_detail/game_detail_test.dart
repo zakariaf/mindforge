@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mindforge/app.dart';
@@ -12,7 +11,6 @@ import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
-import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
@@ -155,15 +153,6 @@ void main() {
       expect(values, <String>['—', '0']);
     });
 
-    testWidgets('the Daily Mix card is here in its paper skin', (tester) async {
-      await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
-
-      expect(
-        tester.widget<DailyMixCard>(find.byType(DailyMixCard)).variant,
-        DailyMixVariant.paper,
-      );
-    });
-
     testWidgets('Classic is selected by default, not the first entry', (
       tester,
     ) async {
@@ -259,14 +248,14 @@ void main() {
     });
 
     testWidgets('and Play is the LAST thing on the screen', (tester) async {
-      // It is pinned to the bottom by a spacer, under the Daily Mix card. A
-      // Play button that floated up under the segmented control would put the
-      // two ways to start a run beside each other.
+      // Below the difficulty control, with room between them. A Play button
+      // that floated up against the segmented control would put the choice and
+      // the commitment in the same gesture.
       await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
 
       expect(
         tester.getRect(find.text('Play')).top,
-        greaterThan(tester.getRect(find.byType(DailyMixCard)).bottom),
+        greaterThan(tester.getRect(find.byType(DifficultySegmented)).bottom),
       );
     });
   });
@@ -353,33 +342,33 @@ void main() {
     });
   });
 
-  group('the Daily Mix card on a game detail screen', () {
-    testWidgets('is ABSENT on the page it would send you to', (tester) async {
-      // A CARD THAT NAVIGATES TO ITSELF. On the detail screen of whichever
-      // game today's pick chose, the card read "Today's pick: Stroop Rush" and
-      // led to the screen already on display. app.html draws a Daily Mix card
-      // here, but its card summarises a multi-game mix; ours names one game,
-      // and on that game's own page it is the dead affordance E11 forbids.
-      await tester.pumpShellApp(
-        const MindForgeApp(),
-        initialLocation: Routes.gameDetail(fixtureBeta.id),
-      );
-
-      final pick = ProviderScope.containerOf(
-        tester.element(find.byType(GameDetailScreen)),
-      ).read(homeHubProvider).dailyPick;
-
-      expect(pick, fixtureBeta.id, reason: 'the fixture pick is this game');
-      expect(find.byType(DailyMixCard), findsNothing);
-    });
-
-    testWidgets('and PRESENT on a game it does not point at', (tester) async {
-      // The other half, so the row is hidden for the right reason rather than
-      // hidden always.
+  group('the Daily Mix card', () {
+    testWidgets('is not on this screen at all', (tester) async {
+      // ONE ENTRY POINT, ON HOME. app.html does draw a Daily Mix card here,
+      // but its card offers a DIFFERENT ACTIVITY — "3 games, 4 minutes", a
+      // curated sequence — which is a coherent second call to action beside a
+      // single game. Ours names the ONE game today's seeded pick chose, and a
+      // multi-game mix is a product feature nobody has built, so printing that
+      // line would be a sentence about software that does not exist.
+      //
+      // That leaves our card saying "here's a different game" on a screen
+      // about this game, which is what Home is for. Hiding it only on the
+      // picked game's own page was worse: the same screen then had a card
+      // sometimes, which reads as a bug rather than a rule.
+      //
+      // When the real mix ships, this card comes back here with the design's
+      // own summary and this test changes with it.
       await tester.pumpShellApp(
         const MindForgeApp(),
         initialLocation: Routes.gameDetail(fixtureAlpha.id),
       );
+
+      expect(find.byType(DailyMixCard), findsNothing);
+    });
+
+    testWidgets('and Home still has exactly one', (tester) async {
+      // The other half: removed from one screen, not from the app.
+      await tester.pumpShellApp(const MindForgeApp());
 
       expect(find.byType(DailyMixCard), findsOneWidget);
     });
