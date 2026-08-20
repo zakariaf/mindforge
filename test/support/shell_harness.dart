@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/core/result.dart';
+import 'package:mindforge/core/run_metric.dart';
+import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
@@ -12,7 +15,6 @@ import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 
 import 'harness.dart';
 import 'locale_cases.dart';
-import 'test_database.dart';
 
 /// Pumps the whole shell in one locale, on the reference device.
 ///
@@ -44,6 +46,13 @@ extension PumpShell on WidgetTester {
   /// The locale is seeded through the SETTINGS OVERRIDE rather than a
   /// `Directionality` wrapper, because that is how the app itself resolves one
   /// — and a hardcoded direction is exactly what hides a physical-side bug.
+  ///
+  /// **It opens no database.** A screen reads providers, so the harness seeds
+  /// those. Opening a real drift database inside `testWidgets` deadlocks: the
+  /// widget binding runs in a fake-async zone, drift's close never completes
+  /// there, and `addTearDown(database.close)` hangs the test until the
+  /// ten-minute timeout. Measured. A test that genuinely needs SQL is a
+  /// repository test and belongs in a plain `test()`.
   Future<void> pumpShellApp(
     Widget app, {
     LocaleCase? localeCase,
@@ -56,11 +65,10 @@ extension PumpShell on WidgetTester {
     FakeHapticGateway? hapticGateway,
     DateTime? now,
     String? initialLocation,
+    Map<String, Result<RunMetric?, DataFailure>> bests =
+        const <String, Result<RunMetric?, DataFailure>>{},
   }) async {
     final resolved = localeCase ?? LocaleCase.english;
-    final database = openTestDatabase(now: now);
-    addTearDown(database.close);
-
     final seeded = settings.withLocaleOverride(resolved.locale);
 
     useDevice(this, device);
@@ -68,7 +76,13 @@ extension PumpShell on WidgetTester {
     await pumpWidget(
       ProviderScope(
         overrides: [
-          appDatabaseProvider.overrideWithValue(database),
+          // The screens' own data seam, seeded directly. See the note above on
+          // why no database is opened here.
+          allBestsProvider.overrideWith(
+            (ref) => Stream<Map<String, Result<RunMetric?, DataFailure>>>.value(
+              bests,
+            ),
+          ),
           clockProvider.overrideWithValue(
             Clock.fixed(now ?? DateTime.utc(2026)),
           ),

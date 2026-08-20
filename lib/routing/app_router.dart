@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mindforge/features/home/ui/home_screen.dart';
 import 'package:mindforge/features/shell/ui/nav_shell.dart';
 import 'package:mindforge/features/shell/ui/not_found_screen.dart';
 import 'package:mindforge/routing/routes.dart';
@@ -38,7 +39,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.home,
-                builder: (context, state) => const _HomePlaceholder(),
+                builder: (context, state) => const HomeScreen(),
               ),
             ],
           ),
@@ -63,14 +64,6 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-
-/// Home, until T08.5 replaces it.
-class _HomePlaceholder extends StatelessWidget {
-  const _HomePlaceholder();
-
-  @override
-  Widget build(BuildContext context) => const SizedBox.expand();
-}
 
 /// Stats, until T08.9 replaces it.
 class _StatsPlaceholder extends StatelessWidget {

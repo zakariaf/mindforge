@@ -608,7 +608,7 @@ abstract class AppLocalizations {
   /// The locked "coming soon" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip.
   ///
   /// In en, this message translates to:
-  /// **'Coming Soon'**
+  /// **'Pattern Trace'**
   String get gamePlaceholderLockedName;
 
   /// The locked slot tagline. Rendered as the card subtitle, NOT reused as the badge — a locked card that printed this twice was an E05 defect.

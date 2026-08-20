@@ -328,7 +328,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gamePlaceholderTurquoiseKicker => 'FOCUS';
 
   @override
-  String get gamePlaceholderLockedName => 'Coming Soon';
+  String get gamePlaceholderLockedName => 'Pattern Trace';
 
   @override
   String get gamePlaceholderLockedTagline => 'Not yet unlocked';

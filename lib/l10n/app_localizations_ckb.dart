@@ -323,7 +323,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get gamePlaceholderTurquoiseKicker => 'سەرنج';
 
   @override
-  String get gamePlaceholderLockedName => 'بەم زووانە';
+  String get gamePlaceholderLockedName => 'شوێنپێی نەخش';
 
   @override
   String get gamePlaceholderLockedTagline => 'هێشتا نەکراوەتەوە';

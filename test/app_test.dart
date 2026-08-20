@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/core/result.dart';
+import 'package:mindforge/core/run_metric.dart';
 import 'package:mindforge/core/supported_locale.dart';
+import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/shared/motion/motion_preference_scope.dart';
-
-import 'support/test_database.dart';
 
 void main() {
   /// Boots the app the way `bootstrap()` does: a real database and the
@@ -16,18 +17,25 @@ void main() {
   /// The overrides are not test scaffolding for their own sake — the app
   /// genuinely requires them, and a smoke test that pumped without them would
   /// be exercising a configuration that never ships.
-  Widget bootedApp({AppSettings initial = const AppSettings.defaults()}) {
-    final db = openTestDatabase();
-    addTearDown(db.close);
-
-    return ProviderScope(
-      overrides: [
-        appDatabaseProvider.overrideWithValue(db),
-        initialAppSettingsProvider.overrideWithValue(initial),
-      ],
-      child: const MindForgeApp(),
-    );
-  }
+  Widget bootedApp({AppSettings initial = const AppSettings.defaults()}) =>
+      ProviderScope(
+        overrides: [
+          initialAppSettingsProvider.overrideWithValue(initial),
+          // NO REAL DATABASE. This is a widget test, and drift inside a
+          // testWidgets fake-async zone never completes its close — the
+          // teardown then hangs until the ten-minute timeout. It was invisible
+          // while the app rendered an empty Scaffold; the moment Home started
+          // watching the bests stream, this file and the shell harness both
+          // hung. A test that genuinely needs SQL is a repository test and
+          // belongs in a plain `test()`.
+          allBestsProvider.overrideWith(
+            (ref) => Stream<Map<String, Result<RunMetric?, DataFailure>>>.value(
+              const <String, Result<RunMetric?, DataFailure>>{},
+            ),
+          ),
+        ],
+        child: const MindForgeApp(),
+      );
 
   testWidgets('MindForgeApp mounts without throwing', (tester) async {
     await tester.pumpWidget(bootedApp());

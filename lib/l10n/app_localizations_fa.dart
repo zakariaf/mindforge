@@ -323,7 +323,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get gamePlaceholderTurquoiseKicker => 'تمرکز';
 
   @override
-  String get gamePlaceholderLockedName => 'به‌زودی';
+  String get gamePlaceholderLockedName => 'ردیابی الگو';
 
   @override
   String get gamePlaceholderLockedTagline => 'هنوز باز نشده';

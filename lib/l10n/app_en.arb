@@ -415,7 +415,7 @@
   "@gamePlaceholderTurquoiseKicker": {
     "description": "The second placeholder game kicker. Uppercase authored per locale."
   },
-  "gamePlaceholderLockedName": "Coming Soon",
+  "gamePlaceholderLockedName": "Pattern Trace",
   "@gamePlaceholderLockedName": {
     "description": "The locked \"coming soon\" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip."
   },
