@@ -82,7 +82,6 @@ RUN_TABLE=(
   "persistence-drift/scripts/check-drift-confinement.sh|lib"
   "persistence-drift/scripts/check-persistence-bans.sh|lib"
   "error-handling-typed-results/scripts/check-swallowed-catch.sh|lib"
-  "error-handling-typed-results/scripts/check-softdelete-parity.sh|lib"
   "local-notifications-scheduler/scripts/check-adhoc-schedule-calls.sh|lib"
   "local-notifications-scheduler/scripts/check-manifest-permissions.sh|lib"
   "local-notifications-scheduler/scripts/check-scheduler-purity.sh|lib"
@@ -143,10 +142,20 @@ SKIP_TABLE=(
   "value-objects-money-and-units/scripts/check-money-violations.sh|measured: structurally cannot exit 0 on a clean tree. It runs under 'set -euo pipefail' and pipes 'grep' into a reporter, so the FIRST scan that finds nothing aborts the script with status 1 — observed here, printing only its header. MindForge also models no money or units. Not this repository's script to fix."
   "value-objects-money-and-units/scripts/verify-core.sh|a runner, not a gate: it invokes 'dart analyze' and 'dart test' over a pure-core package, duplicating two named workflow steps. MindForge has no money core."
   "dependency-hygiene/scripts/audit-deps.sh|its check 3 locates the lint include by taking the FIRST glob match under ~/.pub-cache/hosted/pub.dev/very_good_analysis-*/ instead of the version resolved in pubspec.lock. Measured here: three versions are cached (10.2.0, 10.3.0, 7.0.0), it picks 10.2.0 lexicographically, does not find analysis_options.10.3.0.yaml in it, and reports the ruleset as disabled. The verdict therefore depends on which unrelated projects share this machine's pub cache, which is not a gate. All four of its checks are covered here by something that resolves correctly: (1) lock committed and not gitignored -> test/policy/repo_layout_test.dart; (2) no exact pins -> dependency_policy_test.dart; (3) the include -> verify-include-pin.sh in the RUN table above, which resolves through the real package config, plus lint_config_test.dart, which compares the pinned filename against pubspec.lock; (4) no banned package in the transitive tree -> dependency_policy_test.dart, over the resolved lock. Its audit_deps.py ALLOW list is still the project's policy record and is still edited here."
+  "error-handling-typed-results/scripts/check-softdelete-parity.sh|two substring collisions make it a false-positive generator on this codebase, measured 2026-08-19. It selects candidate files by grepping for 'analytics|rollup|chart|projection|stat|report|dashboard', and 'stat' is a substring of 'static' — so every Dart file with a static member is treated as an analytics producer, including lib/theme/sunburst_primitives.dart. It then greps those files for a guarded table name with a word boundary; MindForge's one soft-deleted table is named 'runs', which is also an extremely common English verb, so it fires on prose like 'one bounded read runs before runApp'. Its default GUARDED list (orders, tasks, products, accounts, items, reminders, notes) names no table this schema has. THE CONTRACT IS NOT DROPPED: test/data/daos/runs_dao_soft_delete_test.dart asserts every read path in RunsDao goes through the single _liveRuns() base query, which is a stronger statement than the grep was making."
   "navigation-and-routing/scripts/check_routing.sh|measured: 'FAIL: no GoRouter(...) found under lib — the app must have one router.' There is no router until E08 builds it. E08 MOVES THIS ROW to the run table."
 )
 
 # =============================================================================
+
+# =============================================================================
+# ENV TABLE — per-script environment, for scripts whose defaults are written for
+# a generic schema rather than this one.
+# =============================================================================
+declare -A GATE_ENV=(
+  # No per-script environment is needed today. Kept because the next gate that
+  # ships a generic default will need one, and the mechanism is two lines.
+)
 
 pass=0; fail=0; skipped=0; status=0
 
@@ -163,9 +172,10 @@ for row in "${RUN_TABLE[@]}"; do
     continue
   fi
 
-  # Word-split $args deliberately: a row may pass more than one argument.
+  # Word-split $args and the env assignments deliberately: a row may pass more
+  # than one of each.
   # shellcheck disable=SC2086
-  if output="$(bash "$path" $args 2>&1)"; then
+  if output="$(env ${GATE_ENV[$script]:-} bash "$path" $args 2>&1)"; then
     printf 'RUN  %s%s → exit 0\n' "$script" "${args:+ $args}"
     pass=$((pass + 1))
   else
