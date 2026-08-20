@@ -76,5 +76,14 @@
   "languageNameEn": "English",
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
-  "languageNameCkb": "کوردیی ناوەندی"
+  "languageNameCkb": "کوردیی ناوەندی",
+  "gamePlaceholderCoralName": "آزمایشگاه واکنش",
+  "gamePlaceholderCoralTagline": "متفاوت را بزن",
+  "gamePlaceholderCoralKicker": "واکنش",
+  "gamePlaceholderTurquoiseName": "جاروب شبکه",
+  "gamePlaceholderTurquoiseTagline": "به ترتیب پیدا کن",
+  "gamePlaceholderTurquoiseKicker": "تمرکز",
+  "gamePlaceholderLockedName": "به‌زودی",
+  "gamePlaceholderLockedTagline": "هنوز باز نشده",
+  "gamePlaceholderLockedKicker": "به‌زودی"
 }

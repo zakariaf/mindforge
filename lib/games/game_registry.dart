@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/games/game_definition.dart';
+import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 
 /// The shipped games, in display order.
 ///
@@ -18,8 +19,13 @@ import 'package:mindforge/games/game_definition.dart';
 /// The list is returned **unsorted and unfiltered**. Its order is display
 /// order, and a locked game still appears — the home hub renders it as a
 /// "coming soon" card rather than hiding it.
+///
+/// It holds E08's three PLACEHOLDERS today. They exist so the eight screens are
+/// renderable and screenshot-comparable in four locales before a real game is
+/// written, and **E09 replaces this line** — deleting `lib/games/placeholder/`
+/// and its nine ARB keys in the same commit that adds Stroop Rush.
 final Provider<List<GameDefinition>> gameRegistryProvider =
-    Provider<List<GameDefinition>>((ref) => const <GameDefinition>[]);
+    Provider<List<GameDefinition>>((ref) => placeholderDefinitions());
 
 /// The definition registered under [GameId].
 ///

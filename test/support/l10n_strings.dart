@@ -38,6 +38,17 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
 
   return <String, String>{
     'appTitle': l10n.appTitle,
+    // E08's placeholder game strings. They exist so the eight shell screens
+    // are renderable before Stroop Rush does, and E09 deletes them.
+    'gamePlaceholderCoralName': l10n.gamePlaceholderCoralName,
+    'gamePlaceholderCoralTagline': l10n.gamePlaceholderCoralTagline,
+    'gamePlaceholderCoralKicker': l10n.gamePlaceholderCoralKicker,
+    'gamePlaceholderTurquoiseName': l10n.gamePlaceholderTurquoiseName,
+    'gamePlaceholderTurquoiseTagline': l10n.gamePlaceholderTurquoiseTagline,
+    'gamePlaceholderTurquoiseKicker': l10n.gamePlaceholderTurquoiseKicker,
+    'gamePlaceholderLockedName': l10n.gamePlaceholderLockedName,
+    'gamePlaceholderLockedTagline': l10n.gamePlaceholderLockedTagline,
+    'gamePlaceholderLockedKicker': l10n.gamePlaceholderLockedKicker,
     'navPlay': l10n.navPlay,
     'navStats': l10n.navStats,
     'navSettings': l10n.navSettings,
@@ -154,6 +165,19 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'gamesUnlocked': (step: 'caption', lines: 1),
   'bestLabel': (step: 'label', lines: 1),
   'comingSoon': (step: 'label', lines: 1),
+  // E08's placeholders. A game name renders at `title` on the home card and a
+  // tagline at `caption` beneath it; a kicker is the `sectionLabel` step above
+  // the detail hero. Same slots the real games take, which is the point — they
+  // exist so the shell is renderable and comparable before Stroop Rush is.
+  'gamePlaceholderCoralName': (step: 'title', lines: 1),
+  'gamePlaceholderCoralTagline': (step: 'caption', lines: 2),
+  'gamePlaceholderCoralKicker': (step: 'sectionLabel', lines: 1),
+  'gamePlaceholderTurquoiseName': (step: 'title', lines: 1),
+  'gamePlaceholderTurquoiseTagline': (step: 'caption', lines: 2),
+  'gamePlaceholderTurquoiseKicker': (step: 'sectionLabel', lines: 1),
+  'gamePlaceholderLockedName': (step: 'title', lines: 1),
+  'gamePlaceholderLockedTagline': (step: 'caption', lines: 2),
+  'gamePlaceholderLockedKicker': (step: 'sectionLabel', lines: 1),
   'gameStroopRushName': (step: 'title', lines: 1),
   'gameStroopRushTagline': (step: 'caption', lines: 2),
   'gameSchulteGridName': (step: 'title', lines: 1),
@@ -231,5 +255,14 @@ TextStyle styleForStep(SunburstType type, String step) => switch (step) {
   'caption' => type.caption,
   'label' => type.label,
   'stimulus' => type.stimulus,
+  'buttonLarge' => type.buttonLarge,
+  'chip' => type.chip,
+  // E08's six.
+  'titleBar' => type.titleBar,
+  'greeting' => type.greeting,
+  'sectionLabel' => type.sectionLabel,
+  'heroTitle' => type.heroTitle,
+  'countdownNumeral' => type.countdownNumeral,
+  'statValue' => type.statValue,
   _ => throw ArgumentError.value(step, 'step', 'not a SunburstType step'),
 };

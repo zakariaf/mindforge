@@ -76,5 +76,14 @@
   "languageNameEn": "English",
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
-  "languageNameCkb": "کوردیی ناوەندی"
+  "languageNameCkb": "کوردیی ناوەندی",
+  "gamePlaceholderCoralName": "تاقیگەی کاردانەوە",
+  "gamePlaceholderCoralTagline": "جیاوازەکە دابگرە",
+  "gamePlaceholderCoralKicker": "کاردانەوە",
+  "gamePlaceholderTurquoiseName": "گەڕانی خانە",
+  "gamePlaceholderTurquoiseTagline": "بە ڕیزبەندی بیاندۆزەوە",
+  "gamePlaceholderTurquoiseKicker": "سەرنج",
+  "gamePlaceholderLockedName": "بەم زووانە",
+  "gamePlaceholderLockedTagline": "هێشتا نەکراوەتەوە",
+  "gamePlaceholderLockedKicker": "بەم زووانە"
 }

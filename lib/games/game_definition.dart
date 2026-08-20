@@ -13,8 +13,19 @@ typedef GameBoardBuilder = Widget Function(BuildContext context, RunConfig run);
 /// Builds a game's home-card artwork.
 typedef GameArtworkBuilder = Widget Function(BuildContext context);
 
-/// How long a run lasts at a difficulty, or `null` when it is untimed.
-typedef RunLimitLookup = Duration? Function(Difficulty difficulty);
+/// How long a run lasts at a difficulty **in milliseconds**, or `null` when it
+/// is untimed.
+///
+/// Milliseconds rather than a `Duration`, and the reason is worth stating: the
+/// engine measures in integer milliseconds everywhere it stores or compares a
+/// span — `RunDraft.durationMs`, a duration `ResultStat`, the `runs` table.
+/// `Duration` appears only where time is being *arithmetic'd* against a clock.
+///
+/// It also keeps a game's round lengths out of the one place three separate
+/// gates insist every `Duration` literal lives, which is `lib/theme/`. A round
+/// length is a game rule, not a design token, and neither answer is worse than
+/// the other having to bend.
+typedef RunLimitLookup = int? Function(Difficulty difficulty);
 
 /// Whether hue is part of a board's answer.
 ///
@@ -242,6 +253,5 @@ final class GameDefinition {
   /// No `isTimed` branch: the assert above already guarantees an untimed game
   /// declares no lookup, so `_runLimitFor` is null whenever `isTimed` is false
   /// and the ternary could not change the answer.
-  Duration? runLimitFor(Difficulty difficulty) =>
-      _runLimitFor?.call(difficulty);
+  int? runLimitMsFor(Difficulty difficulty) => _runLimitFor?.call(difficulty);
 }

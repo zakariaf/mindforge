@@ -308,4 +308,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageNameCkb => 'کوردیی ناوەندی';
+
+  @override
+  String get gamePlaceholderCoralName => 'Reaction Lab';
+
+  @override
+  String get gamePlaceholderCoralTagline => 'Tap the odd one out';
+
+  @override
+  String get gamePlaceholderCoralKicker => 'REACTION';
+
+  @override
+  String get gamePlaceholderTurquoiseName => 'Grid Sweep';
+
+  @override
+  String get gamePlaceholderTurquoiseTagline => 'Find them in order';
+
+  @override
+  String get gamePlaceholderTurquoiseKicker => 'FOCUS';
+
+  @override
+  String get gamePlaceholderLockedName => 'Coming Soon';
+
+  @override
+  String get gamePlaceholderLockedTagline => 'Not yet unlocked';
+
+  @override
+  String get gamePlaceholderLockedKicker => 'SOON';
 }

@@ -390,5 +390,41 @@
   "languageNameCkb": "کوردیی ناوەندی",
   "@languageNameCkb": {
     "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
+  },
+  "gamePlaceholderCoralName": "Reaction Lab",
+  "@gamePlaceholderCoralName": {
+    "description": "A placeholder game name, shipped by E08 so the eight shell screens are renderable and screenshot-comparable before Stroop Rush exists. E09 DELETES these nine keys in its first commit."
+  },
+  "gamePlaceholderCoralTagline": "Tap the odd one out",
+  "@gamePlaceholderCoralTagline": {
+    "description": "The one-line description under a placeholder game on the home card."
+  },
+  "gamePlaceholderCoralKicker": "REACTION",
+  "@gamePlaceholderCoralKicker": {
+    "description": "A section kicker. UPPERCASE IS AUTHORED HERE, per locale, and never applied with toUpperCase() in Dart — fa and ckb have no case."
+  },
+  "gamePlaceholderTurquoiseName": "Grid Sweep",
+  "@gamePlaceholderTurquoiseName": {
+    "description": "The second placeholder game name. See gamePlaceholderCoralName."
+  },
+  "gamePlaceholderTurquoiseTagline": "Find them in order",
+  "@gamePlaceholderTurquoiseTagline": {
+    "description": "The second placeholder game tagline."
+  },
+  "gamePlaceholderTurquoiseKicker": "FOCUS",
+  "@gamePlaceholderTurquoiseKicker": {
+    "description": "The second placeholder game kicker. Uppercase authored per locale."
+  },
+  "gamePlaceholderLockedName": "Coming Soon",
+  "@gamePlaceholderLockedName": {
+    "description": "The locked \"coming soon\" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip."
+  },
+  "gamePlaceholderLockedTagline": "Not yet unlocked",
+  "@gamePlaceholderLockedTagline": {
+    "description": "The locked slot tagline. Rendered as the card subtitle, NOT reused as the badge — a locked card that printed this twice was an E05 defect."
+  },
+  "gamePlaceholderLockedKicker": "SOON",
+  "@gamePlaceholderLockedKicker": {
+    "description": "The locked slot kicker. Uppercase authored per locale."
   }
 }

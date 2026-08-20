@@ -303,4 +303,31 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get languageNameCkb => 'کوردیی ناوەندی';
+
+  @override
+  String get gamePlaceholderCoralName => 'آزمایشگاه واکنش';
+
+  @override
+  String get gamePlaceholderCoralTagline => 'متفاوت را بزن';
+
+  @override
+  String get gamePlaceholderCoralKicker => 'واکنش';
+
+  @override
+  String get gamePlaceholderTurquoiseName => 'جاروب شبکه';
+
+  @override
+  String get gamePlaceholderTurquoiseTagline => 'به ترتیب پیدا کن';
+
+  @override
+  String get gamePlaceholderTurquoiseKicker => 'تمرکز';
+
+  @override
+  String get gamePlaceholderLockedName => 'به‌زودی';
+
+  @override
+  String get gamePlaceholderLockedTagline => 'هنوز باز نشده';
+
+  @override
+  String get gamePlaceholderLockedKicker => 'به‌زودی';
 }

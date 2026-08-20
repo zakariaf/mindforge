@@ -25,7 +25,7 @@ final class RunState {
     required this.phase,
     required this.elapsed,
     required this.snapshot,
-    this.runLimit,
+    this.runLimitMs,
     this.isPersonalBest = false,
     this.saveFailure,
     this.hasFiredTimerAlarm = false,
@@ -35,7 +35,7 @@ final class RunState {
   const RunState.idle({
     required this.config,
     required this.snapshot,
-    this.runLimit,
+    this.runLimitMs,
   }) : phase = RunPhase.idle,
        elapsed = Duration.zero,
        isPersonalBest = false,
@@ -54,8 +54,10 @@ final class RunState {
   /// The board's last report.
   final BoardSnapshot snapshot;
 
-  /// How long the run may last, or `null` when it is untimed.
-  final Duration? runLimit;
+  /// How long the run may last in milliseconds, or `null` when it is untimed.
+  ///
+  /// Integer milliseconds, like every other span the engine stores or compares.
+  final int? runLimitMs;
 
   /// Whether this run beat the stored personal best.
   ///
@@ -84,19 +86,19 @@ final class RunState {
   /// The result, or `null` while the run is still going.
   RunOutcome? get outcome => snapshot.outcome;
 
-  /// How long is left, or `null` for an untimed run.
+  /// How many milliseconds are left, or `null` for an untimed run.
   ///
   /// **Clamped at zero.** A frame landing after the deadline but before the
-  /// notifier ends the run would otherwise report a negative duration, and a
-  /// timer that appears to gain a minute at the moment the round ends is the
-  /// bug `LocaleNumbers.clock` documents from the rendering side.
-  Duration? get remaining {
-    final limit = runLimit;
+  /// notifier ends the run would otherwise report a negative span, and a timer
+  /// that appears to gain a minute at the moment the round ends is the bug
+  /// `LocaleNumbers.clock` documents from the rendering side.
+  int? get remainingMs {
+    final limit = runLimitMs;
     if (limit == null) return null;
 
-    final left = limit - elapsed;
+    final left = limit - elapsed.inMilliseconds;
 
-    return left.isNegative ? Duration.zero : left;
+    return left < 0 ? 0 : left;
   }
 
   /// Whether the run is inside its last [threshold].
@@ -110,9 +112,9 @@ final class RunState {
   ///
   /// Untimed runs never alarm: there is nothing to run out of.
   bool isTimerAlarmAt(Duration threshold) {
-    final left = remaining;
+    final left = remainingMs;
 
-    return left != null && left <= threshold;
+    return left != null && left <= threshold.inMilliseconds;
   }
 
   /// This state with [next] as its phase.
@@ -145,7 +147,7 @@ final class RunState {
     phase: phase ?? this.phase,
     elapsed: elapsed ?? this.elapsed,
     snapshot: snapshot ?? this.snapshot,
-    runLimit: runLimit,
+    runLimitMs: runLimitMs,
     isPersonalBest: isPersonalBest ?? this.isPersonalBest,
     saveFailure: identical(saveFailure, _unset)
         ? this.saveFailure
@@ -176,7 +178,7 @@ final class RunState {
           other.phase == phase &&
           other.elapsed == elapsed &&
           other.snapshot == snapshot &&
-          other.runLimit == runLimit &&
+          other.runLimitMs == runLimitMs &&
           other.isPersonalBest == isPersonalBest &&
           other.saveFailure == saveFailure &&
           other.hasFiredTimerAlarm == hasFiredTimerAlarm;
@@ -187,7 +189,7 @@ final class RunState {
     phase,
     elapsed,
     snapshot,
-    runLimit,
+    runLimitMs,
     isPersonalBest,
     saveFailure,
     hasFiredTimerAlarm,
