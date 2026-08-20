@@ -3,55 +3,42 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/result_stat.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
-import 'package:mindforge/theme/sunburst_colors.dart';
-import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
 
-/// The three-column strip above a board.
+/// The three live values above a board.
 ///
 /// **It formats, and the board does not.** A `HudSlot` arrives as a key and a
 /// canonical integer; this resolves the key and renders the number through the
 /// active locale — which is why switching language mid-run changes the pills
 /// and nothing else.
-class PlayBand extends ConsumerWidget {
-  /// Creates the band over [hud].
-  const PlayBand({required this.hud, required this.fill, super.key});
+///
+/// The three pills are equal-flex, so a longer German caption cannot widen one
+/// of them and push the other two out of line.
+class HudRow extends ConsumerWidget {
+  /// Creates the row over [hud].
+  const HudRow({required this.hud, super.key});
 
   /// The three values.
   final GameHud hud;
 
-  /// The band's background — the game's accent.
-  final Color fill;
+  /// The gap between pills. `app.html`: `.hud{gap:8px}`.
+  static const double gap = 8;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colours = SunburstColors.of(context);
-    final shape = SunburstShape.of(context);
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: fill,
-        border: Border(
-          bottom: BorderSide(color: colours.border, width: shape.borderWidth),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              for (final slot in hud.slots)
-                HudPill(
-                  label: _label(ref, slot),
-                  value: _value(ref, slot),
-                  tone: slot.tone,
-                ),
-            ],
+    return Row(
+      children: <Widget>[
+        for (final (index, slot) in hud.slots.indexed) ...<Widget>[
+          if (index > 0) const SizedBox(width: gap),
+          Expanded(
+            child: HudPill(
+              label: _label(ref, slot),
+              value: _value(ref, slot),
+              tone: slot.tone,
+            ),
           ),
-        ),
-      ),
+        ],
+      ],
     );
   }
 

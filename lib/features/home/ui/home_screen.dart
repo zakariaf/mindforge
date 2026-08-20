@@ -39,6 +39,7 @@ class HomeScreen extends ConsumerWidget {
       children: <Widget>[
         RayHeader(
           fill: colours.accent,
+          rays: colours.headerRay,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

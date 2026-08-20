@@ -34,7 +34,12 @@ class StatsScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         RayHeader(
-          fill: colours.accent,
+          // NO RAYS. `app.html`'s `.stats-hdr` carries the dot lattice and no
+          // ray layer at all, and this is the header the "all three glow the
+          // same" defect shows up on first.
+          fill: colours.accentCool,
+          rays: null,
+          padding: RayHeader.tabInset,
           child: Semantics(
             header: true,
             child: Text(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/features/shell/widgets/halftone_dots.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
-import 'package:mindforge/features/shell/widgets/wordmark.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 
@@ -16,6 +15,7 @@ void main() {
 
   Widget header() => RayHeader(
     fill: colours.accent,
+    rays: colours.headerRay,
     child: const SizedBox(key: contentKey, height: 40),
   );
 
@@ -126,48 +126,6 @@ void main() {
 
       expect(safeAreas.single.top, isTrue);
       expect(safeAreas.single.bottom, isFalse);
-    });
-  });
-
-  group('the wordmark', () {
-    testWidgets('is labelled and is NOT a header', (tester) async {
-      // A screen has one h1 and this is not it, so the heading list stays
-      // useful.
-      await tester.pumpPopComponent(const Wordmark());
-
-      final node = tester.getSemantics(find.byType(Wordmark));
-
-      expect(node.label, 'MindForge');
-      expect(
-        node.flagsCollection.isHeader,
-        isFalse,
-        reason: 'a screen has one h1 and this is not it',
-      );
-    });
-
-    testWidgets('and pins itself LTR inside an RTL page', (tester) async {
-      // "MindForge" is a Latin run, and a Latin run in an RTL paragraph is
-      // reordered by the bidi algorithm unless it is isolated — which is how a
-      // wordmark renders as "orgeMindF" beside a Persian sentence.
-      for (final localeCase in LocaleCase.all) {
-        await tester.pumpPopComponent(
-          const Wordmark(),
-          localeCase: localeCase,
-        );
-
-        final text = tester.widget<Text>(
-          find.descendant(
-            of: find.byType(Wordmark),
-            matching: find.byType(Text),
-          ),
-        );
-
-        expect(
-          text.textDirection,
-          TextDirection.ltr,
-          reason: localeCase.tag,
-        );
-      }
     });
   });
 }

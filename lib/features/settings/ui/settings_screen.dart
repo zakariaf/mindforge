@@ -35,7 +35,10 @@ class SettingsScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         RayHeader(
-          fill: colours.accent,
+          fill: colours.accentAlt,
+          // .3, not .5: Settings is a reading screen.
+          rays: colours.headerRaySettings,
+          padding: RayHeader.tabInset,
           child: Semantics(
             header: true,
             child: Text(

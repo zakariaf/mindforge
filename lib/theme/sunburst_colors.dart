@@ -79,7 +79,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     required this.accentDeep,
     required this.headerRay,
     required this.headerDots,
+    required this.headerRayResults,
+    required this.headerRaySettings,
+    required this.countdownRay,
+    required this.bandRayStroop,
+    required this.bandRaySchulte,
     required this.accentAlt,
+    required this.accentWarm,
+    required this.accentCool,
     required this.success,
     required this.successDeep,
     required this.warning,
@@ -160,9 +167,48 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   /// `app.html`: `.hdr .dots{opacity:.16}` over `var(--ink)`.
   final Color headerDots;
 
+  /// The ray sweep behind the results header, alpha already applied.
+  ///
+  /// `app.html`: `.res-hdr .rays` — `var(--leaf-deep)` at `.55`, not `.5`, and
+  /// not the sunshine of the home header. Each header's ray strength is its
+  /// own decision; one shared slot would flatten all three.
+  final Color headerRayResults;
+
+  /// The ray sweep behind the settings header, alpha already applied.
+  ///
+  /// `app.html`: `.set-hdr .rays` — `var(--grape-pop)` at `.3`. The dimmest of
+  /// the three, because Settings is a reading screen.
+  final Color headerRaySettings;
+
+  /// The full-bleed burst behind the countdown, alpha already applied.
+  ///
+  /// `app.html`: `.count .rays` — `var(--grape-pop)` at `.55`, radiating from
+  /// the centre of the screen rather than from above its top edge.
+  final Color countdownRay;
+
+  /// The ray sweep behind Stroop Rush's play band, alpha already applied.
+  final Color bandRayStroop;
+
+  /// The ray sweep behind Schulte Grid's play band, alpha already applied.
+  final Color bandRaySchulte;
+
   /// The secondary accent, for a surface that must not read as the primary
   /// action.
   final Color accentAlt;
+
+  /// The warm chrome accent: the wordmark tile.
+  ///
+  /// **It shares a primitive with `gameStroop` and is deliberately a separate
+  /// slot.** Chrome must not move when a game's accent does — if Stroop Rush
+  /// were re-skinned tomorrow the product lockup would follow it, and nobody
+  /// would have decided that.
+  final Color accentWarm;
+
+  /// The cool chrome accent: the Stats header.
+  ///
+  /// The same separation as [accentWarm], for the same reason: a tab header is
+  /// not a game surface, even where the design picked the same hue.
+  final Color accentCool;
 
   /// A positive outcome, and the Play button.
   final Color success;
@@ -309,7 +355,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     accentDeep,
     headerRay,
     headerDots,
+    headerRayResults,
+    headerRaySettings,
+    countdownRay,
+    bandRayStroop,
+    bandRaySchulte,
     accentAlt,
+    accentWarm,
+    accentCool,
     success,
     successDeep,
     warning,
@@ -366,7 +419,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     Color? accentDeep,
     Color? headerRay,
     Color? headerDots,
+    Color? headerRayResults,
+    Color? headerRaySettings,
+    Color? countdownRay,
+    Color? bandRayStroop,
+    Color? bandRaySchulte,
     Color? accentAlt,
+    Color? accentWarm,
+    Color? accentCool,
     Color? success,
     Color? successDeep,
     Color? warning,
@@ -403,7 +463,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     accentDeep: accentDeep ?? this.accentDeep,
     headerRay: headerRay ?? this.headerRay,
     headerDots: headerDots ?? this.headerDots,
+    headerRayResults: headerRayResults ?? this.headerRayResults,
+    headerRaySettings: headerRaySettings ?? this.headerRaySettings,
+    countdownRay: countdownRay ?? this.countdownRay,
+    bandRayStroop: bandRayStroop ?? this.bandRayStroop,
+    bandRaySchulte: bandRaySchulte ?? this.bandRaySchulte,
     accentAlt: accentAlt ?? this.accentAlt,
+    accentWarm: accentWarm ?? this.accentWarm,
+    accentCool: accentCool ?? this.accentCool,
     success: success ?? this.success,
     successDeep: successDeep ?? this.successDeep,
     warning: warning ?? this.warning,
@@ -453,7 +520,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
       accentDeep: c(accentDeep, other.accentDeep),
       headerRay: c(headerRay, other.headerRay),
       headerDots: c(headerDots, other.headerDots),
+      headerRayResults: c(headerRayResults, other.headerRayResults),
+      headerRaySettings: c(headerRaySettings, other.headerRaySettings),
+      countdownRay: c(countdownRay, other.countdownRay),
+      bandRayStroop: c(bandRayStroop, other.bandRayStroop),
+      bandRaySchulte: c(bandRaySchulte, other.bandRaySchulte),
       accentAlt: c(accentAlt, other.accentAlt),
+      accentWarm: c(accentWarm, other.accentWarm),
+      accentCool: c(accentCool, other.accentCool),
       success: c(success, other.success),
       successDeep: c(successDeep, other.successDeep),
       warning: c(warning, other.warning),
@@ -506,7 +580,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     accentDeep: _P.sunshineDeep,
     headerRay: _P.sunshineDeepHalf,
     headerDots: _P.inkHalftone,
+    headerRayResults: _P.leafDeepStrong,
+    headerRaySettings: _P.grapePopSoft,
+    countdownRay: _P.grapePopStrong,
+    bandRayStroop: _P.coralDeepBand,
+    bandRaySchulte: _P.turquoiseDeepBand,
     accentAlt: _P.grape,
+    accentWarm: _P.coral,
+    accentCool: _P.turquoise,
     success: _P.leaf,
     successDeep: _P.leafDeep,
     warning: _P.tangerine,

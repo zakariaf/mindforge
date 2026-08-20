@@ -96,7 +96,8 @@ class _CountdownScreenState extends ConsumerState<CountdownScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           RayHeader(
-            fill: colours.accentFor(definition.accent, GameColourRole.base),
+            fill: colours.accentAlt,
+            rays: colours.headerRaySettings,
             // The screen's one h1. "Get ready" is what this screen is, and a
             // screen with no heading is one a screen-reader user arrives on
             // with no idea where they are.

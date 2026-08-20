@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
-import 'package:mindforge/features/play/ui/play_band.dart';
+import 'package:mindforge/features/play/ui/hud_row.dart';
+import 'package:mindforge/features/shell/widgets/play_band.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
@@ -73,7 +74,10 @@ class PlayScaffold extends ConsumerWidget {
               label: ref.watch(gameStringsProvider)(definition).title,
               child: const SizedBox.shrink(),
             ),
-            PlayBand(hud: run.hud, fill: accent),
+            PlayBand(
+              accent: definition.accent,
+              child: HudRow(hud: run.hud),
+            ),
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 0),
               child: Row(

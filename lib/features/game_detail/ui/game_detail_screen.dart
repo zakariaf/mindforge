@@ -55,6 +55,7 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
       children: <Widget>[
         RayHeader(
           fill: colours.accentFor(definition.accent, GameColourRole.base),
+          rays: colours.bandRayFor(definition.accent),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

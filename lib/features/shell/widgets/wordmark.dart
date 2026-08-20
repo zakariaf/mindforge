@@ -39,7 +39,7 @@ class Wordmark extends StatelessWidget {
               width: shape.wordmarkTile,
               height: shape.wordmarkTile,
               decoration: BoxDecoration(
-                color: colours.gameStroop,
+                color: colours.accentWarm,
                 borderRadius: BorderRadius.all(shape.wordmarkTileRadius),
                 border: Border.all(
                   color: colours.border,

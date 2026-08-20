@@ -51,6 +51,16 @@ void main() {
     'sunshineDeepHalf': ('sunshineDeep', 0x80),
     // .hdr .dots{opacity:.16} over var(--ink) -> 0.16 * 255 = 41.
     'inkHalftone': ('ink', 0x29),
+    // .res-hdr .rays{opacity:.55} over var(--leaf-deep) -> 140.
+    'leafDeepStrong': ('leafDeep', 0x8C),
+    // .set-hdr .rays{opacity:.3} over var(--grape-pop) -> 77.
+    'grapePopSoft': ('grapePop', 0x4D),
+    // .count .rays{opacity:.55} over var(--grape-pop) -> 140.
+    'grapePopStrong': ('grapePop', 0x8C),
+    // .playband .rays{opacity:.45} over var(--coral-deep) -> 115.
+    'coralDeepBand': ('coralDeep', 0x73),
+    // .playband--schulte .rays{opacity:.45} over var(--turquoise-deep) -> 115.
+    'turquoiseDeepBand': ('turquoiseDeep', 0x73),
   };
 
   group('token parity with system.html', () {

@@ -13,7 +13,6 @@ import 'package:mindforge/l10n/score_formatter_provider.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
 import 'package:mindforge/shared/motion/pop_celebration.dart';
-import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_badge.dart';
@@ -47,7 +46,11 @@ class ResultsScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         RayHeader(
-          fill: colours.accentFor(definition.accent, GameColourRole.base),
+          // LEAF, not the game's accent: the results header celebrates the
+          // run, and `app.html`'s `.res-hdr` is the one header whose fill is
+          // the success colour rather than the game's.
+          fill: colours.success,
+          rays: colours.headerRayResults,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

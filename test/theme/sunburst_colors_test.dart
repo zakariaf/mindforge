@@ -32,7 +32,14 @@ const Map<String, _Accessor> _accessors = <String, _Accessor>{
   'accentDeep': _accentDeep,
   'headerRay': _headerRay,
   'headerDots': _headerDots,
+  'headerRayResults': _headerRayResults,
+  'headerRaySettings': _headerRaySettings,
+  'countdownRay': _countdownRay,
+  'bandRayStroop': _bandRayStroop,
+  'bandRaySchulte': _bandRaySchulte,
   'accentAlt': _accentAlt,
+  'accentWarm': _accentWarm,
+  'accentCool': _accentCool,
   'success': _success,
   'successDeep': _successDeep,
   'warning': _warning,
@@ -70,7 +77,14 @@ Color _accent(SunburstColors c) => c.accent;
 Color _accentDeep(SunburstColors c) => c.accentDeep;
 Color _headerRay(SunburstColors c) => c.headerRay;
 Color _headerDots(SunburstColors c) => c.headerDots;
+Color _headerRayResults(SunburstColors c) => c.headerRayResults;
+Color _headerRaySettings(SunburstColors c) => c.headerRaySettings;
+Color _countdownRay(SunburstColors c) => c.countdownRay;
+Color _bandRayStroop(SunburstColors c) => c.bandRayStroop;
+Color _bandRaySchulte(SunburstColors c) => c.bandRaySchulte;
 Color _accentAlt(SunburstColors c) => c.accentAlt;
+Color _accentWarm(SunburstColors c) => c.accentWarm;
+Color _accentCool(SunburstColors c) => c.accentCool;
 Color _success(SunburstColors c) => c.success;
 Color _successDeep(SunburstColors c) => c.successDeep;
 Color _warning(SunburstColors c) => c.warning;
@@ -108,7 +122,14 @@ final Map<String, _Setter> _setters = <String, _Setter>{
   'accentDeep': (c, v) => c.copyWith(accentDeep: v),
   'headerRay': (c, v) => c.copyWith(headerRay: v),
   'headerDots': (c, v) => c.copyWith(headerDots: v),
+  'headerRayResults': (c, v) => c.copyWith(headerRayResults: v),
+  'headerRaySettings': (c, v) => c.copyWith(headerRaySettings: v),
+  'countdownRay': (c, v) => c.copyWith(countdownRay: v),
+  'bandRayStroop': (c, v) => c.copyWith(bandRayStroop: v),
+  'bandRaySchulte': (c, v) => c.copyWith(bandRaySchulte: v),
   'accentAlt': (c, v) => c.copyWith(accentAlt: v),
+  'accentWarm': (c, v) => c.copyWith(accentWarm: v),
+  'accentCool': (c, v) => c.copyWith(accentCool: v),
   'success': (c, v) => c.copyWith(success: v),
   'successDeep': (c, v) => c.copyWith(successDeep: v),
   'warning': (c, v) => c.copyWith(warning: v),
@@ -361,6 +382,10 @@ void main() {
         reason: 'the PRIMITIVE, not the playRed slot',
       );
       expect(bindings['accentAlt'], 'grape');
+      // The two chrome accents share a primitive with a game accent and are
+      // still their own slots: chrome must not move when a game is re-skinned.
+      expect(bindings['accentWarm'], 'coral');
+      expect(bindings['accentCool'], 'turquoise');
 
       const colourBlindSlots = <String>{
         'cbBlue',
@@ -389,6 +414,8 @@ void main() {
         'accent',
         'accentDeep',
         'accentAlt',
+        'accentWarm',
+        'accentCool',
         'success',
         'successDeep',
         'warning',
