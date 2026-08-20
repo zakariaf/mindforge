@@ -51,6 +51,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.ringPitch,
     required this.ringBandWidth,
     required this.glyphStrokeWidth,
+    required this.answerKeyHeight,
+    required this.answerKeyPanelWidth,
+    required this.answerStrikeHeight,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -265,6 +268,27 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// which is a CSS technique for a stroke this paints directly.
   final double glyphStrokeWidth;
 
+  /// One answer key's height. `app.html`: `.ans{height:92px}`.
+  ///
+  /// **DERIVED** from `app.html`'s answer-key rules.
+  final double answerKeyHeight;
+
+  /// The ink-bordered pattern panel inside a key.
+  /// `app.html`: `.ans .key{width:56px}` — the second channel, at a size that
+  /// reads at arm's length.
+  ///
+  /// **DERIVED** from `app.html`'s answer-key rules.
+  final double answerKeyPanelWidth;
+
+  /// The ink strike bar a rejected key wears.
+  ///
+  /// The NON-MOTION RESIDUE of a wrong answer: it survives reduce motion, when
+  /// the shake does not, so the wrong key still says so to a player who has
+  /// animation off.
+  ///
+  /// **DERIVED** from `app.html`'s answer-key rules.
+  final double answerStrikeHeight;
+
   /// The ink edge on a surface drawn **inside** another surface.
   ///
   /// DERIVED: two logical pixels, not three. A segment inside its track and a
@@ -417,6 +441,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     ringPitch,
     ringBandWidth,
     glyphStrokeWidth,
+    answerKeyHeight,
+    answerKeyPanelWidth,
+    answerStrikeHeight,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -483,6 +510,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? ringPitch,
     double? ringBandWidth,
     double? glyphStrokeWidth,
+    double? answerKeyHeight,
+    double? answerKeyPanelWidth,
+    double? answerStrikeHeight,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -529,6 +559,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     ringPitch: ringPitch ?? this.ringPitch,
     ringBandWidth: ringBandWidth ?? this.ringBandWidth,
     glyphStrokeWidth: glyphStrokeWidth ?? this.glyphStrokeWidth,
+    answerKeyHeight: answerKeyHeight ?? this.answerKeyHeight,
+    answerKeyPanelWidth: answerKeyPanelWidth ?? this.answerKeyPanelWidth,
+    answerStrikeHeight: answerStrikeHeight ?? this.answerStrikeHeight,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -590,6 +623,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       ringPitch: d(ringPitch, other.ringPitch),
       ringBandWidth: d(ringBandWidth, other.ringBandWidth),
       glyphStrokeWidth: d(glyphStrokeWidth, other.glyphStrokeWidth),
+      answerKeyHeight: d(answerKeyHeight, other.answerKeyHeight),
+      answerKeyPanelWidth: d(answerKeyPanelWidth, other.answerKeyPanelWidth),
+      answerStrikeHeight: d(answerStrikeHeight, other.answerStrikeHeight),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -645,6 +681,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     ringPitch: 7,
     ringBandWidth: 3,
     glyphStrokeWidth: 6,
+    answerKeyHeight: 92,
+    answerKeyPanelWidth: 56,
+    answerStrikeHeight: 6,
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,
