@@ -43,6 +43,13 @@ const kAllowedDirectDependencies = <String>{
   // [collection source_span string_scanner], all already in the lock, all pure
   // Dart. It was already resolved transitively through drift_dev.
   'yaml',
+  // Test-only, E07. run_ticker_test drives a sixty-second run in fake time, so
+  // the suite never sleeps. Audited: fake_async 1.3.3 is published by dart.dev
+  // and its tree is [clock collection] — both already direct dependencies of
+  // this app, both pure Dart, no platform code and no network. It was already
+  // resolved transitively through flutter_test, which uses it for the same
+  // purpose.
+  'fake_async',
   // lib/core/ is Flutter-free, so its tests are too. Declared explicitly rather
   // than resolved by accident through riverpod 3's dependency on package:test —
   // the same graph kExplainedTransitives documents as removable.

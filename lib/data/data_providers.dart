@@ -12,6 +12,8 @@ import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/game_stats.dart';
 import 'package:mindforge/core/id_generator.dart';
 import 'package:mindforge/core/result.dart';
+import 'package:mindforge/core/run_commit.dart';
+import 'package:mindforge/core/run_draft.dart';
 import 'package:mindforge/core/run_metric.dart';
 import 'package:mindforge/core/run_record.dart';
 import 'package:mindforge/core/run_scope.dart';
@@ -65,9 +67,22 @@ final logSinkProvider = Provider<LogSink>((ref) => const DebugLogSink());
 
 /// Which `gameId`s this build ships.
 ///
-/// A placeholder that accepts nothing until E07's registry overrides it. It
-/// refuses rather than accepts, so a run written against an unregistered game
-/// fails in a test rather than in a user's history.
+/// **Overridden by `bootstrap()` from the game registry.**
+///
+/// `RunRepository.saveRun` refuses any id outside this set, so while nothing
+/// supplied one, every finished run of every real game would have failed to
+/// save the moment one was registered — silently, because every engine test
+/// overrides the write path with a fake. E02's doc said the registry would fill
+/// it; nothing did until a review asked.
+///
+/// It is filled at the COMPOSITION ROOT rather than derived here, because
+/// deriving it would make `lib/data/` enumerate the game registry — a layer
+/// inversion, and a second file doing the one thing `game_registry.dart` claims
+/// to be alone in doing.
+///
+/// The default refuses rather than accepts, which is the right polarity: a run
+/// written against an unregistered game fails loudly instead of landing in a
+/// player's history under an id nothing can render.
 final registeredGameIdsProvider = Provider<Set<String>>((ref) => const {});
 
 /// Single-table queries over `settings`. Not exposed above the repository.
@@ -165,4 +180,30 @@ final Provider<AppSettings> appSettingsProvider = Provider<AppSettings>(
   (ref) =>
       ref.watch(settingsProvider).value ??
       ref.watch(initialAppSettingsProvider),
+);
+
+/// The engine's write path: one function, this repository's contract.
+typedef SaveRun =
+    Future<Result<RunCommit, DataFailure>> Function(RunDraft draft);
+
+/// Where a finished run is written.
+///
+/// **A narrow seam over [runRepositoryProvider], not a second write path.** It
+/// forwards to `RunRepository.saveRun` and does nothing else; this file remains
+/// the single owner of the transaction, the personal-best computation and the
+/// canonical row.
+///
+/// It exists because `RunRepository` is a `final class` — implementable only
+/// inside its own library — so a test cannot substitute one. The alternative
+/// was loosening a shipped boundary to an interface purely so a later epic
+/// could observe a call.
+///
+/// It lives HERE, beside `personalBestProvider`, `allBestsProvider`,
+/// `runStatsProvider`, `chartSeriesProvider` and `streakProvider`, rather than
+/// in a feature folder. Those five are the read seams over the same repository;
+/// a write seam filed somewhere else is one the next feature does not find, and
+/// then reaches `runRepositoryProvider` directly — bypassing the observability
+/// that makes persist-then-transition testable.
+final Provider<SaveRun> saveRunProvider = Provider<SaveRun>(
+  (ref) => ref.watch(runRepositoryProvider).saveRun,
 );

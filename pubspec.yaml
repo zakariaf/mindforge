@@ -72,6 +72,9 @@ dev_dependencies:
   # declared.
   crypto: ^3.0.7
   drift_dev: ^2.34.0
+  # Drives RunTicker's tests: a sixty-second run has to cost no wall time, or
+  # the suite becomes something nobody runs.
+  fake_async: ^1.3.3
   flutter_test:
     sdk: flutter
   very_good_analysis: ^10.3.0
