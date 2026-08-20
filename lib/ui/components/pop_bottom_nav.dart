@@ -64,14 +64,21 @@ class PopBottomNav extends StatelessWidget {
           horizontal: SunburstShape.space3,
           vertical: SunburstShape.space2,
         ),
+        // The destinations SHARE the bar's width rather than each sizing to
+        // its own word. Measured: Spielen / Statistiken / Einstellungen
+        // overflows a 320pt phone at 1.3x by five points when each item is
+        // free to size itself. Equal shares plus a wrapping label is a
+        // different layout, which is the sanctioned answer; shrinking the word
+        // is not.
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             for (var i = 0; i < items.length; i++)
-              _NavDestination(
-                item: items[i],
-                selected: i == selectedIndex,
-                onTap: () => onSelected(i),
+              Expanded(
+                child: _NavDestination(
+                  item: items[i],
+                  selected: i == selectedIndex,
+                  onTap: () => onSelected(i),
+                ),
               ),
           ],
         ),
@@ -105,7 +112,7 @@ class _NavDestination extends StatelessWidget {
       // item adds no width and nothing in the bar shifts.
       borderStyle: selected ? PopBorderStyle.solid : PopBorderStyle.none,
       padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: SunburstShape.space3,
+        horizontal: SunburstShape.space1,
         vertical: SunburstShape.space1,
       ),
       selected: selected,
@@ -119,7 +126,8 @@ class _NavDestination extends StatelessWidget {
           Text(
             item.label,
             style: type.label.copyWith(color: colours.textPrimary),
-            maxLines: 1,
+            textAlign: TextAlign.center,
+            maxLines: 2,
           ),
         ],
       ),

@@ -46,33 +46,40 @@ class DifficultySegmented extends StatelessWidget {
       elevation: PopElevation.flat,
       padding: const EdgeInsetsDirectional.all(4),
       minTarget: 0,
+      // The control fills the width it is given and the segments SHARE it,
+      // rather than each sizing to its own word. Measured: at 1.3x on a 320pt
+      // phone the German set — Gemütlich, Klassisch, Blitzschnell — overflows a
+      // min-size Row by eight points. The answer is a different layout, not a
+      // smaller word: each segment takes an equal share and its label wraps.
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           for (var i = 0; i < labels.length; i++)
-            PopSurface(
-              fill: i == selectedIndex ? colours.accent : colours.surfaceSunk,
-              radius: BorderRadiusDirectional.all(shape.radiusPill),
-              // The chosen item is the only one that is raised. The others are
-              // flat and draw no shadow at all.
-              elevation: i == selectedIndex
-                  ? PopElevation.e1
-                  : PopElevation.flat,
-              borderStyle: i == selectedIndex
-                  ? PopBorderStyle.solid
-                  : PopBorderStyle.none,
-              padding: const EdgeInsetsDirectional.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              selected: i == selectedIndex,
-              commitMoment: Moment.difficultySelect,
-              semanticLabel: labels[i],
-              onTap: () => onSelected(i),
-              child: Text(
-                labels[i],
-                style: type.label.copyWith(color: colours.textPrimary),
-                maxLines: 1,
+            Expanded(
+              child: PopSurface(
+                fill: i == selectedIndex ? colours.accent : colours.surfaceSunk,
+                radius: BorderRadiusDirectional.all(shape.radiusPill),
+                // The chosen item is the only one that is raised. The others
+                // are flat and draw no shadow at all.
+                elevation: i == selectedIndex
+                    ? PopElevation.e1
+                    : PopElevation.flat,
+                borderStyle: i == selectedIndex
+                    ? PopBorderStyle.solid
+                    : PopBorderStyle.none,
+                padding: const EdgeInsetsDirectional.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+                selected: i == selectedIndex,
+                commitMoment: Moment.difficultySelect,
+                semanticLabel: labels[i],
+                onTap: () => onSelected(i),
+                child: Text(
+                  labels[i],
+                  style: type.label.copyWith(color: colours.textPrimary),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                ),
               ),
             ),
         ],

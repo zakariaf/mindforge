@@ -533,6 +533,27 @@ void main() {
       expect(bar, 200);
     });
 
+    testWidgets('the bar actually paints its fill', (tester) async {
+      // The contact sheet caught this and no unit test would have: a
+      // CustomPaint with no child and no size measures ZERO, so the bar
+      // rendered as an empty track at every value.
+      await tester.pumpPopComponent(
+        const SizedBox(
+          width: 200,
+          child: PopProgressBar(value: 0.5, semanticLabel: 'Progress'),
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(CustomPaint).last).width,
+        greaterThan(0),
+      );
+      expect(
+        tester.getSize(find.byType(CustomPaint).last).height,
+        greaterThan(0),
+      );
+    });
+
     testWidgets('the ring reads no direction at all', (tester) async {
       // A clock. It runs from twelve, clockwise, in every locale — the same
       // reasoning that keeps the motion glyph unflipped.

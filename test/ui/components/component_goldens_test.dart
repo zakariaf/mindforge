@@ -3,13 +3,23 @@ library;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/hud_tone.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/ui/components/difficulty_segmented.dart';
+import 'package:mindforge/ui/components/game_card.dart';
+import 'package:mindforge/ui/components/hud_pill.dart';
+import 'package:mindforge/ui/components/pop_badge.dart';
+import 'package:mindforge/ui/components/pop_bottom_nav.dart';
 import 'package:mindforge/ui/components/pop_button.dart';
 import 'package:mindforge/ui/components/pop_card.dart';
 import 'package:mindforge/ui/components/pop_chip.dart';
+import 'package:mindforge/ui/components/pop_grid_tile.dart';
 import 'package:mindforge/ui/components/pop_icon_button.dart';
+import 'package:mindforge/ui/components/pop_progress_bar.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
+import 'package:mindforge/ui/components/pop_toggle.dart';
+import 'package:mindforge/ui/components/timer_ring.dart';
 import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 
 import '../../support/component_harness.dart';
@@ -279,5 +289,145 @@ void main() {
         );
       }
     });
+  });
+
+  group('the catalog contact sheet', () {
+    // FOUR IMAGES, ONE PER LOCALE, and the ones a human actually looks at. The
+    // ckb sheet is the only automated place a Sorani-specific glyph is drawn
+    // at all, which is what makes a font-fallback failure visible rather than
+    // inferred.
+    for (final localeCase in LocaleCase.all) {
+      testWidgets('in ${localeCase.tag}', (tester) async {
+        final strings = sampleStrings[localeCase.tag]!;
+
+        await tester.pumpPopComponent(
+          RepaintBoundary(
+            child: ColoredBox(
+              color: colours.surface,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.all(12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PopButton(label: strings.button, onPressed: () {}),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        PopIconButton(
+                          glyph: SunburstGlyph.back,
+                          semanticLabel: strings.navPlay,
+                          onPressed: () {},
+                        ),
+                        const SizedBox(width: 8),
+                        PopChip(
+                          label: strings.chip,
+                          glyph: SunburstGlyph.flame,
+                        ),
+                        const SizedBox(width: 8),
+                        PopBadge(
+                          label: strings.hudLabel,
+                          variant: PopBadgeVariant.best,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    GameCard(
+                      title: strings.cardTitle,
+                      subtitle: strings.cardSubtitle,
+                      accent: colours.gameStroop,
+                      semanticLabel: strings.cardTitle,
+                      bestLabel: strings.hudLabel,
+                      bestValue: strings.score,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 8),
+                    DifficultySegmented(
+                      labels: <String>[
+                        strings.difficultyChill,
+                        strings.difficultyClassic,
+                        strings.difficultyBlitz,
+                      ],
+                      selectedIndex: 1,
+                      onSelected: (_) {},
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        HudPill(
+                          label: strings.hudLabel,
+                          value: strings.score,
+                        ),
+                        const SizedBox(width: 8),
+                        HudPill(
+                          label: strings.hudLabel,
+                          value: strings.duration,
+                          tone: HudTone.alarm,
+                        ),
+                        const SizedBox(width: 8),
+                        PopGridTile(
+                          label: strings.tile,
+                          state: PopGridTileState.next,
+                          semanticLabel: strings.tile,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    PopProgressBar(
+                      value: 0.45,
+                      semanticLabel: strings.hudLabel,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        PopToggle(
+                          value: true,
+                          onLabel: strings.toggleOn,
+                          offLabel: strings.toggleOff,
+                          semanticLabel: strings.navSettings,
+                          onChanged: (_) {},
+                        ),
+                        const SizedBox(width: 8),
+                        TimerRing(
+                          progress: 0.4,
+                          label: strings.duration,
+                          semanticLabel: strings.hudLabel,
+                          size: 72,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    PopBottomNav(
+                      items: <PopNavItem>[
+                        PopNavItem(
+                          glyph: SunburstGlyph.navPlay,
+                          label: strings.navPlay,
+                        ),
+                        PopNavItem(
+                          glyph: SunburstGlyph.navStats,
+                          label: strings.navStats,
+                        ),
+                        PopNavItem(
+                          glyph: SunburstGlyph.navSettings,
+                          label: strings.navSettings,
+                        ),
+                      ],
+                      selectedIndex: 0,
+                      onSelected: (_) {},
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          localeCase: localeCase,
+        );
+
+        await expectLater(
+          find.byType(RepaintBoundary).first,
+          matchesGoldenFile(popGolden('catalog_contact_sheet', localeCase)),
+        );
+      });
+    }
   });
 }

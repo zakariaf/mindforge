@@ -62,6 +62,11 @@ class PopProgressBar extends StatelessWidget {
                   widthFactor: value.clamp(0.0, 1.0),
                   child: RepaintBoundary(
                     child: CustomPaint(
+                      // size: Size.infinite, because a CustomPaint with no
+                      // child and no size measures ZERO and paints nothing —
+                      // the bar rendered as an empty track, which the contact
+                      // sheet caught and no unit test would have.
+                      size: Size.infinite,
                       painter: _StripePainter(
                         colour: fill ?? colours.accent,
                         ink: colours.accentDeep,
