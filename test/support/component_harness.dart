@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/theme/sunburst_type.dart';
 
 import 'harness.dart';
 import 'locale_cases.dart';
@@ -53,10 +54,24 @@ class _ComponentStage extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: SunburstColors.of(context).surface,
-    body: Center(child: child),
-  );
+  Widget build(BuildContext context) {
+    final colours = SunburstColors.of(context);
+
+    return Scaffold(
+      backgroundColor: colours.surface,
+      // An explicit default text style, because the theme deliberately sets no
+      // textTheme: the type scale is a ThemeExtension every component reads
+      // from directly, so an unstyled Text falls through to the test font and
+      // a golden full of Ahem boxes matches its own baseline forever. Measured,
+      // on the first component golden.
+      body: DefaultTextStyle(
+        style: SunburstType.of(
+          context,
+        ).body.copyWith(color: colours.textPrimary),
+        child: Center(child: child),
+      ),
+    );
+  }
 }
 
 /// The path of a golden for [name] under [localeCase]'s language.
@@ -124,10 +139,9 @@ class _StateMatrix extends StatelessWidget {
             for (final state in states) ...[
               Text(
                 state.label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: colours.textSecondary,
-                ),
+                style: SunburstType.of(
+                  context,
+                ).label.copyWith(color: colours.textSecondary),
               ),
               const SizedBox(height: 4),
               buildState(state),
