@@ -282,8 +282,12 @@ changed row. CI never runs it.
 
 **Done when.**
 - [ ] `flutter test test/games/schulte_grid/domain/` green.
-- [ ] `.claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib`
-      exits 0 — no `Random()`, no `DateTime.now()` on the generation path.
+- [x] `check-determinism-bans.sh` exits 0 over the generator directory. **The plan named `lib` and
+      that was wrong**: the script's own header says to point it at the directory holding the
+      generator, and over all of `lib` it reports every Flutter import and every legitimate clock
+      read — `RunTicker`, the repository's stamps — as a determinism defect. `tool/skill_gates.sh`
+      now carries one row per generator directory: `lib/core`, `lib/games/stroop_rush/domain`
+      (which E09 was meant to add and did not) and `lib/games/schulte_grid/domain`.
 - [ ] The vector table's header comment states which rows are independently derived **and** that
       fingerprints are locale-invariant by construction.
 - [ ] `dart run tool/update_schulte_vectors.dart` produces a zero-line diff on a clean tree.
