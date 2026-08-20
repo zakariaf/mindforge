@@ -81,7 +81,7 @@ void main() {
     };
 
     for (final entry in expected.entries) {
-      testWidgets('${entry.key.name}', (tester) async {
+      testWidgets(entry.key.name, (tester) async {
         // Three separated channels per state, none of them hue: the fill never
         // changes, so a player who cannot tell the colours apart still reads
         // the state from the depth, the travel and the bar.

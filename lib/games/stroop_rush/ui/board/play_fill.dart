@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:meta/meta.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 
 /// The measured geometry a [PlayFill] is drawn with.
@@ -8,6 +9,7 @@ import 'package:mindforge/theme/sunburst_colors.dart';
 /// A value type carried into the painter rather than read from a `BuildContext`
 /// inside `paint()`: a painter that reached for a theme would be reading it on
 /// every frame, and `shouldRepaint` could not compare what it read.
+@immutable
 final class PlayFillGeometry {
   /// Creates the geometry.
   const PlayFillGeometry({

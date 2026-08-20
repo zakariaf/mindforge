@@ -53,6 +53,8 @@ void main() {
     'inkHalftone': ('ink', 0x29),
     // .hero .dots{opacity:.08} over var(--ink) -> 0.08 * 255 = 20.
     'inkHalftoneSoft': ('ink', 0x14),
+    // .playfill .wdots{opacity:.14} over var(--ink) -> 0.14 * 255 = 36.
+    'inkHalftoneBoard': ('ink', 0x24),
     // .res-hdr .rays{opacity:.55} over var(--leaf-deep) -> 140.
     'leafDeepStrong': ('leafDeep', 0x8C),
     // .set-hdr .rays{opacity:.3} over var(--grape-pop) -> 77.

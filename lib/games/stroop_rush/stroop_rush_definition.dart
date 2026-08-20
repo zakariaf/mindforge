@@ -33,10 +33,11 @@ final GameDefinition stroopRushDefinition = GameDefinition(
   // is the pairing `accent-contract.md` requires of a mechanic game: an accent
   // background would put a chrome colour behind the answer keys.
   boardBackground: BoardBackground.surfaceSunk,
-  // TIMED, because screen 04 renders a TIME pill — but with NO run limit. The
-  // run ends on the round count, which the board owns; a limit here would give
-  // the shell a second way to end it and the two could disagree.
-  isTimed: true,
+  // TIMED — the default, and stated here because it is a decision rather than
+  // an inheritance: screen 04 renders a TIME pill, so the shell clocks the run.
+  // There is deliberately NO run limit. The run ends on the round count, which
+  // the board owns; a limit would give the shell a second way to end it and the
+  // two could disagree.
   buildBoard: (context, run) => StroopBoard(run: run),
   buildArtwork: (context) => const StroopArtwork(),
   // A SUBSCRIPTION, not a read. The shell is handed a listener so a board

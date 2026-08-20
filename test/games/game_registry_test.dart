@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/core/difficulty.dart';
-import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/theme/game_accent.dart';
 

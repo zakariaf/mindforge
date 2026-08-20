@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
-import 'package:mindforge/features/shell/widgets/halftone_dots.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/difficulty_strings.dart';
@@ -23,6 +22,7 @@ import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_icon_button.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
+import 'package:mindforge/ui/halftone_dots.dart';
 
 /// The 3-2-1 before a run.
 ///

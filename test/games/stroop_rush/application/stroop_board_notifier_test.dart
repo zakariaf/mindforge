@@ -42,13 +42,13 @@ void main() {
         // here rather than left to bootstrap, which is what a real launch
         // would do.
         initialAppSettingsProvider.overrideWithValue(
-          AppSettings.defaults().copyWith(
+          const AppSettings.defaults().copyWith(
             isColourBlindPalette: colourBlind,
           ),
         ),
         settingsProvider.overrideWith(
           (ref) => Stream<AppSettings>.value(
-            AppSettings.defaults().copyWith(
+            const AppSettings.defaults().copyWith(
               isColourBlindPalette: colourBlind,
             ),
           ),

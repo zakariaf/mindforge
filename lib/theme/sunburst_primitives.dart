@@ -47,6 +47,11 @@ abstract final class _P {
   /// the accent-plus-dots composite needs 4.5:1, and the header's stronger
   /// lattice takes it below the floor.
   static const inkHalftoneSoft = Color(0x142B1B4D);
+
+  /// [ink] at 14%, the dot lattice behind a board field.
+  ///
+  /// `app.html`: `.playfill .wdots{opacity:.14}` and `.stim .dots{opacity:.14}`.
+  static const inkHalftoneBoard = Color(0x242B1B4D);
   static const coral = Color(0xFFFF6B5A);
   static const coralDeep = Color(0xFFE8452F);
 

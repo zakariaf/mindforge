@@ -13,7 +13,15 @@ enum RayOrigin {
   centre,
 }
 
-/// The dot lattice and ray sweep behind a header, as one value.
+/// The dot lattice and ray sweep behind a surface, as one value.
+///
+/// **In `lib/ui/`, not under `lib/features/`, and the boundary is what moved
+/// it.** E08 wrote it for the four headers; E09 needs the same lattice behind
+/// the Stroop field and inside its stimulus card, and `lib/games/**` may not
+/// import `lib/features/**`. A painting primitive shared by a shell screen and
+/// a game board belongs in the component layer both may read — the alternative
+/// was a second copy in the game, which is how two dot lattices end up at two
+/// opacities.
 ///
 /// A value type so the painter's `shouldRepaint` is one comparison rather than
 /// seven, and so a scene can be compared in a test without reaching into the

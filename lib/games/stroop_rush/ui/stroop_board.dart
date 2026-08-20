@@ -13,6 +13,7 @@ import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
+import 'package:mindforge/ui/halftone_dots.dart';
 
 /// The board rectangle, and nothing outside it.
 ///
@@ -36,6 +37,9 @@ class StroopBoard extends ConsumerWidget {
   /// `app.html`: `.playfill--stroop{gap:16px}`.
   static const double cardToGridGap = 16;
 
+  /// The field's dot lattice pitch. `app.html`: `background-size:16px 16px`.
+  static const double fieldDotPitch = 16;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colours = SunburstColors.of(context);
@@ -48,12 +52,28 @@ class StroopBoard extends ConsumerWidget {
 
     return ColoredBox(
       color: colours.surfaceSunk,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Stack(
         children: <Widget>[
-          Expanded(child: _StimulusCard(state: state)),
-          const SizedBox(height: cardToGridGap),
-          _AnswerGrid(run: run, state: state),
+          // THE FIELD'S TEXTURE. `app.html`: `.playfill .wdots{opacity:.14}`.
+          // The board field is the largest expanse of one colour in the app,
+          // and the lattice is what stops it reading as a blank.
+          Positioned.fill(
+            child: HalftoneLayer(
+              scene: HalftoneScene(
+                ink: colours.boardDots,
+                ray: null,
+                pitch: fieldDotPitch,
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(child: _StimulusCard(state: state)),
+              const SizedBox(height: cardToGridGap),
+              _AnswerGrid(run: run, state: state),
+            ],
+          ),
         ],
       ),
     );
@@ -63,6 +83,43 @@ class StroopBoard extends ConsumerWidget {
 /// The white card carrying the prompt and the painted word.
 class _StimulusCard extends ConsumerWidget {
   const _StimulusCard({required this.state});
+
+  final StroopBoardState state;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colours = SunburstColors.of(context);
+    final shape = SunburstShape.of(context);
+
+    return PopSurface(
+      fill: colours.surfaceRaised,
+      radius: BorderRadiusDirectional.all(shape.radiusXl),
+      elevation: PopElevation.e3,
+      minTarget: 0,
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 24, 16, 24),
+      child: Stack(
+        children: <Widget>[
+          // The card carries the same lattice at the same strength.
+          // `app.html`: `.stim .dots{opacity:.14}`.
+          Positioned.fill(
+            child: HalftoneLayer(
+              scene: HalftoneScene(
+                ink: colours.boardDots,
+                ray: null,
+                pitch: StroopBoard.fieldDotPitch,
+              ),
+            ),
+          ),
+          _StimulusContent(state: state),
+        ],
+      ),
+    );
+  }
+}
+
+/// The prompt and the painted word.
+class _StimulusContent extends ConsumerWidget {
+  const _StimulusContent({required this.state});
 
   final StroopBoardState state;
 
@@ -85,71 +142,64 @@ class _StimulusCard extends ConsumerWidget {
       l10n: l10n,
     );
 
-    return PopSurface(
-      fill: colours.surfaceRaised,
-      radius: BorderRadiusDirectional.all(shape.radiusXl),
-      elevation: PopElevation.e3,
-      minTarget: 0,
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 24, 16, 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            l10n.stroopPrompt,
-            textAlign: TextAlign.center,
-            style: type.label.copyWith(color: colours.textSecondary),
-          ),
-          const SizedBox(height: 18),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                // A SMALLER BASE STYLE, chosen once, never a shrink. The full
-                // step does not fit the longest word on the narrowest device —
-                // measured in sunburst_type.dart — so the board picks the step
-                // that does rather than scaling glyphs down to whatever is
-                // left.
-                final style = _fits(word, type.stimulus, constraints.maxWidth)
-                    ? type.stimulus
-                    : type.stimulusCompact;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          l10n.stroopPrompt,
+          textAlign: TextAlign.center,
+          style: type.label.copyWith(color: colours.textSecondary),
+        ),
+        const SizedBox(height: 18),
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // A SMALLER BASE STYLE, chosen once, never a shrink. The full
+              // step does not fit the longest word on the narrowest device —
+              // measured in sunburst_type.dart — so the board picks the step
+              // that does rather than scaling glyphs down to whatever is
+              // left.
+              final style = _fits(word, type.stimulus, constraints.maxWidth)
+                  ? type.stimulus
+                  : type.stimulusCompact;
 
-                return Semantics(
-                  // ANNOUNCED, NEVER DRAWN. A screen reader gets the word and
-                  // the colour it is printed in; the painting says the same
-                  // thing to everyone else.
-                  label: l10n.stroopStimulusValue(word, inkWord),
-                  child: ExcludeSemantics(
-                    child: CustomPaint(
-                      size: Size.infinite,
-                      painter: StroopWordPainter(
-                        StroopWordScene(
-                          word: word,
-                          textDirection: Directionality.of(context),
-                          style: style,
-                          fill: round.ink.fill,
-                          hue: colours.answerColour(
-                            round.ink,
-                            colourBlind: state.isColourBlindPalette,
-                          ),
-                          ink: colours.border,
-                          strokeWidth: shape.glyphStrokeWidth,
-                          geometry: PlayFillGeometry(
-                            stripePitch: shape.stripePitch,
-                            stripeAngle: shape.stripeAngle,
-                            dotPitch: shape.dotPitch,
-                            dotRadius: shape.dotRadius,
-                            ringPitch: shape.ringPitch,
-                            ringBandWidth: shape.ringBandWidth,
-                          ),
+              return Semantics(
+                // ANNOUNCED, NEVER DRAWN. A screen reader gets the word and
+                // the colour it is printed in; the painting says the same
+                // thing to everyone else.
+                label: l10n.stroopStimulusValue(word, inkWord),
+                child: ExcludeSemantics(
+                  child: CustomPaint(
+                    size: Size.infinite,
+                    painter: StroopWordPainter(
+                      StroopWordScene(
+                        word: word,
+                        textDirection: Directionality.of(context),
+                        style: style,
+                        fill: round.ink.fill,
+                        hue: colours.answerColour(
+                          round.ink,
+                          colourBlind: state.isColourBlindPalette,
+                        ),
+                        ink: colours.border,
+                        strokeWidth: shape.glyphStrokeWidth,
+                        geometry: PlayFillGeometry(
+                          stripePitch: shape.stripePitch,
+                          stripeAngle: shape.stripeAngle,
+                          dotPitch: shape.dotPitch,
+                          dotRadius: shape.dotRadius,
+                          ringPitch: shape.ringPitch,
+                          ringBandWidth: shape.ringBandWidth,
                         ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

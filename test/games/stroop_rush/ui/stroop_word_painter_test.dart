@@ -117,7 +117,7 @@ void main() {
       // cannot be built at all — and a layer composite is script-independent
       // by construction. This test exists so nobody "optimizes" it into a
       // clipPath that happens to look right in English.
-      final canvas = render(sceneOf(fill: PlayFill.stripe));
+      final canvas = render(sceneOf());
 
       expect(canvas.log, isNot(contains('clipPath')));
       expect(canvas.log, isNot(contains('clipRect')));
@@ -146,7 +146,7 @@ void main() {
       // Per-primitive srcIn clears everything the current stripe does not
       // cover, so the second stripe has nothing to intersect and the pattern
       // is one line. Measured by counting: many primitives, one masked layer.
-      final canvas = render(sceneOf(fill: PlayFill.stripe));
+      final canvas = render(sceneOf());
 
       expect(canvas.primitiveBlendModes, isNot(contains(BlendMode.srcIn)));
       expect(
@@ -158,7 +158,7 @@ void main() {
 
   group('the three patterns each draw something different', () {
     test('stripe strokes lines, dot fills circles, ring strokes circles', () {
-      expect(render(sceneOf(fill: PlayFill.stripe)).log, contains('drawLine'));
+      expect(render(sceneOf()).log, contains('drawLine'));
       expect(render(sceneOf(fill: PlayFill.dot)).log, contains('drawCircle'));
       expect(render(sceneOf(fill: PlayFill.ring)).log, contains('drawCircle'));
 
