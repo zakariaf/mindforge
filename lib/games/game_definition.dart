@@ -166,13 +166,16 @@ final class GameDefinition {
 
   /// Reads this game's current snapshot, watching whatever provider holds it.
   ///
-  /// **A callback taking the shell's `ref`, not a `ProviderListenable`.** That
-  /// type is the common supertype of every provider shape, and
-  /// `flutter_riverpod` does not export it — so naming it would mean importing
-  /// riverpod's internals into `lib/games/`. A callback works for any shape a
-  /// game chooses, `Provider` or `NotifierProvider` alike, and the shell calls
-  /// it inside its own `build`, so the watch registers exactly where it should.
-  final BoardSnapshot Function(WidgetRef ref, RunConfig run) snapshotOf;
+  /// **A callback over `Ref`, not a `ProviderListenable`.** That type is the
+  /// common supertype of every provider shape and `flutter_riverpod` does not
+  /// export it, so naming it would drag riverpod's internals into `lib/games/`.
+  /// A callback works for any shape a game chooses.
+  ///
+  /// `Ref` rather than `WidgetRef` because the only caller is `RunNotifier`:
+  /// the shell reads a snapshot through `RunState`, never directly, so a
+  /// board's provider is watched in exactly one place and every screen sees the
+  /// same one.
+  final BoardSnapshot Function(Ref ref, RunConfig run) snapshotOf;
 
   final RunLimitLookup? _runLimitFor;
 
