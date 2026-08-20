@@ -98,11 +98,11 @@
   },
   "gameStroopRushName": "Stroop Rush",
   "@gameStroopRushName": {
-    "description": "The name of the first game. IT IS TRANSLATED — this is a description, not a brand, and E07's GameDefinition therefore carries this ARB KEY rather than a display string."
+    "description": "The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized."
   },
   "gameStroopRushTagline": "Tap the colour, not the word",
   "@gameStroopRushTagline": {
-    "description": "One-line description of Stroop Rush, on its card and its detail screen. It is also the on-board instruction during play."
+    "description": "One line saying what the player does, on the Home card and under the game's hero."
   },
   "gameSchulteGridName": "Schulte Grid",
   "@gameSchulteGridName": {
@@ -276,6 +276,10 @@
         "type": "String"
       }
     }
+  },
+  "gameStroopRushKicker": "REACTION · FOCUS",
+  "@gameStroopRushKicker": {
+    "description": "The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case."
   },
   "@colourYellow": {
     "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."

@@ -227,6 +227,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get gameStroopRushKicker => 'REACTION · FOCUS';
+
+  @override
   String get resultsTitle => 'Nice run!';
 
   @override

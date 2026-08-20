@@ -127,6 +127,10 @@ void main() {
       const sameInEveryLanguage = <String>{
         'appTitle', // the wordmark
         'gameNBackName', // a proper name
+        // "Stroop" is the psychologist the task is named after, so the English
+        // and German names are the same two words. fa and ckb DO translate the
+        // second word, which is why this is here and not in sameAsEnglish.
+        'gameStroopRushName',
         'gameAndDifficulty', // '{game} · {difficulty}'
         'streakMultiplier', // '×{formatted}'
         'foundOfTotal', // '{found} / {total}'

@@ -45,6 +45,11 @@ final Provider<GameStrings Function(GameDefinition)> gameStringsProvider =
     });
 
 GameStrings _resolve(AppLocalizations l10n, GameId id) => switch (id.value) {
+  'stroop_rush' => GameStrings(
+    title: l10n.gameStroopRushName,
+    tagline: l10n.gameStroopRushTagline,
+    kicker: l10n.gameStroopRushKicker,
+  ),
   // Not a silent fallback: a game in the registry with no row here is a
   // shipping defect that would otherwise render as a blank card, and the
   // registry-localization test is what catches it before a player does.

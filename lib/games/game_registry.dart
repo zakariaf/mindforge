@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/games/game_definition.dart';
+import 'package:mindforge/games/stroop_rush/stroop_rush_definition.dart';
 
 /// The shipped games, in display order.
 ///
@@ -19,16 +20,17 @@ import 'package:mindforge/games/game_definition.dart';
 /// order, and a locked game still appears — the home hub renders it as a
 /// "coming soon" card rather than hiding it.
 ///
-/// It is **empty** between E09's first commit and its last. E08's three
-/// placeholders were deleted here — they existed so the eight screens were
-/// renderable and screenshot-comparable in four locales before a real game was
-/// written — and Stroop Rush is appended by T09.11.
+/// **One line per game, and that is the whole of adding one.** E09 appended
+/// Stroop Rush without editing a single file under `lib/features/**` — the
+/// claim the engine exists to support, and the one E10 will test again.
 ///
-/// Empty is a legitimate state and not only a mid-epic one: it is what a build
-/// with every game feature-flagged off looks like, and the shell renders it
-/// without pretending otherwise.
+/// Empty is still a legitimate state: it is what a build with every game
+/// feature-flagged off looks like, and the shell renders it without pretending
+/// otherwise.
 final Provider<List<GameDefinition>> gameRegistryProvider =
-    Provider<List<GameDefinition>>((ref) => const <GameDefinition>[]);
+    Provider<List<GameDefinition>>(
+      (ref) => <GameDefinition>[stroopRushDefinition],
+    );
 
 /// The definition registered under [GameId].
 ///

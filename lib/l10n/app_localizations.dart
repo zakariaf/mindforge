@@ -191,13 +191,13 @@ abstract class AppLocalizations {
   /// **'Coming soon'**
   String get comingSoon;
 
-  /// The name of the first game. IT IS TRANSLATED — this is a description, not a brand, and E07's GameDefinition therefore carries this ARB KEY rather than a display string.
+  /// The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized.
   ///
   /// In en, this message translates to:
   /// **'Stroop Rush'**
   String get gameStroopRushName;
 
-  /// One-line description of Stroop Rush, on its card and its detail screen. It is also the on-board instruction during play.
+  /// One line saying what the player does, on the Home card and under the game's hero.
   ///
   /// In en, this message translates to:
   /// **'Tap the colour, not the word'**
@@ -418,6 +418,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{word}, printed in {ink}'**
   String stroopStimulusValue(String word, String ink);
+
+  /// The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case.
+  ///
+  /// In en, this message translates to:
+  /// **'REACTION · FOCUS'**
+  String get gameStroopRushKicker;
 
   /// The heading on the results screen. Warm and short; it is celebratory, not an evaluation of the score.
   ///

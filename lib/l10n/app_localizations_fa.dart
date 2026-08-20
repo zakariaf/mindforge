@@ -99,7 +99,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get gameStroopRushName => 'شتاب استروپ';
 
   @override
-  String get gameStroopRushTagline => 'رنگ را بزن، نه واژه را';
+  String get gameStroopRushTagline => 'روی رنگ بزن، نه روی واژه';
 
   @override
   String get gameSchulteGridName => 'جدول شولته';
@@ -221,6 +221,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String stroopStimulusValue(String word, String ink) {
     return '$word، چاپ‌شده با رنگ $ink';
   }
+
+  @override
+  String get gameStroopRushKicker => 'واکنش · تمرکز';
 
   @override
   String get resultsTitle => 'اجرای خوبی بود!';

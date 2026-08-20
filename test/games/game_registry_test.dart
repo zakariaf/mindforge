@@ -5,7 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
+import 'package:mindforge/core/difficulty.dart';
+import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/games/game_registry.dart';
+import 'package:mindforge/theme/game_accent.dart';
 
 import '../policy/support/source_text.dart';
 import '../support/fixture_game.dart';
@@ -21,15 +24,50 @@ void main() {
   }
 
   group('the registry today', () {
-    test('is empty until Stroop Rush is appended', () {
-      // E08's three placeholders are gone — E09 T09.0 deletes them in its
-      // first commit, before any of this epic's tests run, so nothing written
-      // here is measured against scaffolding. T09.11 appends the real game and
-      // this expectation becomes a one-element list.
+    test('holds Stroop Rush, and only Stroop Rush', () {
+      // One line per game, and that is the whole of adding one. E10 appends
+      // Schulte Grid here and this becomes a two-element list.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(container.read(gameRegistryProvider), isEmpty);
+      expect(
+        container.read(gameRegistryProvider).map((game) => game.id.value),
+        <String>['stroop_rush'],
+      );
+    });
+
+    test('and it declares what the shell reads off it', () {
+      // Every one of these is data the shell renders WITHOUT knowing which
+      // game it came from: the card's colour, the score's format, the
+      // difficulty list, the lock state.
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      final stroop = container.read(gameRegistryProvider).single;
+
+      expect(stroop.accent, GameAccent.stroop);
+      expect(stroop.scoreFormat, ScoreFormat.points);
+      expect(stroop.boardBackground, BoardBackground.surfaceSunk);
+      expect(stroop.difficulties, Difficulty.values);
+      expect(stroop.isLocked, isFalse);
+    });
+
+    test('and a MECHANIC board is never drawn on an accent', () {
+      // The one pairing no switch can catch: hue IS the answer on a mechanic
+      // board, so an accent background would put a chrome colour behind the
+      // answer keys. Asserted over the whole registry, so E10 inherits it.
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      for (final game in container.read(gameRegistryProvider)) {
+        if (game.colourRole != BoardColourRole.mechanic) continue;
+
+        expect(
+          game.boardBackground,
+          BoardBackground.surfaceSunk,
+          reason: '${game.id} is a mechanic board on an accent',
+        );
+      }
     });
 
     test('and the shell renders whatever it holds, including nothing', () {

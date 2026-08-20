@@ -15,7 +15,7 @@
   "bestLabel": "بهترین",
   "comingSoon": "به‌زودی",
   "gameStroopRushName": "شتاب استروپ",
-  "gameStroopRushTagline": "رنگ را بزن، نه واژه را",
+  "gameStroopRushTagline": "روی رنگ بزن، نه روی واژه",
   "gameSchulteGridName": "جدول شولته",
   "gameSchulteGridTagline": "۱ تا ۲۵ را سریع پیدا کن",
   "gameNBackName": "N-Back",
@@ -84,6 +84,19 @@
     "x-review": "native-speaker-pending"
   },
   "stroopStimulusValue": "{word}، چاپ‌شده با رنگ {ink}",
+  "@gameStroopRushName": {
+    "description": "The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized.",
+    "x-review": "native-speaker-pending"
+  },
+  "@gameStroopRushTagline": {
+    "description": "One line saying what the player does, on the Home card and under the game's hero.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameStroopRushKicker": "واکنش · تمرکز",
+  "@gameStroopRushKicker": {
+    "description": "The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case.",
+    "x-review": "native-speaker-pending"
+  },
   "@stroopStimulusValue": {
     "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
     "placeholders": {

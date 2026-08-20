@@ -99,7 +99,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get gameStroopRushName => 'پەلەی ستروپ';
 
   @override
-  String get gameStroopRushTagline => 'ڕەنگەکە دابگرە، نەک وشەکە';
+  String get gameStroopRushTagline => 'دەست بنێ بە ڕەنگەکە، نەک وشەکە';
 
   @override
   String get gameSchulteGridName => 'خشتەی شولتە';
@@ -221,6 +221,9 @@ class AppLocalizationsCkb extends AppLocalizations {
   String stroopStimulusValue(String word, String ink) {
     return '$word، بە ڕەنگی $ink چاپکراوە';
   }
+
+  @override
+  String get gameStroopRushKicker => 'کاردانەوە · سەرنج';
 
   @override
   String get resultsTitle => 'خولێکی باش بوو!';

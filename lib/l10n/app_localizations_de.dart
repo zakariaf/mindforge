@@ -100,10 +100,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get comingSoon => 'Demnächst';
 
   @override
-  String get gameStroopRushName => 'Stroop-Rausch';
+  String get gameStroopRushName => 'Stroop Rush';
 
   @override
-  String get gameStroopRushTagline => 'Tippe die Farbe, nicht das Wort';
+  String get gameStroopRushTagline => 'Tippe auf die Farbe, nicht auf das Wort';
 
   @override
   String get gameSchulteGridName => 'Schulte-Tabelle';
@@ -225,6 +225,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String stroopStimulusValue(String word, String ink) {
     return '$word, gedruckt in $ink';
   }
+
+  @override
+  String get gameStroopRushKicker => 'REAKTION · FOKUS';
 
   @override
   String get resultsTitle => 'Starker Lauf!';

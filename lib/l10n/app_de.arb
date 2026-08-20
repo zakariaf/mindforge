@@ -14,8 +14,8 @@
   "gamesUnlocked": "{count, plural, one{{formatted} freigeschaltet} other{{formatted} freigeschaltet}}",
   "bestLabel": "BEST",
   "comingSoon": "Demnächst",
-  "gameStroopRushName": "Stroop-Rausch",
-  "gameStroopRushTagline": "Tippe die Farbe, nicht das Wort",
+  "gameStroopRushName": "Stroop Rush",
+  "gameStroopRushTagline": "Tippe auf die Farbe, nicht auf das Wort",
   "gameSchulteGridName": "Schulte-Tabelle",
   "gameSchulteGridTagline": "Finde 1 bis 25, schnell",
   "gameNBackName": "N-Back",
@@ -52,6 +52,7 @@
   "stroopWordPink": "ROSA",
   "stroopPrompt": "TIPPE AUF DIE FARBE, NICHT AUF DAS WORT",
   "stroopStimulusValue": "{word}, gedruckt in {ink}",
+  "gameStroopRushKicker": "REAKTION · FOKUS",
   "@stroopStimulusValue": {
     "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
     "placeholders": {

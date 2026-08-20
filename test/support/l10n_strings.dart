@@ -92,6 +92,7 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'stroopWordOrange': l10n.stroopWordOrange,
     'stroopWordPink': l10n.stroopWordPink,
     'stroopPrompt': l10n.stroopPrompt,
+    'gameStroopRushKicker': l10n.gameStroopRushKicker,
     'stroopStimulusValue': l10n.stroopStimulusValue(
       l10n.colourBlue,
       l10n.colourRed,
@@ -228,6 +229,10 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'stroopPrompt': (step: 'label', lines: 2),
   // Announced, never drawn, so its budget is the announcement's.
   'stroopStimulusValue': (step: 'caption', lines: 2),
+  // E09 adds the KICKER; E04 seeded the name and the tagline above, before
+  // there was a game to attach them to. It takes the `sectionLabel` step above
+  // the detail hero, the same slot the shell gives any game.
+  'gameStroopRushKicker': (step: 'sectionLabel', lines: 1),
   'resultsTitle': (step: 'displayXl', lines: 2),
   'newPersonalBest': (step: 'label', lines: 1),
   'finalScore': (step: 'label', lines: 1),
