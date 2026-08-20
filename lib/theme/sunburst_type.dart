@@ -40,6 +40,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.title,
     required this.numericHud,
     required this.button,
+    required this.buttonLarge,
+    required this.chip,
     required this.body,
     required this.caption,
     required this.label,
@@ -113,6 +115,21 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// A button label.
   final TextStyle button;
 
+  /// The label on a full-width primary action.
+  ///
+  /// DERIVED: `system.html` §03 draws the large Play button's label three
+  /// steps above [button] rather than scaling [button] up at the call site. A
+  /// component that reached for `button.copyWith(fontSize: 21)` would be
+  /// typing a literal, which is what this slot exists to prevent.
+  final TextStyle buttonLarge;
+
+  /// The label inside a chip or a pill.
+  ///
+  /// DERIVED: `system.html` §04's chips sit between [caption] and [button] in
+  /// size but carry the display face and its weight, so neither of those steps
+  /// can stand in for it.
+  final TextStyle chip;
+
   /// Body copy.
   final TextStyle body;
 
@@ -182,6 +199,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
       title: arabic(title, isDisplay: true),
       numericHud: arabic(numericHud, isDisplay: true),
       button: arabic(button, isDisplay: true),
+      buttonLarge: arabic(buttonLarge, isDisplay: true),
+      chip: arabic(chip, isDisplay: true),
       body: arabic(body, isDisplay: false),
       caption: arabic(caption, isDisplay: false),
       label: arabic(label, isDisplay: false),
@@ -196,6 +215,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     title,
     numericHud,
     button,
+    buttonLarge,
+    chip,
     body,
     caption,
     label,
@@ -227,6 +248,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? title,
     TextStyle? numericHud,
     TextStyle? button,
+    TextStyle? buttonLarge,
+    TextStyle? chip,
     TextStyle? body,
     TextStyle? caption,
     TextStyle? label,
@@ -238,6 +261,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     title: title ?? this.title,
     numericHud: numericHud ?? this.numericHud,
     button: button ?? this.button,
+    buttonLarge: buttonLarge ?? this.buttonLarge,
+    chip: chip ?? this.chip,
     body: body ?? this.body,
     caption: caption ?? this.caption,
     label: label ?? this.label,
@@ -256,6 +281,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
       title: s(title, other.title),
       numericHud: s(numericHud, other.numericHud),
       button: s(button, other.button),
+      buttonLarge: s(buttonLarge, other.buttonLarge),
+      chip: s(chip, other.chip),
       body: s(body, other.body),
       caption: s(caption, other.caption),
       label: s(label, other.label),
@@ -321,6 +348,22 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontWeight: FontWeight.w600,
       fontSize: 18,
       height: 1.22,
+    ),
+    // DERIVED: system.html §03, the full-width primary action.
+    buttonLarge: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 21,
+      height: 24 / 21,
+    ),
+    // DERIVED: system.html §04, the chip label.
+    chip: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 14,
+      height: 18 / 14,
     ),
     body: TextStyle(
       fontFamily: bodyFace,

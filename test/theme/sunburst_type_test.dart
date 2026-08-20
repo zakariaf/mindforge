@@ -6,7 +6,12 @@ import 'package:mindforge/theme/sunburst_type.dart';
 import '../support/design_source.dart';
 import '../support/harness.dart';
 
-/// The ten steps, by name, in the order they are declared.
+/// Every step, by name, in the order it is declared.
+///
+/// The count is DERIVED from the source file rather than hardcoded, so this
+/// literal is the only place a new step is acknowledged — and adding one is a
+/// one-line edit that a reviewer sees. E05 T05.1 took it from ten to twelve
+/// with `buttonLarge` and `chip`; E08 T08.0 takes it further.
 const kTypeSteps = <String>[
   'scoreHero',
   'displayXl',
@@ -14,13 +19,15 @@ const kTypeSteps = <String>[
   'title',
   'numericHud',
   'button',
+  'buttonLarge',
+  'chip',
   'body',
   'caption',
   'label',
   'stimulus',
 ];
 
-/// Reads every step off a scale, so a test can assert over all ten.
+/// Reads every step off a scale, so a test can assert over all of them.
 List<TextStyle> allSteps(SunburstType type) => <TextStyle>[
   type.scoreHero,
   type.displayXl,
@@ -28,6 +35,8 @@ List<TextStyle> allSteps(SunburstType type) => <TextStyle>[
   type.title,
   type.numericHud,
   type.button,
+  type.buttonLarge,
+  type.chip,
   type.body,
   type.caption,
   type.label,
@@ -39,15 +48,43 @@ void main() {
   final arabic = latin.forScript(SunburstScript.arabic);
 
   group('the scale', () {
-    test('has exactly ten steps', () {
+    test('ships exactly the steps its source file declares', () {
       expect(
         DesignSource.dartFieldNames(
           'lib/theme/sunburst_type.dart',
           'SunburstType',
         ),
         kTypeSteps,
-        reason: 'an eleventh step is a new role nobody designed',
+        reason: 'an unlisted step is a new role nobody designed',
       );
+    });
+
+    test('buttonLarge is Fredoka 21/24 and chip is Fredoka 600 14/18', () {
+      expect(latin.buttonLarge.fontSize, 21);
+      expect(latin.buttonLarge.height, 24 / 21);
+      expect(latin.buttonLarge.fontWeight, FontWeight.w600);
+      expect(latin.buttonLarge.fontFamily, SunburstType.display);
+
+      expect(latin.chip.fontSize, 14);
+      expect(latin.chip.height, 18 / 14);
+      expect(latin.chip.fontWeight, FontWeight.w600);
+      expect(latin.chip.fontFamily, SunburstType.display);
+    });
+
+    test('buttonLarge and chip carry the Arabic-script fallback', () {
+      // Fredoka covers NO Arabic script at all, so a display step without a
+      // fallback renders a chip label as tofu in half the shipped locales.
+      // This asserts E03's cascade rather than redefining it: if it fails, the
+      // fix lands in lib/theme/, not in the component that noticed.
+      for (final style in <TextStyle>[latin.buttonLarge, latin.chip]) {
+        expect(style.fontFamilyFallback, isNotEmpty);
+        expect(style.fontFamilyFallback, contains(SunburstType.arabicFace));
+      }
+    });
+
+    test('and both resolve to that face under the Arabic script', () {
+      expect(arabic.buttonLarge.fontFamily, SunburstType.arabicFace);
+      expect(arabic.chip.fontFamily, SunburstType.arabicFace);
     });
 
     test('every step declares an explicit size and family', () {

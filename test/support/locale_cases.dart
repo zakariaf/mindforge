@@ -41,6 +41,24 @@ final class LocaleCase {
       .where((c) => c.locale.isRightToLeft)
       .toList(growable: false);
 
+  /// English, the template locale.
+  static const LocaleCase english = LocaleCase(SupportedLocale.en);
+
+  /// German, the text-expansion stress case.
+  static const LocaleCase german = LocaleCase(SupportedLocale.de);
+
+  /// Persian, the right-to-left case.
+  static const LocaleCase persian = LocaleCase(SupportedLocale.fa);
+
+  /// Sorani, the case with letters no other shipped locale has.
+  static const LocaleCase sorani = LocaleCase(SupportedLocale.ckb);
+
+  /// The pair every golden lane runs: one direction each.
+  ///
+  /// Named because the two-element literal spelling it out was written four
+  /// times in one file.
+  static const List<LocaleCase> bothDirections = <LocaleCase>[english, persian];
+
   @override
   String toString() => 'LocaleCase(${locale.tag})';
 }

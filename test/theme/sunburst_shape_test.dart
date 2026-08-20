@@ -140,10 +140,10 @@ void main() {
   });
 
   group('press physics', () {
-    test('a pressed surface moves elevation - 1 on both axes', () {
-      expect(shape.pressTranslate(shape.e2), const Offset(4, 4));
-      expect(shape.pressTranslate(shape.e1), const Offset(2, 2));
-    });
+    // "A pressed surface moves elevation - 1 on both axes" is asserted on
+    // PressGeometry.travel, in test/ui/components/pop_surface_test.dart. It was
+    // a method here too, with no caller in lib/ — press behaviour is not a
+    // token, and having it in both places meant two statements of one rule.
 
     test('a pressed surface keeps a 1px shadow rather than losing it', () {
       expect(
@@ -179,6 +179,87 @@ void main() {
       expect(SunburstShape.gutter, 20);
       expect(SunburstShape.cardGap, 16);
       expect(SunburstShape.cardPadding, 16);
+    });
+  });
+
+  group('the slots the catalog needs', () {
+    // Added by E05 T05.1. Every one is either DERIVED with its evidence or
+    // transcribed from a system.html section, and each is pinned here so a
+    // component can never justify typing the literal instead.
+    test('eChip is the half-step below e1', () {
+      expect(shape.eChip, const Offset(2, 2));
+      expect(
+        shape.eChip.dx,
+        lessThan(shape.e1.dx),
+        reason: 'a chip sits below the lowest raised step, not on it',
+      );
+    });
+
+    test('nested border width is 2 and the primary edge is still 3', () {
+      // Asserted TOGETHER, so a future edit cannot quietly collapse the two
+      // into one number. The nested edge is the inner border of a surface
+      // drawn inside another surface — a segment inside its track, a knob
+      // inside its rail — and at 3px the pair reads as a smudge.
+      expect(shape.borderWidthNested, 2);
+      expect(shape.borderWidth, 3);
+    });
+
+    test('dash pitch is 9 on / 7 off', () {
+      expect(shape.dashOn, 9);
+      expect(shape.dashOff, 7);
+    });
+
+    test('glyph strokes are 2.6 at nav size and 3.0 below it', () {
+      expect(shape.glyphStrokeNav, 2.6);
+      expect(shape.glyphStrokeControl, 3);
+      expect(
+        shape.glyphStrokeControl,
+        greaterThan(shape.glyphStrokeNav),
+        reason:
+            'the SMALLER glyph takes the HEAVIER stroke, which is why the '
+            'resolver rule is "< 22 -> 3.0" and not "18-20 -> 3.0"',
+      );
+    });
+
+    test('copyWith replaces each new slot independently', () {
+      expect(
+        shape.copyWith(eChip: const Offset(9, 9)).eChip,
+        const Offset(9, 9),
+      );
+      expect(shape.copyWith(borderWidthNested: 9).borderWidthNested, 9);
+      expect(shape.copyWith(dashOn: 9.5).dashOn, 9.5);
+      expect(shape.copyWith(dashOff: 8.5).dashOff, 8.5);
+      expect(shape.copyWith(glyphStrokeNav: 9).glyphStrokeNav, 9);
+      expect(shape.copyWith(glyphStrokeControl: 9).glyphStrokeControl, 9);
+
+      // And each leaves the others alone, which is the half that rots.
+      final one = shape.copyWith(dashOn: 9.5);
+      expect(one.dashOff, shape.dashOff);
+      expect(one.eChip, shape.eChip);
+    });
+
+    test('lerp interpolates every new slot', () {
+      final other = shape.copyWith(
+        eChip: const Offset(12, 12),
+        borderWidthNested: 4,
+        dashOn: 19,
+        dashOff: 17,
+        glyphStrokeNav: 4.6,
+        glyphStrokeControl: 5,
+      );
+
+      final halfway = shape.lerp(other, 0.5);
+
+      // A field missing from lerp() returns a's value, so each midpoint is
+      // asserted rather than the object compared.
+      expect(halfway.eChip, const Offset(7, 7));
+      expect(halfway.borderWidthNested, 3);
+      expect(halfway.dashOn, 14);
+      expect(halfway.dashOff, 12);
+      // closeTo, not equals: 2.6 -> 4.6 lands on 3.5999999999999996, which is
+      // the reason check_test_hygiene bans equals() on a double literal.
+      expect(halfway.glyphStrokeNav, closeTo(3.6, 1e-9));
+      expect(halfway.glyphStrokeControl, 4);
     });
   });
 
@@ -223,6 +304,12 @@ void main() {
         focusWidth: 40,
         stripePitch: 50,
         stripeAngle: 60,
+        eChip: const Offset(94, 94),
+        borderWidthNested: 8,
+        dashOn: 70,
+        dashOff: 80,
+        glyphStrokeNav: 6.6,
+        glyphStrokeControl: 7,
       );
 
       final halfway = shape.lerp(other, 0.5);

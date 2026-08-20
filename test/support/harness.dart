@@ -87,6 +87,7 @@ extension PumpApp on WidgetTester {
     ThemeData? theme,
     bool disableAnimations = false,
     TextScaler textScaler = TextScaler.noScaling,
+    bool boldText = false,
   }) async {
     late TextDirection resolved;
 
@@ -101,6 +102,7 @@ extension PumpApp on WidgetTester {
           data: MediaQueryData.fromView(view).copyWith(
             disableAnimations: disableAnimations,
             textScaler: textScaler,
+            boldText: boldText,
           ),
           child: MaterialApp(
             theme: theme ?? buildSunburstTheme(),
