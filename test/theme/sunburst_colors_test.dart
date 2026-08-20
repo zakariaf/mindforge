@@ -32,6 +32,7 @@ const Map<String, _Accessor> _accessors = <String, _Accessor>{
   'accentDeep': _accentDeep,
   'headerRay': _headerRay,
   'headerDots': _headerDots,
+  'heroDots': _heroDots,
   'headerRayResults': _headerRayResults,
   'headerRaySettings': _headerRaySettings,
   'countdownRay': _countdownRay,
@@ -77,6 +78,7 @@ Color _accent(SunburstColors c) => c.accent;
 Color _accentDeep(SunburstColors c) => c.accentDeep;
 Color _headerRay(SunburstColors c) => c.headerRay;
 Color _headerDots(SunburstColors c) => c.headerDots;
+Color _heroDots(SunburstColors c) => c.heroDots;
 Color _headerRayResults(SunburstColors c) => c.headerRayResults;
 Color _headerRaySettings(SunburstColors c) => c.headerRaySettings;
 Color _countdownRay(SunburstColors c) => c.countdownRay;
@@ -122,6 +124,7 @@ final Map<String, _Setter> _setters = <String, _Setter>{
   'accentDeep': (c, v) => c.copyWith(accentDeep: v),
   'headerRay': (c, v) => c.copyWith(headerRay: v),
   'headerDots': (c, v) => c.copyWith(headerDots: v),
+  'heroDots': (c, v) => c.copyWith(heroDots: v),
   'headerRayResults': (c, v) => c.copyWith(headerRayResults: v),
   'headerRaySettings': (c, v) => c.copyWith(headerRaySettings: v),
   'countdownRay': (c, v) => c.copyWith(countdownRay: v),

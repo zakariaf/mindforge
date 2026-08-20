@@ -51,6 +51,8 @@ void main() {
     'sunshineDeepHalf': ('sunshineDeep', 0x80),
     // .hdr .dots{opacity:.16} over var(--ink) -> 0.16 * 255 = 41.
     'inkHalftone': ('ink', 0x29),
+    // .hero .dots{opacity:.08} over var(--ink) -> 0.08 * 255 = 20.
+    'inkHalftoneSoft': ('ink', 0x14),
     // .res-hdr .rays{opacity:.55} over var(--leaf-deep) -> 140.
     'leafDeepStrong': ('leafDeep', 0x8C),
     // .set-hdr .rays{opacity:.3} over var(--grape-pop) -> 77.

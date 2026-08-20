@@ -52,6 +52,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.heroTitle,
     required this.countdownNumeral,
     required this.statValue,
+    required this.slabLabel,
+    required this.resultStatLabel,
+    required this.resultStatValue,
+    required this.bestGameName,
+    required this.bestValue,
+    required this.dailyTitle,
+    required this.sectionTitle,
+    required this.sectionCount,
   });
 
   /// The Latin display face.
@@ -194,6 +202,53 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// columns shift when a digit changes reads as a layout bug.
   final TextStyle statValue;
 
+  /// The FINAL SCORE caption above the results slab.
+  ///
+  /// `app.html`: `.scoreslab s` — 11/600, `.16em`, uppercase. One point larger
+  /// than [sectionLabel] and tracked the same, because it sits alone over a
+  /// 76pt number and a 10pt caption disappears under it.
+  final TextStyle slabLabel;
+
+  /// The caption inside one of the three results cells.
+  ///
+  /// `app.html`: `.tri s` — 10/600 at `.09em`, line 1.3. The loosest tracking
+  /// in the type scale is deliberately NOT used here: these three captions
+  /// wrap to two lines in German, and 1.6 of tracking pushes them to three.
+  final TextStyle resultStatLabel;
+
+  /// The value inside one of the three results cells.
+  ///
+  /// `app.html`: `.tri b` — 23/700, `-.02em`, tabular.
+  final TextStyle resultStatValue;
+
+  /// The game's name on a Stats best card.
+  ///
+  /// `app.html`: `.bestcard .bl b` — 18/600, `-.01em`.
+  final TextStyle bestGameName;
+
+  /// The value chip on a Stats best card.
+  ///
+  /// `app.html`: `.bestcard .bv` — 28/700, `-.03em`, tabular.
+  final TextStyle bestValue;
+
+  /// The Daily Mix card's title.
+  ///
+  /// `app.html`: `.daily .ct` — 22/700, `-.015em`. The card's paper variant on
+  /// game detail overrides this to 19; the variant carries the step, because a
+  /// screen writing `fontSize: 19` is the raw value the token gates refuse.
+  final TextStyle dailyTitle;
+
+  /// A section heading inside a pane: "Your games", "Last 7 runs".
+  ///
+  /// `app.html`: `.seclab b` — 15/600 at `.01em`. Not [title], which is 21 and
+  /// is what a CARD's name uses.
+  final TextStyle sectionTitle;
+
+  /// The count that trails a section heading: "2 unlocked".
+  ///
+  /// `app.html`: `.seclab s` — 12/800, body face.
+  final TextStyle sectionCount;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -263,6 +318,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
       heroTitle: arabic(heroTitle, isDisplay: true),
       countdownNumeral: arabic(countdownNumeral, isDisplay: true),
       statValue: arabic(statValue, isDisplay: true),
+      slabLabel: arabic(slabLabel, isDisplay: true),
+      resultStatLabel: arabic(resultStatLabel, isDisplay: true),
+      resultStatValue: arabic(resultStatValue, isDisplay: true),
+      bestGameName: arabic(bestGameName, isDisplay: true),
+      bestValue: arabic(bestValue, isDisplay: true),
+      dailyTitle: arabic(dailyTitle, isDisplay: true),
+      sectionTitle: arabic(sectionTitle, isDisplay: true),
+      sectionCount: arabic(sectionCount, isDisplay: false),
     );
   }
 
@@ -285,6 +348,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
     heroTitle,
     countdownNumeral,
     statValue,
+    slabLabel,
+    resultStatLabel,
+    resultStatValue,
+    bestGameName,
+    bestValue,
+    dailyTitle,
+    sectionTitle,
+    sectionCount,
   ];
 
   @override
@@ -324,6 +395,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? heroTitle,
     TextStyle? countdownNumeral,
     TextStyle? statValue,
+    TextStyle? slabLabel,
+    TextStyle? resultStatLabel,
+    TextStyle? resultStatValue,
+    TextStyle? bestGameName,
+    TextStyle? bestValue,
+    TextStyle? dailyTitle,
+    TextStyle? sectionTitle,
+    TextStyle? sectionCount,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -343,6 +422,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
     heroTitle: heroTitle ?? this.heroTitle,
     countdownNumeral: countdownNumeral ?? this.countdownNumeral,
     statValue: statValue ?? this.statValue,
+    slabLabel: slabLabel ?? this.slabLabel,
+    resultStatLabel: resultStatLabel ?? this.resultStatLabel,
+    resultStatValue: resultStatValue ?? this.resultStatValue,
+    bestGameName: bestGameName ?? this.bestGameName,
+    bestValue: bestValue ?? this.bestValue,
+    dailyTitle: dailyTitle ?? this.dailyTitle,
+    sectionTitle: sectionTitle ?? this.sectionTitle,
+    sectionCount: sectionCount ?? this.sectionCount,
   );
 
   @override
@@ -369,6 +456,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
       heroTitle: s(heroTitle, other.heroTitle),
       countdownNumeral: s(countdownNumeral, other.countdownNumeral),
       statValue: s(statValue, other.statValue),
+      slabLabel: s(slabLabel, other.slabLabel),
+      resultStatLabel: s(resultStatLabel, other.resultStatLabel),
+      resultStatValue: s(resultStatValue, other.resultStatValue),
+      bestGameName: s(bestGameName, other.bestGameName),
+      bestValue: s(bestValue, other.bestValue),
+      dailyTitle: s(dailyTitle, other.dailyTitle),
+      sectionTitle: s(sectionTitle, other.sectionTitle),
+      sectionCount: s(sectionCount, other.sectionCount),
     );
   }
 
@@ -539,6 +634,80 @@ class SunburstType extends ThemeExtension<SunburstType> {
       height: 1.1,
       letterSpacing: -0.52,
       fontFeatures: _tabular,
+    ),
+
+    // .scoreslab s — 11/600, .16em, uppercase.
+    slabLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 11,
+      height: 1.2,
+      letterSpacing: 1.76,
+    ),
+    // .tri s — 10/600, .09em, line 1.3.
+    resultStatLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1.3,
+      letterSpacing: 0.9,
+    ),
+    // .tri b — 23/700, -.02em, tabular-nums.
+    resultStatValue: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 23,
+      height: 1.1,
+      letterSpacing: -0.46,
+      fontFeatures: _tabular,
+    ),
+    // .bestcard .bl b — 18/600, -.01em.
+    bestGameName: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 18,
+      height: 1.15,
+      letterSpacing: -0.18,
+    ),
+    // .bestcard .bv — 28/700, -.03em, tabular-nums.
+    bestValue: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 28,
+      height: 1.1,
+      letterSpacing: -0.84,
+      fontFeatures: _tabular,
+    ),
+    // .daily .ct — 22/700, -.015em, line 1.1.
+    dailyTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 22,
+      height: 1.1,
+      letterSpacing: -0.33,
+    ),
+    // .seclab b — 15/600, .01em.
+    sectionTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 15,
+      height: 1.2,
+      letterSpacing: 0.15,
+    ),
+    // .seclab s — 12/800, body face.
+    sectionCount: TextStyle(
+      fontFamily: bodyFace,
+      fontFamilyFallback: bodyFallback,
+      fontWeight: FontWeight.w800,
+      fontSize: 12,
+      height: 1.2,
     ),
   );
 }

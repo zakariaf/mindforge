@@ -79,6 +79,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     required this.accentDeep,
     required this.headerRay,
     required this.headerDots,
+    required this.heroDots,
     required this.headerRayResults,
     required this.headerRaySettings,
     required this.countdownRay,
@@ -166,6 +167,12 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   ///
   /// `app.html`: `.hdr .dots{opacity:.16}` over `var(--ink)`.
   final Color headerDots;
+
+  /// The dot lattice inside the game hero panel, alpha already applied.
+  ///
+  /// Half the header's strength. `app.html`: `.hero .dots{opacity:.08}`, with
+  /// the reason on the rule — ink text on the composite needs 4.5:1.
+  final Color heroDots;
 
   /// The ray sweep behind the results header, alpha already applied.
   ///
@@ -355,6 +362,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     accentDeep,
     headerRay,
     headerDots,
+    heroDots,
     headerRayResults,
     headerRaySettings,
     countdownRay,
@@ -419,6 +427,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     Color? accentDeep,
     Color? headerRay,
     Color? headerDots,
+    Color? heroDots,
     Color? headerRayResults,
     Color? headerRaySettings,
     Color? countdownRay,
@@ -463,6 +472,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     accentDeep: accentDeep ?? this.accentDeep,
     headerRay: headerRay ?? this.headerRay,
     headerDots: headerDots ?? this.headerDots,
+    heroDots: heroDots ?? this.heroDots,
     headerRayResults: headerRayResults ?? this.headerRayResults,
     headerRaySettings: headerRaySettings ?? this.headerRaySettings,
     countdownRay: countdownRay ?? this.countdownRay,
@@ -520,6 +530,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
       accentDeep: c(accentDeep, other.accentDeep),
       headerRay: c(headerRay, other.headerRay),
       headerDots: c(headerDots, other.headerDots),
+      heroDots: c(heroDots, other.heroDots),
       headerRayResults: c(headerRayResults, other.headerRayResults),
       headerRaySettings: c(headerRaySettings, other.headerRaySettings),
       countdownRay: c(countdownRay, other.countdownRay),
@@ -580,6 +591,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     accentDeep: _P.sunshineDeep,
     headerRay: _P.sunshineDeepHalf,
     headerDots: _P.inkHalftone,
+    heroDots: _P.inkHalftoneSoft,
     headerRayResults: _P.leafDeepStrong,
     headerRaySettings: _P.grapePopSoft,
     countdownRay: _P.grapePopStrong,

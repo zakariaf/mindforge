@@ -67,6 +67,20 @@ final class HalftoneScene {
   /// The dot radius. `app.html`: `radial-gradient(var(--ink) 1.6px, ...)`.
   final double dotRadius;
 
+  /// The same scene with a different lattice colour.
+  ///
+  /// The one thing a caller varies that cannot be a const argument, because a
+  /// token is read off the context.
+  HalftoneScene copyInk(Color? ink) => HalftoneScene(
+    ink: ink,
+    ray: ray,
+    origin: origin,
+    spokeDegrees: spokeDegrees,
+    pitchDegrees: pitchDegrees,
+    pitch: pitch,
+    dotRadius: dotRadius,
+  );
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

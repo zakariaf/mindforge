@@ -35,6 +35,17 @@ const kTypeSteps = <String>[
   'heroTitle', // .hero .ht     — 38/700, line .98, -.03em
   'countdownNumeral', // .bigring b    — 132/700, line 1, -.04em, tabular
   'statValue', // .statbox b    — 26/700, -.02em, tabular
+  // E08 T08.3, the composite tier. Each is a role a composite prints in and
+  // therefore a role that had to be named: a widget writing `fontSize: 23` is
+  // the raw value the token gates refuse.
+  'slabLabel', // .scoreslab s    — 11/600, +.16em, uppercase
+  'resultStatLabel', // .tri s     — 10/600, +.09em, line 1.3
+  'resultStatValue', // .tri b     — 23/700, -.02em, tabular
+  'bestGameName', // .bestcard .bl b — 18/600, -.01em
+  'bestValue', // .bestcard .bv    — 28/700, -.03em, tabular
+  'dailyTitle', // .daily .ct      — 22/700, -.015em
+  'sectionTitle', // .seclab b     — 15/600, +.01em
+  'sectionCount', // .seclab s     — Nunito 800 at 12
 ];
 
 /// Reads every step off a scale, so a test can assert over all of them.
@@ -51,6 +62,20 @@ List<TextStyle> allSteps(SunburstType type) => <TextStyle>[
   type.caption,
   type.label,
   type.stimulus,
+  type.titleBar,
+  type.greeting,
+  type.sectionLabel,
+  type.heroTitle,
+  type.countdownNumeral,
+  type.statValue,
+  type.slabLabel,
+  type.resultStatLabel,
+  type.resultStatValue,
+  type.bestGameName,
+  type.bestValue,
+  type.dailyTitle,
+  type.sectionTitle,
+  type.sectionCount,
 ];
 void main() {
   const latin = SunburstType.sunburstPop;
