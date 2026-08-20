@@ -13,19 +13,19 @@ import 'package:mindforge/features/play/domain/run_state.dart';
 import 'package:mindforge/features/results/ui/results_screen.dart';
 import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
 import 'package:mindforge/features/shell/widgets/score_slab.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/ui/components/pop_badge.dart';
 import 'package:mindforge/ui/components/pop_bottom_nav.dart';
 
+import '../../support/fixture_registry.dart';
 import '../../support/locale_cases.dart';
 import '../../support/shell_harness.dart';
 
 /// What a finished run says.
 void main() {
   final config = RunConfig(
-    gameId: placeholderCoralDefinition.id,
+    gameId: fixtureAlpha.id,
     difficulty: Difficulty.classic,
     seed: 7,
   );

@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/core/score_formatter.dart';
 import 'package:mindforge/core/supported_locale.dart';
-
 import 'package:mindforge/l10n/locale_numbers.dart';
 
 import '../policy/support/source_text.dart';

@@ -13,12 +13,13 @@ import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
+import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/routing/app_router.dart';
 import 'package:mindforge/shared/feedback/haptic_gateway.dart';
 import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 
 import 'fake_save_run.dart';
-
+import 'fixture_registry.dart';
 import 'harness.dart';
 import 'locale_cases.dart';
 
@@ -65,6 +66,8 @@ extension PumpShell on WidgetTester {
     Device device = Device.reference390,
     AppSettings settings = const AppSettings.defaults(),
     List<GameDefinition>? games,
+    GameStrings Function(GameDefinition)? gameStrings,
+    bool useShippedRegistry = false,
     TextScaler textScaler = TextScaler.noScaling,
     bool boldText = false,
     bool disableAnimations = false,
@@ -139,7 +142,26 @@ extension PumpShell on WidgetTester {
 
             return Ok<AppSettings, DataFailure>(current);
           }),
-          if (games != null) gameRegistryProvider.overrideWithValue(games),
+          // FAKES BY DEFAULT. A shell test asserts what the SHELL does with a
+          // definition; which games ship is not its subject, and E08 proved
+          // what happens when it is — eighteen test files named a shipped game
+          // and every one of them had to change the day that game was deleted.
+          //
+          // A test that genuinely IS about the shipped registry says
+          // `useShippedRegistry: true`, and there is one: the harness's own
+          // meta-test, which checks that the door still opens.
+          if (!useShippedRegistry)
+            gameRegistryProvider.overrideWithValue(games ?? fixtureRegistry()),
+          // Fake games come with fake strings. `gameStringsProvider` resolves
+          // an id to ARB getters and throws for an unknown one — correctly, so
+          // an unregistered game cannot render as a blank card — which means a
+          // fake registry has to bring its own resolver.
+          if (!useShippedRegistry)
+            gameStringsProvider.overrideWithValue(
+              gameStrings ?? fixtureGameStrings,
+            )
+          else if (gameStrings != null)
+            gameStringsProvider.overrideWithValue(gameStrings),
           // The same wiring bootstrap() does: the registry decides which ids
           // the repository will accept. Without it every save fails, silently.
           registeredGameIdsProvider.overrideWith(

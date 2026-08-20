@@ -575,60 +575,6 @@ abstract class AppLocalizations {
   /// **'کوردیی ناوەندی'**
   String get languageNameCkb;
 
-  /// A placeholder game name, shipped by E08 so the eight shell screens are renderable and screenshot-comparable before Stroop Rush exists. E09 DELETES these nine keys in its first commit.
-  ///
-  /// In en, this message translates to:
-  /// **'Reaction Lab'**
-  String get gamePlaceholderCoralName;
-
-  /// The one-line description under a placeholder game on the home card.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap the odd one out'**
-  String get gamePlaceholderCoralTagline;
-
-  /// A section kicker. UPPERCASE IS AUTHORED HERE, per locale, and never applied with toUpperCase() in Dart — fa and ckb have no case.
-  ///
-  /// In en, this message translates to:
-  /// **'REACTION'**
-  String get gamePlaceholderCoralKicker;
-
-  /// The second placeholder game name. See gamePlaceholderCoralName.
-  ///
-  /// In en, this message translates to:
-  /// **'Grid Sweep'**
-  String get gamePlaceholderTurquoiseName;
-
-  /// The second placeholder game tagline.
-  ///
-  /// In en, this message translates to:
-  /// **'Find them in order'**
-  String get gamePlaceholderTurquoiseTagline;
-
-  /// The second placeholder game kicker. Uppercase authored per locale.
-  ///
-  /// In en, this message translates to:
-  /// **'FOCUS'**
-  String get gamePlaceholderTurquoiseKicker;
-
-  /// The locked "coming soon" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip.
-  ///
-  /// In en, this message translates to:
-  /// **'Pattern Trace'**
-  String get gamePlaceholderLockedName;
-
-  /// The locked slot tagline. Rendered as the card subtitle, NOT reused as the badge — a locked card that printed this twice was an E05 defect.
-  ///
-  /// In en, this message translates to:
-  /// **'Not yet unlocked'**
-  String get gamePlaceholderLockedTagline;
-
-  /// The locked slot kicker. Uppercase authored per locale.
-  ///
-  /// In en, this message translates to:
-  /// **'SOON'**
-  String get gamePlaceholderLockedKicker;
-
   /// Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace.
   ///
   /// In en, this message translates to:

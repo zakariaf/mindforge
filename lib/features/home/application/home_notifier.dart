@@ -44,8 +44,14 @@ final class HomeState {
   /// The registry, in display order, unfiltered.
   final List<GameDefinition> games;
 
-  /// The game the Daily Mix card leads to.
-  final GameId dailyPick;
+  /// The game the Daily Mix card leads to, or `null` when nothing is playable.
+  ///
+  /// **Nullable, because "no games" is a real state.** An empty registry is
+  /// what a build with every game feature-flagged off looks like, and a
+  /// registry holding only locked games is what the hub shows the day before a
+  /// launch. Neither has a pick; the card is absent rather than pointing at a
+  /// "coming soon" slot, which would be the dead chevron E11 forbids.
+  final GameId? dailyPick;
 
   /// How many games are playable today.
   final int unlockedCount;
@@ -96,10 +102,16 @@ Daypart daypartAt(int hour) {
 ///
 /// Locked games are skipped: pointing the hub's one call to action at a
 /// "coming soon" card would be a dead chevron.
-GameId dailyPickFrom(List<GameDefinition> games, CalendarDay day) {
+///
+/// **`null` when nothing is playable**, which covers both an empty registry and
+/// one holding only locked games. The fallback used to be `games.first`, which
+/// is `.first` on an empty list — so the hub threw before it could render the
+/// empty state it exists to render — and for the locked-only case it returned
+/// the very card the paragraph above says to skip.
+GameId? dailyPickFrom(List<GameDefinition> games, CalendarDay day) {
   final playable = games.where((game) => !game.isLocked).toList();
 
-  if (playable.isEmpty) return games.first.id;
+  if (playable.isEmpty) return null;
 
   final generator = seedFrom('${day.serial}', featureSalt: _dailyMixSalt);
 

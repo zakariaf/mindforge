@@ -45,21 +45,6 @@ final Provider<GameStrings Function(GameDefinition)> gameStringsProvider =
     });
 
 GameStrings _resolve(AppLocalizations l10n, GameId id) => switch (id.value) {
-  'placeholder_coral' => GameStrings(
-    title: l10n.gamePlaceholderCoralName,
-    tagline: l10n.gamePlaceholderCoralTagline,
-    kicker: l10n.gamePlaceholderCoralKicker,
-  ),
-  'placeholder_turquoise' => GameStrings(
-    title: l10n.gamePlaceholderTurquoiseName,
-    tagline: l10n.gamePlaceholderTurquoiseTagline,
-    kicker: l10n.gamePlaceholderTurquoiseKicker,
-  ),
-  'placeholder_locked' => GameStrings(
-    title: l10n.gamePlaceholderLockedName,
-    tagline: l10n.gamePlaceholderLockedTagline,
-    kicker: l10n.gamePlaceholderLockedKicker,
-  ),
   // Not a silent fallback: a game in the registry with no row here is a
   // shipping defect that would otherwise render as a blank card, and the
   // registry-localization test is what catches it before a player does.

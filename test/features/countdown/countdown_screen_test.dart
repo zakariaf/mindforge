@@ -7,7 +7,6 @@ import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/play/ui/play_scaffold.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
@@ -15,6 +14,7 @@ import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/ui/components/pop_bottom_nav.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 
+import '../../support/fixture_registry.dart';
 import '../../support/locale_cases.dart';
 import '../../support/shell_harness.dart';
 
@@ -24,7 +24,7 @@ void main() {
   const shape = SunburstShape.sunburstPop;
 
   final config = RunConfig(
-    gameId: placeholderCoralDefinition.id,
+    gameId: fixtureAlpha.id,
     difficulty: Difficulty.classic,
     seed: 3,
   );

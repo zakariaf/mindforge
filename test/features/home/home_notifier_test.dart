@@ -8,8 +8,8 @@ import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 
+import '../../support/fixture_registry.dart';
 import '../../support/locale_matrix.dart';
 
 void main() {
@@ -20,7 +20,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(Clock.fixed(instant)),
-        if (games != null) gameRegistryProvider.overrideWithValue(games),
+        // FAKES BY DEFAULT, like the widget harness: this notifier's subject
+        // is what it does WITH a registry, and which games ship is not it.
+        gameRegistryProvider.overrideWithValue(games ?? fixtureRegistry()),
       ],
     );
     addTearDown(container.dispose);
@@ -69,9 +71,9 @@ void main() {
       expect(
         state.games.map((game) => game.id.value),
         <String>[
-          'placeholder_coral',
-          'placeholder_turquoise',
-          'placeholder_locked',
+          'fixture_alpha',
+          'fixture_beta',
+          'fixture_locked',
         ],
       );
     });
@@ -93,7 +95,7 @@ void main() {
       final previous = Intl.defaultLocale;
       addTearDown(() => Intl.defaultLocale = previous);
 
-      final picks = <String, GameId>{};
+      final picks = <String, GameId?>{};
 
       for (final tag in localeMatrix) {
         Intl.defaultLocale = tag;
@@ -110,7 +112,7 @@ void main() {
     test('and it never lands on a locked game', () {
       // A hub whose one call to action opened a "coming soon" card would be a
       // dead chevron. Swept across a year rather than spot-checked.
-      final games = placeholderDefinitions();
+      final games = fixtureRegistry();
 
       for (var serial = 20000; serial < 20365; serial++) {
         final picked = dailyPickFrom(games, CalendarDay.fromSerial(serial));
@@ -122,12 +124,12 @@ void main() {
 
     test('and it is stable for one day and moves across days', () {
       // Stable, or the card would change under the player mid-session.
-      final games = placeholderDefinitions();
+      final games = fixtureRegistry();
       const day = CalendarDay.fromSerial(20680);
 
       expect(dailyPickFrom(games, day), dailyPickFrom(games, day));
 
-      final week = <GameId>{
+      final week = <GameId?>{
         for (var i = 0; i < 14; i++)
           dailyPickFrom(games, CalendarDay.fromSerial(20680 + i)),
       };
@@ -137,6 +139,38 @@ void main() {
         greaterThan(1),
         reason: 'a pick that never moves is not a daily pick',
       );
+    });
+  });
+
+  group('an empty registry', () {
+    test('has no daily pick, and asking for one does not throw', () {
+      // A REAL STATE, not only a mid-epic one: it is what a build with every
+      // game feature-flagged off looks like. `dailyPickFrom` fell back to
+      // `games.first` when nothing was playable, which is `.first` on an empty
+      // list — so the hub threw before it could render the empty state it is
+      // supposed to render. Found the moment E09 emptied the registry.
+      final state = containerAt(
+        DateTime.utc(2026),
+        games: const <GameDefinition>[],
+      ).read(homeHubProvider);
+
+      expect(state.dailyPick, isNull);
+      expect(state.games, isEmpty);
+      expect(state.unlockedCount, 0);
+    });
+
+    test('and a registry of only LOCKED games has none either', () {
+      // The other half: pointing the hub's one call to action at a "coming
+      // soon" card would be a dead chevron, so "nothing playable" and "nothing
+      // at all" have to reach the same answer.
+      final state = containerAt(
+        DateTime.utc(2026),
+        games: <GameDefinition>[fixtureLocked],
+      ).read(homeHubProvider);
+
+      expect(state.dailyPick, isNull);
+      expect(state.games, hasLength(1));
+      expect(state.unlockedCount, 0);
     });
   });
 }

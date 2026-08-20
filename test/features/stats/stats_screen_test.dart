@@ -14,21 +14,21 @@ import 'package:mindforge/features/shell/widgets/best_card.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/features/stats/widgets/run_bar_chart.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 
+import '../../support/fixture_registry.dart';
 import '../../support/locale_cases.dart';
 import '../../support/shell_harness.dart';
 
 /// The all-time screen.
 void main() {
-  const coralScope = RunScope('placeholder_coral');
-  const turquoiseScope = RunScope('placeholder_turquoise');
+  const coralScope = RunScope('fixture_alpha');
+  const turquoiseScope = RunScope('fixture_beta');
 
   RunRecord record(int value, int startedAt) => RunRecord(
     id: 'r$startedAt',
-    gameId: 'placeholder_coral',
+    gameId: 'fixture_alpha',
     difficultyId: 'classic',
     clientRunKey: 'k$startedAt',
     startedAtUtcMs: startedAt,
@@ -66,7 +66,7 @@ void main() {
     initialLocation: Routes.stats,
     bests: withHistory
         ? <String, Result<RunMetric?, DataFailure>>{
-            'placeholder_coral': const Ok<RunMetric?, DataFailure>(
+            'fixture_alpha': const Ok<RunMetric?, DataFailure>(
               RunMetric.points(1480),
             ),
           }
@@ -284,7 +284,7 @@ void main() {
   });
 
   test('the second scope exists so the fixture reads as a registry', () {
-    expect(turquoiseScope.gameId, 'placeholder_turquoise');
+    expect(turquoiseScope.gameId, 'fixture_beta');
   });
 
   group('a timed game plots the other way up', () {
@@ -293,17 +293,17 @@ void main() {
       // sunshine "best" one the shortest — a chart whose shape means the
       // opposite thing for the game beside it is worse than no chart.
       final timed = GameDefinition(
-        id: GameId('placeholder_coral'),
-        accent: placeholderCoralDefinition.accent,
-        colourRole: placeholderCoralDefinition.colourRole,
+        id: GameId('fixture_alpha'),
+        accent: fixtureAlpha.accent,
+        colourRole: fixtureAlpha.colourRole,
         scoreFormat: ScoreFormat.duration,
-        scoreSource: placeholderCoralDefinition.scoreSource,
-        strings: placeholderCoralDefinition.strings,
-        difficulties: placeholderCoralDefinition.difficulties,
-        boardBackground: placeholderCoralDefinition.boardBackground,
-        buildBoard: placeholderCoralDefinition.buildBoard,
-        buildArtwork: placeholderCoralDefinition.buildArtwork,
-        bindBoard: placeholderCoralDefinition.bindBoard,
+        scoreSource: fixtureAlpha.scoreSource,
+        strings: fixtureAlpha.strings,
+        difficulties: fixtureAlpha.difficulties,
+        boardBackground: fixtureAlpha.boardBackground,
+        buildBoard: fixtureAlpha.buildBoard,
+        buildArtwork: fixtureAlpha.buildArtwork,
+        bindBoard: fixtureAlpha.bindBoard,
       );
 
       await tester.pumpShellApp(
@@ -311,7 +311,7 @@ void main() {
         games: <GameDefinition>[timed],
         initialLocation: Routes.stats,
         bests: <String, Result<RunMetric?, DataFailure>>{
-          'placeholder_coral': const Ok<RunMetric?, DataFailure>(
+          'fixture_alpha': const Ok<RunMetric?, DataFailure>(
             RunMetric.duration(18600),
           ),
         },

@@ -315,32 +315,5 @@ class AppLocalizationsDe extends AppLocalizations {
   String get languageNameCkb => 'کوردیی ناوەندی';
 
   @override
-  String get gamePlaceholderCoralName => 'Reaktionslabor';
-
-  @override
-  String get gamePlaceholderCoralTagline => 'Tippe auf das Abweichende';
-
-  @override
-  String get gamePlaceholderCoralKicker => 'REAKTION';
-
-  @override
-  String get gamePlaceholderTurquoiseName => 'Rasterlauf';
-
-  @override
-  String get gamePlaceholderTurquoiseTagline => 'Finde sie der Reihe nach';
-
-  @override
-  String get gamePlaceholderTurquoiseKicker => 'FOKUS';
-
-  @override
-  String get gamePlaceholderLockedName => 'Musterspur';
-
-  @override
-  String get gamePlaceholderLockedTagline => 'Noch nicht freigeschaltet';
-
-  @override
-  String get gamePlaceholderLockedKicker => 'BALD';
-
-  @override
   String get notFoundTitle => 'Diesen Bildschirm gibt es nicht mehr';
 }

@@ -5,15 +5,16 @@ import 'package:go_router/go_router.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/streak_status.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
+import 'package:mindforge/features/home/ui/home_screen.dart';
 import 'package:mindforge/features/home/widgets/locked_game_slot.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/ui/components/game_card.dart';
 import 'package:mindforge/ui/components/pop_chip.dart';
 
+import '../../support/fixture_registry.dart';
 import '../../support/locale_cases.dart';
 import '../../support/shell_harness.dart';
 
@@ -39,8 +40,8 @@ void main() {
       await tester.pumpShellApp(
         const MindForgeApp(),
         games: <GameDefinition>[
-          ...placeholderDefinitions(),
-          placeholderCoralDefinition,
+          ...fixtureRegistry(),
+          fixtureAlpha,
         ],
       );
 
@@ -74,7 +75,7 @@ void main() {
 
       expect(slot.status, l10n.comingSoon);
       expect(
-        find.text(l10n.gamePlaceholderLockedTagline),
+        find.text(fixtureGameStrings(fixtureLocked).tagline),
         findsNothing,
         reason: 'the tagline and the status are the same fact',
       );
@@ -95,12 +96,16 @@ void main() {
 
   group('in every locale', () {
     for (final localeCase in LocaleCase.all) {
-      testWidgets('${localeCase.tag} renders translated card titles', (
+      testWidgets('${localeCase.tag} renders each card through the resolver', (
         tester,
       ) async {
-        // Resolved through the ARB, never a literal in the screen. Asserted by
-        // resolving the same key the screen resolves, so the test survives a
-        // translation edit.
+        // THE SHELL RESOLVES, IT DOES NOT KNOW. What is asserted is that a
+        // card prints whatever `gameStringsProvider` returned for its
+        // definition — not that a particular game's name is translated, which
+        // is `game_strings.dart`'s subject and the ARB parity test's.
+        //
+        // It used to assert a shipped game's translated title, which is why
+        // deleting that game broke it in four locales at once.
         await tester.pumpShellApp(
           const MindForgeApp(),
           localeCase: localeCase,
@@ -110,22 +115,26 @@ void main() {
           tester.element(find.byType(GameCard).first),
         );
 
-        // The pane scrolls now that the Daily Mix card and the section row
-        // sit above the cards, and a SliverList does not build what is off
-        // screen — so the locked slot has to be reached before it can be
-        // asserted on.
+        for (final game in fixtureRegistry().where((g) => !g.isLocked)) {
+          expect(
+            find.text(fixtureGameStrings(game).title),
+            findsOneWidget,
+            reason: '${game.id} under ${localeCase.tag}',
+          );
+        }
+
+        // The pane scrolls now that the Daily Mix card and the section row sit
+        // above the cards, and a SliverList does not build what is off screen.
         await tester.scrollUntilVisible(
-          find.text(l10n.gamePlaceholderLockedName),
+          find.text(fixtureGameStrings(fixtureLocked).title),
           120,
           scrollable: find.byType(Scrollable).last,
         );
 
-        expect(find.text(l10n.gamePlaceholderCoralName), findsOneWidget);
-        expect(find.text(l10n.gamePlaceholderLockedName), findsOneWidget);
-
-        // The status, asserted through the slot rather than by finding text:
-        // a locked GAME still has a name, and a status word that happened to
-        // match one would make a text finder ambiguous rather than wrong.
+        // The STATUS is chrome and stays translated — asserted through the
+        // slot rather than by finding text, because a locked game still has a
+        // name and a status word that matched one would make a text finder
+        // ambiguous rather than wrong.
         expect(
           tester.widget<LockedGameSlot>(find.byType(LockedGameSlot)).status,
           l10n.comingSoon,
@@ -233,11 +242,15 @@ void main() {
           localeCase: localeCase,
         );
 
-        final expected = Routes.gameDetail(
-          ProviderScope.containerOf(
-            tester.element(find.byType(DailyMixCard).first),
-          ).read(homeHubProvider).dailyPick,
-        );
+        final pick = ProviderScope.containerOf(
+          tester.element(find.byType(DailyMixCard).first),
+        ).read(homeHubProvider).dailyPick;
+
+        // Not `!`: a null pick means the card should not have been on screen
+        // at all, and asserting that here is what tells the two states apart.
+        expect(pick, isNotNull);
+
+        final expected = Routes.gameDetail(pick!);
 
         await tester.tap(find.byType(DailyMixCard).first);
         await tester.pump();
@@ -264,6 +277,53 @@ void main() {
       );
 
       expect(find.text(l10n.gamesUnlocked(2, '2')), findsOneWidget);
+    });
+  });
+
+  group('a registry with nothing playable', () {
+    testWidgets('renders the hub with no Daily Mix card and no cards', (
+      tester,
+    ) async {
+      // The state between E09's first commit and its last, and the state a
+      // build with every game feature-flagged off ships in. The hub still
+      // draws — header, greeting, section heading, nav — and the one thing it
+      // does NOT draw is a call to action with nowhere to go.
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        games: const <GameDefinition>[],
+      );
+
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(find.byType(DailyMixCard), findsNothing);
+      expect(find.byType(GameCard), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('and hides it when every game is locked, too', (tester) async {
+      // Pointing the hub's one call to action at a "coming soon" card would be
+      // the dead chevron E11 forbids, so "nothing playable" and "nothing at
+      // all" have to reach the same answer.
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        games: <GameDefinition>[fixtureLocked],
+      );
+
+      expect(find.byType(DailyMixCard), findsNothing);
+      expect(find.byType(LockedGameSlot), findsOneWidget);
+    });
+
+    testWidgets('and the count reads zero, in the locale own numerals', (
+      tester,
+    ) async {
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        localeCase: LocaleCase.persian,
+        games: const <GameDefinition>[],
+      );
+
+      final l10n = AppLocalizations.of(tester.element(find.byType(HomeScreen)));
+
+      expect(find.text(l10n.gamesUnlocked(0, '۰')), findsOneWidget);
     });
   });
 }

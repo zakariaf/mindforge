@@ -21,53 +21,25 @@ void main() {
   }
 
   group('the registry today', () {
-    test('holds E08 three placeholders, in declaration order', () {
-      // Asserted HERE, against the real provider, rather than inside a test
-      // whose name is about something else. E07 asserted `isEmpty`; E09
-      // replaces these ids with stroop_rush and nothing else in the file
-      // changes.
+    test('is empty until Stroop Rush is appended', () {
+      // E08's three placeholders are gone — E09 T09.0 deletes them in its
+      // first commit, before any of this epic's tests run, so nothing written
+      // here is measured against scaffolding. T09.11 appends the real game and
+      // this expectation becomes a one-element list.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(
-        container.read(gameRegistryProvider).map((game) => game.id.value),
-        <String>[
-          'placeholder_coral',
-          'placeholder_turquoise',
-          'placeholder_locked',
-        ],
-      );
+      expect(container.read(gameRegistryProvider), isEmpty);
     });
 
-    test('and exactly one of them is locked', () {
-      // The home hub draws a locked game as a "coming soon" card rather than
-      // hiding it, so the registry returning it unfiltered is the behaviour
-      // E08 T08.5 renders against.
-      final container = ProviderContainer();
-      addTearDown(container.dispose);
-
+    test('and the shell renders whatever it holds, including nothing', () {
+      // Zero games is a legitimate state and not only a mid-epic one: it is
+      // what a build with every game feature-flagged off would look like. The
+      // hub's own empty-state behaviour is asserted in home_screen_test; what
+      // this states is that the REGISTRY does not pretend otherwise.
       expect(
-        container
-            .read(gameRegistryProvider)
-            .where((game) => game.isLocked)
-            .map((game) => game.id.value),
-        <String>['placeholder_locked'],
-      );
-    });
-
-    test('and they cover both score sources', () {
-      // The turquoise one takes the pairing Schulte Grid will — untimed,
-      // duration-scored, clocked by the shell — so the screens are exercised
-      // against both sources before a real game uses either.
-      final container = ProviderContainer();
-      addTearDown(container.dispose);
-
-      expect(
-        container.read(gameRegistryProvider).map((game) => game.scoreSource),
-        containsAll(<ScoreSource>[
-          ScoreSource.board,
-          ScoreSource.runClock,
-        ]),
+        containerWith(const <GameDefinition>[]).read(gameRegistryProvider),
+        isEmpty,
       );
     });
   });

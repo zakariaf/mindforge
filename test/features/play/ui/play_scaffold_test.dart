@@ -11,7 +11,6 @@ import 'package:mindforge/features/play/ui/hud_row.dart';
 import 'package:mindforge/features/play/ui/play_scaffold.dart';
 import 'package:mindforge/features/shell/widgets/play_band.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
@@ -21,6 +20,7 @@ import 'package:mindforge/ui/components/pop_sheet.dart';
 
 import '../../../support/fake_save_run.dart';
 import '../../../support/fixture_game.dart';
+import '../../../support/fixture_registry.dart';
 import '../../../support/locale_cases.dart';
 import '../../../support/shell_harness.dart';
 
@@ -48,7 +48,7 @@ void main() {
       localeCase: localeCase,
       saveRun: saveRun,
       initialLocation: Routes.countdown(
-        configFor(game ?? placeholderCoralDefinition),
+        configFor(game ?? fixtureAlpha),
       ),
     );
 
@@ -66,8 +66,8 @@ void main() {
       final rects = <String, (Rect, Rect)>{};
 
       for (final definition in <GameDefinition>[
-        placeholderCoralDefinition,
-        placeholderTurquoiseDefinition,
+        fixtureAlpha,
+        fixtureBeta,
       ]) {
         await pumpPlay(tester, game: definition);
 
@@ -78,8 +78,8 @@ void main() {
       }
 
       expect(
-        rects['placeholder_turquoise'],
-        rects['placeholder_coral'],
+        rects['fixture_beta'],
+        rects['fixture_alpha'],
         reason: 'the chrome moved between two games',
       );
     });
@@ -200,7 +200,7 @@ void main() {
       // The coral placeholder's id, so gameStringsProvider resolves — the
       // registry's string table is keyed by id and refuses an unknown one
       // outright, which is the check that stops a blank card shipping.
-      final game = fixtureGame(id: 'placeholder_coral');
+      final game = fixtureGame(id: 'fixture_alpha');
       final config = RunConfig(
         gameId: game.id,
         difficulty: Difficulty.classic,

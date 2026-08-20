@@ -128,9 +128,9 @@ void main() {
       );
 
       expect(accepted, <String>{
-        'placeholder_coral',
-        'placeholder_turquoise',
-        'placeholder_locked',
+        'fixture_alpha',
+        'fixture_beta',
+        'fixture_locked',
       });
     });
   });

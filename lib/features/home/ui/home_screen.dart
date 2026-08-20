@@ -6,7 +6,7 @@ import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/home/widgets/locked_game_slot.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
-import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
+import 'package:mindforge/features/shell/widgets/daily_mix_card_slot.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/features/shell/widgets/section_heading.dart';
 import 'package:mindforge/features/shell/widgets/shell_pane.dart';
@@ -85,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       children: <Widget>[
-        const _DailyMix(),
+        const DailyMixCardSlot(variant: DailyMixVariant.grape),
         const SizedBox(height: 18),
         SectionHeading(
           title: l10n.yourGamesTitle,
@@ -128,19 +128,6 @@ class _StreakChip extends ConsumerWidget {
       ),
     );
   }
-}
-
-/// The Daily Mix card in its grape skin.
-class _DailyMix extends ConsumerWidget {
-  const _DailyMix();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) => DailyMixCard(
-    title: AppLocalizations.of(context).dailyMixTitle,
-    summary: dailyMixSummary(context, ref),
-    onTap: () =>
-        context.go(Routes.gameDetail(ref.read(homeHubProvider).dailyPick)),
-  );
 }
 
 /// A game that has not shipped, as its own dashed slot.
