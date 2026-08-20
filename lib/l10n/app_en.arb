@@ -221,6 +221,18 @@
     "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
   },
   "colourYellow": "Yellow",
+  "colourPurple": "Purple",
+  "@colourPurple": {
+    "description": "A Stroop answer colour word, offered on Blitz only. It is BOTH the stimulus word and an answer-key label, so it has to read at 78pt and fit a 92pt key."
+  },
+  "colourOrange": "Orange",
+  "@colourOrange": {
+    "description": "A Stroop answer colour word. Offered on Blitz, and it is also the label PlayAnswer.green takes under the colour-blind palette, because that palette paints green as orange."
+  },
+  "colourPink": "Pink",
+  "@colourPink": {
+    "description": "A Stroop answer colour word that exists ONLY under the colour-blind palette: it is the label PlayAnswer.red takes there, because that palette paints red as pink. There is no PlayAnswer.pink and there must not be."
+  },
   "@colourYellow": {
     "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
   },

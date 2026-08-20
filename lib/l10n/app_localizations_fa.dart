@@ -185,6 +185,15 @@ class AppLocalizationsFa extends AppLocalizations {
   String get colourYellow => 'زرد';
 
   @override
+  String get colourPurple => 'بنفش';
+
+  @override
+  String get colourOrange => 'نارنجی';
+
+  @override
+  String get colourPink => 'صورتی';
+
+  @override
   String get resultsTitle => 'اجرای خوبی بود!';
 
   @override

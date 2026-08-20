@@ -142,6 +142,7 @@ void main() {
       const sameAsEnglish = <SupportedLocale, Set<String>>{
         SupportedLocale.de: <String>{
           'bestLabel', // BEST
+          'colourOrange', // Orange — the German colour word IS "Orange"
           'difficultyBlitz', // Blitz — an English loanword FROM German
           'unitMilliseconds', // ms
           'unitSeconds', // s

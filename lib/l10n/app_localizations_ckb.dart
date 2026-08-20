@@ -185,6 +185,15 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get colourYellow => 'زەرد';
 
   @override
+  String get colourPurple => 'مۆر';
+
+  @override
+  String get colourOrange => 'نارەنجی';
+
+  @override
+  String get colourPink => 'پەمەیی';
+
+  @override
   String get resultsTitle => 'خولێکی باش بوو!';
 
   @override

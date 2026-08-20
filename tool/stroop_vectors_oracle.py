@@ -116,8 +116,15 @@ def draw_options(rng: SplitMix64, pool):
             return drawn
 
 
-def other_than(rng: SplitMix64, ink: int) -> int:
-    others = [a for a in range(len(ANSWERS)) if a != ink]
+def other_than(rng: SplitMix64, ink: int, pool) -> int:
+    """Any answer in the POOL that is not the ink.
+
+    From the pool rather than from every answer: the word may name a colour
+    that is not among the four offered, but it must name one this run can
+    paint. Drawing from the whole set let the colour-blind palette print a
+    colour with no swapped hue.
+    """
+    others = [a for a in pool if a != ink]
     return others[rng.next_int(len(others))]
 
 
@@ -131,7 +138,7 @@ def generate(seed: int, difficulty: int, colour_blind: bool):
         options = draw_options(rng, pool)
         ink = options[rng.next_int(len(options))]
         incongruent = rng.next_int(1000) < int(share * 1000)
-        word = other_than(rng, ink) if incongruent else ink
+        word = other_than(rng, ink, pool) if incongruent else ink
         rounds.append((index, word, ink, options, 1 if colour_blind else 0))
     return rounds
 

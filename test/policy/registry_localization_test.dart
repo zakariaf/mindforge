@@ -15,12 +15,28 @@ import 'support/source_text.dart';
 /// mechanic board with an accent background. Scanning them as though they were
 /// labels would force those explanations to be deleted to satisfy a gate about
 /// something else.
-String _withoutAsserts(String code) {
+String _withoutAsserts(String code) => _withoutCallsTo(
+  _withoutCallsTo(code, 'assert('),
+  'StateError(',
+);
+
+/// [code] with every `name(...)` call and its arguments removed.
+///
+/// Used for `assert(` and `StateError(`, both of which carry DEVELOPER-facing
+/// messages: an assert explains an invariant to whoever broke it, and a
+/// StateError thrown by a registry switch explains which file to extend. The
+/// rule this scan enforces is about strings a PLAYER can read, and neither of
+/// those ever reaches one — a StateError here means the app is already
+/// crashing.
+///
+/// Both are stripped by the same walker rather than by a regex, because the
+/// message spans lines and a line-based skip would drop only the first of them.
+String _withoutCallsTo(String code, String opening) {
   final buffer = StringBuffer();
   var index = 0;
 
   while (index < code.length) {
-    final start = code.indexOf('assert(', index);
+    final start = code.indexOf(opening, index);
     if (start < 0) {
       buffer.write(code.substring(index));
       break;
@@ -29,7 +45,7 @@ String _withoutAsserts(String code) {
     buffer.write(code.substring(index, start));
 
     var depth = 0;
-    var cursor = start + 'assert'.length;
+    var cursor = start + opening.length - 1;
 
     for (; cursor < code.length; cursor++) {
       if (code[cursor] == '(') depth++;

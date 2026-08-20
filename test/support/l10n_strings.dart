@@ -81,6 +81,9 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'colourBlue': l10n.colourBlue,
     'colourGreen': l10n.colourGreen,
     'colourYellow': l10n.colourYellow,
+    'colourPurple': l10n.colourPurple,
+    'colourOrange': l10n.colourOrange,
+    'colourPink': l10n.colourPink,
     'resultsTitle': l10n.resultsTitle,
     'newPersonalBest': l10n.newPersonalBest,
     'finalScore': l10n.finalScore,
@@ -185,6 +188,12 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'colourBlue': (step: 'button', lines: 1),
   'colourGreen': (step: 'button', lines: 1),
   'colourYellow': (step: 'button', lines: 1),
+  // The three E09 adds. Purple and orange are Blitz answers; pink exists only
+  // as the label red takes under the colour-blind palette. Same step and the
+  // same one-line budget as the other four, because they sit on the same key.
+  'colourPurple': (step: 'button', lines: 1),
+  'colourOrange': (step: 'button', lines: 1),
+  'colourPink': (step: 'button', lines: 1),
   'resultsTitle': (step: 'displayXl', lines: 2),
   'newPersonalBest': (step: 'label', lines: 1),
   'finalScore': (step: 'label', lines: 1),

@@ -95,7 +95,7 @@ StroopRound _deal({
 
   return StroopRound(
     index: index,
-    word: isIncongruent ? _otherThan(generator, ink) : ink,
+    word: isIncongruent ? _otherThan(generator, ink, pool) : ink,
     ink: ink,
     options: options,
     isColourBlindPalette: isColourBlindPalette,
@@ -134,13 +134,23 @@ List<PlayAnswer> _drawOptions(
   }
 }
 
-/// Any answer that is not [ink].
+/// Any answer in [pool] that is not [ink].
 ///
-/// Drawn from the WHOLE answer set rather than from the offered four: naming a
-/// colour the player cannot tap is a legitimate Stroop trial, and it is the one
-/// the reflex most wants to answer.
-PlayAnswer _otherThan(SeededGenerator generator, PlayAnswer ink) {
-  final others = PlayAnswer.values.where((answer) => answer != ink).toList();
+/// **From the POOL, not from `PlayAnswer.values`.** The word may name a colour
+/// that is not among the four offered — on Blitz, where six are drawn from and
+/// four are shown, that is the trial the reflex most wants to answer — but it
+/// must always name a colour this run can actually paint. Drawing from the
+/// whole enum let the colour-blind palette print "Purple", which has no
+/// swapped hue and which the player has therefore never seen on a key.
+///
+/// Caught by `stroop_colour_blind_test`, not by review: with the flag on, the
+/// options were correctly capped and the word was not.
+PlayAnswer _otherThan(
+  SeededGenerator generator,
+  PlayAnswer ink,
+  List<PlayAnswer> pool,
+) {
+  final others = pool.where((answer) => answer != ink).toList();
 
   return others[generator.nextInt(others.length)];
 }

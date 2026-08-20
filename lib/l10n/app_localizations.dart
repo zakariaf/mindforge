@@ -347,6 +347,24 @@ abstract class AppLocalizations {
   /// **'Yellow'**
   String get colourYellow;
 
+  /// A Stroop answer colour word, offered on Blitz only. It is BOTH the stimulus word and an answer-key label, so it has to read at 78pt and fit a 92pt key.
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get colourPurple;
+
+  /// A Stroop answer colour word. Offered on Blitz, and it is also the label PlayAnswer.green takes under the colour-blind palette, because that palette paints green as orange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get colourOrange;
+
+  /// A Stroop answer colour word that exists ONLY under the colour-blind palette: it is the label PlayAnswer.red takes there, because that palette paints red as pink. There is no PlayAnswer.pink and there must not be.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get colourPink;
+
   /// The heading on the results screen. Warm and short; it is celebratory, not an evaluation of the score.
   ///
   /// In en, this message translates to:
