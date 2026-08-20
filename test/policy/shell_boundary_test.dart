@@ -94,33 +94,40 @@ void main() {
     );
   });
 
-  test('and the registry is the only file in lib that enumerates games', () {
-    // bootstrap.dart is the composition root and the one other place allowed
-    // to read the registry: it fills registeredGameIdsProvider, which decides
-    // which ids the repository accepts. Deriving that inside lib/data would
-    // make the data layer enumerate games, which is the inversion this rule
-    // exists to stop.
-    const composition = <String>{
-      'lib/games/game_registry.dart',
-      'lib/bootstrap.dart',
-    };
-
-    final offenders = dartFilesUnderLib()
-        .where((file) => !composition.contains(file.path))
+  test('and the registry is the only file that DECLARES the list', () {
+    // Reading the registry is the whole point of the engine: Home renders one
+    // card per definition, and a screen that could not watch it would need a
+    // hardcoded list instead. What must live in one place is the DECLARATION —
+    // the line that says which games ship.
+    //
+    // The first version of this test banned the provider's NAME outside the
+    // registry and bootstrap, which flagged Home's notifier for doing exactly
+    // what the seam exists to allow.
+    final declarations = dartFilesUnderLib()
         .where(
           (file) => withoutDartComments(
             file.readAsStringSync(),
-          ).contains('gameRegistryProvider'),
+          ).contains('gameRegistryProvider ='),
         )
         .map((file) => file.path)
         .toList();
 
-    expect(
-      offenders,
-      isEmpty,
-      reason:
-          'reading the registry is fine through gameDefinitionProvider; '
-          'enumerating it is the registry own job',
-    );
+    expect(declarations, <String>['lib/games/game_registry.dart']);
+  });
+
+  test('and nothing outside lib/games names a specific definition', () {
+    // Reading the list is fine; naming a member of it is not. This is the
+    // assertion that keeps `switch (gameId)` from arriving by another route.
+    final offenders = dartFilesUnderLib()
+        .where((file) => !file.path.startsWith('lib/games/'))
+        .where(
+          (file) => withoutDartComments(
+            file.readAsStringSync(),
+          ).contains('placeholderDefinitions'),
+        )
+        .map((file) => file.path)
+        .toList();
+
+    expect(offenders, isEmpty);
   });
 }

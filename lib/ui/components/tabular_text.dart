@@ -41,38 +41,53 @@ class TabularText extends StatelessWidget {
     return Semantics(
       label: value,
       child: ExcludeSemantics(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          // ALWAYS LTR, whatever the page reads. A number is displayed left to
-          // right in every language — Unicode lays a numeric run out that way
-          // inside an RTL paragraph — and splitting one into a box per
-          // character destroys that rule, because each character becomes its
-          // own paragraph and this Row does the ordering instead.
-          //
-          // Inheriting the ambient direction painted 1,480 as 0,841 reversed
-          // on the canonical simulator under fa and ckb. The RTL golden lane
-          // could not see it: it renders plain Text, where the bidi algorithm
-          // still applies. The comment that used to sit here claimed "a number
-          // is not re-ordered by this widget", which was the opposite of what
-          // it did.
-          //
-          // Only the run's INTERNAL order is fixed. Where the run sits on the
-          // screen is still the parent's decision, and the parent mirrors.
-          textDirection: TextDirection.ltr,
-          children: [
-            for (final character in value.characters)
-              if (_isDigit(character))
-                SizedBox(
-                  width: pitch,
-                  child: Text(
-                    character,
-                    style: style,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              else
-                Text(character, style: style),
-          ],
+        // IT PANS RATHER THAN SHRINKING OR CLIPPING. A value's length is not
+        // something the shell controls — a four-digit score at 76pt, a run
+        // count in German, any of them at text scale 2.0 — and of the three
+        // ways a too-wide number can behave, two are wrong: scaling the glyphs
+        // down makes the number SMALLER for exactly the player who asked for
+        // bigger text, and clipping turns a wrong number into a plausible one.
+        //
+        // It lives here rather than at each call site so every value in the
+        // app behaves the same way, and so a new one cannot forget. The scroll
+        // view sits INSIDE the ExcludeSemantics, so it adds no semantics
+        // boundary and a caller can still merge the label and the value into
+        // one stop.
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            // ALWAYS LTR, whatever the page reads. A number is displayed left to
+            // right in every language — Unicode lays a numeric run out that way
+            // inside an RTL paragraph — and splitting one into a box per
+            // character destroys that rule, because each character becomes its
+            // own paragraph and this Row does the ordering instead.
+            //
+            // Inheriting the ambient direction painted 1,480 as 0,841 reversed
+            // on the canonical simulator under fa and ckb. The RTL golden lane
+            // could not see it: it renders plain Text, where the bidi algorithm
+            // still applies. The comment that used to sit here claimed "a number
+            // is not re-ordered by this widget", which was the opposite of what
+            // it did.
+            //
+            // Only the run's INTERNAL order is fixed. Where the run sits on the
+            // screen is still the parent's decision, and the parent mirrors.
+            textDirection: TextDirection.ltr,
+            children: [
+              for (final character in value.characters)
+                if (_isDigit(character))
+                  SizedBox(
+                    width: pitch,
+                    child: Text(
+                      character,
+                      style: style,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                else
+                  Text(character, style: style),
+            ],
+          ),
         ),
       ),
     );

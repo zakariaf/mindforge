@@ -8,6 +8,7 @@ import 'package:mindforge/ui/components/game_card.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
 import 'package:mindforge/ui/components/pop_badge.dart';
 import 'package:mindforge/ui/components/pop_bottom_nav.dart';
+import 'package:mindforge/ui/components/pop_chip.dart';
 import 'package:mindforge/ui/components/pop_grid_tile.dart';
 import 'package:mindforge/ui/components/pop_progress_bar.dart';
 import 'package:mindforge/ui/components/pop_sheet.dart';
@@ -769,6 +770,26 @@ void main() {
         reason:
             'the isolated and the bare number were measured against different '
             'digit scripts: $widths',
+      );
+    });
+  });
+
+  group('PopChip in a bounded row', () {
+    testWidgets('wraps to two lines rather than overflowing', (tester) async {
+      // maxLines is a promise the layout cannot keep unless something bounds
+      // the width. Found on Home: the zero-streak chip is the longest string
+      // that row ever carries, and it overflowed instead of wrapping.
+      await tester.pumpPopComponent(
+        const SizedBox(
+          width: 120,
+          child: PopChip(label: 'A rather long streak label indeed'),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(
+        tester.getSize(find.byType(PopChip)).width,
+        lessThanOrEqualTo(120),
       );
     });
   });

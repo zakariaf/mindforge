@@ -72,6 +72,11 @@ class AppLocalizationsFa extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'انتخاب امروز: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'بازی‌های شما';
 
   @override
@@ -303,4 +308,34 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get languageNameCkb => 'کوردیی ناوەندی';
+
+  @override
+  String get gamePlaceholderCoralName => 'آزمایشگاه واکنش';
+
+  @override
+  String get gamePlaceholderCoralTagline => 'متفاوت را بزن';
+
+  @override
+  String get gamePlaceholderCoralKicker => 'واکنش';
+
+  @override
+  String get gamePlaceholderTurquoiseName => 'جاروب شبکه';
+
+  @override
+  String get gamePlaceholderTurquoiseTagline => 'به ترتیب پیدا کن';
+
+  @override
+  String get gamePlaceholderTurquoiseKicker => 'تمرکز';
+
+  @override
+  String get gamePlaceholderLockedName => 'ردیابی الگو';
+
+  @override
+  String get gamePlaceholderLockedTagline => 'هنوز باز نشده';
+
+  @override
+  String get gamePlaceholderLockedKicker => 'به‌زودی';
+
+  @override
+  String get notFoundTitle => 'این صفحه دیگر وجود ندارد';
 }

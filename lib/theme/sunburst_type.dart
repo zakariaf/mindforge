@@ -46,6 +46,23 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.caption,
     required this.label,
     required this.stimulus,
+    required this.titleBar,
+    required this.greeting,
+    required this.sectionLabel,
+    required this.heroTitle,
+    required this.countdownNumeral,
+    required this.statValue,
+    required this.slabLabel,
+    required this.resultStatLabel,
+    required this.resultStatValue,
+    required this.bestGameName,
+    required this.bestValue,
+    required this.dailyTitle,
+    required this.sectionTitle,
+    required this.sectionCount,
+    required this.chartValueLabel,
+    required this.countdownReady,
+    required this.lockedTitle,
   });
 
   /// The Latin display face.
@@ -142,6 +159,121 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// The Stroop stimulus word.
   final TextStyle stimulus;
 
+  /// The play and detail top-bar title.
+  ///
+  /// DERIVED from `app.html` `.topbar .tt`: Fredoka 600 at 17, tracking
+  /// -.01em. `system.html` section 04 names ten steps and this is not among
+  /// them, which is why every step below carries its evidence.
+  final TextStyle titleBar;
+
+  /// The home hub's greeting line.
+  ///
+  /// DERIVED from `app.html` `.greet`: Nunito 800 at 14, tracking .02em. A
+  /// BODY step — it is the one new step that is not Fredoka.
+  final TextStyle greeting;
+
+  /// The small upper label above a section.
+  ///
+  /// DERIVED from `app.html` `.hero .kicker`: Fredoka 600 at 10, tracking
+  /// .16em, uppercase.
+  ///
+  /// **The uppercase is authored into the ARB value, not applied in Dart.**
+  /// `fa` and `ckb` have no case, and `toUpperCase()` on a Persian string is a
+  /// no-op that still says the author thought casing was a rendering
+  /// decision. The tracking is zeroed for Arabic script by [forScript], because
+  /// .16em on a cursive script breaks the joins — `کۆ` spaced out is not a
+  /// style, it is broken text.
+  final TextStyle sectionLabel;
+
+  /// The game detail hero title.
+  ///
+  /// DERIVED from `app.html` `.hero .ht`: Fredoka 700 at 38, line 0.98,
+  /// tracking -.03em.
+  final TextStyle heroTitle;
+
+  /// The 3-2-1 numeral.
+  ///
+  /// DERIVED from `app.html` `.bigring b`: Fredoka 700 at 132, line 1,
+  /// tracking -.04em. Tabular, so 3 and 2 and 1 occupy the same box and the
+  /// ring does not appear to breathe as it counts.
+  final TextStyle countdownNumeral;
+
+  /// A stat box's value, and each cell of the results trio.
+  ///
+  /// DERIVED from `app.html` `.statbox b`: Fredoka 700 at 26, tracking -.02em,
+  /// `font-variant-numeric: tabular-nums`. Tabular because a stats grid whose
+  /// columns shift when a digit changes reads as a layout bug.
+  final TextStyle statValue;
+
+  /// The FINAL SCORE caption above the results slab.
+  ///
+  /// `app.html`: `.scoreslab s` — 11/600, `.16em`, uppercase. One point larger
+  /// than [sectionLabel] and tracked the same, because it sits alone over a
+  /// 76pt number and a 10pt caption disappears under it.
+  final TextStyle slabLabel;
+
+  /// The caption inside one of the three results cells.
+  ///
+  /// `app.html`: `.tri s` — 10/600 at `.09em`, line 1.3. The loosest tracking
+  /// in the type scale is deliberately NOT used here: these three captions
+  /// wrap to two lines in German, and 1.6 of tracking pushes them to three.
+  final TextStyle resultStatLabel;
+
+  /// The value inside one of the three results cells.
+  ///
+  /// `app.html`: `.tri b` — 23/700, `-.02em`, tabular.
+  final TextStyle resultStatValue;
+
+  /// The game's name on a Stats best card.
+  ///
+  /// `app.html`: `.bestcard .bl b` — 18/600, `-.01em`.
+  final TextStyle bestGameName;
+
+  /// The value chip on a Stats best card.
+  ///
+  /// `app.html`: `.bestcard .bv` — 28/700, `-.03em`, tabular.
+  final TextStyle bestValue;
+
+  /// The Daily Mix card's title.
+  ///
+  /// `app.html`: `.daily .ct` — 22/700, `-.015em`. The card's paper variant on
+  /// game detail overrides this to 19; the variant carries the step, because a
+  /// screen writing `fontSize: 19` is the raw value the token gates refuse.
+  final TextStyle dailyTitle;
+
+  /// A section heading inside a pane: "Your games", "Last 7 runs".
+  ///
+  /// `app.html`: `.seclab b` — 15/600 at `.01em`. Not [title], which is 21 and
+  /// is what a CARD's name uses.
+  final TextStyle sectionTitle;
+
+  /// The count that trails a section heading: "2 unlocked".
+  ///
+  /// `app.html`: `.seclab s` — 12/800, body face.
+  final TextStyle sectionCount;
+
+  /// The value printed above a chart bar.
+  ///
+  /// `app.html`: `.bar u` — 10/600 with **no tracking** and tabular figures.
+  /// Not [label] with its tracking zeroed out: a step is a role, and a widget
+  /// overriding one field of another role is a raw value wearing a token's
+  /// name.
+  final TextStyle chartValueLabel;
+
+  /// The "Get ready" line under the countdown ring.
+  ///
+  /// `app.html`: `.count .ready` — 30/700, `-.01em`. Its own step because the
+  /// scale had nothing at 30: [displayL] is 33 and [title] is 21, and rounding
+  /// to either changes the one line on the screen that is not a numeral.
+  final TextStyle countdownReady;
+
+  /// A locked slot's game name.
+  ///
+  /// `app.html`: `.locked .ct` — 19/600, `-.01em`. Two points under [title],
+  /// because a slot is quieter than a card and the design says so rather than
+  /// leaving both at 21.
+  final TextStyle lockedTitle;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -205,6 +337,23 @@ class SunburstType extends ThemeExtension<SunburstType> {
       caption: arabic(caption, isDisplay: false),
       label: arabic(label, isDisplay: false),
       stimulus: arabic(stimulus, isDisplay: true),
+      titleBar: arabic(titleBar, isDisplay: true),
+      greeting: arabic(greeting, isDisplay: false),
+      sectionLabel: arabic(sectionLabel, isDisplay: true),
+      heroTitle: arabic(heroTitle, isDisplay: true),
+      countdownNumeral: arabic(countdownNumeral, isDisplay: true),
+      statValue: arabic(statValue, isDisplay: true),
+      slabLabel: arabic(slabLabel, isDisplay: true),
+      resultStatLabel: arabic(resultStatLabel, isDisplay: true),
+      resultStatValue: arabic(resultStatValue, isDisplay: true),
+      bestGameName: arabic(bestGameName, isDisplay: true),
+      bestValue: arabic(bestValue, isDisplay: true),
+      dailyTitle: arabic(dailyTitle, isDisplay: true),
+      sectionTitle: arabic(sectionTitle, isDisplay: true),
+      sectionCount: arabic(sectionCount, isDisplay: false),
+      chartValueLabel: arabic(chartValueLabel, isDisplay: true),
+      countdownReady: arabic(countdownReady, isDisplay: true),
+      lockedTitle: arabic(lockedTitle, isDisplay: true),
     );
   }
 
@@ -221,6 +370,23 @@ class SunburstType extends ThemeExtension<SunburstType> {
     caption,
     label,
     stimulus,
+    titleBar,
+    greeting,
+    sectionLabel,
+    heroTitle,
+    countdownNumeral,
+    statValue,
+    slabLabel,
+    resultStatLabel,
+    resultStatValue,
+    bestGameName,
+    bestValue,
+    dailyTitle,
+    sectionTitle,
+    sectionCount,
+    chartValueLabel,
+    countdownReady,
+    lockedTitle,
   ];
 
   @override
@@ -254,6 +420,23 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? caption,
     TextStyle? label,
     TextStyle? stimulus,
+    TextStyle? titleBar,
+    TextStyle? greeting,
+    TextStyle? sectionLabel,
+    TextStyle? heroTitle,
+    TextStyle? countdownNumeral,
+    TextStyle? statValue,
+    TextStyle? slabLabel,
+    TextStyle? resultStatLabel,
+    TextStyle? resultStatValue,
+    TextStyle? bestGameName,
+    TextStyle? bestValue,
+    TextStyle? dailyTitle,
+    TextStyle? sectionTitle,
+    TextStyle? sectionCount,
+    TextStyle? chartValueLabel,
+    TextStyle? countdownReady,
+    TextStyle? lockedTitle,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -267,6 +450,23 @@ class SunburstType extends ThemeExtension<SunburstType> {
     caption: caption ?? this.caption,
     label: label ?? this.label,
     stimulus: stimulus ?? this.stimulus,
+    titleBar: titleBar ?? this.titleBar,
+    greeting: greeting ?? this.greeting,
+    sectionLabel: sectionLabel ?? this.sectionLabel,
+    heroTitle: heroTitle ?? this.heroTitle,
+    countdownNumeral: countdownNumeral ?? this.countdownNumeral,
+    statValue: statValue ?? this.statValue,
+    slabLabel: slabLabel ?? this.slabLabel,
+    resultStatLabel: resultStatLabel ?? this.resultStatLabel,
+    resultStatValue: resultStatValue ?? this.resultStatValue,
+    bestGameName: bestGameName ?? this.bestGameName,
+    bestValue: bestValue ?? this.bestValue,
+    dailyTitle: dailyTitle ?? this.dailyTitle,
+    sectionTitle: sectionTitle ?? this.sectionTitle,
+    sectionCount: sectionCount ?? this.sectionCount,
+    chartValueLabel: chartValueLabel ?? this.chartValueLabel,
+    countdownReady: countdownReady ?? this.countdownReady,
+    lockedTitle: lockedTitle ?? this.lockedTitle,
   );
 
   @override
@@ -287,6 +487,23 @@ class SunburstType extends ThemeExtension<SunburstType> {
       caption: s(caption, other.caption),
       label: s(label, other.label),
       stimulus: s(stimulus, other.stimulus),
+      titleBar: s(titleBar, other.titleBar),
+      greeting: s(greeting, other.greeting),
+      sectionLabel: s(sectionLabel, other.sectionLabel),
+      heroTitle: s(heroTitle, other.heroTitle),
+      countdownNumeral: s(countdownNumeral, other.countdownNumeral),
+      statValue: s(statValue, other.statValue),
+      slabLabel: s(slabLabel, other.slabLabel),
+      resultStatLabel: s(resultStatLabel, other.resultStatLabel),
+      resultStatValue: s(resultStatValue, other.resultStatValue),
+      bestGameName: s(bestGameName, other.bestGameName),
+      bestValue: s(bestValue, other.bestValue),
+      dailyTitle: s(dailyTitle, other.dailyTitle),
+      sectionTitle: s(sectionTitle, other.sectionTitle),
+      sectionCount: s(sectionCount, other.sectionCount),
+      chartValueLabel: s(chartValueLabel, other.chartValueLabel),
+      countdownReady: s(countdownReady, other.countdownReady),
+      lockedTitle: s(lockedTitle, other.lockedTitle),
     );
   }
 
@@ -399,6 +616,165 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontSize: 78,
       height: 1,
       letterSpacing: 0.78,
+    ),
+    // .topbar .tt — 17/600, -.01em.
+    titleBar: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 17,
+      height: 1.2,
+      letterSpacing: -0.17,
+    ),
+    // .greet — Nunito 800 at 14, +.02em. The one new step that is BODY, so it
+    // takes the body fallback cascade rather than the display one.
+    greeting: TextStyle(
+      fontFamily: bodyFace,
+      fontFamilyFallback: bodyFallback,
+      fontWeight: FontWeight.w800,
+      fontSize: 14,
+      height: 1.3,
+      letterSpacing: 0.28,
+    ),
+    // .hero .kicker — 10/600, +.16em, uppercase authored into the ARB.
+    sectionLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1.2,
+      letterSpacing: 1.6,
+    ),
+    // .hero .ht — 38/700, line .98, -.03em.
+    heroTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 38,
+      height: 0.98,
+      letterSpacing: -1.14,
+    ),
+    // .bigring b — 132/700, line 1, -.04em. Tabular, so the ring does not
+    // appear to breathe as the numeral changes.
+    countdownNumeral: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 132,
+      height: 1,
+      letterSpacing: -5.28,
+      fontFeatures: _tabular,
+    ),
+    // .statbox b — 26/700, -.02em, tabular-nums.
+    statValue: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 26,
+      height: 1.1,
+      letterSpacing: -0.52,
+      fontFeatures: _tabular,
+    ),
+
+    // .scoreslab s — 11/600, .16em, uppercase.
+    slabLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 11,
+      height: 1.2,
+      letterSpacing: 1.76,
+    ),
+    // .tri s — 10/600, .09em, line 1.3.
+    resultStatLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1.3,
+      letterSpacing: 0.9,
+    ),
+    // .tri b — 23/700, -.02em, tabular-nums.
+    resultStatValue: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 23,
+      height: 1.1,
+      letterSpacing: -0.46,
+      fontFeatures: _tabular,
+    ),
+    // .bestcard .bl b — 18/600, -.01em.
+    bestGameName: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 18,
+      height: 1.15,
+      letterSpacing: -0.18,
+    ),
+    // .bestcard .bv — 28/700, -.03em, tabular-nums.
+    bestValue: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 28,
+      height: 1.1,
+      letterSpacing: -0.84,
+      fontFeatures: _tabular,
+    ),
+    // .daily .ct — 22/700, -.015em, line 1.1.
+    dailyTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 22,
+      height: 1.1,
+      letterSpacing: -0.33,
+    ),
+    // .seclab b — 15/600, .01em.
+    sectionTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 15,
+      height: 1.2,
+      letterSpacing: 0.15,
+    ),
+    // .seclab s — 12/800, body face.
+    sectionCount: TextStyle(
+      fontFamily: bodyFace,
+      fontFamilyFallback: bodyFallback,
+      fontWeight: FontWeight.w800,
+      fontSize: 12,
+      height: 1.2,
+    ),
+    // .bar u — 10/600, no tracking, tabular-nums.
+    chartValueLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1.2,
+      fontFeatures: _tabular,
+    ),
+    // .count .ready — 30/700, -.01em.
+    countdownReady: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 30,
+      height: 1.15,
+      letterSpacing: -0.3,
+    ),
+    // .locked .ct — 19/600, -.01em.
+    lockedTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 19,
+      height: 1.15,
+      letterSpacing: -0.19,
     ),
   );
 }

@@ -75,6 +75,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'Today\'s pick: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'Your games';
 
   @override
@@ -118,13 +123,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get yourBest => 'Your best';
+  String get yourBest => 'YOUR BEST';
 
   @override
-  String get gamesPlayed => 'Games played';
+  String get gamesPlayed => 'GAMES PLAYED';
 
   @override
-  String get difficultyTitle => 'Difficulty';
+  String get difficultyTitle => 'DIFFICULTY';
 
   @override
   String get difficultyChill => 'Chill';
@@ -190,13 +195,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newPersonalBest => 'New personal best';
 
   @override
-  String get finalScore => 'Final score';
+  String get finalScore => 'FINAL SCORE';
 
   @override
-  String get accuracyLabel => 'Accuracy';
+  String get accuracyLabel => 'ACCURACY';
 
   @override
-  String get avgReactionLabel => 'Avg reaction';
+  String get avgReactionLabel => 'AVG REACTION';
 
   @override
   String get unitMilliseconds => 'ms';
@@ -205,7 +210,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unitSeconds => 's';
 
   @override
-  String get longestStreakLabel => 'Longest streak';
+  String get longestStreakLabel => 'LONGEST STREAK';
 
   @override
   String get playAgain => 'Play again';
@@ -220,13 +225,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsAllTime => 'All time';
 
   @override
-  String get bestScore => 'Best score';
+  String get bestScore => 'BEST SCORE';
 
   @override
-  String get bestTime => 'Best time';
+  String get bestTime => 'BEST TIME';
 
   @override
-  String get timeTrained => 'Time trained';
+  String get timeTrained => 'TIME TRAINED';
 
   @override
   String durationHoursMinutes(String hours, String minutes) {
@@ -308,4 +313,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageNameCkb => 'کوردیی ناوەندی';
+
+  @override
+  String get gamePlaceholderCoralName => 'Reaction Lab';
+
+  @override
+  String get gamePlaceholderCoralTagline => 'Tap the odd one out';
+
+  @override
+  String get gamePlaceholderCoralKicker => 'REACTION';
+
+  @override
+  String get gamePlaceholderTurquoiseName => 'Grid Sweep';
+
+  @override
+  String get gamePlaceholderTurquoiseTagline => 'Find them in order';
+
+  @override
+  String get gamePlaceholderTurquoiseKicker => 'FOCUS';
+
+  @override
+  String get gamePlaceholderLockedName => 'Pattern Trace';
+
+  @override
+  String get gamePlaceholderLockedTagline => 'Not yet unlocked';
+
+  @override
+  String get gamePlaceholderLockedKicker => 'SOON';
+
+  @override
+  String get notFoundTitle => 'That screen has moved';
 }

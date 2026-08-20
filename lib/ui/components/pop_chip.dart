@@ -44,14 +44,30 @@ class PopChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (mark != null) ...[
-            SunburstGlyphIcon(mark, size: 16, colour: colours.textPrimary),
+            // DECORATION. The chip's label already says what the chip says —
+            // "4 day streak" — and a flame announced beside it is a second
+            // stop that adds nothing.
+            ExcludeSemantics(
+              child: SunburstGlyphIcon(
+                mark,
+                size: 16,
+                colour: colours.textPrimary,
+              ),
+            ),
             const SizedBox(width: SunburstShape.space2),
           ],
-          Text(
-            label,
-            style: type.chip.copyWith(color: colours.textPrimary),
-            textAlign: TextAlign.start,
-            maxLines: 2,
+          // FLEXIBLE, or maxLines is a promise the layout cannot keep. A
+          // Text with no width bound takes its natural width and overflows the
+          // row it was given; two lines only happen once something has told it
+          // how wide it may be. Measured on Home, where the zero-streak chip
+          // is the longest string the row ever carries.
+          Flexible(
+            child: Text(
+              label,
+              style: type.chip.copyWith(color: colours.textPrimary),
+              textAlign: TextAlign.start,
+              maxLines: 2,
+            ),
           ),
         ],
       ),

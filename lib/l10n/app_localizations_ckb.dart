@@ -72,6 +72,11 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'هەڵبژاردەی ئەمڕۆ: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'یارییەکانت';
 
   @override
@@ -303,4 +308,34 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get languageNameCkb => 'کوردیی ناوەندی';
+
+  @override
+  String get gamePlaceholderCoralName => 'تاقیگەی کاردانەوە';
+
+  @override
+  String get gamePlaceholderCoralTagline => 'جیاوازەکە دابگرە';
+
+  @override
+  String get gamePlaceholderCoralKicker => 'کاردانەوە';
+
+  @override
+  String get gamePlaceholderTurquoiseName => 'گەڕانی خانە';
+
+  @override
+  String get gamePlaceholderTurquoiseTagline => 'بە ڕیزبەندی بیاندۆزەوە';
+
+  @override
+  String get gamePlaceholderTurquoiseKicker => 'سەرنج';
+
+  @override
+  String get gamePlaceholderLockedName => 'شوێنپێی نەخش';
+
+  @override
+  String get gamePlaceholderLockedTagline => 'هێشتا نەکراوەتەوە';
+
+  @override
+  String get gamePlaceholderLockedKicker => 'بەم زووانە';
+
+  @override
+  String get notFoundTitle => 'ئەم پەڕەیە نەماوە';
 }

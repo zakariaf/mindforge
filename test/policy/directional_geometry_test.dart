@@ -50,6 +50,21 @@ const kPhysicalSideConstructs = <String, String>{
 /// repository does not own; if they ever disagree, this one is right.
 const kNonMirroringShadowFile = 'lib/theme/sunburst_shape.dart';
 
+/// The ONE production file allowed to write a `Directionality`.
+///
+/// A language picker, and `i18n-rtl-l10n` sanctions it by name. Each option is
+/// a language's name written in that language: "فارسی" inside an English list
+/// is still Persian, and letting the page's direction reorder it makes the
+/// chooser unreadable by exactly the person who needs it — someone who cannot
+/// read the current language.
+///
+/// It is an island around ONE WORD, not a root. The ban this list carves an
+/// exception out of is about pinning a TREE, which is what hides a
+/// physical-side bug by never exercising the other direction.
+const kDirectionalityIslandFiles = <String>{
+  'lib/features/settings/ui/language_sheet.dart',
+};
+
 /// The construct this file bans from production code, spelled without being
 /// one.
 ///
@@ -124,6 +139,29 @@ void main() {
     );
   });
 
+  test('the sanctioned island files exist and say why', () {
+    // An allow-list nobody checks is a hole. Each named file has to still be
+    // there AND still explain itself at the line — the same rule the shadow
+    // exception above follows.
+    for (final path in kDirectionalityIslandFiles) {
+      final file = File(path);
+
+      expect(file.existsSync(), isTrue, reason: '$path was moved or deleted');
+      expect(
+        file.readAsStringSync(),
+        contains('own direction'),
+        reason: '$path must say at the line why it pins one',
+      );
+      expect(
+        withoutDartComments(file.readAsStringSync()),
+        contains(kDirectionalityCall),
+        reason:
+            '$path no longer needs the exception — take it off the list '
+            'rather than leaving a hole open',
+      );
+    }
+  });
+
   test('no production file hardcodes a root Directionality', () {
     // A hardcoded Directionality is exactly what hides a physical-side bug:
     // it pins the tree to one direction so the other is never exercised. The
@@ -135,6 +173,7 @@ void main() {
           ).contains(kDirectionalityCall),
         )
         .map((f) => f.path)
+        .where((path) => !kDirectionalityIslandFiles.contains(path))
         .toList();
 
     expect(

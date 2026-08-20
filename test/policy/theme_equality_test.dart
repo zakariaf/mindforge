@@ -53,8 +53,34 @@ void main() {
         'shakeAmplitude': base.copyWith(shakeAmplitude: 99),
         'celebrationScaleFrom': base.copyWith(celebrationScaleFrom: 99),
         'celebrationScalePeak': base.copyWith(celebrationScalePeak: 99),
+        'wordmarkTile': base.copyWith(wordmarkTile: 99),
+        'wordmarkTileRadius': base.copyWith(
+          wordmarkTileRadius: const Radius.circular(99),
+        ),
         'focusGap': base.copyWith(focusGap: 99),
         'stripePitch': base.copyWith(stripePitch: 99),
+        'chartBarRadiusTop': base.copyWith(
+          chartBarRadiusTop: const Radius.circular(99),
+        ),
+        'chartBarRadiusBottom': base.copyWith(
+          chartBarRadiusBottom: const Radius.circular(99),
+        ),
+        'settingsChipRadius': base.copyWith(
+          settingsChipRadius: const Radius.circular(99),
+        ),
+        'paletteSwatchRadius': base.copyWith(
+          paletteSwatchRadius: const Radius.circular(99),
+        ),
+        'countdownRing': base.copyWith(countdownRing: 99),
+        'countdownDot': base.copyWith(countdownDot: 99),
+        'countdownReadyShadow': base.copyWith(
+          countdownReadyShadow: const Offset(99, 99),
+        ),
+        'gameArtFrame': base.copyWith(gameArtFrame: 99),
+        'lockedChip': base.copyWith(lockedChip: 99),
+        'cardChipRadius': base.copyWith(
+          cardChipRadius: const Radius.circular(99),
+        ),
       };
 
       for (final entry in variants.entries) {
@@ -101,10 +127,10 @@ void main() {
   group('and the source still declares what these tests enumerate', () {
     // If a seventh shape slot lands, this count moves and the test above stops
     // being exhaustive — so the count is pinned rather than assumed.
-    test('SunburstShape declares 26 instance fields', () {
+    test('SunburstShape declares 40 instance fields', () {
       expect(
         declaredFieldsOf('lib/theme/sunburst_shape.dart', 'SunburstShape'),
-        26,
+        40,
       );
     });
   });

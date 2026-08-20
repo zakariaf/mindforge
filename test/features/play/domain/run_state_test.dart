@@ -25,14 +25,14 @@ void main() {
 
   final alarmAt = SunburstMotion.sunburstPop.alarmThreshold;
 
-  RunState idleRun({Duration? runLimit}) => RunState.idle(
+  RunState idleRun({int? runLimitMs}) => RunState.idle(
     config: RunConfig(
       gameId: GameId('fixture_game'),
       difficulty: Difficulty.classic,
       seed: 1,
     ),
     snapshot: snapshot,
-    runLimit: runLimit,
+    runLimitMs: runLimitMs,
   );
 
   group('transitions', () {
@@ -72,33 +72,33 @@ void main() {
     test('is null for an untimed run', () {
       // Which is what definition.runLimitFor returns for a game that declares
       // no limit.
-      expect(idleRun().remaining, isNull);
+      expect(idleRun().remainingMs, isNull);
       expect(idleRun().isTimerAlarmAt(alarmAt), isFalse);
     });
 
     test('counts down from the limit', () {
-      final state = idleRun(runLimit: const Duration(seconds: 60)).copyWith(
+      final state = idleRun(runLimitMs: 60000).copyWith(
         elapsed: const Duration(seconds: 20),
       );
 
-      expect(state.remaining, const Duration(seconds: 40));
+      expect(state.remainingMs, 40000);
     });
 
     test('and never goes below zero', () {
       // A frame landing after the deadline but before the notifier ends the run
       // would otherwise report a negative duration — a timer that appears to
       // GAIN a minute at the moment the round ends.
-      final state = idleRun(runLimit: const Duration(seconds: 60)).copyWith(
+      final state = idleRun(runLimitMs: 60000).copyWith(
         elapsed: const Duration(seconds: 61),
       );
 
-      expect(state.remaining, Duration.zero);
+      expect(state.remainingMs, 0);
     });
   });
 
   group('the five-second alarm', () {
     test('fires at or below five seconds, and not above', () {
-      const limit = Duration(seconds: 60);
+      const limit = 60000;
 
       const rows = <int, bool>{
         54999: false, // 5001 ms left
@@ -109,14 +109,14 @@ void main() {
       };
 
       for (final row in rows.entries) {
-        final state = idleRun(runLimit: limit).copyWith(
+        final state = idleRun(runLimitMs: limit).copyWith(
           elapsed: Duration(milliseconds: row.key),
         );
 
         expect(
           state.isTimerAlarmAt(alarmAt),
           row.value,
-          reason: '${state.remaining} left',
+          reason: '${state.remainingMs}ms left',
         );
       }
     });

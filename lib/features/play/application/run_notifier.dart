@@ -96,7 +96,7 @@ class RunNotifier extends Notifier<RunState> {
       // instead would re-run this build on every board update and hand back a
       // fresh idle state, ending the run on the player's first tap.
       snapshot: definition.bindBoard(ref, config, onSnapshot),
-      runLimit: definition.runLimitFor(config.difficulty),
+      runLimitMs: definition.runLimitMsFor(config.difficulty),
     );
   }
 
@@ -145,7 +145,7 @@ class RunNotifier extends Notifier<RunState> {
     state = RunState.idle(
       config: state.config,
       snapshot: state.snapshot,
-      runLimit: state.runLimit,
+      runLimitMs: state.runLimitMs,
     );
   }
 
@@ -203,7 +203,7 @@ class RunNotifier extends Notifier<RunState> {
     // Stroop Rush Blitz the timer IS the normal ending — the board never gets
     // to declare an outcome — and this branch used to persist every one of
     // those as abandoned with a score of zero.
-    if (next.remaining == Duration.zero) {
+    if (next.remainingMs == 0) {
       unawaited(_finish(next.snapshot.outcome ?? _expiredOutcome()));
     }
   }

@@ -24,6 +24,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.pressScale,
     required this.pressScaleSmall,
     required this.badgeTiltDegrees,
+    required this.wordmarkTile,
+    required this.wordmarkTileRadius,
+    required this.wordmarkDot,
+    required this.wordmarkDotRadius,
     required this.shakeAmplitude,
     required this.celebrationScaleFrom,
     required this.celebrationScalePeak,
@@ -32,6 +36,16 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.stripePitch,
     required this.stripeAngle,
     required this.eChip,
+    required this.chartBarRadiusTop,
+    required this.chartBarRadiusBottom,
+    required this.settingsChipRadius,
+    required this.paletteSwatchRadius,
+    required this.countdownRing,
+    required this.countdownDot,
+    required this.countdownReadyShadow,
+    required this.gameArtFrame,
+    required this.lockedChip,
+    required this.cardChipRadius,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -94,6 +108,18 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// reason a reader could name.
   final double badgeTiltDegrees;
 
+  /// The wordmark tile's side. `app.html`: `.wordmark i{width:26px;height:26px}`.
+  final double wordmarkTile;
+
+  /// Its corner. `app.html`: `border-radius:9px`.
+  final Radius wordmarkTileRadius;
+
+  /// The cream square inside it. `app.html`: `.wordmark i b{width:8px}`.
+  final double wordmarkDot;
+
+  /// That square's corner. `app.html`: `border-radius:2px`.
+  final Radius wordmarkDotRadius;
+
   /// How far the wrong-answer shake travels to each side.
   ///
   /// `system.html`: `@keyframes shake{0%,100%{translateX(0)}
@@ -146,6 +172,59 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// badges were built against that sentence, so all three variants shipped a
   /// step too low, and the segment that does want 2px was built at 3px.
   final Offset eChip;
+
+  /// A chart bar's top corners. `app.html`: `.bar i{border-radius:8px 8px ...}`.
+  ///
+  /// Its own pair rather than the radius scale: 8 and 3 are BELOW `radiusSm`,
+  /// and they are not a smaller version of a card corner — they are the shape
+  /// of a bar standing on an axis, rounded where it ends and square where it
+  /// meets the line.
+  final Radius chartBarRadiusTop;
+
+  /// A chart bar's bottom corners, where it sits on the axis.
+  final Radius chartBarRadiusBottom;
+
+  /// The icon chip on a settings row.
+  ///
+  /// `app.html`: `.srow .si{border-radius:11px}`. Eleven, not [radiusSm]'s ten.
+  /// A point either way is invisible in isolation and obvious in a column of
+  /// six chips beside a 22pt card corner, which is why the design states it
+  /// separately.
+  final Radius settingsChipRadius;
+
+  /// A palette swatch. `app.html`: `.cbprev i{border-radius:5px}`.
+  final Radius paletteSwatchRadius;
+
+  /// The countdown ring's diameter. `app.html`: `.bigring{width:238px}`.
+  final double countdownRing;
+
+  /// One beat dot. `app.html`: `.count .dotsrow i{width:14px;height:14px}`.
+  final double countdownDot;
+
+  /// The hard ink shadow behind "Get ready".
+  ///
+  /// `app.html`: `.count .ready{text-shadow:4px 4px 0 var(--ink)}`. Four, not
+  /// the five the results score casts — a bigger word on a smaller type step
+  /// takes a shorter throw. **It does not mirror**, by the same light-source
+  /// rule as every box shadow in the app.
+  final Offset countdownReadyShadow;
+
+  /// The cream frame a game's preview is drawn inside, on a home card.
+  ///
+  /// `app.html`: `.gart{width:64px;height:64px}`. **The frame is the CARD's,
+  /// not the game's** — a definition contributes what goes inside it, and the
+  /// shell decides how it is mounted, which is why the size lives here.
+  final double gameArtFrame;
+
+  /// The padlock chip on a locked slot. `app.html`: `.locked .lk{width:44px}`.
+  final double lockedChip;
+
+  /// The corner on a chip drawn INSIDE a card.
+  ///
+  /// Fourteen. `app.html` uses it twice — `.bestcard .bv{border-radius:14px}`
+  /// and `.locked .lk{border-radius:14px}` — and it sits between [radiusSm]'s
+  /// ten and [radiusMd]'s sixteen, so neither is a rounding away.
+  final Radius cardChipRadius;
 
   /// The ink edge on a surface drawn **inside** another surface.
   ///
@@ -272,6 +351,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale,
     pressScaleSmall,
     badgeTiltDegrees,
+    wordmarkTile,
+    wordmarkTileRadius,
+    wordmarkDot,
+    wordmarkDotRadius,
     shakeAmplitude,
     celebrationScaleFrom,
     celebrationScalePeak,
@@ -280,6 +363,16 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     stripePitch,
     stripeAngle,
     eChip,
+    chartBarRadiusTop,
+    chartBarRadiusBottom,
+    settingsChipRadius,
+    paletteSwatchRadius,
+    countdownRing,
+    countdownDot,
+    countdownReadyShadow,
+    gameArtFrame,
+    lockedChip,
+    cardChipRadius,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -319,6 +412,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? pressScale,
     double? pressScaleSmall,
     double? badgeTiltDegrees,
+    double? wordmarkTile,
+    Radius? wordmarkTileRadius,
+    double? wordmarkDot,
+    Radius? wordmarkDotRadius,
     double? shakeAmplitude,
     double? celebrationScaleFrom,
     double? celebrationScalePeak,
@@ -327,6 +424,16 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? stripePitch,
     double? stripeAngle,
     Offset? eChip,
+    Radius? chartBarRadiusTop,
+    Radius? chartBarRadiusBottom,
+    Radius? settingsChipRadius,
+    Radius? paletteSwatchRadius,
+    double? countdownRing,
+    double? countdownDot,
+    Offset? countdownReadyShadow,
+    double? gameArtFrame,
+    double? lockedChip,
+    Radius? cardChipRadius,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -346,6 +453,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale: pressScale ?? this.pressScale,
     pressScaleSmall: pressScaleSmall ?? this.pressScaleSmall,
     badgeTiltDegrees: badgeTiltDegrees ?? this.badgeTiltDegrees,
+    wordmarkTile: wordmarkTile ?? this.wordmarkTile,
+    wordmarkTileRadius: wordmarkTileRadius ?? this.wordmarkTileRadius,
+    wordmarkDot: wordmarkDot ?? this.wordmarkDot,
+    wordmarkDotRadius: wordmarkDotRadius ?? this.wordmarkDotRadius,
     shakeAmplitude: shakeAmplitude ?? this.shakeAmplitude,
     celebrationScaleFrom: celebrationScaleFrom ?? this.celebrationScaleFrom,
     celebrationScalePeak: celebrationScalePeak ?? this.celebrationScalePeak,
@@ -354,6 +465,16 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     stripePitch: stripePitch ?? this.stripePitch,
     stripeAngle: stripeAngle ?? this.stripeAngle,
     eChip: eChip ?? this.eChip,
+    chartBarRadiusTop: chartBarRadiusTop ?? this.chartBarRadiusTop,
+    chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
+    settingsChipRadius: settingsChipRadius ?? this.settingsChipRadius,
+    paletteSwatchRadius: paletteSwatchRadius ?? this.paletteSwatchRadius,
+    countdownRing: countdownRing ?? this.countdownRing,
+    countdownDot: countdownDot ?? this.countdownDot,
+    countdownReadyShadow: countdownReadyShadow ?? this.countdownReadyShadow,
+    gameArtFrame: gameArtFrame ?? this.gameArtFrame,
+    lockedChip: lockedChip ?? this.lockedChip,
+    cardChipRadius: cardChipRadius ?? this.cardChipRadius,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -382,6 +503,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       pressScale: d(pressScale, other.pressScale),
       pressScaleSmall: d(pressScaleSmall, other.pressScaleSmall),
       badgeTiltDegrees: d(badgeTiltDegrees, other.badgeTiltDegrees),
+      wordmarkTile: d(wordmarkTile, other.wordmarkTile),
+      wordmarkTileRadius: r(wordmarkTileRadius, other.wordmarkTileRadius),
+      wordmarkDot: d(wordmarkDot, other.wordmarkDot),
+      wordmarkDotRadius: r(wordmarkDotRadius, other.wordmarkDotRadius),
       shakeAmplitude: d(shakeAmplitude, other.shakeAmplitude),
       celebrationScaleFrom: d(celebrationScaleFrom, other.celebrationScaleFrom),
       celebrationScalePeak: d(celebrationScalePeak, other.celebrationScalePeak),
@@ -390,6 +515,22 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       stripePitch: d(stripePitch, other.stripePitch),
       stripeAngle: d(stripeAngle, other.stripeAngle),
       eChip: o(eChip, other.eChip),
+      chartBarRadiusTop: r(chartBarRadiusTop, other.chartBarRadiusTop),
+      chartBarRadiusBottom: r(
+        chartBarRadiusBottom,
+        other.chartBarRadiusBottom,
+      ),
+      settingsChipRadius: r(settingsChipRadius, other.settingsChipRadius),
+      paletteSwatchRadius: r(paletteSwatchRadius, other.paletteSwatchRadius),
+      countdownRing: d(countdownRing, other.countdownRing),
+      countdownDot: d(countdownDot, other.countdownDot),
+      countdownReadyShadow: o(
+        countdownReadyShadow,
+        other.countdownReadyShadow,
+      ),
+      gameArtFrame: d(gameArtFrame, other.gameArtFrame),
+      lockedChip: d(lockedChip, other.lockedChip),
+      cardChipRadius: r(cardChipRadius, other.cardChipRadius),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -413,6 +554,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale: 0.98,
     pressScaleSmall: 0.97,
     badgeTiltDegrees: -2.5,
+    wordmarkTile: 26,
+    wordmarkTileRadius: Radius.circular(9),
+    wordmarkDot: 8,
+    wordmarkDotRadius: Radius.circular(2),
     shakeAmplitude: 4,
     celebrationScaleFrom: 0.86,
     celebrationScalePeak: 1.06,
@@ -426,6 +571,16 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     stripeAngle: 45,
     // DERIVED: half of e1. See the field docs for the evidence behind each.
     eChip: Offset(2, 2),
+    chartBarRadiusTop: Radius.circular(8),
+    chartBarRadiusBottom: Radius.circular(3),
+    settingsChipRadius: Radius.circular(11),
+    paletteSwatchRadius: Radius.circular(5),
+    countdownRing: 238,
+    countdownDot: 14,
+    countdownReadyShadow: Offset(4, 4),
+    gameArtFrame: 64,
+    lockedChip: 44,
+    cardChipRadius: Radius.circular(14),
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,

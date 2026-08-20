@@ -70,15 +70,15 @@ void main() {
     test('a timed game answers per difficulty', () {
       final game = fixtureGame(
         runLimitFor: (difficulty) => switch (difficulty) {
-          Difficulty.chill => const Duration(seconds: 90),
-          Difficulty.classic => const Duration(seconds: 60),
-          Difficulty.blitz => const Duration(seconds: 30),
+          Difficulty.chill => 90000,
+          Difficulty.classic => 60000,
+          Difficulty.blitz => 30000,
         },
       );
 
-      expect(game.runLimitFor(Difficulty.chill), const Duration(seconds: 90));
-      expect(game.runLimitFor(Difficulty.classic), const Duration(seconds: 60));
-      expect(game.runLimitFor(Difficulty.blitz), const Duration(seconds: 30));
+      expect(game.runLimitMsFor(Difficulty.chill), 90000);
+      expect(game.runLimitMsFor(Difficulty.classic), 60000);
+      expect(game.runLimitMsFor(Difficulty.blitz), 30000);
     });
 
     test('and an untimed game returns null for every one of them', () {
@@ -88,7 +88,7 @@ void main() {
       final game = fixtureGame(isTimed: false);
 
       for (final difficulty in Difficulty.values) {
-        expect(game.runLimitFor(difficulty), isNull, reason: difficulty.name);
+        expect(game.runLimitMsFor(difficulty), isNull, reason: difficulty.name);
       }
     });
 
@@ -96,7 +96,7 @@ void main() {
       expect(
         () => fixtureGame(
           isTimed: false,
-          runLimitFor: (_) => const Duration(seconds: 60),
+          runLimitFor: (_) => 60000,
         ),
         throwsAssertionError,
       );
@@ -109,7 +109,7 @@ void main() {
       final game = fixtureGame();
 
       for (final difficulty in Difficulty.values) {
-        expect(game.runLimitFor(difficulty), isNull, reason: difficulty.name);
+        expect(game.runLimitMsFor(difficulty), isNull, reason: difficulty.name);
       }
     });
   });

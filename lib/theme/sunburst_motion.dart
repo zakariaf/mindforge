@@ -16,6 +16,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     required this.easeInOut,
     required this.timerPulse,
     required this.alarmThreshold,
+    required this.countdownInterval,
   });
 
   /// Press down / release.
@@ -59,6 +60,17 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
   /// an argument, because that type is Flutter-free and may not reach here.
   final Duration alarmThreshold;
 
+  /// How long each 3-2-1 beat is held.
+  ///
+  /// One second, which is what a countdown means. It is here for the same
+  /// reason `timerPulse` is: every `Duration` literal in the app lives in this
+  /// file, three gates enforce that, and the countdown screen takes its cadence
+  /// rather than knowing it.
+  ///
+  /// **Not collapsed by reduce motion.** The beat is the countdown, not an
+  /// animation of one — collapsing it would start the run instantly.
+  final Duration countdownInterval;
+
   /// The single place a widget asks "should I animate?".
   ///
   /// Reduced motion means **stop**, not "gentler": [full] collapses to
@@ -92,6 +104,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easeInOut,
     timerPulse,
     alarmThreshold,
+    countdownInterval,
   ];
 
   @override
@@ -122,6 +135,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     Curve? easeInOut,
     Duration? timerPulse,
     Duration? alarmThreshold,
+    Duration? countdownInterval,
   }) => SunburstMotion(
     durTap: durTap ?? this.durTap,
     durState: durState ?? this.durState,
@@ -132,6 +146,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easeInOut: easeInOut ?? this.easeInOut,
     timerPulse: timerPulse ?? this.timerPulse,
     alarmThreshold: alarmThreshold ?? this.alarmThreshold,
+    countdownInterval: countdownInterval ?? this.countdownInterval,
   );
 
   /// Deliberate step, not an unfinished implementation. Durations and curves
@@ -153,5 +168,6 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easeInOut: Cubic(0.6, 0, 0.3, 1),
     timerPulse: Duration(milliseconds: 100),
     alarmThreshold: Duration(seconds: 5),
+    countdownInterval: Duration(seconds: 1),
   );
 }

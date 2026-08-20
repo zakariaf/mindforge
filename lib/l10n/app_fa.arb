@@ -9,6 +9,7 @@
   "streakDays": "{count, plural, =0{هنوز زنجیره‌ای نیست} other{زنجیره‌ی {formatted} روزه}}",
   "dailyMixTitle": "ترکیب روزانه",
   "dailyMixSummary": "{games, plural, other{{formattedGames} بازی}}، {minutes, plural, other{{formattedMinutes} دقیقه}}",
+  "dailyMixTodaysPick": "انتخاب امروز: {game}",
   "yourGamesTitle": "بازی‌های شما",
   "gamesUnlocked": "{count, plural, other{{formatted} باز شده}}",
   "bestLabel": "بهترین",
@@ -76,5 +77,15 @@
   "languageNameEn": "English",
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
-  "languageNameCkb": "کوردیی ناوەندی"
+  "languageNameCkb": "کوردیی ناوەندی",
+  "gamePlaceholderCoralName": "آزمایشگاه واکنش",
+  "gamePlaceholderCoralTagline": "متفاوت را بزن",
+  "gamePlaceholderCoralKicker": "واکنش",
+  "gamePlaceholderTurquoiseName": "جاروب شبکه",
+  "gamePlaceholderTurquoiseTagline": "به ترتیب پیدا کن",
+  "gamePlaceholderTurquoiseKicker": "تمرکز",
+  "gamePlaceholderLockedName": "ردیابی الگو",
+  "gamePlaceholderLockedTagline": "هنوز باز نشده",
+  "gamePlaceholderLockedKicker": "به‌زودی",
+  "notFoundTitle": "این صفحه دیگر وجود ندارد"
 }

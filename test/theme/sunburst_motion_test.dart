@@ -64,6 +64,7 @@ void main() {
           'easeInOut',
           'timerPulse',
           'alarmThreshold',
+          'countdownInterval',
         ],
         reason:
             'a fifth SCALE duration is a new moment nobody catalogued. The '

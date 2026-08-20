@@ -62,7 +62,7 @@ void main() {
   final config = fixtureConfig();
 
   ({ProviderContainer container, FakeSaveRun save}) harness({
-    Duration? runLimit,
+    int? runLimitMs,
     bool isPersonalBest = false,
     DataFailure? failure,
     Clock? clock,
@@ -72,8 +72,8 @@ void main() {
 
     final container = engineContainer(
       game: fixtureGame(
-        isTimed: runLimit != null,
-        runLimitFor: runLimit == null ? null : (_) => runLimit,
+        isTimed: runLimitMs != null,
+        runLimitFor: runLimitMs == null ? null : (_) => runLimitMs,
       ),
       save: save,
       clock: clock,
@@ -350,7 +350,7 @@ void main() {
       // reach idle after thirty seconds of play. Relabelling left elapsed, the
       // alarm latch, the snapshot and the ticker's banked time intact — and
       // the next run started at 0:00:31 with 29 seconds left of sixty.
-      final h = harness(runLimit: const Duration(seconds: 60));
+      final h = harness(runLimitMs: 60000);
 
       notifierIn(h.container)
         ..start()
@@ -364,7 +364,7 @@ void main() {
       expect(state.phase, RunPhase.idle);
       expect(state.elapsed, Duration.zero);
       expect(state.hasFiredTimerAlarm, isFalse);
-      expect(state.remaining, const Duration(seconds: 60));
+      expect(state.remainingMs, 60000);
     });
   });
 
@@ -397,7 +397,7 @@ void main() {
       fakeAsync((async) {
         withClock(async.getClock(DateTime.utc(2026)), () {
           final container = harness(
-            runLimit: const Duration(seconds: 60),
+            runLimitMs: 60000,
             clock: clock,
           ).container;
 
@@ -447,7 +447,7 @@ void main() {
       fakeAsync((async) {
         withClock(async.getClock(DateTime.utc(2026)), () {
           final container = harness(
-            runLimit: const Duration(seconds: 60),
+            runLimitMs: 60000,
             clock: clock,
           ).container;
 

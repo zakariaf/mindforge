@@ -47,6 +47,17 @@ extension GameAccentTokens on SunburstColors {
     (GameAccent.schulte, GameColourRole.deep) => gameSchulteDeep,
   };
 
+  /// The ray sweep behind [accent]'s play band, alpha already applied.
+  ///
+  /// A slot per accent rather than `accentFor(deep).withValues(alpha: .45)`,
+  /// because an alpha applied at a call site is the raw value the token gates
+  /// refuse, and because the band's texture strength is a design decision.
+  /// `app.html`: `.playband .rays{opacity:.45}`.
+  Color bandRayFor(GameAccent accent) => switch (accent) {
+    GameAccent.stroop => bandRayStroop,
+    GameAccent.schulte => bandRaySchulte,
+  };
+
   /// The label colour to draw on [accent] in [role], or **`null` when that
   /// surface carries no compliant label at all**.
   ///

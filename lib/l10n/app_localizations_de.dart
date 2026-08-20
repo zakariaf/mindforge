@@ -75,6 +75,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'Heutige Auswahl: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'Deine Spiele';
 
   @override
@@ -118,13 +123,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get yourBest => 'Deine Bestleistung';
+  String get yourBest => 'DEINE BESTLEISTUNG';
 
   @override
-  String get gamesPlayed => 'Gespielte Runden';
+  String get gamesPlayed => 'GESPIELTE RUNDEN';
 
   @override
-  String get difficultyTitle => 'Schwierigkeit';
+  String get difficultyTitle => 'SCHWIERIGKEIT';
 
   @override
   String get difficultyChill => 'Locker';
@@ -190,13 +195,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get newPersonalBest => 'Neue Bestleistung';
 
   @override
-  String get finalScore => 'Endpunktzahl';
+  String get finalScore => 'ENDPUNKTZAHL';
 
   @override
-  String get accuracyLabel => 'Genauigkeit';
+  String get accuracyLabel => 'GENAUIGKEIT';
 
   @override
-  String get avgReactionLabel => 'Ø Reaktion';
+  String get avgReactionLabel => 'Ø REAKTION';
 
   @override
   String get unitMilliseconds => 'ms';
@@ -205,7 +210,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get unitSeconds => 's';
 
   @override
-  String get longestStreakLabel => 'Längste Serie';
+  String get longestStreakLabel => 'LÄNGSTE SERIE';
 
   @override
   String get playAgain => 'Nochmal spielen';
@@ -220,13 +225,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get statsAllTime => 'Gesamt';
 
   @override
-  String get bestScore => 'Beste Punktzahl';
+  String get bestScore => 'BESTE PUNKTZAHL';
 
   @override
-  String get bestTime => 'Beste Zeit';
+  String get bestTime => 'BESTE ZEIT';
 
   @override
-  String get timeTrained => 'Trainingszeit';
+  String get timeTrained => 'TRAININGSZEIT';
 
   @override
   String durationHoursMinutes(String hours, String minutes) {
@@ -308,4 +313,34 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageNameCkb => 'کوردیی ناوەندی';
+
+  @override
+  String get gamePlaceholderCoralName => 'Reaktionslabor';
+
+  @override
+  String get gamePlaceholderCoralTagline => 'Tippe auf das Abweichende';
+
+  @override
+  String get gamePlaceholderCoralKicker => 'REAKTION';
+
+  @override
+  String get gamePlaceholderTurquoiseName => 'Rasterlauf';
+
+  @override
+  String get gamePlaceholderTurquoiseTagline => 'Finde sie der Reihe nach';
+
+  @override
+  String get gamePlaceholderTurquoiseKicker => 'FOKUS';
+
+  @override
+  String get gamePlaceholderLockedName => 'Musterspur';
+
+  @override
+  String get gamePlaceholderLockedTagline => 'Noch nicht freigeschaltet';
+
+  @override
+  String get gamePlaceholderLockedKicker => 'BALD';
+
+  @override
+  String get notFoundTitle => 'Diesen Bildschirm gibt es nicht mehr';
 }

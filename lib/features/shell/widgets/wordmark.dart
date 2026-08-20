@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/theme/sunburst_type.dart';
+
+/// The MindForge lockup: a chunky coral tile and the product name.
+///
+/// **The name is pinned left-to-right inside an RTL page.** "MindForge" is a
+/// Latin brand string, and a Latin run inside an RTL paragraph is reordered by
+/// the bidi algorithm unless it is isolated — which is how a wordmark ends up
+/// rendering as "orgeMindF" beside a Persian sentence. Here it is its own
+/// widget with its own direction; where it appears INSIDE a sentence, it goes
+/// through an ARB placeholder and `BidiText.isolate`, never spliced.
+///
+/// It is labelled but is **not a header**: a screen has one h1 and this is not
+/// it, so a screen reader's heading list stays useful.
+class Wordmark extends StatelessWidget {
+  /// Creates the lockup.
+  const Wordmark({super.key});
+
+  /// The product name. Never translated, never cased in Dart.
+  static const String name = 'MindForge';
+
+  @override
+  Widget build(BuildContext context) {
+    final colours = SunburstColors.of(context);
+    final shape = SunburstShape.of(context);
+    final type = SunburstType.of(context);
+
+    return Semantics(
+      label: name,
+      header: false,
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // 26x26, r9, coral, with an 8x8 cream square centred.
+            Container(
+              width: shape.wordmarkTile,
+              height: shape.wordmarkTile,
+              decoration: BoxDecoration(
+                color: colours.accentWarm,
+                borderRadius: BorderRadius.all(shape.wordmarkTileRadius),
+                border: Border.all(
+                  color: colours.border,
+                  width: shape.borderWidth,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Container(
+                width: shape.wordmarkDot,
+                height: shape.wordmarkDot,
+                decoration: BoxDecoration(
+                  color: colours.surface,
+                  borderRadius: BorderRadius.all(shape.wordmarkDotRadius),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              name,
+              // THE PIN. Not the ambient direction: a Latin run in an RTL
+              // paragraph is reordered without it.
+              textDirection: TextDirection.ltr,
+              // AND THE LOCKUP DOES NOT SCALE WITH DYNAMIC TYPE. It is a
+              // logotype, not copy: iOS ships app marks as artwork and does
+              // not grow them with the text setting, and at scale 2.0 on a
+              // 320pt screen the tile and the name are wider than the header —
+              // measured by the overflow matrix, in all four locales.
+              //
+              // This is NOT a clamp on content. Nothing here is information a
+              // player needs at a larger size: the accessible name is the
+              // Semantics label above, which a screen reader announces
+              // regardless of how the mark is drawn, and every other string on
+              // both screens that use it scales normally.
+              textScaler: TextScaler.noScaling,
+              style: type.titleBar.copyWith(color: colours.textPrimary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

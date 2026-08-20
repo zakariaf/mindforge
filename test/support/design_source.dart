@@ -75,7 +75,11 @@ abstract final class DesignSource {
   }) {
     final hexes = <String, String>{};
     for (final match in RegExp(
-      r'static const (\w+) = Color\(0xFF([0-9A-Fa-f]{6})\);',
+      // The full eight digits, not `0xFF` plus six: a composited primitive
+      // like the header's ray sweep carries an alpha, and a parser that only
+      // saw opaque colours reported it as "does not exist" — which reads as a
+      // typo rather than as the parser's own blind spot.
+      r'static const (\w+) = Color\(0x([0-9A-Fa-f]{8})\);',
     ).allMatches(File(pathToRepoFile(path)).readAsStringSync())) {
       hexes[match.group(1)!] = match.group(2)!.toUpperCase();
     }

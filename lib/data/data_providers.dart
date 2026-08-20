@@ -182,6 +182,29 @@ final Provider<AppSettings> appSettingsProvider = Provider<AppSettings>(
       ref.watch(initialAppSettingsProvider),
 );
 
+/// The settings write path: one function, the repository's contract.
+typedef WriteSettings =
+    Future<Result<AppSettings, DataFailure>> Function(
+      AppSettings Function(AppSettings current) change,
+    );
+
+/// Where a setting is written.
+///
+/// **A narrow seam over [settingsRepositoryProvider], not a second write
+/// path.** It forwards to `SettingsRepository.mutate` and does nothing else, so
+/// the read-modify-write stays inside one transaction — which is the whole
+/// reason `mutate` exists, and what stops the language row and four toggles on
+/// one screen from losing each other's field.
+///
+/// It exists for the same reason [saveRunProvider] does: `SettingsRepository`
+/// is a `final class`, implementable only inside its own library, so a test
+/// cannot substitute one. The alternative was loosening a shipped boundary to
+/// an interface purely so a widget test could observe a write — or opening a
+/// real database inside `testWidgets`, which deadlocks.
+final Provider<WriteSettings> writeSettingsProvider = Provider<WriteSettings>(
+  (ref) => ref.watch(settingsRepositoryProvider).mutate,
+);
+
 /// The engine's write path: one function, this repository's contract.
 typedef SaveRun =
     Future<Result<RunCommit, DataFailure>> Function(RunDraft draft);

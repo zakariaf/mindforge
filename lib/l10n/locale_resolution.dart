@@ -140,11 +140,9 @@ final class LocaleController {
   /// callers would get an `Ok`. E08 puts the language row and four toggles on
   /// one screen, which is exactly where that happens.
   Future<Result<AppSettings, DataFailure>> setLocale(SupportedLocale? locale) =>
-      _ref
-          .read(settingsRepositoryProvider)
-          .mutate(
-            (current) => locale == null
-                ? current.withSystemLocale()
-                : current.withLocaleOverride(locale),
-          );
+      _ref.read(writeSettingsProvider)(
+        (current) => locale == null
+            ? current.withSystemLocale()
+            : current.withLocaleOverride(locale),
+      );
 }

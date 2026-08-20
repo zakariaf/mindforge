@@ -63,6 +63,15 @@
       }
     }
   },
+  "dailyMixTodaysPick": "Today's pick: {game}",
+  "@dailyMixTodaysPick": {
+    "description": "The Daily Mix summary line in v1, naming the one game today's seeded pick leads to. NOT '3 games, 4 minutes': the card routes to a single game, and a summary claiming three would be a sentence about software that does not exist. The game name arrives already resolved.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      }
+    }
+  },
   "yourGamesTitle": "Your games",
   "@yourGamesTitle": {
     "description": "Section heading above the game cards on Home. Sentence case."
@@ -123,17 +132,17 @@
       }
     }
   },
-  "yourBest": "Your best",
+  "yourBest": "YOUR BEST",
   "@yourBest": {
-    "description": "Label on the personal-best figure on game detail."
+    "description": "Label on the personal-best figure on game detail. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "gamesPlayed": "Games played",
+  "gamesPlayed": "GAMES PLAYED",
   "@gamesPlayed": {
-    "description": "Label on the run-count figure on game detail and on Stats."
+    "description": "Label on the run-count figure on game detail and on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "difficultyTitle": "Difficulty",
+  "difficultyTitle": "DIFFICULTY",
   "@difficultyTitle": {
-    "description": "Heading above the difficulty selector."
+    "description": "Heading above the difficulty selector. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "difficultyChill": "Chill",
   "@difficultyChill": {
@@ -223,17 +232,17 @@
   "@newPersonalBest": {
     "description": "Badge shown on results when the run beat every previous run in its scope."
   },
-  "finalScore": "Final score",
+  "finalScore": "FINAL SCORE",
   "@finalScore": {
-    "description": "Label above the large results score."
+    "description": "Label above the large results score. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "accuracyLabel": "Accuracy",
+  "accuracyLabel": "ACCURACY",
   "@accuracyLabel": {
-    "description": "Label on the accuracy figure on results."
+    "description": "Label on the accuracy figure on results. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "avgReactionLabel": "Avg reaction",
+  "avgReactionLabel": "AVG REACTION",
   "@avgReactionLabel": {
-    "description": "Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow."
+    "description": "Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "unitMilliseconds": "ms",
   "unitSeconds": "s",
@@ -243,9 +252,9 @@
   "@unitMilliseconds": {
     "description": "The millisecond unit, rendered as its OWN run beside the number. A separate key so the value and its unit are never hand-glued, which is what breaks in RTL."
   },
-  "longestStreakLabel": "Longest streak",
+  "longestStreakLabel": "LONGEST STREAK",
   "@longestStreakLabel": {
-    "description": "Label on the best-combo figure on results."
+    "description": "Label on the best-combo figure on results. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "playAgain": "Play again",
   "@playAgain": {
@@ -263,17 +272,17 @@
   "@statsAllTime": {
     "description": "The scope chip on Stats, saying the figures below cover every run ever."
   },
-  "bestScore": "Best score",
+  "bestScore": "BEST SCORE",
   "@bestScore": {
-    "description": "Label on the best-points figure on Stats."
+    "description": "Label on the best-points figure on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "bestTime": "Best time",
+  "bestTime": "BEST TIME",
   "@bestTime": {
-    "description": "Label on the fastest-completion figure on Stats."
+    "description": "Label on the fastest-completion figure on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "timeTrained": "Time trained",
+  "timeTrained": "TIME TRAINED",
   "@timeTrained": {
-    "description": "Label on the total-play-time figure on Stats."
+    "description": "Label on the total-play-time figure on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "durationHoursMinutes": "{hours}h {minutes}m",
   "@durationHoursMinutes": {
@@ -390,5 +399,45 @@
   "languageNameCkb": "کوردیی ناوەندی",
   "@languageNameCkb": {
     "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
+  },
+  "gamePlaceholderCoralName": "Reaction Lab",
+  "@gamePlaceholderCoralName": {
+    "description": "A placeholder game name, shipped by E08 so the eight shell screens are renderable and screenshot-comparable before Stroop Rush exists. E09 DELETES these nine keys in its first commit."
+  },
+  "gamePlaceholderCoralTagline": "Tap the odd one out",
+  "@gamePlaceholderCoralTagline": {
+    "description": "The one-line description under a placeholder game on the home card."
+  },
+  "gamePlaceholderCoralKicker": "REACTION",
+  "@gamePlaceholderCoralKicker": {
+    "description": "A section kicker. UPPERCASE IS AUTHORED HERE, per locale, and never applied with toUpperCase() in Dart — fa and ckb have no case."
+  },
+  "gamePlaceholderTurquoiseName": "Grid Sweep",
+  "@gamePlaceholderTurquoiseName": {
+    "description": "The second placeholder game name. See gamePlaceholderCoralName."
+  },
+  "gamePlaceholderTurquoiseTagline": "Find them in order",
+  "@gamePlaceholderTurquoiseTagline": {
+    "description": "The second placeholder game tagline."
+  },
+  "gamePlaceholderTurquoiseKicker": "FOCUS",
+  "@gamePlaceholderTurquoiseKicker": {
+    "description": "The second placeholder game kicker. Uppercase authored per locale."
+  },
+  "gamePlaceholderLockedName": "Pattern Trace",
+  "@gamePlaceholderLockedName": {
+    "description": "The locked \"coming soon\" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip."
+  },
+  "gamePlaceholderLockedTagline": "Not yet unlocked",
+  "@gamePlaceholderLockedTagline": {
+    "description": "The locked slot tagline. Rendered as the card subtitle, NOT reused as the badge — a locked card that printed this twice was an E05 defect."
+  },
+  "gamePlaceholderLockedKicker": "SOON",
+  "@gamePlaceholderLockedKicker": {
+    "description": "The locked slot kicker. Uppercase authored per locale."
+  },
+  "notFoundTitle": "That screen has moved",
+  "@notFoundTitle": {
+    "description": "Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace."
   }
 }
