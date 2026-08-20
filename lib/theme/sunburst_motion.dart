@@ -14,6 +14,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     required this.easePop,
     required this.easeOut,
     required this.easeInOut,
+    required this.shakeAmplitude,
   });
 
   /// Press down / release.
@@ -38,6 +39,15 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
 
   /// Accelerate then decelerate. For something that both leaves and arrives.
   final Curve easeInOut;
+
+  /// How far the wrong-answer shake travels to each side, in logical pixels.
+  ///
+  /// `system.html`: `@keyframes shake{0%,100%{translateX(0)}
+  /// 25%{translateX(-4px)}75%{translateX(4px)}}`. A motion value rather than a
+  /// shape one, so it lives beside the durations it is played over — and a
+  /// token rather than a constant beside the widget, because it is transcribed
+  /// from the design and not invented by the implementation.
+  final double shakeAmplitude;
 
   /// The single place a widget asks "should I animate?".
   ///
@@ -70,6 +80,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easePop,
     easeOut,
     easeInOut,
+    shakeAmplitude,
   ];
 
   @override
@@ -98,6 +109,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     Curve? easePop,
     Curve? easeOut,
     Curve? easeInOut,
+    double? shakeAmplitude,
   }) => SunburstMotion(
     durTap: durTap ?? this.durTap,
     durState: durState ?? this.durState,
@@ -106,6 +118,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easePop: easePop ?? this.easePop,
     easeOut: easeOut ?? this.easeOut,
     easeInOut: easeInOut ?? this.easeInOut,
+    shakeAmplitude: shakeAmplitude ?? this.shakeAmplitude,
   );
 
   /// Deliberate step, not an unfinished implementation. Durations and curves
@@ -125,5 +138,6 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easePop: Cubic(0.2, 1.5, 0.4, 1),
     easeOut: Cubic(0.2, 0.8, 0.2, 1),
     easeInOut: Cubic(0.6, 0, 0.3, 1),
+    shakeAmplitude: 4,
   );
 }
