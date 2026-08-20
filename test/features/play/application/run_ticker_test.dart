@@ -2,6 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/features/play/application/run_ticker.dart';
+import 'package:mindforge/theme/sunburst_motion.dart';
 
 /// Every test here runs inside `fakeAsync`, so a sixty-second run costs no wall
 /// time. That is the point: a suite that sleeps is a suite nobody runs.
@@ -16,6 +17,9 @@ void main() {
         final ticker = RunTicker(
           clock: clock,
           onTick: () => ticks.add(ticks.length),
+          // The rate the theme carries, read here rather than retyped, so this
+          // test moves if the design does.
+          pulse: SunburstMotion.sunburstPop.timerPulse,
         );
         addTearDown(ticker.dispose);
 

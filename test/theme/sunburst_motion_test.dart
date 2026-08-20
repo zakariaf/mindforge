@@ -46,7 +46,7 @@ void main() {
       }
     });
 
-    test('there are exactly four durations and three curves', () {
+    test('there are four scale durations, three curves and two run timings', () {
       final fields = DesignSource.dartFieldNames(
         'lib/theme/sunburst_motion.dart',
         'SunburstMotion',
@@ -62,14 +62,18 @@ void main() {
           'easePop',
           'easeOut',
           'easeInOut',
+          'timerPulse',
+          'alarmThreshold',
         ],
         reason:
-            'a fifth duration is a new moment nobody catalogued. This scale is '
-            'a WHEN and nothing else: shakeAmplitude passed through here '
-            'briefly and the list had to carry a sentence calling it "the one '
-            'non-timing member", which is a test pinning an anomaly rather '
-            'than resolving it. Magnitudes live on SunburstShape, beside '
-            'e1..e4, focusGap and pressScale',
+            'a fifth SCALE duration is a new moment nobody catalogued. The '
+            'last two are run timings rather than scale steps: the engine takes '
+            'them as arguments — RunTicker is handed its pulse and '
+            'RunState.isTimerAlarmAt is handed its threshold — because '
+            'lib/features/play/domain is Flutter-free and cannot reach here. '
+            'They live in this file because every duration in the app does, '
+            'which is the rule three separate gates enforce. Magnitudes still '
+            'live on SunburstShape beside e1..e4 and pressScale',
       );
     });
 

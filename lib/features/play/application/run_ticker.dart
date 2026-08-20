@@ -17,8 +17,12 @@ import 'package:clock/clock.dart';
 /// **One ticker, owned by the shell.** Without it every game grows a
 /// `Stopwatch`, and pause stops none of them.
 final class RunTicker {
-  /// Creates a ticker that calls [onTick] while running.
-  RunTicker({required this.clock, required this.onTick});
+  /// Creates a ticker that calls [onTick] every [pulse] while running.
+  RunTicker({
+    required this.clock,
+    required this.onTick,
+    required this.pulse,
+  });
 
   /// Where "now" comes from. Injected, so a test drives it with fake time and
   /// a sixty-second run takes no wall time at all.
@@ -27,8 +31,14 @@ final class RunTicker {
   /// Called on every pulse while running.
   final void Function() onTick;
 
-  /// The rate a running timer repaints at.
-  static const Duration pulse = Duration(milliseconds: 100);
+  /// How often [onTick] fires while running.
+  ///
+  /// **Injected, not declared here.** The rate is a design decision —
+  /// `SunburstMotion.timerPulse` carries it, at the 10 Hz
+  /// `sunburst-motion-and-haptics` rule 6 states — and the engine takes it
+  /// rather than knowing it. That keeps every duration in the app in one file
+  /// and keeps this one free of a number a reader would have to trace.
+  final Duration pulse;
 
   Timer? _timer;
   DateTime? _segmentStart;

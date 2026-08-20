@@ -104,13 +104,20 @@ final class RunState {
     return left.isNegative ? Duration.zero : left;
   }
 
-  /// Whether the run is inside its last five seconds.
+  /// Whether the run is inside its last [threshold].
+  ///
+  /// **The threshold is passed in, not held here.** It is a design value —
+  /// `SunburstMotion.alarmThreshold` carries it — and this is a Flutter-free
+  /// domain type that may not reach the theme. Taking it as an argument keeps
+  /// the number in the one file that owns numbers, and keeps this type honest
+  /// about what it knows: how long is left, and nothing about when that starts
+  /// to matter.
   ///
   /// Untimed runs never alarm: there is nothing to run out of.
-  bool get isTimerAlarm {
+  bool isTimerAlarmAt(Duration threshold) {
     final left = remaining;
 
-    return left != null && left <= const Duration(seconds: 5);
+    return left != null && left <= threshold;
   }
 
   /// This state with [next] as its phase.

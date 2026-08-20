@@ -9,6 +9,7 @@ import 'package:mindforge/features/play/domain/result_stat.dart';
 import 'package:mindforge/features/play/domain/run_config.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
 import 'package:mindforge/features/play/domain/run_state.dart';
+import 'package:mindforge/theme/sunburst_motion.dart';
 
 import '../../../policy/support/source_text.dart';
 
@@ -21,6 +22,8 @@ void main() {
   const snapshot = BoardSnapshot(
     hud: GameHud(leading: slot, middle: slot),
   );
+
+  final alarmAt = SunburstMotion.sunburstPop.alarmThreshold;
 
   RunState idleRun({Duration? runLimit}) => RunState.idle(
     config: RunConfig(
@@ -70,7 +73,7 @@ void main() {
       // Which is what definition.runLimitFor returns for a game that declares
       // no limit.
       expect(idleRun().remaining, isNull);
-      expect(idleRun().isTimerAlarm, isFalse);
+      expect(idleRun().isTimerAlarmAt(alarmAt), isFalse);
     });
 
     test('counts down from the limit', () {
@@ -111,7 +114,7 @@ void main() {
         );
 
         expect(
-          state.isTimerAlarm,
+          state.isTimerAlarmAt(alarmAt),
           row.value,
           reason: '${state.remaining} left',
         );
@@ -120,7 +123,9 @@ void main() {
 
     test('and an untimed run never alarms', () {
       expect(
-        idleRun().copyWith(elapsed: const Duration(hours: 1)).isTimerAlarm,
+        idleRun()
+            .copyWith(elapsed: const Duration(hours: 1))
+            .isTimerAlarmAt(alarmAt),
         isFalse,
       );
     });

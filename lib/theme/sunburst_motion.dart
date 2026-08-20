@@ -14,6 +14,8 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     required this.easePop,
     required this.easeOut,
     required this.easeInOut,
+    required this.timerPulse,
+    required this.alarmThreshold,
   });
 
   /// Press down / release.
@@ -38,6 +40,24 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
 
   /// Accelerate then decelerate. For something that both leaves and arrives.
   final Curve easeInOut;
+
+  /// How often a running run timer repaints.
+  ///
+  /// 10 Hz, from `sunburst-motion-and-haptics` rule 6: fast enough that a
+  /// tenths display never visibly stutters, slow enough that the timer is not a
+  /// per-frame rebuild of the whole play band. `RunTicker` is handed this
+  /// rather than declaring it, so the engine takes its timing instead of
+  /// knowing it.
+  ///
+  /// **Not collapsed by reduce motion.** It is a sampling rate, not an
+  /// animation, and collapsing it would stop the clock.
+  final Duration timerPulse;
+
+  /// How much time left counts as "running out".
+  ///
+  /// The `timerAlarm` moment's boundary. `RunState.isTimerAlarmAt` takes it as
+  /// an argument, because that type is Flutter-free and may not reach here.
+  final Duration alarmThreshold;
 
   /// The single place a widget asks "should I animate?".
   ///
@@ -70,6 +90,8 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easePop,
     easeOut,
     easeInOut,
+    timerPulse,
+    alarmThreshold,
   ];
 
   @override
@@ -98,6 +120,8 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     Curve? easePop,
     Curve? easeOut,
     Curve? easeInOut,
+    Duration? timerPulse,
+    Duration? alarmThreshold,
   }) => SunburstMotion(
     durTap: durTap ?? this.durTap,
     durState: durState ?? this.durState,
@@ -106,6 +130,8 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easePop: easePop ?? this.easePop,
     easeOut: easeOut ?? this.easeOut,
     easeInOut: easeInOut ?? this.easeInOut,
+    timerPulse: timerPulse ?? this.timerPulse,
+    alarmThreshold: alarmThreshold ?? this.alarmThreshold,
   );
 
   /// Deliberate step, not an unfinished implementation. Durations and curves
@@ -125,5 +151,7 @@ class SunburstMotion extends ThemeExtension<SunburstMotion> {
     easePop: Cubic(0.2, 1.5, 0.4, 1),
     easeOut: Cubic(0.2, 0.8, 0.2, 1),
     easeInOut: Cubic(0.6, 0, 0.3, 1),
+    timerPulse: Duration(milliseconds: 100),
+    alarmThreshold: Duration(seconds: 5),
   );
 }
