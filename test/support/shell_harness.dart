@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/core/game_stats.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_metric.dart';
+import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
@@ -67,6 +69,7 @@ extension PumpShell on WidgetTester {
     String? initialLocation,
     Map<String, Result<RunMetric?, DataFailure>> bests =
         const <String, Result<RunMetric?, DataFailure>>{},
+    Map<RunScope, GameStats> stats = const <RunScope, GameStats>{},
   }) async {
     final resolved = localeCase ?? LocaleCase.english;
     final seeded = settings.withLocaleOverride(resolved.locale);
@@ -81,6 +84,14 @@ extension PumpShell on WidgetTester {
           allBestsProvider.overrideWith(
             (ref) => Stream<Map<String, Result<RunMetric?, DataFailure>>>.value(
               bests,
+            ),
+          ),
+          // The other derived read a screen makes. Unseeded it would reach the
+          // repository, which opens a database — see the note above on why
+          // that deadlocks inside testWidgets.
+          runStatsProvider.overrideWith(
+            (ref, scope) => Stream<GameStats>.value(
+              stats[scope] ?? const GameStats.empty(),
             ),
           ),
           clockProvider.overrideWithValue(

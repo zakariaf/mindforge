@@ -82,6 +82,22 @@ void main() {
     });
   });
 
+  group('the title is the heading', () {
+    testWidgets('and it is the only thing in the panel that claims to be', (
+      tester,
+    ) async {
+      // A detail screen's h1 is the game's name. A heading list is only worth
+      // having if exactly one thing is in it.
+      await tester.pumpPopComponent(hero());
+
+      final headers = tester
+          .widgetList<Semantics>(find.byType(Semantics))
+          .where((node) => node.properties.header ?? false);
+
+      expect(headers, hasLength(1));
+    });
+  });
+
   group('the dot layer', () {
     testWidgets('runs at the panel opacity, not the header one', (
       tester,

@@ -98,9 +98,18 @@ class GameHeroPanel extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    title,
-                    style: type.heroTitle.copyWith(color: colours.textPrimary),
+                  // THE SCREEN'S h1, and the panel is the right place to say
+                  // so: the game's name is what the detail screen is about,
+                  // and a heading list with one entry is the only kind worth
+                  // having.
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      title,
+                      style: type.heroTitle.copyWith(
+                        color: colours.textPrimary,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(

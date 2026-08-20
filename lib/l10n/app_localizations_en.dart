@@ -75,6 +75,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'Today\'s pick: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'Your games';
 
   @override

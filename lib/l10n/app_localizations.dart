@@ -161,6 +161,12 @@ abstract class AppLocalizations {
     String formattedMinutes,
   );
 
+  /// The Daily Mix summary line in v1, naming the one game today's seeded pick leads to. NOT '3 games, 4 minutes': the card routes to a single game, and a summary claiming three would be a sentence about software that does not exist. The game name arrives already resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s pick: {game}'**
+  String dailyMixTodaysPick(String game);
+
   /// Section heading above the game cards on Home. Sentence case.
   ///
   /// In en, this message translates to:

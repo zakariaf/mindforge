@@ -9,6 +9,7 @@
   "streakDays": "{count, plural, =0{Noch keine Serie} one{{formatted} Tag Serie} other{{formatted} Tage Serie}}",
   "dailyMixTitle": "Tagesmix",
   "dailyMixSummary": "{games, plural, one{{formattedGames} Spiel} other{{formattedGames} Spiele}}, {minutes, plural, one{{formattedMinutes} Minute} other{{formattedMinutes} Minuten}}",
+  "dailyMixTodaysPick": "Heutige Auswahl: {game}",
   "yourGamesTitle": "Deine Spiele",
   "gamesUnlocked": "{count, plural, one{{formatted} freigeschaltet} other{{formatted} freigeschaltet}}",
   "bestLabel": "BEST",

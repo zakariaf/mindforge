@@ -3,8 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/game_stats.dart';
+import 'package:mindforge/core/result.dart';
+import 'package:mindforge/core/run_metric.dart';
+import 'package:mindforge/core/run_scope.dart';
+import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
+import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
+import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
+import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
@@ -17,6 +26,7 @@ import '../../support/shell_harness.dart';
 
 void main() {
   final coral = Routes.gameDetail(GameId('placeholder_coral'));
+  const coralScope = RunScope('placeholder_coral');
 
   group('the detail screen', () {
     testWidgets('reads its game from the path, on a cold start', (
@@ -83,6 +93,107 @@ void main() {
     });
   });
 
+  group('the composition', () {
+    testWidgets('is a title bar and a hero, NOT a ray header', (tester) async {
+      // app.html gives this screen a plain top bar over the pane: the colour
+      // arrives with the hero panel, which is the game's, rather than with a
+      // header strip, which is the shell's. A RayHeader here would paint the
+      // game's accent edge to edge and leave the hero with nothing to say.
+      await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
+
+      expect(find.byType(RayHeader), findsNothing);
+      expect(find.byType(GameHeroPanel), findsOneWidget);
+    });
+
+    testWidgets('the stat duo shows the formatted best and the run count', (
+      tester,
+    ) async {
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        initialLocation: coral,
+        bests: <String, Result<RunMetric?, DataFailure>>{
+          'placeholder_coral': const Ok<RunMetric?, DataFailure>(
+            RunMetric.points(1480),
+          ),
+        },
+        stats: <RunScope, GameStats>{
+          coralScope: const GameStats(
+            gamesPlayed: 128,
+            timeTrainedMs: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            totalReactionMs: 0,
+            longestCombo: 0,
+          ),
+        },
+      );
+
+      final values = tester
+          .widgetList<StatBox>(find.byType(StatBox))
+          .map((box) => box.value)
+          .toList();
+
+      expect(values, <String>['1,480', '128']);
+    });
+
+    testWidgets('and a game with no runs shows a dash, never a zero', (
+      tester,
+    ) async {
+      // A zero states a score that was never achieved. The RUN COUNT is
+      // legitimately zero and prints as one; the BEST is absent and prints as
+      // an em dash. The two are different facts and the screen says so.
+      await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
+
+      final values = tester
+          .widgetList<StatBox>(find.byType(StatBox))
+          .map((box) => box.value)
+          .toList();
+
+      expect(values, <String>['—', '0']);
+    });
+
+    testWidgets('the Daily Mix card is here in its paper skin', (tester) async {
+      await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
+
+      expect(
+        tester.widget<DailyMixCard>(find.byType(DailyMixCard)).variant,
+        DailyMixVariant.paper,
+      );
+    });
+
+    testWidgets('and Play is the LAST thing on the screen', (tester) async {
+      // It is pinned to the bottom by a spacer, under the Daily Mix card. A
+      // Play button that floated up under the segmented control would put the
+      // two ways to start a run beside each other.
+      await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
+
+      expect(
+        tester.getRect(find.text('Play')).top,
+        greaterThan(tester.getRect(find.byType(DailyMixCard)).bottom),
+      );
+    });
+  });
+
+  group('the segmented control fits its labels', () {
+    for (final localeCase in LocaleCase.all) {
+      testWidgets('at ${localeCase.tag}, with no overflow', (tester) async {
+        // German is the length stress case and this control has the least
+        // slack on the screen.
+        await tester.pumpShellApp(
+          const MindForgeApp(),
+          initialLocation: coral,
+          localeCase: localeCase,
+        );
+
+        expect(tester.takeException(), isNull, reason: localeCase.tag);
+
+        final track = tester.getRect(find.byType(DifficultySegmented));
+
+        expect(track.width, lessThanOrEqualTo(390), reason: localeCase.tag);
+      });
+    }
+  });
+
   group('in every locale', () {
     for (final localeCase in LocaleCase.all) {
       testWidgets('${localeCase.tag} renders the game own strings', (
@@ -98,7 +209,9 @@ void main() {
           tester.element(find.byType(GameDetailScreen)),
         );
 
-        expect(find.text(l10n.gamePlaceholderCoralName), findsOneWidget);
+        // Twice: once in the title bar and once as the hero's h1, exactly as
+        // app.html draws it. Only one of the two announces itself.
+        expect(find.text(l10n.gamePlaceholderCoralName), findsNWidgets(2));
         expect(find.text(l10n.gamePlaceholderCoralKicker), findsOneWidget);
         expect(find.text(l10n.playButton), findsOneWidget);
       });

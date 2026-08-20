@@ -72,6 +72,11 @@ class AppLocalizationsFa extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'انتخاب امروز: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'بازی‌های شما';
 
   @override

@@ -72,6 +72,11 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
+  String dailyMixTodaysPick(String game) {
+    return 'هەڵبژاردەی ئەمڕۆ: $game';
+  }
+
+  @override
   String get yourGamesTitle => 'یارییەکانت';
 
   @override

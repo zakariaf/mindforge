@@ -9,6 +9,7 @@
   "streakDays": "{count, plural, =0{هێشتا زنجیرە نییە} other{زنجیرەی {formatted} ڕۆژە}}",
   "dailyMixTitle": "تێکەڵەی ڕۆژانە",
   "dailyMixSummary": "{games, plural, other{{formattedGames} یاری}}، {minutes, plural, other{{formattedMinutes} خولەک}}",
+  "dailyMixTodaysPick": "هەڵبژاردەی ئەمڕۆ: {game}",
   "yourGamesTitle": "یارییەکانت",
   "gamesUnlocked": "{count, plural, other{{formatted} کراوەتەوە}}",
   "bestLabel": "باشترین",
