@@ -41,6 +41,27 @@ come from the app's own tokens: `AppIconMark` renders the wordmark's coral tile
 at 1024, a golden pins it, and a script fills the appiconset from that one
 master — so a palette change reds the golden rather than leaving the icon behind.
 
+## What the code review found in this epic's own tests
+
+The gates E11 is built on were weaker than their names, and the review caught
+three of them asserting nothing. Each is fixed and each fix was checked by
+breaking it on purpose.
+
+| Gate | What was wrong |
+|---|---|
+| the literal ban | Line-scoped, and `dart format` puts `Text(` on its own line the moment the contents pass 80 columns — so it caught only literals short enough to fit inline, the ones least likely to be prose. |
+| "not Flutter's placeholder" | Compared file size with the numbers backwards. The placeholder is 10,932 bytes and the real mark is 20,288, so it was **green on the exact artifact it was written to reject**. It samples a pixel now. |
+| the grouping separator | Filtered rendered strings for a grouped number — and `TabularText` splits values one character per `Text`, so no string could ever span one. It looped zero times. |
+| the sweep itself | Seeded no data, so every value it inspected was `0` or `—`: no grouped thousand, no best, no chart label. |
+| the a11y ban list | Two bans matched adjacent tokens, which the formatter moves apart. Measured: `copyWith(color: …, fontSize: 13)` slipped past. |
+
+And one product defect the sweep had not found: **German was still being
+shredded.** The `TabularText` guard tested for a JOINING script and rescued only
+Persian, but the per-character row cannot wrap in any language — `0 Std. 0 Min.`
+measured 275pt of content in a 141pt viewport at 2.0x, cut off mid-word with no
+ellipsis and no scroll affordance. The question is whether the value has
+LETTERS; every value whose digits actually move carries none.
+
 ## Release configuration
 
 `flutter build ios --release --no-codesign` → **20.1 MB** `Runner.app`.
