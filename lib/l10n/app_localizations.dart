@@ -658,6 +658,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That screen has moved'**
   String get notFoundTitle;
+
+  /// One line under the colour-blind toggle saying exactly what it changes. Without it the setting reads as if it turns the fill patterns on, which are always on.
+  ///
+  /// In en, this message translates to:
+  /// **'Swaps red for pink and green for orange. The fill patterns are always on.'**
+  String get settingColourBlindHelp;
+
+  /// Label of the version row on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersion;
+
+  /// Heading of the offline promise on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Works offline, always'**
+  String get aboutOffline;
+
+  /// The offline promise. It is literally true: the app contains no HTTP client.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no network code in this app. Nothing is downloaded and nothing is sent.'**
+  String get aboutOfflineBody;
+
+  /// Heading of the privacy promise on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing leaves your device'**
+  String get aboutPrivate;
+
+  /// The privacy promise. No accounts, no telemetry, on-device storage only.
+  ///
+  /// In en, this message translates to:
+  /// **'No account, no analytics, no crash reporting. Your scores live in one file on this phone.'**
+  String get aboutPrivateBody;
+
+  /// Heading of the licence block on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Licence'**
+  String get aboutLicenceTitle;
+
+  /// The app own licence. The SPDX identifier is passed in rather than written into the ARB: it is a proper noun that is never translated, and it carries ASCII digits that the fa and ckb numeral gate rightly refuses.
+  ///
+  /// In en, this message translates to:
+  /// **'MindForge is open source under {licence}.'**
+  String aboutLicenceBody(String licence);
+
+  /// Row that opens the platform third-party licence list.
+  ///
+  /// In en, this message translates to:
+  /// **'Open-source licences'**
+  String get aboutThirdParty;
 }
 
 class _AppLocalizationsDelegate

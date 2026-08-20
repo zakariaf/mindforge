@@ -147,5 +147,47 @@
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
   "languageNameCkb": "کوردیی ناوەندی",
-  "notFoundTitle": "این صفحه دیگر وجود ندارد"
+  "notFoundTitle": "این صفحه دیگر وجود ندارد",
+  "settingColourBlindHelp": "قرمز را با صورتی و سبز را با نارنجی جابه‌جا می‌کند. الگوهای پرکننده همیشه روشن‌اند.",
+  "@settingColourBlindHelp": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutVersion": "نسخه",
+  "@aboutVersion": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOffline": "همیشه بدون اینترنت کار می‌کند",
+  "@aboutOffline": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOfflineBody": "در این برنامه هیچ کد شبکه‌ای وجود ندارد. چیزی دانلود و چیزی ارسال نمی‌شود.",
+  "@aboutOfflineBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivate": "هیچ‌چیز از دستگاه شما خارج نمی‌شود",
+  "@aboutPrivate": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivateBody": "بدون حساب کاربری، بدون تحلیل، بدون گزارش خرابی. امتیازهای شما در یک فایل روی همین گوشی می‌مانند.",
+  "@aboutPrivateBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceTitle": "پروانه",
+  "@aboutLicenceTitle": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceBody": "مایندفورج متن‌باز است، زیر پروانهٔ {licence}.",
+  "@aboutLicenceBody": {
+    "x-review": "native-speaker-pending",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "پروانه‌های متن‌باز",
+  "@aboutThirdParty": {
+    "x-review": "native-speaker-pending"
+  }
 }

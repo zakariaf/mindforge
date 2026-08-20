@@ -145,6 +145,7 @@ void main() {
       // locale and per key, so a fifth locale inherits nothing by accident.
       const sameAsEnglish = <SupportedLocale, Set<String>>{
         SupportedLocale.de: <String>{
+          'aboutVersion', // Version — the German word IS "Version"
           'bestLabel', // BEST
           'colourOrange', // Orange — the German colour word IS "Orange"
           'stroopWordOrange', // ORANGE — the same word, in the stimulus form

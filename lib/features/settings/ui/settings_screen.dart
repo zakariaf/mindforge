@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/data/data_providers.dart';
@@ -10,7 +11,9 @@ import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/features/shell/widgets/shell_pane.dart';
 import 'package:mindforge/features/shell/widgets/wordmark.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_toggle.dart';
 import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
@@ -63,15 +66,15 @@ class SettingsScreen extends ConsumerWidget {
       children: <Widget>[
         SettingsGroup(
           rows: <Widget>[
-            _Toggle(
-              glyph: SunburstGlyph.sound,
-              label: l10n.settingSound,
-              value: settings.isSoundEnabled,
-              onChanged: (value) => _write(
-                ref,
-                (current) => current.copyWith(isSoundEnabled: value),
-              ),
-            ),
+            // NO SOUND ROW, because nothing plays a sound. There is no
+            // audio in MindForge: no player, no assets, no package.
+            // `FeedbackService` works out which cue a moment WOULD play and
+            // nobody plays it, so the switch was silent in both positions.
+            //
+            // The SETTING stays — the column, the model field and
+            // `soundEnabledProvider` are all still wired — so the epic that
+            // adds audio adds this row back and changes nothing else. What is
+            // removed is the claim that the app can make a noise.
             _Toggle(
               glyph: SunburstGlyph.haptics,
               label: l10n.settingHaptics,
@@ -97,7 +100,12 @@ class SettingsScreen extends ConsumerWidget {
               // THE PREVIEW SHOWS WHAT THE SETTING SWAPS IN, not what is
               // on screen now. The row is an offer, and previewing the
               // current palette would tell the player nothing about it.
-              below: const ColourBlindPreview(),
+              //
+              // The SENTENCE is what the swatches cannot say. Without it the
+              // setting reads as if it turns the fill patterns on — and the
+              // patterns are always on, so a player toggled it, saw the same
+              // patterns, and concluded it did nothing.
+              below: const _ColourBlindExplainer(),
               onChanged: (value) => _write(
                 ref,
                 (current) => current.copyWith(isColourBlindPalette: value),
@@ -121,15 +129,12 @@ class SettingsScreen extends ConsumerWidget {
               glyph: SunburstGlyph.info,
               label: l10n.aboutTitle,
               trailing: const _Chevron(),
-              // NOT A DEAD ROW. There is no About screen in E08, so it
-              // opens the platform's own licence page — which is where
-              // the bundled font licences registered at startup are
-              // actually readable, and the only legally required screen
-              // in the app.
-              onTap: () => showLicensePage(
-                context: context,
-                applicationName: Wordmark.name,
-              ),
+              // THE ABOUT SCREEN. This row used to open the platform's
+              // licence page directly — a wall of package licences that says
+              // nothing about MindForge and buries the bundled font licences
+              // it was there to surface. They are one tap further in now,
+              // behind a screen that answers what a player asks About for.
+              onTap: () => context.go(Routes.about),
             ),
           ],
         ),
@@ -162,6 +167,35 @@ String _languageName(AppLocalizations l10n, SupportedLocale? locale) =>
       SupportedLocale.fa => l10n.languageNameFa,
       SupportedLocale.ckb => l10n.languageNameCkb,
     };
+
+/// What the colour-blind setting actually changes, said in words and shown.
+///
+/// The swatches alone were read as "the patterns come from this switch". They
+/// do not: hue is never the only channel in this app, so the patterns are on in
+/// both positions and the only thing that moves is which hues the answers use.
+/// A player who toggled it, saw the same four patterns, and concluded the
+/// setting did nothing was reading it exactly as drawn.
+class _ColourBlindExplainer extends StatelessWidget {
+  const _ColourBlindExplainer();
+
+  @override
+  Widget build(BuildContext context) {
+    final colours = SunburstColors.of(context);
+    final type = SunburstType.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          AppLocalizations.of(context).settingColourBlindHelp,
+          style: type.caption.copyWith(color: colours.textSecondary),
+        ),
+        const SizedBox(height: SunburstShape.space2),
+        const ColourBlindPreview(),
+      ],
+    );
+  }
+}
 
 /// A settings row whose control is a toggle.
 class _Toggle extends StatelessWidget {

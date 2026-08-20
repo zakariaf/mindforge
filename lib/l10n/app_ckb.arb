@@ -147,5 +147,47 @@
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
   "languageNameCkb": "کوردیی ناوەندی",
-  "notFoundTitle": "ئەم پەڕەیە نەماوە"
+  "notFoundTitle": "ئەم پەڕەیە نەماوە",
+  "settingColourBlindHelp": "سوور دەگۆڕێت بە پەمەیی و سەوز بە پرتەقاڵی. شێوەکانی پڕکردنەوە هەمیشە کاران.",
+  "@settingColourBlindHelp": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutVersion": "وەشان",
+  "@aboutVersion": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOffline": "هەمیشە بەبێ ئینتەرنێت کار دەکات",
+  "@aboutOffline": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOfflineBody": "هیچ کۆدێکی تۆڕ لەم ئەپەدا نییە. هیچ شتێک دانالوود ناکرێت و هیچ شتێک نانێردرێت.",
+  "@aboutOfflineBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivate": "هیچ شتێک لە ئامێرەکەت دەرناچێت",
+  "@aboutPrivate": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivateBody": "بێ هەژمار، بێ شیکاری، بێ ڕاپۆرتی تێکچوون. خاڵەکانت لە یەک فایلدا لەسەر ئەم مۆبایلە دەمێننەوە.",
+  "@aboutPrivateBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceTitle": "مۆڵەتنامە",
+  "@aboutLicenceTitle": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceBody": "مایندفۆرج سەرچاوەکراوەیە، لەژێر {licence}.",
+  "@aboutLicenceBody": {
+    "x-review": "native-speaker-pending",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "مۆڵەتنامە سەرچاوەکراوەکان",
+  "@aboutThirdParty": {
+    "x-review": "native-speaker-pending"
+  }
 }

@@ -44,9 +44,18 @@ void main() {
           return;
         }
 
+        // ONE EXCEPTION, named and reasoned. `aboutLicenceBody` interpolates
+        // an SPDX identifier — `Apache-2.0` — which is a proper noun with a
+        // version in it. It is not a numeral a reader counts with, it is not
+        // parsed back, and rendering it in Eastern Arabic digits would make it
+        // a licence identifier that matches nothing. The rule this test
+        // enforces is about NUMBERS, and that is not one.
+        const spdxIdentifier = <String>{'aboutLicenceBody'};
+
         final offenders = <String>[
           for (final entry in rendered.entries)
-            if (RegExp('[0-9]').hasMatch(entry.value))
+            if (!spdxIdentifier.contains(entry.key) &&
+                RegExp('[0-9]').hasMatch(entry.value))
               '${entry.key}: "${entry.value}"',
         ];
 

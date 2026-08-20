@@ -463,5 +463,47 @@
   "notFoundTitle": "That screen has moved",
   "@notFoundTitle": {
     "description": "Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace."
+  },
+  "settingColourBlindHelp": "Swaps red for pink and green for orange. The fill patterns are always on.",
+  "@settingColourBlindHelp": {
+    "description": "One line under the colour-blind toggle saying exactly what it changes. Without it the setting reads as if it turns the fill patterns on, which are always on."
+  },
+  "aboutVersion": "Version",
+  "@aboutVersion": {
+    "description": "Label of the version row on the About screen."
+  },
+  "aboutOffline": "Works offline, always",
+  "@aboutOffline": {
+    "description": "Heading of the offline promise on the About screen."
+  },
+  "aboutOfflineBody": "There is no network code in this app. Nothing is downloaded and nothing is sent.",
+  "@aboutOfflineBody": {
+    "description": "The offline promise. It is literally true: the app contains no HTTP client."
+  },
+  "aboutPrivate": "Nothing leaves your device",
+  "@aboutPrivate": {
+    "description": "Heading of the privacy promise on the About screen."
+  },
+  "aboutPrivateBody": "No account, no analytics, no crash reporting. Your scores live in one file on this phone.",
+  "@aboutPrivateBody": {
+    "description": "The privacy promise. No accounts, no telemetry, on-device storage only."
+  },
+  "aboutLicenceTitle": "Licence",
+  "@aboutLicenceTitle": {
+    "description": "Heading of the licence block on the About screen."
+  },
+  "aboutLicenceBody": "MindForge is open source under {licence}.",
+  "@aboutLicenceBody": {
+    "description": "The app own licence. The SPDX identifier is passed in rather than written into the ARB: it is a proper noun that is never translated, and it carries ASCII digits that the fa and ckb numeral gate rightly refuses.",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "Open-source licences",
+  "@aboutThirdParty": {
+    "description": "Row that opens the platform third-party licence list."
   }
 }

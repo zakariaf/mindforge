@@ -352,4 +352,36 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get notFoundTitle => 'این صفحه دیگر وجود ندارد';
+
+  @override
+  String get settingColourBlindHelp =>
+      'قرمز را با صورتی و سبز را با نارنجی جابه‌جا می‌کند. الگوهای پرکننده همیشه روشن‌اند.';
+
+  @override
+  String get aboutVersion => 'نسخه';
+
+  @override
+  String get aboutOffline => 'همیشه بدون اینترنت کار می‌کند';
+
+  @override
+  String get aboutOfflineBody =>
+      'در این برنامه هیچ کد شبکه‌ای وجود ندارد. چیزی دانلود و چیزی ارسال نمی‌شود.';
+
+  @override
+  String get aboutPrivate => 'هیچ‌چیز از دستگاه شما خارج نمی‌شود';
+
+  @override
+  String get aboutPrivateBody =>
+      'بدون حساب کاربری، بدون تحلیل، بدون گزارش خرابی. امتیازهای شما در یک فایل روی همین گوشی می‌مانند.';
+
+  @override
+  String get aboutLicenceTitle => 'پروانه';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'مایندفورج متن‌باز است، زیر پروانهٔ $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'پروانه‌های متن‌باز';
 }

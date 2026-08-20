@@ -357,4 +357,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notFoundTitle => 'That screen has moved';
+
+  @override
+  String get settingColourBlindHelp =>
+      'Swaps red for pink and green for orange. The fill patterns are always on.';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutOffline => 'Works offline, always';
+
+  @override
+  String get aboutOfflineBody =>
+      'There is no network code in this app. Nothing is downloaded and nothing is sent.';
+
+  @override
+  String get aboutPrivate => 'Nothing leaves your device';
+
+  @override
+  String get aboutPrivateBody =>
+      'No account, no analytics, no crash reporting. Your scores live in one file on this phone.';
+
+  @override
+  String get aboutLicenceTitle => 'Licence';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'MindForge is open source under $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'Open-source licences';
 }

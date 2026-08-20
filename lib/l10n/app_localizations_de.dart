@@ -357,4 +357,36 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notFoundTitle => 'Diesen Bildschirm gibt es nicht mehr';
+
+  @override
+  String get settingColourBlindHelp =>
+      'Tauscht Rot gegen Pink und Grün gegen Orange. Die Füllmuster sind immer an.';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutOffline => 'Funktioniert immer offline';
+
+  @override
+  String get aboutOfflineBody =>
+      'Diese App enthält keinen Netzwerkcode. Es wird nichts geladen und nichts gesendet.';
+
+  @override
+  String get aboutPrivate => 'Nichts verlässt dein Gerät';
+
+  @override
+  String get aboutPrivateBody =>
+      'Kein Konto, keine Analyse, keine Absturzberichte. Deine Ergebnisse liegen in einer Datei auf diesem Telefon.';
+
+  @override
+  String get aboutLicenceTitle => 'Lizenz';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'MindForge ist quelloffen unter $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'Open-Source-Lizenzen';
 }

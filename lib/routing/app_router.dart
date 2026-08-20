@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/run_config.dart';
+import 'package:mindforge/features/about/ui/about_screen.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
 import 'package:mindforge/features/home/ui/home_screen.dart';
@@ -83,6 +84,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
                 _runScreen(state, (config) => ResultsScreen(config: config)),
           ),
         ],
+      ),
+      // OUTSIDE the shell, like game detail: About is pushed from Settings and
+      // carries no bottom nav of its own.
+      GoRoute(
+        path: Routes.about,
+        builder: (context, state) => const RunScaffold(child: AboutScreen()),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => NavShell(shell: shell),

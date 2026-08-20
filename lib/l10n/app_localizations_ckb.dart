@@ -352,4 +352,36 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get notFoundTitle => 'ئەم پەڕەیە نەماوە';
+
+  @override
+  String get settingColourBlindHelp =>
+      'سوور دەگۆڕێت بە پەمەیی و سەوز بە پرتەقاڵی. شێوەکانی پڕکردنەوە هەمیشە کاران.';
+
+  @override
+  String get aboutVersion => 'وەشان';
+
+  @override
+  String get aboutOffline => 'هەمیشە بەبێ ئینتەرنێت کار دەکات';
+
+  @override
+  String get aboutOfflineBody =>
+      'هیچ کۆدێکی تۆڕ لەم ئەپەدا نییە. هیچ شتێک دانالوود ناکرێت و هیچ شتێک نانێردرێت.';
+
+  @override
+  String get aboutPrivate => 'هیچ شتێک لە ئامێرەکەت دەرناچێت';
+
+  @override
+  String get aboutPrivateBody =>
+      'بێ هەژمار، بێ شیکاری، بێ ڕاپۆرتی تێکچوون. خاڵەکانت لە یەک فایلدا لەسەر ئەم مۆبایلە دەمێننەوە.';
+
+  @override
+  String get aboutLicenceTitle => 'مۆڵەتنامە';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'مایندفۆرج سەرچاوەکراوەیە، لەژێر $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'مۆڵەتنامە سەرچاوەکراوەکان';
 }
