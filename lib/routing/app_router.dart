@@ -6,8 +6,12 @@ import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
 import 'package:mindforge/features/home/ui/home_screen.dart';
+import 'package:mindforge/features/play/ui/play_scaffold.dart';
+import 'package:mindforge/features/results/ui/results_screen.dart';
+import 'package:mindforge/features/settings/ui/settings_screen.dart';
 import 'package:mindforge/features/shell/ui/nav_shell.dart';
 import 'package:mindforge/features/shell/ui/not_found_screen.dart';
+import 'package:mindforge/features/stats/ui/stats_screen.dart';
 import 'package:mindforge/routing/routes.dart';
 
 /// The app's one router.
@@ -52,6 +56,16 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
               (config) => CountdownScreen(config: config),
             ),
           ),
+          GoRoute(
+            path: 'play',
+            builder: (context, state) =>
+                _runScreen(state, (config) => PlayScaffold(config: config)),
+          ),
+          GoRoute(
+            path: 'results',
+            builder: (context, state) =>
+                _runScreen(state, (config) => ResultsScreen(config: config)),
+          ),
         ],
       ),
       StatefulShellRoute.indexedStack(
@@ -69,7 +83,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.stats,
-                builder: (context, state) => const _StatsPlaceholder(),
+                builder: (context, state) => const StatsScreen(),
               ),
             ],
           ),
@@ -77,7 +91,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.settings,
-                builder: (context, state) => const _SettingsPlaceholder(),
+                builder: (context, state) => const SettingsScreen(),
               ),
             ],
           ),
@@ -103,20 +117,4 @@ Widget _runScreen(
   );
 
   return config == null ? const NotFoundScreen() : build(config);
-}
-
-/// Stats, until T08.9 replaces it.
-class _StatsPlaceholder extends StatelessWidget {
-  const _StatsPlaceholder();
-
-  @override
-  Widget build(BuildContext context) => const SizedBox.expand();
-}
-
-/// Settings, until T08.9 replaces it.
-class _SettingsPlaceholder extends StatelessWidget {
-  const _SettingsPlaceholder();
-
-  @override
-  Widget build(BuildContext context) => const SizedBox.expand();
 }
