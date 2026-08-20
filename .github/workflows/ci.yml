@@ -239,9 +239,19 @@ jobs:
         # The claim this whole engine exists to defend: a second game ships
         # without editing lib/features. Asserted from both sides — the shell
         # imports no specific game, and no game builds shell chrome.
+        #
+        # ONE ROW PER GENERATOR DIRECTORY, matching tool/skill_gates.sh. The
+        # determinism script takes a single target and its own header says to
+        # point it at the directory holding the generator; pointed at `lib` it
+        # reports every Flutter import and every legitimate clock read as a
+        # defect. This list drifted once already — it named only lib/core while
+        # both games had shipped seeded generators.
         run: |
           .claude/skills/sunburst-shell-screens/scripts/check_shell_boundaries.sh lib
           .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/core
+          .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/stroop_rush/domain
+          .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/schulte_grid/domain
+          flutter test test/policy/engine_seam_test.dart --reporter expanded
 
       - name: Check the motion and haptic contracts
         # Named separately as well as inside the runner, for the same reason the
