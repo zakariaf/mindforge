@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
@@ -56,7 +57,10 @@ class SchulteArtwork extends ConsumerWidget {
                 ],
                 textDirection: Directionality.of(context),
                 style: SunburstType.of(context).miniTile,
-                cellFill: colours.surface,
+                // `app.html`: `.gart .mini i{background:var(--cream-2)}`. The
+                // frame around it is `--cream`, so painting the cells the
+                // same colour left them reading as bare outlines.
+                cellFill: colours.surfaceSunk,
                 onFill: colours.accentCool,
                 ink: colours.border,
                 idleText: colours.textSecondary,
@@ -142,7 +146,7 @@ class SchulteArtworkScene {
           other.gap == gap &&
           other.radius == radius &&
           other.borderWidth == borderWidth &&
-          _sameLabels(other.labels, labels);
+          listEquals(other.labels, labels);
 
   @override
   int get hashCode => Object.hash(
@@ -158,16 +162,6 @@ class SchulteArtworkScene {
     radius,
     borderWidth,
   );
-
-  static bool _sameLabels(List<String> a, List<String> b) {
-    if (a.length != b.length) return false;
-
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-
-    return true;
-  }
 }
 
 /// Draws the mini grid.

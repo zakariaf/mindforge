@@ -62,7 +62,11 @@ final class ResultStat {
     required this.canonicalValue,
     required this.format,
     this.total,
-  });
+  }) : assert(
+         format != StatFormat.fraction || total != null,
+         'a fraction stat needs its denominator: without it the results screen '
+         'renders "25 / 0" rather than failing',
+       );
 
   /// The ARB key naming this stat.
   final String labelKey;
@@ -74,6 +78,11 @@ final class ResultStat {
   final StatFormat format;
 
   /// The denominator, for [StatFormat.fraction]. Null for every other format.
+  ///
+  /// It is part of equality, like every other field. Leaving it out made two
+  /// stats differing only in denominator compare equal — and that equality is
+  /// what decides whether a board's snapshot is republished at all, so "3 of 5"
+  /// becoming "3 of 10" would have been swallowed.
   final int? total;
 
   @override
@@ -82,10 +91,11 @@ final class ResultStat {
       other is ResultStat &&
           other.labelKey == labelKey &&
           other.canonicalValue == canonicalValue &&
-          other.format == format;
+          other.format == format &&
+          other.total == total;
 
   @override
-  int get hashCode => Object.hash(labelKey, canonicalValue, format);
+  int get hashCode => Object.hash(labelKey, canonicalValue, format, total);
 
   @override
   String toString() => 'ResultStat($labelKey, $canonicalValue, ${format.name})';

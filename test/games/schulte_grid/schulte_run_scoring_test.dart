@@ -10,6 +10,7 @@ import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/data/db/app_database.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
+import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/games/schulte_grid/application/schulte_board_notifier.dart';
 import 'package:mindforge/games/schulte_grid/schulte_grid_definition.dart';
@@ -167,6 +168,42 @@ void main() {
       final rows = await played.db.select(played.db.runs).get();
 
       expect(rows, isEmpty);
+    });
+  });
+
+  group('the results screen', () {
+    test('shows the elapsed time, not the tile count', () async {
+      // THE DEFECT THIS EXISTS FOR. The slab formatted `snapshot.score`, which
+      // for a clock-scored game is the number of TILES — 25 — handed to a
+      // duration formatter, so every Schulte run read `0.0s`. Not merely
+      // wrong: constant, so a four-second board and a sixty-second board were
+      // indistinguishable on the screen that celebrates them.
+      final played = await playFullBoard(
+        SupportedLocale.en,
+        elapsed: const Duration(milliseconds: 18600),
+      );
+      final run = played.container.read(runNotifierProvider(config));
+
+      expect(run.snapshot.score, 25, reason: 'the board counts tiles');
+      expect(
+        run.displayScore(ScoreSource.runClock),
+        18600,
+        reason: 'and the shell shows the clock',
+      );
+    });
+
+    test('and a board-scored game still shows what the board said', () async {
+      // The other half, so the switch is a switch and not a rewrite: the same
+      // run reports two different numbers depending only on what its
+      // definition declares.
+      final played = await playFullBoard(
+        SupportedLocale.en,
+        elapsed: const Duration(milliseconds: 18600),
+      );
+      final run = played.container.read(runNotifierProvider(config));
+
+      expect(run.displayScore(ScoreSource.board), 25);
+      expect(run.displayScore(ScoreSource.runClock), 18600);
     });
   });
 }

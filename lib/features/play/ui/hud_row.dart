@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/board_snapshot.dart';
-import 'package:mindforge/core/result_stat.dart';
 import 'package:mindforge/l10n/arb_lookup.dart';
-import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
+import 'package:mindforge/l10n/stat_text.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
 
 /// The three live values above a board.
@@ -54,45 +53,17 @@ class HudRow extends ConsumerWidget {
       arbString(ref.watch(appLocalizationsProvider), slot.labelKey);
 
   /// [slot]'s value, formatted for the active locale.
-  String _value(WidgetRef ref, HudSlot slot) {
-    final numbers = ref.watch(localeNumbersProvider);
-
-    return switch (slot.format) {
-      StatFormat.duration => numbers.clock(slot.canonicalValue),
-      StatFormat.percent => numbers.percent(slot.canonicalValue / 1000),
-      // NOT ISOLATED, and that is the whole point. The logical order is the
-      // sign then the digit in every locale — one ARB message — and the bidi
-      // algorithm is what puts the sign on the reading-START side: `x7` in
-      // English, `۷×` in Persian, which is what the RTL reference draws.
-      //
-      // An FSI here resolves to the direction of the first STRONG character,
-      // and `x7` has none, so it falls back to LTR and pins the sign left in
-      // every locale. The pill holds nothing but this value, so there are no
-      // neighbours for an isolate to protect.
-      StatFormat.multiplier =>
-        ref
-            .watch(appLocalizationsProvider)
-            .streakMultiplier(
-              slot.canonicalValue,
-              numbers.count(slot.canonicalValue),
-            ),
-      // ISOLATED, unlike the multiplier, and for the opposite reason. A
-      // fraction has to keep reading numerator-first in every language, and
-      // `۶ / ۲۵` inside an RTL line renders as `۲۵ / ۶` without this: the
-      // spaces and the slash are neutrals that take the paragraph direction.
-      // FSI resolves to LTR here because the run carries no strong character,
-      // which is exactly the direction a fraction wants.
-      StatFormat.fraction => BidiText.isolate(
-        ref
-            .watch(appLocalizationsProvider)
-            .foundOfTotal(
-              numbers.count(slot.canonicalValue),
-              numbers.count(slot.total ?? 0),
-            ),
-      ),
-      StatFormat.points || StatFormat.count => numbers.count(
-        slot.canonicalValue,
-      ),
-    };
-  }
+  ///
+  /// Through `stat_text.dart`, the app's one switch over `StatFormat`. The HUD
+  /// and the results screen each carried their own, four of five arms
+  /// identical, so a new format had to be written twice.
+  String _value(WidgetRef ref, HudSlot slot) => statText(
+    slot.format,
+    slot.canonicalValue,
+    l10n: ref.watch(appLocalizationsProvider),
+    numbers: ref.watch(localeNumbersProvider),
+    // A RUNNING CLOCK, not a measurement: the HUD counts, results reports.
+    durationStyle: DurationStyle.clock,
+    total: slot.total,
+  );
 }

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/games/game_registry.dart';
 
 import 'support/source_text.dart';
@@ -64,7 +64,7 @@ void main() {
           if (!line.startsWith('import ') && !line.startsWith('export ')) {
             continue;
           }
-          if (RegExp(r"games/(?!game_)[a-z_]+/").hasMatch(line)) {
+          if (RegExp('games/(?!game_)[a-z_]+/').hasMatch(line)) {
             offenders.add('${file.path}: ${line.trim()}');
           }
         }
@@ -79,7 +79,7 @@ void main() {
       final plural = <String>[];
 
       for (final file in filesUnder('lib')) {
-        final imports = RegExp(r"games/([a-z_]+)/")
+        final imports = RegExp('games/([a-z_]+)/')
             .allMatches(file.readAsStringSync())
             .map((match) => match.group(1))
             .whereType<String>()

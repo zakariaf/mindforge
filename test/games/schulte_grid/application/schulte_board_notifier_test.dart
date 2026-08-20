@@ -146,11 +146,11 @@ void main() {
 
       notifierOf(container, config).tapCell(wrongIndex);
 
-      final first = stateOf(container, config).wrongTapId;
+      final first = stateOf(container, config).wrongCount;
 
       notifierOf(container, config).tapCell(wrongIndex);
 
-      expect(stateOf(container, config).wrongTapId, greaterThan(first));
+      expect(stateOf(container, config).wrongCount, greaterThan(first));
     });
 
     test('and the latch clears on the next tap, right or wrong', () {

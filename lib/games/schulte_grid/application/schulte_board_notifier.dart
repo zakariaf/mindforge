@@ -33,7 +33,6 @@ final class SchulteBoardNotifier extends Notifier<SchulteBoardState> {
     // three seconds before the countdown ends; the tiles are visible and
     // must not be playable until the countdown says so.
     started: false,
-    wrongTapId: 0,
   );
 
   /// The countdown has handed over.
@@ -59,8 +58,8 @@ final class SchulteBoardNotifier extends Notifier<SchulteBoardState> {
       state = state.copyWith(
         wrongIndex: index,
         // A NEW IDENTITY on every wrong tap, so tapping the same wrong tile
-        // twice shakes twice.
-        wrongTapId: state.wrongTapId + 1,
+        // twice shakes twice — and it is the same number the results screen
+        // shows as misses.
         wrongCount: state.wrongCount + 1,
       );
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/game_id.dart';
@@ -16,6 +15,7 @@ import 'package:mindforge/features/shell/widgets/best_card.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/features/stats/widgets/run_bar_chart.dart';
 import 'package:mindforge/games/game_definition.dart';
+import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 

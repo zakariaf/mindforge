@@ -37,9 +37,6 @@ class StroopBoard extends ConsumerStatefulWidget {
   /// `app.html`: `.playfill--stroop{gap:16px}`.
   static const double cardToGridGap = 16;
 
-  /// The field's dot lattice pitch. `app.html`: `background-size:16px 16px`.
-  static const double fieldDotPitch = 16;
-
   /// The most of a cramped field the answer grid may take.
   ///
   /// DERIVED. app.html has no such rule because it renders one size, where the
@@ -94,7 +91,6 @@ class _StroopBoardState extends ConsumerState<StroopBoard> {
   @override
   Widget build(BuildContext context) {
     final run = widget.run;
-    final colours = SunburstColors.of(context);
     final state = ref.watch(stroopBoardNotifierProvider(run));
     final round = state.current;
 
@@ -102,48 +98,37 @@ class _StroopBoardState extends ConsumerState<StroopBoard> {
     // next; a board that navigated would be the second owner of the run.
     if (round == null) return const SizedBox.expand();
 
-    return ColoredBox(
-      color: colours.surfaceSunk,
-      child: Stack(
-        children: <Widget>[
-          // THE FIELD'S TEXTURE. `app.html`: `.playfill .wdots{opacity:.14}`.
-          // The board field is the largest expanse of one colour in the app,
-          // and the lattice is what stops it reading as a blank.
-          Positioned.fill(
-            child: HalftoneLayer(
-              scene: HalftoneScene(
-                ink: colours.boardDots,
-                ray: null,
-                pitch: StroopBoard.fieldDotPitch,
-              ),
-            ),
-          ),
-          // CENTRED, and the card is sized by its CONTENT. app.html:
-          // `.playfill{justify-content:center}` with a 16pt gap. The first
-          // draft stretched the card to fill the field, which made it twice
-          // the height of the reference and left the word floating in a sea of
-          // paper — caught on the canonical simulator, not by a test, because
-          // nothing was overflowing.
-          LayoutBuilder(
-            builder: (context, constraints) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Flexible(child: _StimulusCard(state: state)),
-                const SizedBox(height: StroopBoard.cardToGridGap),
-                _AnswerGrid(
-                  run: run,
-                  state: state,
-                  keyHeight: StroopBoard.keyHeight(
-                    context,
-                    constraints.maxHeight,
-                  ),
+    // NO FILL AND NO LATTICE OF ITS OWN. The definition asked for
+    // `BoardBackground.surfaceSunk` and the shell paints it, dots and all.
+    // This board used to paint both again on top, which occluded the shell's
+    // and paid for the raster twice on every frame.
+    return Stack(
+      children: <Widget>[
+        // CENTRED, and the card is sized by its CONTENT. app.html:
+        // `.playfill{justify-content:center}` with a 16pt gap. The first
+        // draft stretched the card to fill the field, which made it twice
+        // the height of the reference and left the word floating in a sea of
+        // paper — caught on the canonical simulator, not by a test, because
+        // nothing was overflowing.
+        LayoutBuilder(
+          builder: (context, constraints) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Flexible(child: _StimulusCard(state: state)),
+              const SizedBox(height: StroopBoard.cardToGridGap),
+              _AnswerGrid(
+                run: run,
+                state: state,
+                keyHeight: StroopBoard.keyHeight(
+                  context,
+                  constraints.maxHeight,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -258,7 +243,7 @@ class _StimulusCard extends StatelessWidget {
                   scene: HalftoneScene(
                     ink: colours.boardDots,
                     ray: null,
-                    pitch: StroopBoard.fieldDotPitch,
+                    pitch: kBoardDotPitch,
                   ),
                 ),
               ),

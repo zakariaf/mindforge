@@ -5,12 +5,9 @@
 // vector exists to prevent. Run it by hand when the draw order changes on
 // purpose, bump kSchulteGeneratorVersion in the same commit, and read the
 // per-row diff it prints before committing the result.
-// The fingerprint arithmetic below uses exact 64-bit integers, which are
-// silently wrong on the web. This tool runs on a developer's machine and the
-// app ships iOS only.
-// ignore_for_file: avoid_js_rounded_ints
 import 'dart:io';
 
+import 'package:mindforge/core/seeded_generator.dart';
 import 'package:mindforge/games/schulte_grid/domain/schulte_scramble.dart';
 
 /// The rows the table pins, and why each one is there.
@@ -96,12 +93,17 @@ void main() {
 
   for (final row in _rows) {
     final cells = schulteScramble(seed: row.$1, size: row.$2);
+    // THE SHIPPED HASH, not a copy of it. A tool that re-implemented FNV-1a
+    // would compute the pinned value by a different code path from the test
+    // that checks it, so a divergence in the copy would silently re-bless a
+    // wrong table — which is the one thing a frozen vector exists to prevent.
+    final fingerprint = fnv1a64(cells.join(','));
 
     buffer
       ..writeln('      (')
       ..writeln('        seed: ${row.$1},')
       ..writeln('        size: ${row.$2},')
-      ..writeln('        fingerprint: ${_fingerprint(cells)},')
+      ..writeln('        fingerprint: $fingerprint,')
       ..writeln('        firstCell: ${cells.first},')
       ..writeln('        naturalPositions: ${naturalPositionCount(cells)},')
       ..writeln("        note: '${row.$3}',")
@@ -115,14 +117,4 @@ void main() {
   ).writeAsStringSync(buffer.toString());
 
   stdout.writeln('wrote ${_rows.length} vectors');
-}
-
-int _fingerprint(List<int> cells) {
-  var hash = 0xCBF29CE484222325;
-
-  for (final byte in cells.join(',').codeUnits) {
-    hash = (hash ^ byte) * 0x100000001B3;
-  }
-
-  return hash;
 }

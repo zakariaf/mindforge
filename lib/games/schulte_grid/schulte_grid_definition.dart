@@ -4,6 +4,7 @@ import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/schulte_grid/application/schulte_snapshot.dart';
 import 'package:mindforge/games/schulte_grid/domain/schulte_rules.dart';
 import 'package:mindforge/games/schulte_grid/ui/board/schulte_artwork.dart';
+import 'package:mindforge/games/schulte_grid/ui/board/schulte_hero_art.dart';
 import 'package:mindforge/games/schulte_grid/ui/schulte_board.dart';
 import 'package:mindforge/theme/game_accent.dart';
 
@@ -27,6 +28,11 @@ final GameDefinition schulteGridDefinition = GameDefinition(
   // elapsed time is the score and the shell owns it.
   scoreFormat: ScoreFormat.duration,
   scoreSource: ScoreSource.runClock,
+  // UNTIMED: nothing takes this run away. The clock counts UP and is the
+  // score, which is the opposite of a limit — the board ends the run when the
+  // last tile is found. Stated rather than inherited, because the default is
+  // `true` and it would have been a lie about the one game the flag describes.
+  isTimed: false,
   strings: const GameStringIds(
     titleKey: 'gameSchulteGridName',
     taglineKey: 'gameSchulteGridTagline',
@@ -38,7 +44,7 @@ final GameDefinition schulteGridDefinition = GameDefinition(
   boardBackground: BoardBackground.gameAccent,
   buildBoard: (context, run) => SchulteBoard(run: run),
   buildArtwork: (context) => const SchulteArtwork(),
-  buildHeroArt: (context) => const SchulteArtwork(),
+  buildHeroArt: (context) => const SchulteHeroArt(),
   // A SUBSCRIPTION, not a read — the same shape Stroop uses, for the same
   // reason: a read here re-runs the run's build and resets the phase.
   bindBoard: (ref, run, onChanged) {

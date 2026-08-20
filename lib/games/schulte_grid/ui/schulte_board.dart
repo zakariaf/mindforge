@@ -150,7 +150,7 @@ class _Grid extends StatelessWidget {
             label: labels[index],
             semanticLabel: labels[index],
             state: tileState,
-            wrongTapId: state.wrongTapId,
+            wrongTapId: state.wrongCount,
             onTap:
                 tileState == SchulteTileState.found ||
                     tileState == SchulteTileState.disabled

@@ -22,7 +22,11 @@ final class HudSlot {
     this.tone = HudTone.neutral,
     this.source = HudSource.board,
     this.total,
-  });
+  }) : assert(
+         format != StatFormat.fraction || total != null,
+         'a fraction slot needs its denominator: without it the HUD renders '
+         '"6 / 0" on a live board rather than failing',
+       );
 
   /// The ARB key naming this slot.
   final String labelKey;
@@ -99,7 +103,7 @@ enum HudSource {
 /// type is what makes a fourth unrepresentable — a list would let a game push
 /// one more and discover the overflow on a 320pt phone in German.
 ///
-/// [trailing] is nullable: Schulte Grid has nothing to put there.
+/// [trailing] is nullable: a two-value game leaves it empty.
 @immutable
 final class GameHud {
   /// Creates a HUD.

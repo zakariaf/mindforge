@@ -8,6 +8,8 @@ import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/games/stroop_rush/ui/stroop_board.dart';
+import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/ui/halftone_dots.dart';
 
 import '../../../support/component_harness.dart';
 import '../../../support/load_app_fonts.dart';
@@ -49,7 +51,27 @@ void main() {
     // proving nothing while looking like coverage.
     RepaintBoundary(
       child: Greyscale(
-        child: SizedBox(width: 350, height: 520, child: StroopBoard(run: run)),
+        // THE FIELD IS THE SHELL'S NOW, so the harness supplies it: the board
+        // stopped painting its own fill and lattice when both moved up to
+        // `PlayScaffold`, and a golden of a board floating on the stage colour
+        // would be a picture of a screen that cannot happen.
+        child: ColoredBox(
+          color: SunburstColors.sunburstPop.surfaceSunk,
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: HalftoneLayer(
+                  scene: HalftoneScene(
+                    ink: SunburstColors.sunburstPop.boardDots,
+                    ray: null,
+                    pitch: kBoardDotPitch,
+                  ),
+                ),
+              ),
+              SizedBox(width: 350, height: 520, child: StroopBoard(run: run)),
+            ],
+          ),
+        ),
       ),
     ),
     localeCase: localeCase,

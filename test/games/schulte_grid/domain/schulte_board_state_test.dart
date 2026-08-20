@@ -11,13 +11,13 @@ void main() {
     int nextValue = 1,
     bool started = true,
     int? wrongIndex,
-    int wrongTapId = 0,
+    int wrongCount = 0,
   }) => SchulteBoardState(
     cells: const <int>[3, 1, 4, 2],
     nextValue: nextValue,
     started: started,
     wrongIndex: wrongIndex,
-    wrongTapId: wrongTapId,
+    wrongCount: wrongCount,
   );
 
   group('stateOf', () {
@@ -107,7 +107,6 @@ void main() {
           cells: List<int>.generate(25, (i) => i + 1),
           nextValue: 1,
           started: true,
-          wrongTapId: 0,
         ).columnCount,
         5,
       );
