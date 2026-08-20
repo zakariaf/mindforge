@@ -184,13 +184,6 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   /// what stops it reading as a blank.
   final Color boardDots;
 
-  /// The dot lattice behind a board field and inside its stimulus card.
-  ///
-  /// `app.html`: `.playfill .wdots{opacity:.14}` and `.stim .dots{opacity:.14}`
-  /// over `var(--ink)`. Between the header's .16 and the hero's .08 — the
-  /// field is the largest expanse of one colour in the app, and a lattice is
-  /// what stops it reading as a blank.
-
   /// The ray sweep behind the results header, alpha already applied.
   ///
   /// `app.html`: `.res-hdr .rays` — `var(--leaf-deep)` at `.55`, not `.5`, and

@@ -1,8 +1,8 @@
 import 'dart:math' as math;
-import 'dart:ui';
 
-import 'package:meta/meta.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/theme/sunburst_shape.dart';
 
 /// The measured geometry a [PlayFill] is drawn with.
 ///
@@ -20,6 +20,27 @@ final class PlayFillGeometry {
     required this.ringPitch,
     required this.ringBandWidth,
   });
+
+  /// The geometry the theme declares.
+  ///
+  /// ONE ADAPTER, not one per call site. The stimulus glyph and the answer
+  /// key's panel draw the same four patterns and must draw them identically —
+  /// a key whose stripes ran at a different pitch from the word's would break
+  /// the match the second channel exists to make. Both used to assemble these
+  /// six fields by hand, which is two places for a seventh pattern to be
+  /// forgotten.
+  factory PlayFillGeometry.of(BuildContext context) {
+    final shape = SunburstShape.of(context);
+
+    return PlayFillGeometry(
+      stripePitch: shape.stripePitch,
+      stripeAngle: shape.stripeAngle,
+      dotPitch: shape.dotPitch,
+      dotRadius: shape.dotRadius,
+      ringPitch: shape.ringPitch,
+      ringBandWidth: shape.ringBandWidth,
+    );
+  }
 
   /// Distance between stripe centres.
   final double stripePitch;

@@ -6,6 +6,7 @@ import 'package:mindforge/games/stroop_rush/ui/board/play_fill_painter.dart';
 import 'package:mindforge/shared/motion/shake_on_wrong.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 
 import '../../../support/component_harness.dart';
@@ -300,6 +301,63 @@ void main() {
         findsWidgets,
       );
       expect(translationOf(tester), SunburstShape.pressedShadow);
+    });
+  });
+
+  group('the label takes the step that fits', () {
+    /// The resolved font size of [key]'s label.
+    double labelSize(WidgetTester tester, String label) =>
+        tester.widget<Text>(find.text(label)).style!.fontSize!;
+
+    testWidgets('the full step for a short word', (tester) async {
+      await tester.pumpPopComponent(
+        const SizedBox(
+          width: 169,
+          child: StroopAnswerKey(
+            answer: PlayAnswer.red,
+            label: 'Red',
+            state: AnswerKeyState.idle,
+            isColourBlindPalette: false,
+            wrongTapId: 0,
+            onTap: null,
+          ),
+        ),
+      );
+
+      final type = SunburstType.of(tester.element(find.text('Red')));
+
+      expect(labelSize(tester, 'Red'), type.button.fontSize);
+    });
+
+    testWidgets('and the compact step for one that does not fit', (
+      tester,
+    ) async {
+      // `buttonCompact` was added to the theme with a doc comment naming this
+      // exact case — "the answer key that has to hold `پرتەقاڵی` beside a 56pt
+      // pattern panel" — and then never wired, so the key drew `button` and
+      // wrapped instead. A token only the tests read is a token that is wrong
+      // the first time somebody trusts it.
+      const long = 'پرتەقاڵی';
+
+      await tester.pumpPopComponent(
+        const SizedBox(
+          width: 169,
+          child: StroopAnswerKey(
+            answer: PlayAnswer.orange,
+            label: long,
+            state: AnswerKeyState.idle,
+            isColourBlindPalette: false,
+            wrongTapId: 0,
+            onTap: null,
+          ),
+        ),
+        localeCase: LocaleCase.sorani,
+      );
+
+      final type = SunburstType.of(tester.element(find.text(long)));
+
+      expect(labelSize(tester, long), type.buttonCompact.fontSize);
+      expect(type.buttonCompact.fontSize, lessThan(type.button.fontSize!));
     });
   });
 }

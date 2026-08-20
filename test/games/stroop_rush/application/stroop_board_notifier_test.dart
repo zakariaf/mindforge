@@ -124,11 +124,18 @@ void main() {
     test('and clears the wrong-key marks it may have left', () {
       final container = containerWith();
 
+      // ASSERTED ON keyStates, which is what the board actually draws. The
+      // state used to carry a second `wrongKeyIndex` field saying the same
+      // thing, and a test that read it could pass while every key rendered
+      // idle.
       answer(container, correctly: false);
-      expect(stateOf(container).wrongKeyIndex, isNotNull);
+      expect(stateOf(container).keyStates, contains(AnswerKeyState.rejected));
 
       answer(container, correctly: true);
-      expect(stateOf(container).wrongKeyIndex, isNull);
+      expect(
+        stateOf(container).keyStates,
+        isNot(contains(AnswerKeyState.rejected)),
+      );
     });
   });
 
@@ -148,10 +155,10 @@ void main() {
       expect(after.index, before.index, reason: 'the round is not consumed');
       expect(after.score.streak, 0);
       expect(after.score.points, before.score.points);
-      expect(after.wrongKeyIndex, isNotNull);
       expect(
-        after.keyStates[after.wrongKeyIndex!],
-        AnswerKeyState.rejected,
+        after.keyStates.where((s) => s == AnswerKeyState.rejected),
+        hasLength(1),
+        reason: 'exactly the tapped key is marked',
       );
       expect(feedback.countOf(Moment.answerWrong), 1);
     });

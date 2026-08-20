@@ -246,13 +246,29 @@ void main() {
       // is not. A card that shrank the word first would make the thing the
       // player has to read smaller in order to keep breathing room nobody
       // asked for.
-      await pumpBoard(tester, height: 400);
+      // The heights are DESCENDING and the assertion is monotonic, rather
+      // than one magic number: the exact height at which the padding starts to
+      // give depends on the grid's share and on the measured glyph, and a
+      // pinned value turns any improvement in that split into a red test.
+      var previous = 52.0;
 
-      final padding = cardPadding(tester) as EdgeInsetsDirectional;
+      for (final height in <double>[420, 360, 300, 240]) {
+        await pumpBoard(tester, height: height);
 
-      expect(padding.top, lessThan(52));
-      expect(padding.top, greaterThanOrEqualTo(0));
-      expect(tester.takeException(), isNull);
+        final padding = cardPadding(tester) as EdgeInsetsDirectional;
+
+        expect(
+          padding.top,
+          lessThanOrEqualTo(previous),
+          reason: 'padding grew as the field shrank, at ${height}pt',
+        );
+        expect(padding.top, greaterThanOrEqualTo(0));
+        expect(tester.takeException(), isNull, reason: '${height}pt');
+
+        previous = padding.top;
+      }
+
+      expect(previous, lessThan(52), reason: 'it never gave any padding up');
     });
 
     testWidgets('and never overflows, at any size and any scale', (

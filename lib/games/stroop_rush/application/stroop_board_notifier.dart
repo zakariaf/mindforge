@@ -105,7 +105,6 @@ final class StroopBoardNotifier extends Notifier<StroopBoardState> {
         // streak celebrating. Breaking at six and climbing back to five is a
         // new achievement and is felt as one.
         lastMilestone: 0,
-        wrongKeyIndex: optionIndex,
         // A NEW IDENTITY on every wrong tap, so tapping the same wrong key
         // twice shakes twice. Without it the second tap looks to the animation
         // like a rebuild of the first.
@@ -134,7 +133,6 @@ final class StroopBoardNotifier extends Notifier<StroopBoardState> {
     state = state.copyWith(
       index: nextIndex,
       score: score,
-      clearWrongKey: true,
       lastMilestone: milestone ?? state.lastMilestone,
       keyStates: isFinished
           ? List<AnswerKeyState>.filled(
@@ -163,16 +161,12 @@ final class StroopBoardNotifier extends Notifier<StroopBoardState> {
     // Past the cap the multiplier stops moving, so there is nothing to
     // celebrate: a milestone that fires every five answers forever stops
     // meaning anything.
-    if (streakMultiplier(streak, cap: profile.multiplierCap) >=
-        streakMultiplier(
-              streak - kStroopStreakStep,
-              cap: profile.multiplierCap,
-            ) +
-            1) {
-      return streak;
-    }
+    final cap = profile.multiplierCap;
+    final moved =
+        streakMultiplier(streak, cap: cap) >
+        streakMultiplier(streak - kStroopStreakStep, cap: cap);
 
-    return null;
+    return moved ? streak : null;
   }
 
   List<AnswerKeyState> _keyStatesWith(int index, AnswerKeyState value) {

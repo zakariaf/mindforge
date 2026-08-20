@@ -92,7 +92,11 @@ final class StroopWordScene {
 class StroopWordPainter extends CustomPainter {
   /// Creates a painter for [scene].
   StroopWordPainter(this.scene)
-    : _maskToGlyph = Paint()..blendMode = BlendMode.srcIn,
+    : // HOISTED, both of them. `paint()` runs on every frame of a shake, and
+      // the plain layer paint was being allocated there while its sibling was
+      // already a field — one invariant, half applied.
+      _layer = Paint(),
+      _maskToGlyph = Paint()..blendMode = BlendMode.srcIn,
       _inkStroke = Paint()
         ..color = scene.ink
         ..style = PaintingStyle.stroke
@@ -145,6 +149,7 @@ class StroopWordPainter extends CustomPainter {
   /// have nothing left to intersect and the pattern would be one line. The
   /// whole pattern is drawn into its own layer and that layer is composited
   /// once.
+  final Paint _layer;
   final Paint _maskToGlyph;
 
   @override
@@ -178,7 +183,7 @@ class StroopWordPainter extends CustomPainter {
     if (scene.fill == PlayFill.solid) return;
 
     // Pass 3: the pattern, masked to the glyph.
-    canvas.saveLayer(glyphBounds, Paint());
+    canvas.saveLayer(glyphBounds, _layer);
     _body.paint(canvas, origin);
     canvas.saveLayer(glyphBounds, _maskToGlyph);
     paintPlayFill(

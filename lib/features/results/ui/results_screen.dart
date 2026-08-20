@@ -200,8 +200,6 @@ class _StatCell extends ConsumerWidget {
               ? '${numbers.count(stat.canonicalValue)}'
                     '${l10n.unitMilliseconds}'
               : '${numbers.seconds(stat.canonicalValue)}${l10n.unitSeconds}',
-        // The same isolate as the HUD pill: `×11` is a mixed run and the
-        // results trio prints it in the same cell shape.
         // NOT ISOLATED — see hud_row.dart. An FSI over a run with no strong
         // character resolves LTR and pins the sign to the left in Persian too.
         StatFormat.multiplier => l10n.streakMultiplier(

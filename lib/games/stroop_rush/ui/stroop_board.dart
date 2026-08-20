@@ -59,11 +59,14 @@ class StroopBoard extends ConsumerWidget {
 
     if (!available.isFinite) return design;
 
-    final forGrid =
-        (available - cardToGridGap) * gridShareWhenCramped -
-        SunburstShape.space3;
+    // The share is the GRID's, and the grid is two rows and the space between
+    // them — so the per-key height is that share minus the gap, halved. The
+    // first version divided nothing and handed 0.45 to each ROW, which let the
+    // grid claim about nine tenths of a cramped field while the doc comment
+    // promised the word would keep the majority.
+    final forGrid = (available - cardToGridGap) * gridShareWhenCramped;
 
-    return forGrid.clamp(kPopMinTarget, design);
+    return ((forGrid - SunburstShape.space3) / 2).clamp(kPopMinTarget, design);
   }
 
   @override
@@ -127,7 +130,7 @@ class StroopBoard extends ConsumerWidget {
 /// whitespace before it gives up any of the word: at x2.0 on a 320pt phone the
 /// prompt, the glyph and the answer grid together want more than the field has,
 /// and the thing the player has to READ is the last thing that should shrink.
-class _StimulusCard extends ConsumerWidget {
+class _StimulusCard extends StatelessWidget {
   const _StimulusCard({required this.state});
 
   final StroopBoardState state;
@@ -145,7 +148,7 @@ class _StimulusCard extends ConsumerWidget {
   static const int promptMaxLines = 2;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
     final shape = SunburstShape.of(context);
     final type = SunburstType.of(context);
@@ -266,11 +269,14 @@ class _StimulusCard extends ConsumerWidget {
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
       maxLines: maxLines,
-    )..layout(maxWidth: width);
-    final result = (
-      fits: !painter.didExceedMaxLines && painter.width <= width,
-      height: painter.height,
-    );
+      // UNCONSTRAINED WHEN THE QUESTION IS "DOES IT FIT". A layout capped at
+      // the available width reports a width that is never wider than it, so
+      // `painter.width <= width` is true by construction and the fit check
+      // decides nothing. `check_painter_hygiene.sh` warns on exactly this
+      // shape. A multi-line measurement is a HEIGHT question and does want the
+      // cap, because where the lines break is what makes it tall.
+    )..layout(maxWidth: maxLines == 1 ? double.infinity : width);
+    final result = (fits: painter.width <= width, height: painter.height);
 
     painter.dispose();
 
@@ -279,7 +285,7 @@ class _StimulusCard extends ConsumerWidget {
 }
 
 /// The prompt and the painted word, at the size the card resolved.
-class _StimulusContent extends ConsumerWidget {
+class _StimulusContent extends StatelessWidget {
   const _StimulusContent({
     required this.state,
     required this.word,
@@ -303,7 +309,7 @@ class _StimulusContent extends ConsumerWidget {
   final double promptGap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
     final shape = SunburstShape.of(context);
     final type = SunburstType.of(context);
@@ -344,26 +350,26 @@ class _StimulusContent extends ConsumerWidget {
               // reference height.
               height: glyphHeight,
               width: double.infinity,
-              child: CustomPaint(
-                painter: StroopWordPainter(
-                  StroopWordScene(
-                    word: word,
-                    textDirection: Directionality.of(context),
-                    style: style,
-                    fill: round.ink.fill,
-                    hue: colours.answerColour(
-                      round.ink,
-                      colourBlind: state.isColourBlindPalette,
-                    ),
-                    ink: colours.border,
-                    strokeWidth: shape.glyphStrokeWidth,
-                    geometry: PlayFillGeometry(
-                      stripePitch: shape.stripePitch,
-                      stripeAngle: shape.stripeAngle,
-                      dotPitch: shape.dotPitch,
-                      dotRadius: shape.dotRadius,
-                      ringPitch: shape.ringPitch,
-                      ringBandWidth: shape.ringBandWidth,
+              // ITS OWN LAYER. The glyph is the expensive paint on this
+              // screen — two saveLayers and three text draws — and without a
+              // boundary it shares a layer with the card's PopSurface and
+              // halftone stack, so any repaint of the card re-runs it.
+              // `check_painter_hygiene.sh` warns on exactly this.
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: StroopWordPainter(
+                    StroopWordScene(
+                      word: word,
+                      textDirection: Directionality.of(context),
+                      style: style,
+                      fill: round.ink.fill,
+                      hue: colours.answerColour(
+                        round.ink,
+                        colourBlind: state.isColourBlindPalette,
+                      ),
+                      ink: colours.border,
+                      strokeWidth: shape.glyphStrokeWidth,
+                      geometry: PlayFillGeometry.of(context),
                     ),
                   ),
                 ),

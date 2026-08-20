@@ -36,7 +36,6 @@ final class StroopBoardState {
     required this.score,
     required this.keyStates,
     required this.isColourBlindPalette,
-    this.wrongKeyIndex,
     this.wrongTapId = 0,
     this.lastMilestone = 0,
   });
@@ -63,9 +62,6 @@ final class StroopBoardState {
   /// who flips it mid-run keeps the palette they were dealt.
   final bool isColourBlindPalette;
 
-  /// Which key was tapped wrongly, or `null` when none was.
-  final int? wrongKeyIndex;
-
   /// A counter that changes on every wrong tap.
   ///
   /// **The shake latches on this, not on "a wrong answer happened".** Tapping
@@ -91,16 +87,10 @@ final class StroopBoardState {
   double get progress => rounds.isEmpty ? 0 : index / rounds.length;
 
   /// A copy with the named parts replaced.
-  ///
-  /// `wrongKeyIndex` takes a `clearWrongKey` flag rather than a nullable
-  /// sentinel: `copyWith(wrongKeyIndex: null)` cannot mean "clear it" and
-  /// "leave it" at once, and a correct answer needs the first.
   StroopBoardState copyWith({
     int? index,
     StroopScore? score,
     List<AnswerKeyState>? keyStates,
-    int? wrongKeyIndex,
-    bool clearWrongKey = false,
     int? wrongTapId,
     int? lastMilestone,
   }) => StroopBoardState(
@@ -109,7 +99,6 @@ final class StroopBoardState {
     score: score ?? this.score,
     keyStates: keyStates ?? this.keyStates,
     isColourBlindPalette: isColourBlindPalette,
-    wrongKeyIndex: clearWrongKey ? null : (wrongKeyIndex ?? this.wrongKeyIndex),
     wrongTapId: wrongTapId ?? this.wrongTapId,
     lastMilestone: lastMilestone ?? this.lastMilestone,
   );
@@ -120,7 +109,6 @@ final class StroopBoardState {
       other is StroopBoardState &&
           other.index == index &&
           other.score == score &&
-          other.wrongKeyIndex == wrongKeyIndex &&
           other.wrongTapId == wrongTapId &&
           other.lastMilestone == lastMilestone &&
           other.isColourBlindPalette == isColourBlindPalette &&
@@ -141,7 +129,6 @@ final class StroopBoardState {
   int get hashCode => Object.hash(
     index,
     score,
-    wrongKeyIndex,
     wrongTapId,
     lastMilestone,
     isColourBlindPalette,

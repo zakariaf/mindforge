@@ -93,8 +93,12 @@ class StroopAnswerKey extends StatelessWidget {
         elevation: elevation,
         onTap: onTap,
         semanticLabel: label,
-        child: SizedBox(
-          height: shape.answerKeyHeight,
+        // NO HEIGHT OF ITS OWN. The grid sets `mainAxisExtent`, which is the
+        // height the FIELD negotiated and can be as low as the 48pt tap floor
+        // on a cramped screen. A SizedBox restating the token here was either
+        // a no-op or silently clamped away, and a reader could not tell which
+        // number won.
+        child: SizedBox.expand(
           child: Stack(
             children: <Widget>[
               Row(
@@ -108,15 +112,27 @@ class StroopAnswerKey extends StatelessWidget {
                       padding: const EdgeInsetsDirectional.symmetric(
                         horizontal: SunburstShape.space3,
                       ),
-                      child: Text(
-                        label,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: type.button.copyWith(
-                          // FROM THE PALETTE, not the call site: ink on
-                          // yellow and paper on everything else, and the
-                          // palette is the only thing that knows which.
-                          color: colours.answerLabel(answer),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) => Text(
+                          label,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          // THE STEP THAT FITS ON ONE LINE, chosen once, the
+                          // same two-step rule the stimulus uses. `پرتەقاڵی`
+                          // beside a 56pt panel does not fit at the full step
+                          // on a 390pt phone; a smaller step reads better than
+                          // a colour word broken across two lines.
+                          style: _fits(context, label, type.button, constraints)
+                              ? type.button.copyWith(
+                                  // FROM THE PALETTE, not the call site: ink
+                                  // on yellow and paper on everything else,
+                                  // and the palette is the only thing that
+                                  // knows which.
+                                  color: colours.answerLabel(answer),
+                                )
+                              : type.buttonCompact.copyWith(
+                                  color: colours.answerLabel(answer),
+                                ),
                         ),
                       ),
                     ),
@@ -157,6 +173,29 @@ class StroopAnswerKey extends StatelessWidget {
       child: key,
     );
   }
+
+  /// Whether [label] draws on one line at [style] inside [constraints].
+  ///
+  /// Measured rather than estimated: the answer differs per script, per face
+  /// and per text scale, and laying it out is the only honest way to ask.
+  bool _fits(
+    BuildContext context,
+    String label,
+    TextStyle style,
+    BoxConstraints constraints,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: label, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final fits = painter.width <= constraints.maxWidth;
+
+    painter.dispose();
+
+    return fits;
+  }
 }
 
 /// The 56pt pattern block at the key's START edge.
@@ -185,22 +224,20 @@ class _PatternPanel extends StatelessWidget {
             end: BorderSide(color: colours.border, width: shape.borderWidth),
           ),
         ),
-        child: CustomPaint(
-          painter: PlayFillPainter(
-            PlayFillScene(
-              fill: answer.fill,
-              hue: colours.answerColour(
-                answer,
-                colourBlind: isColourBlindPalette,
-              ),
-              ink: colours.border,
-              geometry: PlayFillGeometry(
-                stripePitch: shape.stripePitch,
-                stripeAngle: shape.stripeAngle,
-                dotPitch: shape.dotPitch,
-                dotRadius: shape.dotRadius,
-                ringPitch: shape.ringPitch,
-                ringBandWidth: shape.ringBandWidth,
+        // ITS OWN LAYER, so a key that presses or shakes does not re-rasterise
+        // its pattern panel. The panel never changes; the transform above it
+        // does. `check_painter_hygiene.sh` warns without this.
+        child: RepaintBoundary(
+          child: CustomPaint(
+            painter: PlayFillPainter(
+              PlayFillScene(
+                fill: answer.fill,
+                hue: colours.answerColour(
+                  answer,
+                  colourBlind: isColourBlindPalette,
+                ),
+                ink: colours.border,
+                geometry: PlayFillGeometry.of(context),
               ),
             ),
           ),

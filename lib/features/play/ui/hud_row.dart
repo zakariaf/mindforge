@@ -74,12 +74,6 @@ class HudRow extends ConsumerWidget {
     return switch (slot.format) {
       StatFormat.duration => numbers.clock(slot.canonicalValue),
       StatFormat.percent => numbers.percent(slot.canonicalValue / 1000),
-      // BIDI-ISOLATED, and FIRST-STRONG is the right isolate precisely
-      // because `×7` has no strong character in it: the sign is neutral and
-      // the numeral is weak, so the run takes the PARAGRAPH's direction. That
-      // is what makes one helper produce `x7` in English and `۷×` in Persian
-      // — which is what the RTL reference screen draws — while still bounding
-      // the run so it cannot reorder the pill around it.
       // NOT ISOLATED, and that is the whole point. The logical order is the
       // sign then the digit in every locale — one ARB message — and the bidi
       // algorithm is what puts the sign on the reading-START side: `x7` in
