@@ -520,7 +520,6 @@ void main() {
         return tester.getRect(find.byType(FractionallySizedBox));
       }
 
-      const bar = 200.0;
       final ltr = await fillRect(en);
       final rtl = await fillRect(fa);
 
@@ -530,7 +529,6 @@ void main() {
         lessThan(rtl.left),
         reason: 'the fill grows from the start edge, which swaps sides',
       );
-      expect(bar, 200);
     });
 
     testWidgets('the bar actually paints its fill', (tester) async {
@@ -594,6 +592,116 @@ void main() {
           reason: '${entry.key}',
         );
       }
+    });
+  });
+
+  group('the findings the correctness review turned up', () {
+    testWidgets('a locked card does not print its tagline twice', (
+      tester,
+    ) async {
+      // The badge reused `subtitle`, so every locked card on the home hub said
+      // "Coming soon" as both its tagline and its badge.
+      await tester.pumpPopComponent(
+        GameCard(
+          title: 'N-Back',
+          subtitle: 'Coming soon',
+          accent: colours.accentAlt,
+          semanticLabel: 'N-Back',
+          lockedLabel: 'Locked',
+          locked: true,
+        ),
+      );
+
+      expect(find.text('Coming soon'), findsOneWidget);
+      expect(find.text('Locked'), findsOneWidget);
+    });
+
+    testWidgets('the progress bar announces the value it is given', (
+      tester,
+    ) async {
+      // It was the ONE component that formatted a number, and it emitted ASCII
+      // digits and an ASCII percent sign under fa, where the rest of the
+      // screen renders ۴۵٪.
+      final handle = tester.ensureSemantics();
+
+      await tester.pumpPopComponent(
+        const SizedBox(
+          width: 200,
+          child: PopProgressBar(
+            value: 0.45,
+            semanticLabel: 'پیشرفت',
+            semanticValue: '۴۵٪',
+          ),
+        ),
+        localeCase: fa,
+      );
+
+      expect(
+        tester.getSemantics(find.byType(PopProgressBar)).value,
+        '۴۵٪',
+      );
+
+      handle.dispose();
+    });
+
+    testWidgets('a sheet keeps its gap when one action instance repeats', (
+      tester,
+    ) async {
+      // `action != actions.last` compares by IDENTITY, so a const action used
+      // twice silently lost the separator before the repeat.
+      const shared = SizedBox(width: 40, height: 20);
+
+      await tester.pumpPopComponent(
+        const PopSheet(
+          title: 'Paused',
+          actions: <Widget>[shared, SizedBox(width: 40, height: 30), shared],
+        ),
+      );
+
+      final gaps = tester
+          .widgetList<SizedBox>(find.byType(SizedBox))
+          .where((box) => box.height == SunburstShape.space3)
+          .length;
+
+      expect(gaps, 2, reason: 'two gaps between three actions');
+    });
+
+    testWidgets('a bidi-isolated Latin number keeps its Latin pitch', (
+      tester,
+    ) async {
+      // TabularText chose its digit script with a bare codepoint comparison,
+      // so the FSI mark the bidi helper inserts — which sits above U+06F0 —
+      // made it measure against Eastern Arabic digits Fredoka cannot draw. The
+      // pitch then came from the fallback face and the glyph from Fredoka.
+      const isolated =
+          '\u2068'
+          '12:34'
+          '\u2069';
+
+      await tester.pumpPopComponent(
+        const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TabularText(isolated, style: TextStyle(fontSize: 22)),
+            TabularText('12:34', style: TextStyle(fontSize: 22)),
+          ],
+        ),
+      );
+
+      final widths = tester
+          .widgetList<SizedBox>(find.byType(SizedBox))
+          .map((box) => box.width)
+          .whereType<double>()
+          .toSet();
+
+      expect(tester.takeException(), isNull);
+      expect(
+        widths,
+        hasLength(1),
+        reason:
+            'the isolated and the bare number were measured against different '
+            'digit scripts: $widths',
+      );
     });
   });
 }

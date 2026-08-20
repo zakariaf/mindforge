@@ -39,7 +39,10 @@ class PopToggle extends StatelessWidget {
   final ValueChanged<bool>? onChanged;
 
   /// The knob's diameter.
-  static const double _knob = 26;
+  /// The knob's diameter.
+  ///
+  /// Package-visible so `_Knob` can size itself to it.
+  static const double knobSize = 26;
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +51,21 @@ class PopToggle extends StatelessWidget {
     final type = SunburstType.of(context);
     final changed = onChanged;
 
+    // NO ExcludeSemantics around the surface. It stripped the tap action the
+    // GestureDetector inside contributes, so a screen-reader user could focus
+    // "Sound, on", double-tap, and nothing happened — every Settings toggle
+    // was unreachable. The surface carries the label and the role; this node
+    // adds only the toggled state.
     return Semantics(
-      label: semanticLabel,
       toggled: value,
-      child: ExcludeSemantics(
-        child: PopSurface(
+      enabled: onChanged != null,
+      child: Builder(
+        builder: (context) => PopSurface(
           fill: value ? colours.success : colours.surfaceSunk,
           radius: BorderRadiusDirectional.all(shape.radiusPill),
           elevation: PopElevation.flat,
           onTap: changed == null ? null : () => changed(!value),
+          semanticLabel: semanticLabel,
           padding: const EdgeInsetsDirectional.all(4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -85,17 +94,17 @@ class _Knob extends StatelessWidget {
   final SunburstColors colours;
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: PopToggle._knob,
-    height: PopToggle._knob,
-    decoration: BoxDecoration(
-      color: colours.surfaceRaised,
-      shape: BoxShape.circle,
-      border: Border.all(
-        color: colours.border,
-        width: SunburstShape.of(context).borderWidthNested,
-      ),
+  Widget build(BuildContext context) => PopSurface(
+    fill: colours.surfaceRaised,
+    radius: BorderRadiusDirectional.all(
+      SunburstShape.of(context).radiusPill,
     ),
+    elevation: PopElevation.flat,
+    // Inside the track, so the thinner edge — otherwise the knob's border and
+    // the track's read as one thick smudge.
+    nested: true,
+    minTarget: 0,
+    child: const SizedBox.square(dimension: PopToggle.knobSize),
   );
 }
 

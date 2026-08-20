@@ -4,6 +4,7 @@ import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_badge.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
+import 'package:mindforge/ui/components/tabular_text.dart';
 
 /// A game on the home hub.
 ///
@@ -24,6 +25,7 @@ class GameCard extends StatelessWidget {
     this.bestLabel,
     this.bestValue,
     this.artwork,
+    this.lockedLabel,
     this.locked = false,
     this.onTap,
     super.key,
@@ -49,6 +51,12 @@ class GameCard extends StatelessWidget {
 
   /// The game's artwork tile, at the end edge.
   final Widget? artwork;
+
+  /// The already-localized word on the locked badge.
+  ///
+  /// Its own string, not the subtitle: reusing the subtitle printed the same
+  /// tagline twice on every locked card.
+  final String? lockedLabel;
 
   /// Whether the game is not yet available.
   final bool locked;
@@ -100,9 +108,12 @@ class GameCard extends StatelessWidget {
                   const SizedBox(height: SunburstShape.space3),
                   _BestPill(label: bestLabel ?? '', value: best),
                 ],
-                if (locked) ...[
+                if (locked && lockedLabel != null) ...[
                   const SizedBox(height: SunburstShape.space3),
-                  PopBadge(label: subtitle, variant: PopBadgeVariant.locked),
+                  PopBadge(
+                    label: lockedLabel!,
+                    variant: PopBadgeVariant.locked,
+                  ),
                 ],
               ],
             ),
@@ -122,9 +133,9 @@ class GameCard extends StatelessWidget {
 
 /// The small pill carrying a game's best score.
 ///
-/// Its edge is [SunburstShape.borderWidthNested] rather than the full ink
-/// width: it sits inside another surface, and two 3px borders a few pixels
-/// apart read as one smudge.
+/// It composes [PopSurface] with `nested: true`, which is what gives it the
+/// thinner edge: it sits inside another surface, and two 3px borders a few
+/// pixels apart read as one smudge.
 class _BestPill extends StatelessWidget {
   const _BestPill({required this.label, required this.value});
 
@@ -138,36 +149,31 @@ class _BestPill extends StatelessWidget {
     final type = SunburstType.of(context);
 
     return MergeSemantics(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colours.surface,
-          borderRadius: BorderRadius.all(shape.radiusPill),
-          border: Border.all(
-            color: colours.border,
-            width: shape.borderWidthNested,
-          ),
+      child: PopSurface(
+        fill: colours.surface,
+        radius: BorderRadiusDirectional.all(shape.radiusPill),
+        elevation: PopElevation.flat,
+        nested: true,
+        minTarget: 0,
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 12,
+          vertical: 6,
         ),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 12,
-            vertical: 6,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // BEST is textSecondary, which is legal here because the pill's
-              // own fill is cream — not the card's coral.
-              Text(
-                label,
-                style: type.label.copyWith(color: colours.textSecondary),
-              ),
-              const SizedBox(width: SunburstShape.space2),
-              Text(
-                value,
-                style: type.numericHud.copyWith(color: colours.textPrimary),
-              ),
-            ],
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // BEST is textSecondary, which is legal here because the pill's
+            // own fill is cream — not the card's coral.
+            Text(
+              label,
+              style: type.label.copyWith(color: colours.textSecondary),
+            ),
+            const SizedBox(width: SunburstShape.space2),
+            TabularText(
+              value,
+              style: type.numericHud.copyWith(color: colours.textPrimary),
+            ),
+          ],
         ),
       ),
     );

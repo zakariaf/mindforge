@@ -85,14 +85,23 @@ class TabularText extends StatelessWidget {
     TextScaler scaler,
     TextDirection direction,
   ) {
-    final zero =
-        value.characters.any(
-          (character) => character.runes.first >= 0x06F0,
-        )
+    // `_isDigit &&`, not a bare codepoint comparison. The old test caught an
+    // en dash, a curly apostrophe, and — the one that mattered here — the
+    // FSI/PDI isolate marks the bidi helper inserts, all of which sit above
+    // U+06F0. An isolated Latin clock like `\u2068` + "12:34" was then
+    // measured against Eastern Arabic digits that Fredoka does not cover, so
+    // the pitch came from the fallback face while the glyph came from Fredoka
+    // and the number was mis-spaced — the exact jitter this widget removes.
+    final digits = value.characters.where(_isDigit).toList();
+    if (digits.isEmpty) return 0;
+
+    final zero = digits.any((character) => character.runes.first >= 0x06F0)
         ? 0x06F0
         : 0x30;
     var widest = 0.0;
 
+    // Only the digits actually present, which is what the doc above says and
+    // what the ten-layouts-per-build version did not do.
     for (var i = 0; i < 10; i++) {
       final painter = TextPainter(
         text: TextSpan(text: String.fromCharCode(zero + i), style: style),

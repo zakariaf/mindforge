@@ -112,10 +112,21 @@ class PressPhysicsState extends State<PressPhysics>
   /// ancestor is unsafe". Measured, on the first disabled-surface test.
   late final AnimationController _controller;
 
+  /// The curved value the surface is actually drawn from.
+  ///
+  /// The controller runs LINEARLY and the curve is applied here, because
+  /// `AnimationController` clamps its own value to `[lowerBound, upperBound]`.
+  /// `easePop` peaks near 1.09 — the overshoot it is named for — so driving the
+  /// controller with the curve threw the spring away and, worse, arrived early:
+  /// measured, the travel reached its end at 30ms of a 120ms press and then sat
+  /// still for 90ms.
+  late Animation<double> _curved;
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    _curved = _controller;
   }
 
   @override
@@ -130,6 +141,12 @@ class PressPhysicsState extends State<PressPhysics>
   /// pick up from where the surface actually is, not restart from rest. That is
   /// the difference between a control that feels solid and one that jumps.
   void _driveTo(double target) {
+    // GestureBinding caches the hit-test path for a live pointer, so the UP
+    // event is still delivered to a Listener whose element has been unmounted
+    // — a sheet that auto-closes or a route that pops under a held finger.
+    // Reading context there throws.
+    if (!mounted) return;
+
     final motion = SunburstMotion.of(context);
     final duration = motion.resolve(context, motion.durTap);
 
@@ -141,12 +158,14 @@ class PressPhysicsState extends State<PressPhysics>
       return;
     }
 
+    // The CURVE is applied to the controller's output, not passed to
+    // animateTo: passing it makes the controller clamp the overshoot away.
+    _curved = CurvedAnimation(parent: _controller, curve: motion.easePop);
+
     // unawaited: the returned TickerFuture completes when the animation
     // finishes or is cancelled by the next press, and neither is something a
     // caller waits on.
-    unawaited(
-      _controller.animateTo(target, duration: duration, curve: motion.easePop),
-    );
+    unawaited(_controller.animateTo(target, duration: duration));
   }
 
   void _onPointerDown() => _driveTo(1);
@@ -165,7 +184,7 @@ class PressPhysicsState extends State<PressPhysics>
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) =>
-            widget.builder(context, _controller.value, child),
+            widget.builder(context, _curved.value, child),
         child: widget.child,
       ),
     );

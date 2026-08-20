@@ -25,6 +25,13 @@ enum PopElevation {
   /// ring of ink around the surface. Flat means nothing is drawn.
   flat,
 
+  /// The half-step below [e1], for chips and badges.
+  ///
+  /// Its own step rather than a number a component types: without it
+  /// `SunburstShape.eChip` is a token nothing can reach, since `restOffset` is
+  /// the only place a step becomes an offset.
+  chip,
+
   /// The lowest raised step.
   e1,
 
@@ -40,6 +47,7 @@ enum PopElevation {
   /// The hard-shadow offset this step rests at, or `null` when [flat].
   Offset? restOffset(SunburstShape shape) => switch (this) {
     PopElevation.flat => null,
+    PopElevation.chip => shape.eChip,
     PopElevation.e1 => shape.e1,
     PopElevation.e2 => shape.e2,
     PopElevation.e3 => shape.e3,
@@ -51,7 +59,9 @@ enum PopElevation {
   /// The e1 family is small enough that the larger scale is imperceptible on
   /// it, so the smaller surfaces shrink harder.
   double pressScale(SunburstShape shape) => switch (this) {
-    PopElevation.flat || PopElevation.e1 => shape.pressScaleSmall,
+    PopElevation.flat ||
+    PopElevation.chip ||
+    PopElevation.e1 => shape.pressScaleSmall,
     PopElevation.e2 || PopElevation.e3 || PopElevation.e4 => shape.pressScale,
   };
 }
@@ -97,6 +107,7 @@ class PopSurface extends ConsumerStatefulWidget {
     this.radius,
     this.elevation = PopElevation.e2,
     this.borderStyle = PopBorderStyle.solid,
+    this.nested = false,
     this.padding = EdgeInsetsDirectional.zero,
     this.onTap,
     this.enabled = true,
@@ -122,6 +133,17 @@ class PopSurface extends ConsumerStatefulWidget {
 
   /// How the edge is drawn.
   final PopBorderStyle borderStyle;
+
+  /// Whether this surface is drawn **inside** another one.
+  ///
+  /// A nested surface takes the thinner edge: a knob inside its rail, a pill
+  /// inside a card, a fill inside a track all put two borders within a few
+  /// pixels of each other, and at the full width the pair reads as one smudge.
+  ///
+  /// It is a parameter rather than three components each building their own
+  /// decoration — which is what they did before, and three of them reaching
+  /// for the same token independently is the signal that it belongs here.
+  final bool nested;
 
   /// The inset between the edge and [child].
   final EdgeInsetsDirectional padding;
@@ -175,13 +197,45 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
           widget.pressScaleOverride ?? widget.elevation.pressScale(shape),
     );
 
+    final label = widget.semanticLabel;
+
     return Semantics(
-      button: _isInteractive,
+      // A surface with an onTap is a BUTTON whether or not it is currently
+      // enabled. Gating the role on _isInteractive stripped it from every
+      // disabled control — and since the whole catalog disables by passing
+      // `onTap: null`, the previous `onTap == null ? null : enabled` ternary
+      // also dropped hasEnabledState, so a disabled button announced as plain
+      // static text with no hint that it was a control at all.
+      button: widget.onTap != null,
       enabled: widget.onTap == null ? null : widget.enabled,
       selected: widget.selected ? true : null,
-      label: widget.semanticLabel,
+      label: label,
+      // ExcludeSemantics under the label: without it the child's own Text
+      // merges INTO this node and every component announced its label twice —
+      // "Play, Play, button". A surface that provides no label of its own
+      // leaves the child's semantics alone.
       child: FocusableActionDetector(
         enabled: _isInteractive,
+        // Without these the catalog is focusable and DEAD to a hardware
+        // keyboard, to iOS Full Keyboard Access and to Switch Control:
+        // FocusableActionDetector inserts no Actions when given an empty map,
+        // and Flutter supplies no default ActivateAction.
+        actions: _isInteractive
+            ? <Type, Action<Intent>>{
+                ActivateIntent: CallbackAction<ActivateIntent>(
+                  onInvoke: (_) {
+                    _handleTap();
+                    return null;
+                  },
+                ),
+                ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+                  onInvoke: (_) {
+                    _handleTap();
+                    return null;
+                  },
+                ),
+              }
+            : const <Type, Action<Intent>>{},
         onShowFocusHighlight: (value) => setState(() => _focused = value),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -201,6 +255,9 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
                 t: t,
                 geometry: geometry,
                 radius: radius,
+                edgeWidth: widget.nested
+                    ? shape.borderWidthNested
+                    : shape.borderWidth,
                 focused: _focused,
                 fill: _resolveFill(colours),
                 ink: _resolveInk(colours),
@@ -216,7 +273,9 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
               child: Center(
                 widthFactor: 1,
                 heightFactor: 1,
-                child: widget.child,
+                child: label == null
+                    ? widget.child
+                    : ExcludeSemantics(child: widget.child),
               ),
             ),
           ),
@@ -255,6 +314,7 @@ class _PaintedSurface extends StatelessWidget {
     required this.t,
     required this.geometry,
     required this.radius,
+    required this.edgeWidth,
     required this.focused,
     required this.fill,
     required this.ink,
@@ -271,6 +331,9 @@ class _PaintedSurface extends StatelessWidget {
   final double t;
   final PressGeometry geometry;
   final BorderRadiusDirectional radius;
+
+  /// How thick the ink edge is: the primary width, or the nested one.
+  final double edgeWidth;
   final bool focused;
   final Color fill;
 
@@ -293,7 +356,7 @@ class _PaintedSurface extends StatelessWidget {
         color: fill,
         borderRadius: resolved,
         border: borderStyle == PopBorderStyle.solid
-            ? Border.all(color: ink, width: shape.borderWidth)
+            ? Border.all(color: ink, width: edgeWidth)
             : null,
         boxShadow: _shadow(),
       ),
@@ -309,7 +372,7 @@ class _PaintedSurface extends StatelessWidget {
               foregroundPainter: DashedInkBorder(
                 radius: resolved,
                 colour: ink,
-                strokeWidth: shape.borderWidth,
+                strokeWidth: edgeWidth,
                 dashOn: shape.dashOn,
                 dashOff: shape.dashOff,
               ),

@@ -140,10 +140,10 @@ void main() {
   });
 
   group('press physics', () {
-    test('a pressed surface moves elevation - 1 on both axes', () {
-      expect(shape.pressTranslate(shape.e2), const Offset(4, 4));
-      expect(shape.pressTranslate(shape.e1), const Offset(2, 2));
-    });
+    // "A pressed surface moves elevation - 1 on both axes" is asserted on
+    // PressGeometry.travel, in test/ui/components/pop_surface_test.dart. It was
+    // a method here too, with no caller in lib/ — press behaviour is not a
+    // token, and having it in both places meant two statements of one rule.
 
     test('a pressed surface keeps a 1px shadow rather than losing it', () {
       expect(

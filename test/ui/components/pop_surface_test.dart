@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
 import 'package:mindforge/shared/motion/press_physics.dart';
@@ -119,34 +120,9 @@ void main() {
       expect(decoration.boxShadow, anyOf(isNull, isEmpty));
     });
 
-    testWidgets('the hard shadow is identical in fa and in en', (tester) async {
-      // THE REVIEWER'S QUESTION, ANSWERED BY A TEST. The shadow is a light
-      // source fixed at the top-start of the PAGE, not a reading-direction
-      // property. Mirroring it would put the light behind the reader in half
-      // the shipped locales, and make every RTL screenshot disagree with
-      // system.html §07 for no reason anyone could name.
-      for (final elevation in PopElevation.values.where(
-        (e) => e != PopElevation.flat,
-      )) {
-        final ltr = await decorationOf(
-          tester,
-          localeCase: en,
-          elevation: elevation,
-        );
-        final rtl = await decorationOf(
-          tester,
-          localeCase: fa,
-          elevation: elevation,
-        );
-
-        final ltrOffset = ltr.boxShadow!.single.offset;
-        final rtlOffset = rtl.boxShadow!.single.offset;
-
-        expect(rtlOffset, ltrOffset, reason: '$elevation');
-        expect(rtlOffset.dx, greaterThan(0), reason: '$elevation');
-        expect(rtlOffset.dy, greaterThan(0), reason: '$elevation');
-      }
-    });
+    // The shadow-does-not-mirror law lives in mirroring_test.dart, which is
+    // the designated home for "what mirrors" and asserts it at every
+    // elevation step. A second copy here would be a second place to update.
 
     testWidgets('directional padding DOES mirror', (tester) async {
       // The positive control for the negative controls above. If this fails,
@@ -264,7 +240,11 @@ void main() {
       await tester.pump();
     });
 
-    testWidgets('fires its commit moment exactly once per tap', (tester) async {
+    testWidgets('resolves a tap exactly once', (tester) async {
+      // NAMED FOR WHAT IT ASSERTS. It counts taps, not fired moments: the
+      // recording fake and the harness override that would let it observe the
+      // FeedbackService are E06's, which is the epic that gives the service
+      // something to do.
       var taps = 0;
 
       await tester.pumpPopComponent(
@@ -388,10 +368,17 @@ void main() {
         ),
       );
 
+      // A DISABLED BUTTON IS STILL A BUTTON. Gating the role on "is this
+      // currently tappable" stripped isButton and hasEnabledState from every
+      // disabled control — and since the whole catalog disables by passing
+      // onTap: null, that was all of them. A screen reader announced them as
+      // static text, with no hint that they were controls or that they were
+      // unavailable.
       expect(
         tester.getSemantics(find.bySemanticsLabel('Play')),
         matchesSemantics(
           label: 'Play',
+          isButton: true,
           hasEnabledState: true,
           hasSelectedState: true,
           isSelected: true,
@@ -399,6 +386,52 @@ void main() {
       );
 
       handle.dispose();
+    });
+
+    testWidgets('announces its label exactly once', (tester) async {
+      // The label sat above a child that also produced one, and neither is a
+      // semantic boundary, so the two concatenated: every labelled component
+      // announced "Play, Play, button".
+      final handle = tester.ensureSemantics();
+
+      await tester.pumpPopComponent(
+        PopSurface(
+          fill: colours.accent,
+          semanticLabel: 'Play',
+          onTap: () {},
+          child: const Text('Play'),
+        ),
+      );
+
+      expect(tester.getSemantics(find.byType(PopSurface)).label, 'Play');
+
+      handle.dispose();
+    });
+
+    testWidgets('and can be activated from a keyboard', (tester) async {
+      // FocusableActionDetector inserts no Actions when given an empty map and
+      // Flutter supplies no default ActivateAction, so the whole catalog was
+      // focusable and dead to a hardware keyboard, to Full Keyboard Access and
+      // to Switch Control.
+      var taps = 0;
+
+      await tester.pumpPopComponent(
+        PopSurface(
+          fill: colours.accent,
+          semanticLabel: 'Play',
+          onTap: () => taps++,
+          child: const SizedBox(width: 60, height: 40),
+        ),
+      );
+
+      Focus.of(
+        tester.element(find.byType(GestureDetector)),
+      ).requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+
+      expect(taps, 1);
     });
 
     testWidgets('and a null onTap is not a button at all', (tester) async {

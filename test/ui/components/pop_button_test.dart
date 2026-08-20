@@ -295,7 +295,7 @@ void main() {
       handle.dispose();
     });
 
-    testWidgets('density maps to elevation', (tester) async {
+    test('density maps to elevation', () {
       const expected = <PopCardDensity, PopElevation>{
         PopCardDensity.dense: PopElevation.e1,
         PopCardDensity.standard: PopElevation.e2,

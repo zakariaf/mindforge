@@ -185,15 +185,14 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     BoxShadow(color: ink, offset: elevation, blurRadius: 0, spreadRadius: 0),
   ];
 
-  /// Where a surface at [elevation] moves while pressed.
-  ///
-  /// It travels `elevation - 1` on both axes and keeps a 1px shadow, so it
-  /// reads as pushed **into** the page rather than as merely smaller. The hit
-  /// area does not move with it.
-  Offset pressTranslate(Offset elevation) =>
-      Offset(elevation.dx - 1, elevation.dy - 1);
-
   /// The shadow a pressed surface keeps.
+  ///
+  /// One logical pixel, not none: dropping to zero reads as the surface
+  /// vanishing rather than as it being pushed into the page.
+  ///
+  /// How far a pressed surface *travels* is not here. That is press behaviour
+  /// rather than a token, and it lives on `PressGeometry.travel` — one place,
+  /// where the hit-area rule that goes with it also lives.
   static const Offset pressedShadow = Offset(1, 1);
 
   /// The shape scale attached to [context]'s theme.
@@ -227,6 +226,12 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     focusWidth,
     stripePitch,
     stripeAngle,
+    eChip,
+    borderWidthNested,
+    dashOn,
+    dashOff,
+    glyphStrokeNav,
+    glyphStrokeControl,
   ];
 
   @override

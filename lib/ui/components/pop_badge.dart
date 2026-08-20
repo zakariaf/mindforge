@@ -61,7 +61,7 @@ class PopBadge extends StatelessWidget {
       child: PopSurface(
         fill: variant.fill(colours),
         radius: BorderRadiusDirectional.all(shape.radiusPill),
-        elevation: PopElevation.e1,
+        elevation: PopElevation.chip,
         padding: const EdgeInsetsDirectional.symmetric(
           horizontal: 10,
           vertical: 5,

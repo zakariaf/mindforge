@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/widgets.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/ui/components/pop_surface.dart';
 
 /// How much of a run is left, as a striped ink bar.
 ///
@@ -18,6 +19,7 @@ class PopProgressBar extends StatelessWidget {
   const PopProgressBar({
     required this.value,
     required this.semanticLabel,
+    this.semanticValue,
     this.fill,
     super.key,
   });
@@ -27,6 +29,15 @@ class PopProgressBar extends StatelessWidget {
 
   /// The already-localized label a screen reader announces.
   final String semanticLabel;
+
+  /// The already-localized progress a screen reader announces, e.g. `۴۵٪`.
+  ///
+  /// Passed in, not built here. This was the one component in the catalog that
+  /// formatted a number — `'${(value * 100).round()}%'` — and it emitted ASCII
+  /// digits and an ASCII percent sign under `fa` and `ckb`, where the rest of
+  /// the screen renders `۴۵٪`. No component formats a number; the shell owns
+  /// `LocaleNumbers`.
+  final String? semanticValue;
 
   /// The stripe colour. Defaults to the accent.
   final Color? fill;
@@ -38,17 +49,14 @@ class PopProgressBar extends StatelessWidget {
 
     return Semantics(
       label: semanticLabel,
-      value: '${(value.clamp(0.0, 1.0) * 100).round()}%',
+      value: semanticValue,
       child: ExcludeSemantics(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: colours.surfaceSunk,
-            borderRadius: BorderRadius.all(shape.radiusPill),
-            border: Border.all(
-              color: colours.border,
-              width: shape.borderWidthNested,
-            ),
-          ),
+        child: PopSurface(
+          fill: colours.surfaceSunk,
+          radius: BorderRadiusDirectional.all(shape.radiusPill),
+          elevation: PopElevation.flat,
+          nested: true,
+          minTarget: 0,
           // The stripe is clipped INSIDE the painter rather than by a clip
           // widget around it: one of those costs a save layer on every frame
           // of a running timer, and lib/ui/ bans them for that reason.

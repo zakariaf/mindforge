@@ -283,11 +283,15 @@ void main() {
             'keep them apart — it desaturates, it does not flatten',
       );
 
-      // Two that differ ONLY in hue do collapse, which is the failure the lane
-      // is built to make visible.
-      final (first, _, _) = filtered(const Color(0xFF00FF00));
-      final (second, _, _) = filtered(const Color(0xFF00FF00));
-      expect(first, closeTo(second, 1e-9));
+      // And two that differ ONLY in hue DO collapse, which is the failure the
+      // lane is built to make visible. These two have identical luminance by
+      // construction: 0.2126r + 0.7152g + 0.0722b is the same for both.
+      final (redGrey, _, _) = filtered(const Color(0xFFFF0000));
+      final (blueGrey, _, _) = filtered(
+        Color.fromARGB(255, 0, 0, (0.2126 * 255 / 0.0722).round()),
+      );
+
+      expect(redGrey, closeTo(blueGrey, 1));
     });
   });
 

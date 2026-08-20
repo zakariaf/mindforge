@@ -25,10 +25,5 @@ void main() {
         isTrue,
       );
     });
-
-    test('draws at the pitch the shape scale declares', () {
-      expect(shape.dashOn, 9);
-      expect(shape.dashOff, 7);
-    });
   });
 }

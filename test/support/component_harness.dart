@@ -31,6 +31,7 @@ extension PopHarness on WidgetTester {
     LocaleCase? localeCase,
     TextScaler textScaler = TextScaler.noScaling,
     bool boldText = false,
+    bool disableAnimations = false,
   }) async {
     useDevice(this, device);
 
@@ -39,6 +40,7 @@ extension PopHarness on WidgetTester {
       localeCase ?? LocaleCase.all.first,
       textScaler: textScaler,
       boldText: boldText,
+      disableAnimations: disableAnimations,
     );
   }
 }

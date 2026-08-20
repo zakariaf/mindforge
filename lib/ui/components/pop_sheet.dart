@@ -53,43 +53,52 @@ class PopSheet extends StatelessWidget {
         border: Border.all(color: colours.border, width: shape.borderWidth),
         boxShadow: shape.shadow(shape.e3, colours.border),
       ),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.all(SunburstShape.space5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: _handle.width,
-                height: _handle.height,
-                decoration: BoxDecoration(
-                  color: colours.border,
-                  borderRadius: BorderRadius.all(shape.radiusPill),
+      // SafeArea at the bottom: on the canonical iPhone 14 the last action
+      // would otherwise sit under the 34pt home indicator, where it is both
+      // hard to hit and partly hidden.
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.all(SunburstShape.space5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: _handle.width,
+                  height: _handle.height,
+                  decoration: BoxDecoration(
+                    color: colours.border,
+                    borderRadius: BorderRadius.all(shape.radiusPill),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: SunburstShape.space4),
-            Text(
-              title,
-              style: type.title.copyWith(color: colours.textPrimary),
-              textAlign: TextAlign.start,
-            ),
-            if (copy != null) ...[
-              const SizedBox(height: SunburstShape.space2),
+              const SizedBox(height: SunburstShape.space4),
               Text(
-                copy,
-                style: type.body.copyWith(color: colours.textSecondary),
+                title,
+                style: type.title.copyWith(color: colours.textPrimary),
                 textAlign: TextAlign.start,
               ),
+              if (copy != null) ...[
+                const SizedBox(height: SunburstShape.space2),
+                Text(
+                  copy,
+                  style: type.body.copyWith(color: colours.textSecondary),
+                  textAlign: TextAlign.start,
+                ),
+              ],
+              const SizedBox(height: SunburstShape.space5),
+              // Indexed, not `action != actions.last`: that compares by
+              // identity, so reusing one const action instance twice in a list
+              // silently drops the gap before the repeat.
+              for (var i = 0; i < actions.length; i++) ...[
+                actions[i],
+                if (i < actions.length - 1)
+                  const SizedBox(height: SunburstShape.space3),
+              ],
             ],
-            const SizedBox(height: SunburstShape.space5),
-            for (final action in actions) ...[
-              action,
-              if (action != actions.last)
-                const SizedBox(height: SunburstShape.space3),
-            ],
-          ],
+          ),
         ),
       ),
     );

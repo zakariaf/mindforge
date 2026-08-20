@@ -215,6 +215,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     title,
     numericHud,
     button,
+    buttonLarge,
+    chip,
     body,
     caption,
     label,
