@@ -12,6 +12,7 @@ import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/difficulty_strings.dart';
+import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/l10n/score_formatter_provider.dart';
@@ -200,6 +201,14 @@ class _StatCell extends ConsumerWidget {
               ? '${numbers.count(stat.canonicalValue)}'
                     '${l10n.unitMilliseconds}'
               : '${numbers.seconds(stat.canonicalValue)}${l10n.unitSeconds}',
+        // The same isolate as the HUD pill: `×11` is a mixed run and the
+        // results trio prints it in the same cell shape.
+        StatFormat.multiplier => BidiText.isolate(
+          l10n.streakMultiplier(
+            stat.canonicalValue,
+            numbers.count(stat.canonicalValue),
+          ),
+        ),
         StatFormat.points || StatFormat.count => numbers.count(
           stat.canonicalValue,
         ),

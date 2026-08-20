@@ -60,6 +60,9 @@ void main() {
         StatFormat.duration: 'milliseconds',
         StatFormat.percent: 'per mille',
         StatFormat.count: 'items',
+        // E09. The multiplier a streak has earned: `7` renders as `×7`, and
+        // the SIGN is the shell's — a game publishes the number.
+        StatFormat.multiplier: 'items',
       };
 
       expect(units.keys.toSet(), StatFormat.values.toSet());
