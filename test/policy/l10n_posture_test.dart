@@ -310,11 +310,15 @@ void main() {
       // later screen had not quietly written one in English. Accumulated and
       // failed once, so the first offender does not hide the rest.
       final offenders = <String>[];
-      // A literal handed to a widget or to a semantics argument. Built once
-      // rather than per line: the alternation never changes.
+      // WHITESPACE-TOLERANT, AND MATCHED OVER THE WHOLE FILE. The first
+      // version ran per line, and `dart format` puts `Text(` on a line of its
+      // own the moment the contents pass 80 columns — which is every real
+      // English sentence. It caught only literals short enough to fit inline,
+      // which is to say the ones least likely to be prose.
       final literalCall = RegExp(
         '(?:Text|${arguments.join('|')})'
-        r"""(?::|\()\s*'([^']{2,})'""",
+        r"""\s*(?::|\()\s*'([^'\n]{2,})'""",
+        multiLine: true,
       );
 
       for (final directory in <String>['lib/features', 'lib/ui', 'lib/games']) {
@@ -326,15 +330,12 @@ void main() {
           if (sanctioned.containsKey(file.path)) continue;
 
           final code = withoutDartComments(file.readAsStringSync());
-          final lines = code.split('\n');
 
-          for (var i = 0; i < lines.length; i++) {
-            final line = lines[i];
-
+          {
             // A literal is a quote that is not immediately a key lookup, an
             // asset path or an empty string. Keys are ASCII identifiers the
             // ARB owns; a user-facing string is prose.
-            for (final match in literalCall.allMatches(line)) {
+            for (final match in literalCall.allMatches(code)) {
               final literal = match.group(1)!;
 
               // An ARB KEY, not a sentence: `labelKey: 'hudTime'` is data the
@@ -360,7 +361,7 @@ void main() {
 
               if (!RegExp('[A-Za-z]').hasMatch(withoutValues)) continue;
 
-              offenders.add('${file.path}:${i + 1}: "$literal"');
+              offenders.add('${file.path}: "$literal"');
             }
           }
         }

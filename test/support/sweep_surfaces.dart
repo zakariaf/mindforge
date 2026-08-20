@@ -6,7 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/game_stats.dart';
+import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_config.dart';
+import 'package:mindforge/core/run_metric.dart';
+import 'package:mindforge/core/run_scope.dart';
+import 'package:mindforge/core/streak_status.dart';
+import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/settings/ui/language_sheet.dart';
 import 'package:mindforge/features/settings/widgets/settings_row.dart';
@@ -45,6 +51,42 @@ enum SweepSurface {
   bool get needsCompletedRun => this == SweepSurface.results;
 }
 
+/// Data every sweep seeds, so the numbers on screen are worth looking at.
+///
+/// **An empty app renders zeros and em-dashes**, and a sweep of zeros cannot
+/// see the digit classes most likely to regress: a grouped thousand, a
+/// percentage, a chart label, a personal best. The first version of this file
+/// seeded nothing, so every value it ever inspected was `0`, `—`, `0:00` or
+/// `100%` — and the grouping-separator assertion built on it could never
+/// match anything.
+///
+/// The figures are the design's own, from `app.html`: a 1,480 best and a
+/// seven-run series peaking there.
+final Map<String, Result<RunMetric?, DataFailure>> kSweepBests =
+    <String, Result<RunMetric?, DataFailure>>{
+      'stroop_rush': const Ok<RunMetric?, DataFailure>(
+        RunMetric.points(1480),
+      ),
+      'schulte_grid': const Ok<RunMetric?, DataFailure>(
+        RunMetric.duration(18600),
+      ),
+    };
+
+/// Aggregates with four-digit values in them, for both shipped games.
+final Map<RunScope, GameStats> kSweepStats = <RunScope, GameStats>{
+  for (final id in <String>['stroop_rush', 'schulte_grid'])
+    for (final difficulty in Difficulty.values)
+      RunScope.of(GameId(id), difficulty): const GameStats(
+        gamesPlayed: 128,
+        // 3h 12m, which is what `app.html` prints.
+        timeTrainedMs: 11520000,
+        correctCount: 1204,
+        wrongCount: 96,
+        totalReactionMs: 770560,
+        longestCombo: 11,
+      ),
+};
+
 /// The Stroop run every sweep drives.
 final RunConfig kSweepStroop = RunConfig(
   gameId: GameId('stroop_rush'),
@@ -79,6 +121,13 @@ extension SweepPump on WidgetTester {
       textScaler: textScaler,
       boldText: boldText,
       initialLocation: location,
+      bests: kSweepBests,
+      stats: kSweepStats,
+      streak: const StreakStatus(
+        currentDays: 4,
+        longestDays: 12,
+        isActiveToday: true,
+      ),
     );
 
     /// Runs the 3-2-1 out, so the board is live rather than disabled.

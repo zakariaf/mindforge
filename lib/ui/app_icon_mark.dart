@@ -17,9 +17,6 @@ class AppIconMark extends StatelessWidget {
   /// Creates the mark.
   const AppIconMark({super.key});
 
-  /// The wordmark's tile is 26 with a 9 radius, an 8 dot and a 3 edge.
-  static const double _tile = 26;
-
   @override
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
@@ -28,7 +25,12 @@ class AppIconMark extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final side = constraints.biggest.shortestSide;
-        final scale = side / _tile;
+        // FROM THE TOKEN, not from a copy of it. A private `26` here was the
+        // one number this widget did not read from the theme, which is exactly
+        // the drift its own doc comment warns about: move `wordmarkTile` to 28
+        // and the wordmark's dot becomes 8/28 of its tile while the icon's
+        // stays 8/26, with both goldens re-blessed by whoever moved it.
+        final scale = side / shape.wordmarkTile;
 
         return DecoratedBox(
           // OPAQUE, and drawn rather than inherited. iOS rejects an app icon

@@ -46,17 +46,24 @@ class TabularText extends StatelessWidget {
     // not a layout, and the marks are harmless there.
     final drawn = BidiText.strip(value);
 
-    // A JOINED SCRIPT IS SHAPED AS ONE RUN OR IT IS NOT SHAPED AT ALL. Every
-    // box below is its own paragraph, so an Arabic-script letter inside one is
-    // rendered in ISOLATED form and the joins that make the script readable
-    // are gone — and the LTR row then reverses the words on top of it. Stats'
-    // "time trained" is a whole Persian sentence, and it drew as an unreadable
-    // smear that overflowed its box.
+    // WORDS ARE LAID OUT AS TEXT; only a NUMBER gets the per-character
+    // treatment. Every box below is its own paragraph and the row that holds
+    // them cannot wrap, which breaks a multi-word value two different ways:
     //
-    // Latin never showed it, because Latin letters do not join: `0h 0m` split
-    // into boxes still reads. So the guard is about the SCRIPT, not about
-    // whether letters are present.
-    if (_hasJoiningScript(drawn)) {
+    //  - in Arabic script, catastrophically — each letter is shaped in
+    //    ISOLATED form, the joins that make the script readable are gone, and
+    //    the LTR row reverses the words on top of it. Stats' Persian "time
+    //    trained" drew as an unreadable smear.
+    //  - in Latin, quietly — `0 Std. 0 Min.` at 2.0x measured 275pt of content
+    //    in a 141pt viewport, so a German player saw it cut off mid-word with
+    //    no wrap, no ellipsis and no scroll affordance. That is the same
+    //    "a truncated value reads as a plausible one" that `a11y_bans_test`
+    //    bans an ellipsis for, just without the visible edge.
+    //
+    // The first version of this guard tested for a JOINING script and rescued
+    // only the first case. A LETTER is the right question: a value with words
+    // in it is prose, and prose wraps.
+    if (_hasLetters(drawn)) {
       return Text(value, style: style, textAlign: TextAlign.center);
     }
 
@@ -120,23 +127,20 @@ class TabularText extends StatelessWidget {
     );
   }
 
-  /// Whether [value] contains a letter from a script whose glyphs join.
+  /// Whether [value] contains a letter, in any script.
   ///
-  /// Arabic script only, which is every joining script this app ships.
+  /// **A unit is not a letter for this purpose, and that is the subtlety.**
+  /// `18.6s`, `640ms` and `0 Std. 0 Min.` all contain letters, and only the
+  /// last is prose — but the first two are STATIC values that never animate,
+  /// so nothing is lost by laying them out as text, while the third is what
+  /// gets clipped. Every value whose digits actually move under the player's
+  /// eye — the clock `0:00`, a score `1,480`, a streak `×1`, a percentage
+  /// `100%` — carries no letter at all and still gets its fixed pitch.
   ///
-  /// The block holds more than letters, and the exclusions are the whole
-  /// subtlety: both DIGIT ranges live in it, and so do the numeric marks a
-  /// Persian number is built from — `٪` U+066A, `٫` U+066B and `٬` U+066C. A
-  /// guard that took the whole block sent `۱٬۴۸۰` down the plain-text path and
-  /// took its fixed pitch away, which is the one thing this widget is for.
-  static bool _hasJoiningScript(String value) => value.runes.any((rune) {
-    if (rune < 0x0600 || rune > 0x06FF) return false;
-    if (rune >= 0x0660 && rune <= 0x0669) return false;
-    if (rune >= 0x06F0 && rune <= 0x06F9) return false;
-    if (rune >= 0x066A && rune <= 0x066C) return false;
-
-    return true;
-  });
+  /// Uses the Unicode letter property rather than a block list: an earlier
+  /// version tested only for Arabic script and left German clipped.
+  static bool _hasLetters(String value) =>
+      RegExp(r'\p{L}', unicode: true).hasMatch(value);
 
   /// Whether [character] is a digit in any script this app renders.
   static bool _isDigit(String character) {

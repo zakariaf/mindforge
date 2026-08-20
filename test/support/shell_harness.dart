@@ -88,8 +88,7 @@ extension PumpShell on WidgetTester {
     final seeded = settings.withLocaleOverride(resolved.locale);
     // The live value a write mutates, so a second write sees the first one.
     var current = seeded;
-    final settingsChanges = StreamController<AppSettings>.broadcast()
-      ..add(seeded);
+    final settingsChanges = StreamController<AppSettings>.broadcast();
 
     useDevice(this, device);
 
@@ -141,7 +140,18 @@ extension PumpShell on WidgetTester {
           settingsProvider.overrideWith((ref) {
             ref.onDispose(settingsChanges.close);
 
-            return settingsChanges.stream;
+            // THE SEED IS YIELDED, not added to the controller. A broadcast
+            // stream drops anything published before someone subscribes, so
+            // `..add(seeded)` at construction reached nobody — it read like a
+            // seed and was not one. Without this the provider sat in
+            // `AsyncLoading` until the first write, where the real one
+            // (`data_providers.dart`) yields the bootstrap value first and is
+            // `AsyncData` on frame one. Anything branching on the loading
+            // state would have taken a path the app never takes.
+            return () async* {
+              yield seeded;
+              yield* settingsChanges.stream;
+            }();
           }),
           // The settings WRITE seam, recorded rather than persisted. Without
           // it a toggle or the language row reaches the repository, which

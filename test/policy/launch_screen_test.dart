@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
@@ -41,21 +42,33 @@ void main() {
       'ios/Runner/Assets.xcassets/AppIcon.appiconset',
     );
 
-    test('is not Flutter own placeholder any more', () {
-      // The default ships a blue Flutter logo, and it is the kind of thing
-      // that survives to a store listing because it looks like SOMETHING.
-      // Compared by bytes against the known placeholder's size rather than by
-      // eye: the real mark is a flat two-colour square and compresses far
-      // smaller than the gradient logo.
+    test('is MindForge own mark, sampled from the pixels', () {
+      // ASSERTED ON A PIXEL, not on a file size. The first version of this
+      // test compared bytes against a threshold and had the numbers backwards:
+      // the Flutter placeholder is 10,932 bytes and the real mark is 20,288,
+      // so `lessThan(40000)` was GREEN on the exact artifact it was written to
+      // reject. Reverting the appiconset would have passed it.
+      //
+      // The corner of the icon is the accent the wordmark's tile uses, and
+      // nothing about a blue Flutter logo is.
       final master = File('${appicon.path}/Icon-App-1024x1024@1x.png');
 
       expect(master.existsSync(), isTrue);
+
+      final corner = _pixelAt(master.readAsBytesSync(), 8, 0);
+      final accent = SunburstColors.sunburstPop.accentWarm;
+
       expect(
-        master.readAsBytesSync().length,
-        lessThan(40000),
+        corner,
+        <int>[
+          (accent.r * 255).round(),
+          (accent.g * 255).round(),
+          (accent.b * 255).round(),
+        ],
         reason:
-            'the flat mark compresses to a few KB; the Flutter placeholder is '
-            'a gradient and does not',
+            'the icon corner is not SunburstColors.accentWarm — is this still '
+            "Flutter's placeholder, or has the palette moved without the icon "
+            'being regenerated?',
       );
     });
 
@@ -95,4 +108,70 @@ void main() {
       }
     });
   });
+}
+
+/// The RGB triple at [x], [y] of an 8-bit RGB PNG.
+///
+/// A small decoder rather than a dependency: the icons this reads are written
+/// by `tool/icon/resize_app_icon.sh` as non-interlaced 8-bit RGB, which is the
+/// one shape it has to handle. It asserts that shape rather than assuming it,
+/// so a re-encode that changed the format fails loudly instead of returning a
+/// plausible wrong colour.
+List<int> _pixelAt(Uint8List bytes, int x, int y) {
+  expect(bytes[24], 8, reason: 'expected an 8-bit PNG');
+  expect(bytes[25], 2, reason: 'expected truecolour RGB with no alpha');
+  expect(bytes[28], 0, reason: 'expected a non-interlaced PNG');
+
+  final width = ByteData.sublistView(bytes, 16, 20).getUint32(0);
+
+  // Walk the chunks to collect IDAT, which may be split across several.
+  final data = BytesBuilder();
+  var offset = 8;
+
+  while (offset < bytes.length) {
+    final length = ByteData.sublistView(
+      bytes,
+      offset,
+      offset + 4,
+    ).getUint32(0);
+    final type = String.fromCharCodes(bytes.sublist(offset + 4, offset + 8));
+
+    if (type == 'IDAT') {
+      data.add(bytes.sublist(offset + 8, offset + 8 + length));
+    }
+
+    offset += length + 12;
+  }
+
+  final raw = ZLibDecoder().convert(data.takeBytes());
+  final stride = width * 3;
+  // ROW 0 ONLY, which is all this needs and which makes the filters tractable:
+  // every one of them references the PRIOR row, and for row 0 that row is
+  // zeros — so Up collapses to the identity, and Average and Paeth both
+  // collapse to Sub. ffmpeg writes Sub here, not None, which is what the first
+  // version of this helper wrongly assumed.
+  expect(y, 0, reason: 'this decoder reconstructs the first scanline only');
+
+  final filter = raw[0];
+
+  expect(
+    filter,
+    anyOf(0, 1, 2, 3, 4),
+    reason: 'unknown PNG filter type $filter',
+  );
+
+  final row = List<int>.filled(stride, 0);
+
+  for (var i = 0; i < stride; i++) {
+    final left = i >= 3 ? row[i - 3] : 0;
+    final value = raw[1 + i];
+
+    row[i] = switch (filter) {
+      0 || 2 => value,
+      1 || 4 => (value + left) & 0xFF,
+      _ => (value + (left ~/ 2)) & 0xFF,
+    };
+  }
+
+  return <int>[row[x * 3], row[x * 3 + 1], row[x * 3 + 2]];
 }

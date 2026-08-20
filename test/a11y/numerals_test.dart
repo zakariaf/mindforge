@@ -100,22 +100,29 @@ void main() {
       // The separator is the half of number formatting that survives having
       // the right DIGITS: `1,480` in German is as wrong as a Latin four in
       // Persian, and it looks deliberate.
+      // JOINED BEFORE MATCHING, and asserted to be non-empty first. The value
+      // is drawn by TabularText, which splits it into one Text per character,
+      // so `Text.data` is a single glyph and no per-string regex can span a
+      // grouped number. The first version of this test filtered for
+      // `\d[.,]\d{3}`, found nothing, and looped zero times — green while
+      // asserting nothing at all.
       await tester.pumpSurface(
         SweepSurface.stats,
         localeCase: LocaleCase.german,
       );
 
-      final grouped = renderedText(
-        tester,
-      ).map(visible).where((value) => RegExp(r'\d[.,]\d{3}').hasMatch(value));
+      final german = renderedText(tester).map(visible).join();
 
-      for (final value in grouped) {
-        expect(
-          value,
-          isNot(contains(',')),
-          reason: 'German groups with a full stop',
-        );
-      }
+      expect(
+        german,
+        contains('1.480'),
+        reason: 'German groups with a full stop',
+      );
+      expect(
+        german,
+        isNot(contains('1,480')),
+        reason: "1,480 is English's grouping, and it looks deliberate",
+      );
     });
   });
 

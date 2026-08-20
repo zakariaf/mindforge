@@ -221,14 +221,14 @@ void main() {
       );
     });
 
-    testWidgets('and a number with a unit still gets its fixed pitch', (
-      tester,
-    ) async {
-      // The other half: `18.6s` is a NUMBER with a unit glued on, Latin
-      // letters do not join, and the whole reason this widget exists is that
-      // its digits must not shimmer as the value changes.
+    testWidgets('and German is not shredded either', (tester) async {
+      // THE HALF THE FIRST FIX MISSED. `0 Std. 0 Min.` is prose too, and the
+      // per-character row cannot wrap: at 2.0x it measured 275pt of content in
+      // a 141pt viewport, so a German player saw it cut off mid-word with no
+      // ellipsis and no scroll affordance. The first guard tested for a
+      // JOINING script and rescued only Persian.
       await tester.pumpPopComponent(
-        const TabularText('18.6s', style: TextStyle(fontSize: 20)),
+        const TabularText('0 Std. 0 Min.', style: TextStyle(fontSize: 20)),
       );
 
       expect(
@@ -238,8 +238,33 @@ void main() {
             matching: find.byType(Text),
           ),
         ),
-        hasLength(greaterThan(1)),
+        hasLength(1),
       );
+    });
+
+    testWidgets('but a value whose digits MOVE keeps its fixed pitch', (
+      tester,
+    ) async {
+      // The line the guard draws. Every value that changes under the player's
+      // eye — the clock, a score, a streak, a percentage — carries no letter
+      // at all, which is why a letter is the right question to ask.
+      for (final value in <String>['1,480', '0:00', '100%', '×7']) {
+        await tester.pumpPopComponent(
+          TabularText(value, style: const TextStyle(fontSize: 20)),
+          resetFirst: true,
+        );
+
+        expect(
+          tester.widgetList<Text>(
+            find.descendant(
+              of: find.byType(TabularText),
+              matching: find.byType(Text),
+            ),
+          ),
+          hasLength(greaterThan(1)),
+          reason: '$value lost its tabular pitch',
+        );
+      }
     });
   });
 }
