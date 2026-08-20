@@ -64,6 +64,15 @@ void main() {
       // tripwire for E08, E09 and E10, which is why it exists before they do.
       final offenders = <String>[];
       final identifier = RegExp(r'^[a-z][a-zA-Z0-9_]*$');
+      // A PURE SEPARATOR is not a display string. A canonical serializer joins
+      // fields with `:` and `,` — E09's `StroopRound.canonical()` is the first
+      // — and those are machine-readable punctuation, not words.
+      //
+      // Deliberately these five characters and no more: a string a player can
+      // read always contains a letter or a space, and both are still refused.
+      // "Anything short" or "anything without a capital" would have let `", "`
+      // and `"— "` through, which are display strings.
+      final separator = RegExp(r'^[:,;|/]+$');
 
       for (final file in registryFiles()) {
         final code = _withoutAsserts(
@@ -78,6 +87,7 @@ void main() {
             final value = match.group(1)!;
             if (value.isEmpty) continue;
             if (identifier.hasMatch(value)) continue;
+            if (separator.hasMatch(value)) continue;
 
             offenders.add('${file.path}: "$value"');
           }
@@ -89,6 +99,31 @@ void main() {
         isEmpty,
         reason: 'these read as display strings rather than keys',
       );
+    });
+  });
+
+  group('the separator exemption is narrow', () {
+    test('a display string is still refused, however short', () {
+      // The exemption above is the kind that rots into "anything short". These
+      // are the strings it must keep out — each one a thing a player could
+      // read — asserted against the same pattern the scan uses.
+      final separator = RegExp(r'^[:,;|/]+$');
+
+      for (final display in <String>[', ', '— ', 'Red', 'x', '0:23', '·']) {
+        expect(
+          separator.hasMatch(display),
+          isFalse,
+          reason: '"$display" would have been exempted',
+        );
+      }
+    });
+
+    test('and a real separator is accepted', () {
+      final separator = RegExp(r'^[:,;|/]+$');
+
+      for (final punctuation in <String>[':', ',', '|', ';', '/']) {
+        expect(separator.hasMatch(punctuation), isTrue);
+      }
     });
   });
 
