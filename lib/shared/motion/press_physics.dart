@@ -103,7 +103,20 @@ class PressPhysicsState extends State<PressPhysics>
   /// and a duration captured at construction would keep animating after it. It
   /// also means there is no raw `Duration` in this file, which is what
   /// `check_motion_tokens.sh` is checking for.
-  late final AnimationController _controller = AnimationController(vsync: this);
+  ///
+  /// Created in [initState], **not** as a `late final` initialiser. A disabled
+  /// surface never reaches the branch that touches it, so a lazy field would
+  /// still be uninitialised at `dispose()` — and `dispose()` touching it
+  /// CREATES it, mid-unmount, where `AnimationController` looks up `TickerMode`
+  /// on a deactivated element and throws "Looking up a deactivated widget's
+  /// ancestor is unsafe". Measured, on the first disabled-surface test.
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
 
   @override
   void dispose() {
