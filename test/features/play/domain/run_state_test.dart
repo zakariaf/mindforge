@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/result_stat.dart';
+import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/data/data_failure.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
-import 'package:mindforge/features/play/domain/run_config.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
 import 'package:mindforge/features/play/domain/run_state.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
@@ -60,7 +60,7 @@ void main() {
       final over = idleRun()
           .transitionTo(RunPhase.countdown)
           .transitionTo(RunPhase.playing)
-          .toOver(snapshot: snapshot, isPersonalBest: true);
+          .toOver(isPersonalBest: true);
 
       expect(over.phase, RunPhase.over);
       expect(over.isPersonalBest, isTrue);
@@ -141,7 +141,10 @@ void main() {
       );
 
       expect(failed.saveFailure, isNotNull);
-      expect(failed.copyWith(scoreValue: 5).saveFailure, isNotNull);
+      expect(
+        failed.copyWith(elapsed: const Duration(seconds: 5)).saveFailure,
+        isNotNull,
+      );
       expect(failed.copyWith(saveFailure: null).saveFailure, isNull);
     });
   });
@@ -150,7 +153,10 @@ void main() {
     test('two identical states are equal, because listeners diff by value', () {
       expect(idleRun(), idleRun());
       expect(idleRun().hashCode, idleRun().hashCode);
-      expect(idleRun(), isNot(idleRun().copyWith(scoreValue: 1)));
+      expect(
+        idleRun(),
+        isNot(idleRun().copyWith(elapsed: const Duration(seconds: 1))),
+      );
     });
   });
 

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/hud_tone.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
-import 'package:mindforge/features/play/domain/run_outcome.dart';
+import 'package:mindforge/core/result_stat.dart';
+import 'package:mindforge/core/run_outcome.dart';
 
 void main() {
   const slot = HudSlot(

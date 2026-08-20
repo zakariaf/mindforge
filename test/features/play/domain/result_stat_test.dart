@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
+import 'package:mindforge/core/result_stat.dart';
 
 import '../../../policy/support/source_text.dart';
 import '../../../support/design_source.dart';
@@ -31,7 +31,7 @@ void main() {
       // language.
       expect(
         DesignSource.dartFieldNames(
-          'lib/features/play/domain/result_stat.dart',
+          'lib/core/result_stat.dart',
           'ResultStat',
         ),
         <String>['labelKey', 'canonicalValue', 'format'],
@@ -65,7 +65,7 @@ void main() {
       expect(units.keys.toSet(), StatFormat.values.toSet());
 
       final doc = File(
-        'lib/features/play/domain/result_stat.dart',
+        'lib/core/result_stat.dart',
       ).readAsStringSync();
 
       for (final entry in units.entries) {

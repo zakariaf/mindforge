@@ -6,17 +6,17 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/result_stat.dart';
+import 'package:mindforge/core/run_config.dart';
+import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
-import 'package:mindforge/features/play/application/save_run.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
-import 'package:mindforge/features/play/domain/run_config.dart';
-import 'package:mindforge/features/play/domain/run_outcome.dart';
+
 import 'package:mindforge/features/play/domain/run_phase.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
@@ -37,8 +37,14 @@ void main() {
   );
   const finishedSnapshot = BoardSnapshot(
     hud: GameHud(leading: slot, middle: slot),
+    // The SNAPSHOT carries the run's numbers, on every frame — not only at the
+    // end. That is what lets a timed run that expires still write a real row.
+    score: 1480,
+    correctCount: 23,
+    wrongCount: 2,
+    longestCombo: 7,
+    totalReactionMs: 14720,
     outcome: RunOutcome.completed(
-      scoreValue: 1480,
       first: ResultStat(
         labelKey: 'statAccuracy',
         canonicalValue: 923,
@@ -421,7 +427,15 @@ void main() {
           ..start()
           ..beginPlaying();
 
-        WidgetsBinding.instance.handleAppLifecycleStateChanged(lifecycle);
+        // Driven through RESUMED first. AppLifecycleListener fires on
+        // TRANSITIONS and synthesizes the intermediate states, so a jump into
+        // `hidden` from whatever a fresh binding happens to hold is not a
+        // transition it recognises. The hand-rolled observer this replaced
+        // accepted any state at any time, which made these tests pass against
+        // sequences iOS never produces.
+        WidgetsBinding.instance
+          ..handleAppLifecycleStateChanged(AppLifecycleState.resumed)
+          ..handleAppLifecycleStateChanged(lifecycle);
 
         expect(phaseIn(h.container), RunPhase.paused);
       });
@@ -438,6 +452,7 @@ void main() {
         ..beginPlaying();
 
       WidgetsBinding.instance
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed)
         ..handleAppLifecycleStateChanged(AppLifecycleState.paused)
         ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
 
@@ -451,9 +466,9 @@ void main() {
         ..start()
         ..beginPlaying();
 
-      WidgetsBinding.instance.handleAppLifecycleStateChanged(
-        AppLifecycleState.detached,
-      );
+      WidgetsBinding.instance
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.detached);
 
       expect(h.save.saved, isEmpty);
     });

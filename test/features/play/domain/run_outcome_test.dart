@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
-import 'package:mindforge/features/play/domain/run_outcome.dart';
+import 'package:mindforge/core/result_stat.dart';
+import 'package:mindforge/core/run_outcome.dart';
 
 void main() {
   const stat = ResultStat(
@@ -8,16 +8,14 @@ void main() {
     canonicalValue: 923,
     format: StatFormat.percent,
   );
-  const trio = RunCompleted(
-    scoreValue: 1480,
-    first: stat,
-    second: stat,
-    third: stat,
-  );
+  const trio = RunCompleted(first: stat, second: stat, third: stat);
 
   group('a completed outcome', () {
-    test('carries a score and exactly three stats', () {
-      expect(trio.scoreValue, 1480);
+    test('carries exactly three stats, and no score', () {
+      // The SNAPSHOT owns a run's numbers. An outcome that also carried a score
+      // would be a second authority, and a timed run that ends on the clock
+      // never gets one from the board at all — which is how every Stroop Blitz
+      // run was persisted as abandoned with a zero.
       expect(trio.stats, hasLength(3));
     });
 
@@ -31,23 +29,18 @@ void main() {
     });
 
     test('and is value-equal down to its stats', () {
-      expect(
-        trio,
-        const RunCompleted(
-          scoreValue: 1480,
-          first: stat,
-          second: stat,
-          third: stat,
-        ),
-      );
+      expect(trio, const RunCompleted(first: stat, second: stat, third: stat));
       expect(
         trio,
         isNot(
           const RunCompleted(
-            scoreValue: 1481,
             first: stat,
             second: stat,
-            third: stat,
+            third: ResultStat(
+              labelKey: 'statOther',
+              canonicalValue: 1,
+              format: StatFormat.count,
+            ),
           ),
         ),
       );

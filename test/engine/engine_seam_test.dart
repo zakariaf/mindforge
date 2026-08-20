@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/result_stat.dart';
+import 'package:mindforge/core/run_config.dart';
+import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
-import 'package:mindforge/features/play/application/save_run.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
-import 'package:mindforge/features/play/domain/run_config.dart';
-import 'package:mindforge/features/play/domain/run_outcome.dart';
+
 import 'package:mindforge/features/play/domain/run_phase.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
@@ -47,6 +47,13 @@ void main() {
     ),
     progress: progress,
     outcome: outcome,
+    // The snapshot carries the run's numbers on every frame, which is what
+    // lets a timed run that expires still write a real row.
+    score: score,
+    correctCount: 23,
+    wrongCount: 2,
+    longestCombo: 4,
+    totalReactionMs: 14720,
   );
 
   setUp(TestWidgetsFlutterBinding.ensureInitialized);
@@ -93,7 +100,6 @@ void main() {
           1480,
           progress: 1,
           outcome: const RunOutcome.completed(
-            scoreValue: 1480,
             first: ResultStat(
               labelKey: 'statAccuracy',
               canonicalValue: 923,
@@ -122,6 +128,7 @@ void main() {
       expect(end.progress, 1);
       expect(save.saved.single.metricValue, 1480);
       expect((end.outcome! as RunCompleted).stats, hasLength(3));
+      expect(save.saved.single.longestCombo, 4);
     });
 
     test('and a board update does not end the run', () {

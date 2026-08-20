@@ -15,7 +15,7 @@ void main() {
   List<File> generationPath() => <File>[
     File('lib/core/seeded_generator.dart'),
     File('lib/features/play/application/seeded_random_provider.dart'),
-    ...Directory('lib/features/play/domain')
+    ...Directory('lib/core')
         .listSync(recursive: true)
         .whereType<File>()
         .where((file) => file.path.endsWith('.dart')),

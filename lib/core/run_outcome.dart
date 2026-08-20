@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
+import 'package:mindforge/core/result_stat.dart';
 
 /// How a run ended.
 ///
@@ -11,8 +11,12 @@ sealed class RunOutcome {
   const RunOutcome();
 
   /// A run the player finished.
+  ///
+  /// It carries the three display stats and nothing else. **The run's numbers
+  /// live on `BoardSnapshot`**, because a timed run can end without the board
+  /// declaring anything at all and those numbers still have to reach the row.
+  /// One authority for figures, one for how it ended.
   const factory RunOutcome.completed({
-    required int scoreValue,
     required ResultStat first,
     required ResultStat second,
     required ResultStat third,
@@ -35,14 +39,10 @@ sealed class RunOutcome {
 final class RunCompleted extends RunOutcome {
   /// Creates a completed outcome.
   const RunCompleted({
-    required this.scoreValue,
     required this.first,
     required this.second,
     required this.third,
   });
-
-  /// The score, in the game's `ScoreFormat` canonical unit.
-  final int scoreValue;
 
   /// The first cell of the results trio.
   final ResultStat first;
@@ -60,13 +60,12 @@ final class RunCompleted extends RunOutcome {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is RunCompleted &&
-          other.scoreValue == scoreValue &&
           other.first == first &&
           other.second == second &&
           other.third == third;
 
   @override
-  int get hashCode => Object.hash(scoreValue, first, second, third);
+  int get hashCode => Object.hash(first, second, third);
 }
 
 /// The player left before the run ended.

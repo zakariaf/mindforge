@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/result_stat.dart';
 import 'package:mindforge/core/score_format.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/result_stat.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/theme/game_accent.dart';
 
@@ -19,6 +19,7 @@ GameDefinition fixtureGame({
   BoardBackground boardBackground = BoardBackground.surfaceSunk,
   List<Difficulty>? difficulties,
   bool isTimed = true,
+  ScoreSource scoreSource = ScoreSource.board,
   bool isLocked = false,
   RunLimitLookup? runLimitFor,
   GameStringIds? strings,
@@ -36,6 +37,7 @@ GameDefinition fixtureGame({
       ),
   difficulties: difficulties ?? Difficulty.values,
   boardBackground: boardBackground,
+  scoreSource: scoreSource,
   isTimed: isTimed,
   isLocked: isLocked,
   runLimitFor: runLimitFor,

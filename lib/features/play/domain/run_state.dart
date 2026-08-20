@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
+import 'package:mindforge/core/board_snapshot.dart';
+import 'package:mindforge/core/run_config.dart';
+import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/data/data_failure.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/run_config.dart';
-import 'package:mindforge/features/play/domain/run_outcome.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
 
 /// Everything the shell knows about the run in progress.
@@ -26,7 +26,6 @@ final class RunState {
     required this.elapsed,
     required this.snapshot,
     this.runLimit,
-    this.scoreValue = 0,
     this.isPersonalBest = false,
     this.saveFailure,
     this.hasFiredTimerAlarm = false,
@@ -39,7 +38,6 @@ final class RunState {
     this.runLimit,
   }) : phase = RunPhase.idle,
        elapsed = Duration.zero,
-       scoreValue = 0,
        isPersonalBest = false,
        saveFailure = null,
        hasFiredTimerAlarm = false;
@@ -58,9 +56,6 @@ final class RunState {
 
   /// How long the run may last, or `null` when it is untimed.
   final Duration? runLimit;
-
-  /// The score so far, in the game's canonical unit.
-  final int scoreValue;
 
   /// Whether this run beat the stored personal best.
   ///
@@ -142,7 +137,6 @@ final class RunState {
     RunPhase? phase,
     Duration? elapsed,
     BoardSnapshot? snapshot,
-    int? scoreValue,
     bool? isPersonalBest,
     Object? saveFailure = _unset,
     bool? hasFiredTimerAlarm,
@@ -152,7 +146,6 @@ final class RunState {
     elapsed: elapsed ?? this.elapsed,
     snapshot: snapshot ?? this.snapshot,
     runLimit: runLimit,
-    scoreValue: scoreValue ?? this.scoreValue,
     isPersonalBest: isPersonalBest ?? this.isPersonalBest,
     saveFailure: identical(saveFailure, _unset)
         ? this.saveFailure
@@ -165,15 +158,13 @@ final class RunState {
   /// [isPersonalBest] and [saveFailure] are set on this edge and nowhere else,
   /// so the state that says "new best" is the same state that says the row was
   /// written.
-  RunState toOver({
-    required BoardSnapshot snapshot,
-    bool isPersonalBest = false,
-    DataFailure? saveFailure,
-  }) => transitionTo(RunPhase.over).copyWith(
-    snapshot: snapshot,
-    isPersonalBest: isPersonalBest,
-    saveFailure: saveFailure,
-  );
+  /// It takes no snapshot: every caller passed the one the receiver already
+  /// held, which is a required parameter with exactly one legal argument.
+  RunState toOver({bool isPersonalBest = false, DataFailure? saveFailure}) =>
+      transitionTo(RunPhase.over).copyWith(
+        isPersonalBest: isPersonalBest,
+        saveFailure: saveFailure,
+      );
 
   static const Object _unset = Object();
 
@@ -186,7 +177,6 @@ final class RunState {
           other.elapsed == elapsed &&
           other.snapshot == snapshot &&
           other.runLimit == runLimit &&
-          other.scoreValue == scoreValue &&
           other.isPersonalBest == isPersonalBest &&
           other.saveFailure == saveFailure &&
           other.hasFiredTimerAlarm == hasFiredTimerAlarm;
@@ -198,7 +188,6 @@ final class RunState {
     elapsed,
     snapshot,
     runLimit,
-    scoreValue,
     isPersonalBest,
     saveFailure,
     hasFiredTimerAlarm,

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
-import 'package:mindforge/features/play/domain/run_config.dart';
+import 'package:mindforge/core/run_config.dart';
 
 import '../../../support/design_source.dart';
 
@@ -46,14 +46,14 @@ void main() {
       // rendered in another language.
       expect(
         DesignSource.dartFieldNames(
-          'lib/features/play/domain/run_config.dart',
+          'lib/core/run_config.dart',
           'RunConfig',
         ),
         <String>['gameId', 'difficulty', 'seed'],
       );
 
       expect(
-        File('lib/features/play/domain/run_config.dart').readAsStringSync(),
+        File('lib/core/run_config.dart').readAsStringSync(),
         isNot(contains('Locale')),
       );
     });

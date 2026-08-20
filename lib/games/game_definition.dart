@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/score_format.dart';
-import 'package:mindforge/features/play/domain/board_snapshot.dart';
-import 'package:mindforge/features/play/domain/run_config.dart';
 import 'package:mindforge/theme/game_accent.dart';
 
 /// Builds a game's board for one run.
@@ -33,6 +33,25 @@ enum BoardColourRole {
 
   /// Colour is never the answer, as in Schulte Grid.
   decorative,
+}
+
+/// Where a run's score comes from.
+///
+/// **Schulte Grid cannot compute its own score.** It is scored by elapsed time,
+/// elapsed time belongs to `RunTicker` inside `RunNotifier`, and `lib/games/**`
+/// is fenced from the notifier and from owning a `Stopwatch` — so a Schulte
+/// board can count tiles and has no way to know how long it took.
+///
+/// Without this field the only ways out were for the board to break the fence
+/// or for the shell to special-case `ScoreFormat.duration` — a switch on a
+/// definition field in a shell file, one step from a switch on the game id.
+/// Declaring where the score comes from keeps it data.
+enum ScoreSource {
+  /// The board reports it, on every snapshot.
+  board,
+
+  /// The shell's run clock is the score. Elapsed milliseconds, lower is better.
+  runClock,
 }
 
 /// What a board is painted on.
@@ -96,6 +115,7 @@ final class GameDefinition {
     required this.strings,
     required this.difficulties,
     required this.boardBackground,
+    required this.scoreSource,
     required this.buildBoard,
     required this.buildArtwork,
     required this.bindBoard,
@@ -114,19 +134,32 @@ final class GameDefinition {
          'identity colour sits behind the hues that ARE the question.',
        ),
        assert(
+         scoreSource != ScoreSource.runClock ||
+             scoreFormat == ScoreFormat.duration,
+         'a game scored by the run clock is scored in milliseconds, so its '
+         'ScoreFormat is duration. Any other pairing would rank a time as '
+         'though higher were better.',
+       ),
+       assert(
          isTimed || runLimitFor == null,
          'an untimed game has no run limit. Schulte Grid ends when the last '
          'tile is found, and a shell-imposed limit would cut the player off '
          'mid-board.',
-       ) {
-    for (final key in strings.keys) {
-      assert(
-        RegExp(r'^[a-z][a-zA-Z0-9]*$').hasMatch(key),
-        'a game declares ARB KEYS, not display strings. "$key" is not '
-        'lowerCamelCase ASCII.',
-      );
-    }
-  }
+       ),
+       // Inside the assert, not a loop in the constructor BODY: a body loop
+       // runs in release doing nothing, and recompiles the pattern once per
+       // key per definition.
+       assert(
+         strings.keys.every(_isArbKey),
+         'a game declares ARB KEYS, not display strings. Every one must be '
+         'lowerCamelCase ASCII.',
+       );
+
+  /// Whether [key] is a lowerCamelCase ASCII ARB key.
+  static bool _isArbKey(String key) => _arbKey.hasMatch(key);
+
+  /// Compiled once, not once per key per definition.
+  static final RegExp _arbKey = RegExp(r'^[a-z][a-zA-Z0-9]*$');
 
   /// The stable id, used as a route segment and a database key.
   final GameId id;
@@ -148,6 +181,9 @@ final class GameDefinition {
 
   /// What the board is painted on.
   final BoardBackground boardBackground;
+
+  /// Where this game's score comes from.
+  final ScoreSource scoreSource;
 
   /// Whether the shell should run a countdown clock for it.
   final bool isTimed;
@@ -202,6 +238,10 @@ final class GameDefinition {
   /// **Here rather than on `Difficulty`.** Stroop Rush is a fixed round count
   /// and Schulte Grid is a race scored by elapsed time; one answer on the enum
   /// would force the shell to cut a Schulte player off mid-board.
+  ///
+  /// No `isTimed` branch: the assert above already guarantees an untimed game
+  /// declares no lookup, so `_runLimitFor` is null whenever `isTimed` is false
+  /// and the ternary could not change the answer.
   Duration? runLimitFor(Difficulty difficulty) =>
-      isTimed ? _runLimitFor?.call(difficulty) : null;
+      _runLimitFor?.call(difficulty);
 }
