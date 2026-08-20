@@ -40,6 +40,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.chartBarRadiusBottom,
     required this.settingsChipRadius,
     required this.paletteSwatchRadius,
+    required this.heroSwatchSize,
+    required this.heroSwatchRadius,
+    required this.heroSwatchShadow,
     required this.countdownRing,
     required this.countdownDot,
     required this.countdownReadyShadow,
@@ -202,6 +205,21 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
 
   /// A palette swatch. `app.html`: `.cbprev i{border-radius:5px}`.
   final Radius paletteSwatchRadius;
+
+  /// One hero swatch chip. `app.html`: `.swatchrow i{width:38px;height:38px}`.
+  ///
+  /// The four chips under a game's tagline on its detail screen: the game's
+  /// answer colours, each carrying its ink FILL PATTERN. They are the legend
+  /// for the second channel, met before the first round rather than during it.
+  final double heroSwatchSize;
+
+  /// A hero swatch's corner. `app.html`: `.swatchrow i{border-radius:12px}`.
+  final Radius heroSwatchRadius;
+
+  /// A hero swatch's hard offset. `app.html`: `.swatchrow i{box-shadow:2px 2px
+  /// 0 var(--ink)}` — smaller than [e1], because a 38pt chip carrying the full
+  /// 3px edge takes e1 as a slab rather than a lift.
+  final Offset heroSwatchShadow;
 
   /// The countdown ring's diameter. `app.html`: `.bigring{width:238px}`.
   final double countdownRing;
@@ -430,6 +448,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom,
     settingsChipRadius,
     paletteSwatchRadius,
+    heroSwatchSize,
+    heroSwatchRadius,
+    heroSwatchShadow,
     countdownRing,
     countdownDot,
     countdownReadyShadow,
@@ -499,6 +520,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Radius? chartBarRadiusBottom,
     Radius? settingsChipRadius,
     Radius? paletteSwatchRadius,
+    double? heroSwatchSize,
+    Radius? heroSwatchRadius,
+    Offset? heroSwatchShadow,
     double? countdownRing,
     double? countdownDot,
     Offset? countdownReadyShadow,
@@ -548,6 +572,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
     settingsChipRadius: settingsChipRadius ?? this.settingsChipRadius,
     paletteSwatchRadius: paletteSwatchRadius ?? this.paletteSwatchRadius,
+    heroSwatchSize: heroSwatchSize ?? this.heroSwatchSize,
+    heroSwatchRadius: heroSwatchRadius ?? this.heroSwatchRadius,
+    heroSwatchShadow: heroSwatchShadow ?? this.heroSwatchShadow,
     countdownRing: countdownRing ?? this.countdownRing,
     countdownDot: countdownDot ?? this.countdownDot,
     countdownReadyShadow: countdownReadyShadow ?? this.countdownReadyShadow,
@@ -609,6 +636,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       ),
       settingsChipRadius: r(settingsChipRadius, other.settingsChipRadius),
       paletteSwatchRadius: r(paletteSwatchRadius, other.paletteSwatchRadius),
+      heroSwatchSize: d(heroSwatchSize, other.heroSwatchSize),
+      heroSwatchRadius: r(heroSwatchRadius, other.heroSwatchRadius),
+      heroSwatchShadow: o(heroSwatchShadow, other.heroSwatchShadow),
       countdownRing: d(countdownRing, other.countdownRing),
       countdownDot: d(countdownDot, other.countdownDot),
       countdownReadyShadow: o(
@@ -670,6 +700,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: Radius.circular(3),
     settingsChipRadius: Radius.circular(11),
     paletteSwatchRadius: Radius.circular(5),
+    heroSwatchSize: 38,
+    heroSwatchRadius: Radius.circular(12),
+    heroSwatchShadow: Offset(2, 2),
     countdownRing: 238,
     countdownDot: 14,
     countdownReadyShadow: Offset(4, 4),

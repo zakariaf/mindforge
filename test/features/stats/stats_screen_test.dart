@@ -303,6 +303,7 @@ void main() {
         boardBackground: fixtureAlpha.boardBackground,
         buildBoard: fixtureAlpha.buildBoard,
         buildArtwork: fixtureAlpha.buildArtwork,
+        buildHeroArt: (context) => const SizedBox.shrink(),
         bindBoard: fixtureAlpha.bindBoard,
       );
 

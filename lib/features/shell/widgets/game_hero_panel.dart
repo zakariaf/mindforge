@@ -113,10 +113,18 @@ class GameHeroPanel extends StatelessWidget {
                     style: type.body.copyWith(color: colours.textPrimary),
                   ),
                   if (artwork != null) ...<Widget>[
+                    // app.html: `.hero p{margin-bottom:14px}`.
                     const SizedBox(height: 14),
-                    // Decoration, by the same rule as the card's: the panel
-                    // above it has already named the game three ways.
-                    ExcludeSemantics(child: artwork),
+                    // ALIGNED TO THE START, so a row that wants to be four
+                    // chips wide is not stretched across the hero. The column
+                    // above stretches its children, which is right for the
+                    // text and wrong for a drawing with a size of its own.
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      // Decoration, by the same rule as the card's: the panel
+                      // above it has already named the game three ways.
+                      child: ExcludeSemantics(child: artwork),
+                    ),
                   ],
                 ],
               ),

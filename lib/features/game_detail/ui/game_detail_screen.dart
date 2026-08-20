@@ -104,7 +104,7 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
                   kicker: strings.kicker,
                   title: strings.title,
                   tagline: strings.tagline,
-                  artwork: definition.buildArtwork(context),
+                  artwork: definition.buildHeroArt(context),
                 ),
                 const SizedBox(height: 16),
                 _StatDuo(definition: definition),
@@ -126,7 +126,10 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
                       setState(() => _chosen = offered[index]),
                 ),
                 const SizedBox(height: 16),
-                const DailyMixCardSlot(variant: DailyMixVariant.paper),
+                DailyMixCardSlot(
+                  variant: DailyMixVariant.paper,
+                  hideFor: definition.id,
+                ),
                 const SizedBox(height: 26),
                 PopButton(
                   label: l10n.playButton,

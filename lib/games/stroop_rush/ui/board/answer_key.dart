@@ -98,66 +98,81 @@ class StroopAnswerKey extends StatelessWidget {
         // on a cramped screen. A SizedBox restating the token here was either
         // a no-op or silently clamped away, and a reader could not tell which
         // number won.
-        child: SizedBox.expand(
-          child: Stack(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  _PatternPanel(
-                    answer: answer,
-                    isColourBlindPalette: isColourBlindPalette,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.symmetric(
-                        horizontal: SunburstShape.space3,
+        // INSET BY THE EDGE AND CLIPPED TO IT. `PopSurface` paints its border
+        // as a `BoxDecoration` behind its child and does not clip — so a child
+        // that fills the surface paints straight over the ink edge and out to
+        // the square corners. The pattern panel is exactly such a child: it
+        // reached the start edge with no border and no shadow, while the label
+        // half kept both, and the key looked cut in two.
+        child: Padding(
+          padding: EdgeInsetsDirectional.all(shape.borderWidth),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(
+              // The INNER curve: the outer radius less the edge it sits
+              // inside, or the clip crosses the border on the diagonal.
+              Radius.circular(shape.radiusLg.x - shape.borderWidth),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    _PatternPanel(
+                      answer: answer,
+                      isColourBlindPalette: isColourBlindPalette,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.symmetric(
+                          horizontal: SunburstShape.space3,
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) => Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            // THE STEP THAT FITS ON ONE LINE, chosen once, the
+                            // same two-step rule the stimulus uses. `پرتەقاڵی`
+                            // beside a 56pt panel does not fit at the full step
+                            // on a 390pt phone; a smaller step reads better than
+                            // a colour word broken across two lines.
+                            style:
+                                _fits(context, label, type.button, constraints)
+                                ? type.button.copyWith(
+                                    // FROM THE PALETTE, not the call site: ink
+                                    // on yellow and paper on everything else,
+                                    // and the palette is the only thing that
+                                    // knows which.
+                                    color: colours.answerLabel(answer),
+                                  )
+                                : type.buttonCompact.copyWith(
+                                    color: colours.answerLabel(answer),
+                                  ),
+                          ),
+                        ),
                       ),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) => Text(
-                          label,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          // THE STEP THAT FITS ON ONE LINE, chosen once, the
-                          // same two-step rule the stimulus uses. `پرتەقاڵی`
-                          // beside a 56pt panel does not fit at the full step
-                          // on a 390pt phone; a smaller step reads better than
-                          // a colour word broken across two lines.
-                          style: _fits(context, label, type.button, constraints)
-                              ? type.button.copyWith(
-                                  // FROM THE PALETTE, not the call site: ink
-                                  // on yellow and paper on everything else,
-                                  // and the palette is the only thing that
-                                  // knows which.
-                                  color: colours.answerLabel(answer),
-                                )
-                              : type.buttonCompact.copyWith(
-                                  color: colours.answerLabel(answer),
-                                ),
+                    ),
+                  ],
+                ),
+                if (isStruck)
+                  // FULL WIDTH IN BOTH DIRECTIONS. `start: 0, end: 0` rather
+                  // than a width, so it never becomes a half-bar under RTL.
+                  PositionedDirectional(
+                    start: 0,
+                    end: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: ColoredBox(
+                        color: colours.border,
+                        child: SizedBox(
+                          height: shape.answerStrikeHeight,
+                          width: double.infinity,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-              if (isStruck)
-                // FULL WIDTH IN BOTH DIRECTIONS. `start: 0, end: 0` rather
-                // than a width, so it never becomes a half-bar under RTL.
-                PositionedDirectional(
-                  start: 0,
-                  end: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: ColoredBox(
-                      color: colours.border,
-                      child: SizedBox(
-                        height: shape.answerStrikeHeight,
-                        width: double.infinity,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

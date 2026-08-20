@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/games/game_registry.dart';
@@ -22,16 +23,25 @@ import 'package:mindforge/routing/routes.dart';
 /// does not exist.
 class DailyMixCardSlot extends ConsumerWidget {
   /// Creates the slot in [variant]'s skin.
-  const DailyMixCardSlot({required this.variant, super.key});
+  const DailyMixCardSlot({required this.variant, this.hideFor, super.key});
 
   /// Which skin: grape on Home, paper on game detail.
   final DailyMixVariant variant;
+
+  /// The game whose screen this is, when it has one.
+  ///
+  /// **A card that led to the page already on display is a dead affordance.**
+  /// `app.html` draws a Daily Mix card on the detail screen and it summarises a
+  /// multi-game mix; ours names the ONE game today's pick chose, so on that
+  /// game's own screen it read "Today's pick: Stroop Rush" and went nowhere.
+  /// Home passes nothing here and always shows it.
+  final GameId? hideFor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pick = ref.watch(homeHubProvider).dailyPick;
 
-    if (pick == null) return const SizedBox.shrink();
+    if (pick == null || pick == hideFor) return const SizedBox.shrink();
 
     final l10n = AppLocalizations.of(context);
     final definition = ref.watch(gameDefinitionProvider(pick));

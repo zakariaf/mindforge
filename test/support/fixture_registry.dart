@@ -75,6 +75,7 @@ GameDefinition fixtureDefinition({
       ? (context, run) => const SizedBox.shrink()
       : (context, run) => buildBoard(context, run),
   buildArtwork: (context) => const SizedBox.shrink(),
+  buildHeroArt: (context) => const SizedBox.shrink(),
   bindBoard: (ref, run, onChanged) => _idleSnapshot,
 );
 

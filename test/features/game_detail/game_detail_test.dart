@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mindforge/app.dart';
@@ -11,6 +12,7 @@ import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
+import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
@@ -202,6 +204,7 @@ void main() {
         boardBackground: fixtureBeta.boardBackground,
         buildBoard: fixtureBeta.buildBoard,
         buildArtwork: fixtureBeta.buildArtwork,
+        buildHeroArt: (context) => const SizedBox.shrink(),
         bindBoard: fixtureBeta.bindBoard,
       );
 
@@ -349,6 +352,38 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  group('the Daily Mix card on a game detail screen', () {
+    testWidgets('is ABSENT on the page it would send you to', (tester) async {
+      // A CARD THAT NAVIGATES TO ITSELF. On the detail screen of whichever
+      // game today's pick chose, the card read "Today's pick: Stroop Rush" and
+      // led to the screen already on display. app.html draws a Daily Mix card
+      // here, but its card summarises a multi-game mix; ours names one game,
+      // and on that game's own page it is the dead affordance E11 forbids.
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        initialLocation: Routes.gameDetail(fixtureBeta.id),
+      );
+
+      final pick = ProviderScope.containerOf(
+        tester.element(find.byType(GameDetailScreen)),
+      ).read(homeHubProvider).dailyPick;
+
+      expect(pick, fixtureBeta.id, reason: 'the fixture pick is this game');
+      expect(find.byType(DailyMixCard), findsNothing);
+    });
+
+    testWidgets('and PRESENT on a game it does not point at', (tester) async {
+      // The other half, so the row is hidden for the right reason rather than
+      // hidden always.
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        initialLocation: Routes.gameDetail(fixtureAlpha.id),
+      );
+
+      expect(find.byType(DailyMixCard), findsOneWidget);
+    });
+  });
 }
 
 /// A definition offering only [difficulties].
@@ -364,5 +399,6 @@ GameDefinition fixtureWithDifficulties(List<Difficulty> difficulties) =>
       boardBackground: fixtureAlpha.boardBackground,
       buildBoard: fixtureAlpha.buildBoard,
       buildArtwork: fixtureAlpha.buildArtwork,
+      buildHeroArt: (context) => const SizedBox.shrink(),
       bindBoard: fixtureAlpha.bindBoard,
     );

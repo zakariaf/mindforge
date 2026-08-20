@@ -4,6 +4,7 @@ import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/stroop_rush/application/stroop_board_notifier.dart';
 import 'package:mindforge/games/stroop_rush/ui/board/stroop_artwork.dart';
+import 'package:mindforge/games/stroop_rush/ui/board/stroop_hero_swatches.dart';
 import 'package:mindforge/games/stroop_rush/ui/stroop_board.dart';
 import 'package:mindforge/theme/game_accent.dart';
 
@@ -40,6 +41,7 @@ final GameDefinition stroopRushDefinition = GameDefinition(
   // two could disagree.
   buildBoard: (context, run) => StroopBoard(run: run),
   buildArtwork: (context) => const StroopArtwork(),
+  buildHeroArt: (context) => const StroopHeroSwatches(),
   // A SUBSCRIPTION, not a read. The shell is handed a listener so a board
   // update reaches it without the run rebuilding — a read here re-ran the
   // run's build and reset the phase, which is the defect E07 fixed.
