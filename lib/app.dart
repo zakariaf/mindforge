@@ -4,6 +4,7 @@ import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
 import 'package:mindforge/l10n/locale_resolution.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
+import 'package:mindforge/routing/app_router.dart';
 import 'package:mindforge/shared/motion/motion_preference_scope.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
@@ -40,7 +41,7 @@ class MindForgeApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
+    return MaterialApp.router(
       // Resolved before the first frame: settingsProvider is SEEDED with the
       // row bootstrap() read ahead of runApp, so a Persian user's cold start
       // never paints an English LTR frame and then flips.
@@ -60,7 +61,7 @@ class MindForgeApp extends ConsumerWidget {
       // MediaQuery that is not the one the screens below are reading.
       builder: (context, child) =>
           MotionPreferenceScope(child: child ?? const SizedBox.shrink()),
-      home: const Scaffold(),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }

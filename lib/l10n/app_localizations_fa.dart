@@ -330,4 +330,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get gamePlaceholderLockedKicker => 'به‌زودی';
+
+  @override
+  String get notFoundTitle => 'این صفحه دیگر وجود ندارد';
 }

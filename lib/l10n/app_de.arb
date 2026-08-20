@@ -85,5 +85,6 @@
   "gamePlaceholderTurquoiseKicker": "FOKUS",
   "gamePlaceholderLockedName": "Demnächst",
   "gamePlaceholderLockedTagline": "Noch nicht freigeschaltet",
-  "gamePlaceholderLockedKicker": "BALD"
+  "gamePlaceholderLockedKicker": "BALD",
+  "notFoundTitle": "Diesen Bildschirm gibt es nicht mehr"
 }

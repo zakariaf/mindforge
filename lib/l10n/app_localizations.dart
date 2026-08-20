@@ -622,6 +622,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SOON'**
   String get gamePlaceholderLockedKicker;
+
+  /// Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace.
+  ///
+  /// In en, this message translates to:
+  /// **'That screen has moved'**
+  String get notFoundTitle;
 }
 
 class _AppLocalizationsDelegate

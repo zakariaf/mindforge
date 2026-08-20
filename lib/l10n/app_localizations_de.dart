@@ -335,4 +335,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get gamePlaceholderLockedKicker => 'BALD';
+
+  @override
+  String get notFoundTitle => 'Diesen Bildschirm gibt es nicht mehr';
 }

@@ -335,4 +335,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gamePlaceholderLockedKicker => 'SOON';
+
+  @override
+  String get notFoundTitle => 'That screen has moved';
 }

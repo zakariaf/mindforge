@@ -38,6 +38,7 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
 
   return <String, String>{
     'appTitle': l10n.appTitle,
+    'notFoundTitle': l10n.notFoundTitle,
     // E08's placeholder game strings. They exist so the eight shell screens
     // are renderable before Stroop Rush does, and E09 deletes them.
     'gamePlaceholderCoralName': l10n.gamePlaceholderCoralName,
@@ -153,6 +154,8 @@ typedef TypeSlot = ({String step, int lines});
 /// 320pt phone at 1.4x expansion, which is where German is heading.
 const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'appTitle': (step: 'displayL', lines: 1),
+  // Centred on an otherwise empty screen, so it has the width to wrap twice.
+  'notFoundTitle': (step: 'title', lines: 2),
   'navPlay': (step: 'label', lines: 1),
   'navStats': (step: 'label', lines: 1),
   'navSettings': (step: 'label', lines: 1),

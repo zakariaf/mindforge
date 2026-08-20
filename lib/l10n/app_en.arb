@@ -426,5 +426,9 @@
   "gamePlaceholderLockedKicker": "SOON",
   "@gamePlaceholderLockedKicker": {
     "description": "The locked slot kicker. Uppercase authored per locale."
+  },
+  "notFoundTitle": "That screen has moved",
+  "@notFoundTitle": {
+    "description": "Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace."
   }
 }
