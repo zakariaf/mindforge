@@ -13,6 +13,7 @@ import 'package:mindforge/features/shell/widgets/daily_mix_card_slot.dart';
 import 'package:mindforge/features/shell/widgets/equal_row.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
+import 'package:mindforge/features/shell/widgets/top_bar.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
@@ -84,33 +85,14 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            // app.html: `.topbar{padding:2px 20px 16px}`.
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 2, 20, 16),
-            child: Row(
-              children: <Widget>[
-                PopIconButton(
-                  // The chevron mirrors, because "back" is a
-                  // reading-direction word. The glyph table decides that, not
-                  // this screen.
-                  glyph: SunburstGlyph.back,
-                  semanticLabel: l10n.homeButton,
-                  onPressed: () => context.go(Routes.home),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  // DRAWN, NOT ANNOUNCED. app.html puts the game's name in the
-                  // bar and again in the hero below it; the hero's copy is the
-                  // h1, so a screen reader that met both would hear the same
-                  // three words twice before reaching anything new.
-                  child: ExcludeSemantics(
-                    child: Text(
-                      strings.title,
-                      style: type.titleBar.copyWith(color: colours.textPrimary),
-                    ),
-                  ),
-                ),
-              ],
+          TopBar(
+            title: strings.title,
+            leading: PopIconButton(
+              // The chevron mirrors, because "back" is a reading-direction
+              // word. The glyph table decides that, not this screen.
+              glyph: SunburstGlyph.back,
+              semanticLabel: l10n.homeButton,
+              onPressed: () => context.go(Routes.home),
             ),
           ),
           Expanded(

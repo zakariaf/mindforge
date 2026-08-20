@@ -34,6 +34,7 @@ void main() {
     LocaleCase? localeCase,
     Device device = Device.reference390,
     TextScaler textScaler = TextScaler.noScaling,
+    double height = 560,
   }) => tester.pumpPopComponent(
     ProviderScope(
       overrides: [
@@ -46,7 +47,7 @@ void main() {
       ],
       child: SizedBox(
         width: device.logicalSize.width - 40,
-        height: 560,
+        height: height,
         child: StroopBoard(run: run),
       ),
     ),
@@ -220,5 +221,64 @@ void main() {
         });
       }
     }
+  });
+
+  group('the stimulus card gives way before the field overflows', () {
+    /// The card's resolved padding.
+    EdgeInsetsGeometry cardPadding(WidgetTester tester) => tester
+        .widget<PopSurface>(
+          find
+              .descendant(
+                of: find.byType(StroopBoard),
+                matching: find.byType(PopSurface),
+              )
+              .first,
+        )
+        .padding;
+
+    testWidgets('takes app.html padding exactly, at the reference', (
+      tester,
+    ) async {
+      // `.stim{padding:52px 16px 58px}`. At 390x844 and no text scaling there
+      // is slack to spare, so the design's own numbers are what the card gets
+      // — the degrade below must not cost anything at the size the reference
+      // screenshot was rendered at.
+      await pumpBoard(tester);
+
+      expect(
+        cardPadding(tester),
+        const EdgeInsetsDirectional.fromSTEB(16, 52, 16, 58),
+      );
+    });
+
+    testWidgets('and eats its own padding first when the field shrinks', (
+      tester,
+    ) async {
+      // PADDING BEFORE GLYPH. The word is the game; the whitespace around it
+      // is not. A card that shrank the word first would make the thing the
+      // player has to read smaller in order to keep breathing room nobody
+      // asked for.
+      await pumpBoard(tester, height: 400);
+
+      final padding = cardPadding(tester) as EdgeInsetsDirectional;
+
+      expect(padding.top, lessThan(52));
+      expect(padding.top, greaterThanOrEqualTo(0));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('and never overflows, at any size and any scale', (
+      tester,
+    ) async {
+      // The matrix in stroop_overflow_matrix_test covers locale and scale on a
+      // full-height field. This covers the other axis: a field short enough
+      // that even the compact step does not fit, which is what x2.0 on a 320
+      // produces once the shell top bar has taken its share.
+      for (final height in <double>[560, 460, 360, 260, 200]) {
+        await pumpBoard(tester, height: height, localeCase: LocaleCase.sorani);
+
+        expect(tester.takeException(), isNull, reason: 'at ${height}pt');
+      }
+    });
   });
 }

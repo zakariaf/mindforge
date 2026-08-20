@@ -8,15 +8,18 @@ import 'package:mindforge/features/play/application/run_notifier.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
 import 'package:mindforge/features/play/ui/hud_row.dart';
 import 'package:mindforge/features/shell/widgets/play_band.dart';
+import 'package:mindforge/features/shell/widgets/top_bar.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/ui/components/pop_button.dart';
+import 'package:mindforge/ui/components/pop_chip.dart';
 import 'package:mindforge/ui/components/pop_icon_button.dart';
 import 'package:mindforge/ui/components/pop_progress_bar.dart';
 import 'package:mindforge/ui/components/pop_sheet.dart';
@@ -78,79 +81,77 @@ class PlayScaffold extends ConsumerWidget {
           BoardBackground.surfaceSunk => colours.surfaceSunk,
           BoardBackground.gameAccent => accent,
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            // The screen's one h1, announced and not drawn. The board IS the
-            // screen visually, so there is no title to paint — but a screen
-            // reader still needs to be told which game it just landed in.
-            Semantics(
-              header: true,
-              label: ref.watch(gameStringsProvider)(definition).title,
-              child: const SizedBox.shrink(),
-            ),
-            PlayBand(
-              accent: definition.accent,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(child: HudRow(hud: run.hud)),
-                      const SizedBox(width: 12),
-                      // IN THE BAND, not on a row of its own below it. A
-                      // separate row cost the board twelve points of height
-                      // for one 48pt control; in the chrome it costs nothing,
-                      // because the band is already as tall as its pills.
-                      //
-                      // The design draws NO pause control at all — its play
-                      // band is three pills and a track — and this is a
-                      // deliberate addition. iOS's edge-swipe does pause the
-                      // run, and it is not a thing a player finds mid-Blitz.
-                      // The pause glyph does not mirror: two bars, not a
-                      // direction.
-                      PopIconButton(
-                        glyph: SunburstGlyph.pause,
-                        semanticLabel: l10n.pauseTitle,
-                        onPressed: () => ref
-                            .read(runNotifierProvider(config).notifier)
-                            .pause(),
-                      ),
-                    ],
-                  ),
-                  // THE TRACK IS ABSENT, not empty, when a board reports no
-                  // progress. An empty well says "nothing done yet" about a
-                  // game that has no measurable progress at all.
-                  if (progress != null) ...<Widget>[
-                    const SizedBox(height: 10),
-                    PopProgressBar(
-                      value: progress,
-                      fill: colours.accentFor(
-                        definition.accent,
-                        GameColourRole.deep,
-                      ),
-                      semanticLabel: l10n.hudFound,
-                      semanticValue: ref
-                          .watch(localeNumbersProvider)
-                          .percent(progress),
-                    ),
-                  ],
-                ],
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // The screen's one h1, announced and not drawn. The board IS the
+              // screen visually, so there is no title to paint — but a screen
+              // reader still needs to be told which game it just landed in.
+              Semantics(
+                header: true,
+                label: ref.watch(gameStringsProvider)(definition).title,
+                child: const SizedBox.shrink(),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                // THE GUTTER IS THE SHELL'S. A board that inset itself would
-                // be deciding its own margins, and two games would disagree.
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 20),
-                child: SafeArea(
-                  top: false,
-                  child: definition.buildBoard(context, config),
+              // app.html draws `.topbar` here: the pause control, the game's
+              // name and the difficulty chip. The difficulty is state the player
+              // CHOSE one screen ago and can see nowhere else during a run.
+              TopBar(
+                title: ref.watch(gameStringsProvider)(definition).title,
+                leading: PopIconButton(
+                  // The design draws the pause HERE, in the bar, and the band
+                  // stays what it is: three pills and a track. The pause glyph
+                  // does not mirror — two bars, not a direction.
+                  glyph: SunburstGlyph.pause,
+                  semanticLabel: l10n.pauseTitle,
+                  onPressed: () =>
+                      ref.read(runNotifierProvider(config).notifier).pause(),
+                ),
+                trailing: PopChip(
+                  label: difficultyLabel(l10n, config.difficulty),
                 ),
               ),
-            ),
-          ],
+              PlayBand(
+                accent: definition.accent,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    HudRow(hud: run.hud),
+                    // THE TRACK IS ABSENT, not empty, when a board reports no
+                    // progress. An empty well says "nothing done yet" about a
+                    // game that has no measurable progress at all.
+                    if (progress != null) ...<Widget>[
+                      const SizedBox(height: 10),
+                      PopProgressBar(
+                        value: progress,
+                        fill: colours.accentFor(
+                          definition.accent,
+                          GameColourRole.deep,
+                        ),
+                        semanticLabel: l10n.hudFound,
+                        semanticValue: ref
+                            .watch(localeNumbersProvider)
+                            .percent(progress),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  // THE GUTTER IS THE SHELL'S. A board that inset itself would
+                  // be deciding its own margins, and two games would disagree.
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 20),
+                  child: SafeArea(
+                    top: false,
+                    child: definition.buildBoard(context, config),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
