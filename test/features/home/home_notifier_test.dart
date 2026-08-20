@@ -54,7 +54,7 @@ void main() {
       expect(
         containerAt(
           DateTime.utc(2026, 1, 1, 20),
-        ).read(homeStateProvider).daypart,
+        ).read(homeHubProvider).daypart,
         Daypart.evening,
       );
     });
@@ -64,7 +64,7 @@ void main() {
     test('is rendered in order, unfiltered', () {
       // A locked game still appears: the hub draws it as a "coming soon" card
       // rather than hiding it.
-      final state = containerAt(DateTime.utc(2026)).read(homeStateProvider);
+      final state = containerAt(DateTime.utc(2026)).read(homeHubProvider);
 
       expect(
         state.games.map((game) => game.id.value),
@@ -78,7 +78,7 @@ void main() {
 
     test('and unlockedCount counts only what is playable', () {
       expect(
-        containerAt(DateTime.utc(2026)).read(homeStateProvider).unlockedCount,
+        containerAt(DateTime.utc(2026)).read(homeHubProvider).unlockedCount,
         2,
       );
     });
@@ -99,7 +99,7 @@ void main() {
         Intl.defaultLocale = tag;
         picks[tag] = containerAt(
           DateTime.utc(2026, 3, 21),
-        ).read(homeStateProvider).dailyPick;
+        ).read(homeHubProvider).dailyPick;
       }
 
       for (final entry in picks.entries) {

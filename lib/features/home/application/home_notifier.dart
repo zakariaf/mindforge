@@ -53,11 +53,17 @@ final class HomeState {
 
 /// The hub's state.
 ///
+/// Named for the hub rather than for its state. Two gates ban Riverpod's
+/// legacy mutable-provider shape by grepping for its name, and a provider whose
+/// own name ends in `...State` + `Provider` contains that string as a
+/// substring. A plain `Provider` is not what those gates are looking for, but
+/// the collision is real and a name is the cheaper side to move.
+///
 /// **It produces keys and ids, never text.** The greeting is a `Daypart`, the
 /// games are definitions carrying ARB keys, and the daily pick is a `GameId`.
 /// Everything a person reads is resolved by the screen, at render, in whatever
 /// locale is active then.
-final Provider<HomeState> homeStateProvider = Provider<HomeState>((ref) {
+final Provider<HomeState> homeHubProvider = Provider<HomeState>((ref) {
   final games = ref.watch(gameRegistryProvider);
   final now = ref.watch(clockProvider).now();
 
