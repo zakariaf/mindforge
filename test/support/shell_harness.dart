@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,6 +88,8 @@ extension PumpShell on WidgetTester {
     final seeded = settings.withLocaleOverride(resolved.locale);
     // The live value a write mutates, so a second write sees the first one.
     var current = seeded;
+    final settingsChanges = StreamController<AppSettings>.broadcast()
+      ..add(seeded);
 
     useDevice(this, device);
 
@@ -128,9 +131,18 @@ extension PumpShell on WidgetTester {
             Clock.fixed(now ?? DateTime.utc(2026)),
           ),
           initialAppSettingsProvider.overrideWithValue(seeded),
-          settingsProvider.overrideWith(
-            (ref) => Stream<AppSettings>.value(seeded),
-          ),
+          // A LIVE STREAM, not a single value. The write seam below feeds it,
+          // so a settings change made through the UI reaches every reader the
+          // way it does in the app — which is what lets a test assert that
+          // choosing Persian flips the whole tree to RTL. With a one-shot
+          // stream the write was recorded and nothing re-read it, so the
+          // language sheet appeared to do nothing and the test that noticed
+          // was the first one to look.
+          settingsProvider.overrideWith((ref) {
+            ref.onDispose(settingsChanges.close);
+
+            return settingsChanges.stream;
+          }),
           // The settings WRITE seam, recorded rather than persisted. Without
           // it a toggle or the language row reaches the repository, which
           // opens a database — see the note above on why that deadlocks. It is
@@ -139,6 +151,10 @@ extension PumpShell on WidgetTester {
           writeSettingsProvider.overrideWithValue((change) async {
             current = change(current);
             settingsWrites?.add(current);
+            // PERSIST, THEN PUBLISH — the repository's own order, so a test
+            // sees what a player sees rather than a value that changed only
+            // where it was written.
+            settingsChanges.add(current);
 
             return Ok<AppSettings, DataFailure>(current);
           }),
