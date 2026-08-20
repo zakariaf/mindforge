@@ -1,0 +1,42 @@
+# gen-l10n configuration. The posture behind every key is recorded in
+# docs/decisions/0001-localisation.md and pinned by
+# test/policy/l10n_posture_test.dart.
+
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+
+# output-dir keeps the generated AppLocalizations as real, greppable source
+# under lib/l10n/ rather than hiding it inside .dart_tool/, which is what keeps
+# check_import_boundaries.sh and every policy grep honest.
+output-dir: lib/l10n
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+
+# Load-bearing: a missing key becomes a COMPILE error rather than a null at
+# runtime. That is a stronger guarantee than any grep over hardcoded literals.
+nullable-getter: false
+
+# Every message must carry an @key description. A translator working into
+# Sorani cannot guess the context of a three-word game label.
+required-resource-attributes: true
+
+# The generated files are committed and CI runs
+# `dart format --set-exit-if-changed .`, so unformatted generated output would
+# fail the format gate on a file no human wrote. This is not cosmetic.
+format: true
+
+# Deliberately ABSENT:
+#
+# synthetic-package — measured on Flutter 3.44.6, `flutter gen-l10n --help`
+#   prints "DEPRECATED. This flag cannot be enabled and should be removed."
+#
+# suppress-warnings — the untranslated-message warning is the signal E04
+#   depends on to know which of three locales is still incomplete.
+#
+# use-escaping — E04's decision, not E01's, and the reason is recorded in ADR
+#   0001: turning it on changes how existing messages parse, so it must be
+#   settled BEFORE three locales of copy exist. None of the six seeded keys
+#   contains a brace or an apostrophe, so E01 is unaffected either way.
+#
+# untranslated-messages-file — likewise E04's; it has nothing to report at one
+#   locale.

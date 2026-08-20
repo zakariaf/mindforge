@@ -38,9 +38,25 @@ BANNED = [
 # Add a name here ONLY with a written justification: WHY the reachable-but-inert
 # dependency is acceptable and what the real, enforced gate is instead.
 ALLOW: set[str] = {
-    # e.g. "http",  # reaches the tree only via <platform-interface>; the app
-    #                # declares no INTERNET permission so the socket is inert.
-    #                # Real gate: test/policy/no_internet_permission_test.
+    # MindForge (E01 T01.3), measured 2026-08-19 with
+    #   flutter pub deps --style=compact
+    # Chain: riverpod 3.4.2 -> test 1.31.0 -> shelf_web_socket 3.0.0 ->
+    #        web_socket_channel 3.0.3 -> web_socket 1.0.1
+    # Riverpod 3 declares package:test as a REGULAR dependency because it ships
+    # its test utilities inside the main package. CLAUDE.md mandates Riverpod
+    # 3.x, so this chain cannot be resolved away without violating a stronger
+    # constraint; Riverpod 2.x is the only alternative and it is refused.
+    #
+    # WHY IT IS INERT: nothing under lib/ imports package:web_socket_channel,
+    # package:web_socket or package:test. The socket code is unreachable from
+    # any entrypoint and tree-shakes out of the release binary.
+    #
+    # THE REAL, ENFORCED GATE: test/policy/banned_imports_test.dart walks every
+    # .dart file under lib/ and fails on the import URI, which is what actually
+    # decides whether a network path can run. The lock-level check here cannot
+    # distinguish "present in the graph" from "reachable from main()".
+    "web_socket_channel",
+    "web_socket",
 }
 
 USAGE = """usage: audit_deps.py <deps.json>

@@ -1,0 +1,176 @@
+# MindForge CI.
+#
+# Runs on macOS because iOS is the only shipping target. A Linux job would be
+# cheaper and would prove something about a platform nobody ships.
+#
+# ---------------------------------------------------------------------------
+# WHAT THIS PIPELINE CANNOT PROVE. Stated here rather than left implied, so
+# nobody reads a green check as more than it is:
+#
+#   * that the app launches at all. The canonical simulator, MindForge
+#     iPhone 14 (390x844), is a machine-local device; no GitHub runner has it.
+#     build-ios proves the tree COMPILES for the shipping platform. The launch
+#     proof is a local artifact: docs/verification/e01-simulator-launch.png.
+#   * screenshot parity against design/sunburst-pop/screens/. That is a human
+#     placing two images side by side. Every screen task carries an explicit
+#     comparison step, and the PR body must name which screens were compared.
+#   * font rendering, and Arabic-script shaping in fa and ckb.
+#   * RTL rendering. A goldens diff can prove shaping CHANGED; it cannot prove
+#     the shaping is correct, and it proves nothing about translation quality.
+#   * motion, press physics and haptics. A simulator reproduces no haptics at
+#     all; those are judged on a physical device in E11's sweep.
+#   * translation quality. E11 gates release on a native Persian and a native
+#     Sorani reader walking all eight screens.
+# ---------------------------------------------------------------------------
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A superseded push should stop burning macOS minutes, which GitHub bills at a
+# multiple of Linux minutes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    # VERIFY: confirm macos-15 is a current GitHub-hosted image label before merge.
+    # Never macos-latest: image drift moves Xcode and the toolchain with no diff
+    # to review (ci-pipeline-and-gates rule 2).
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out
+        # VERIFY: confirm v4 is still the current major.
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Pinned literally, and test/policy/ci_workflow_test.dart asserts this
+          # equals .toolchain.json's flutter key. .fvmrc is deliberately not
+          # used, so flutter-version-file cannot point at the record; the drift
+          # is caught by a test instead of by the action.
+          flutter-version: '3.44.6'
+          cache: true
+
+      - name: Record the host tools
+        # Not a gate — a log line, so a failure caused by an image bump is
+        # diagnosable from the run alone.
+        run: |
+          sw_vers
+          bash --version | head -1
+          xcodebuild -version
+          pod --version || echo "cocoapods not on this image"
+
+      - name: Provide bash 5
+        # tool/skill_gates.sh needs bash 4+ because one skill script uses
+        # mapfile. macOS ships bash 3.2, and so does this runner image — moving
+        # CI to macOS means the runner no longer supplies bash 5 for free the
+        # way the Ubuntu image did.
+        # VERIFY: check whether the image's default bash is already 4+, and drop
+        # this step if so.
+        run: |
+          brew install bash
+          echo "BASH5=$(brew --prefix)/bin/bash" >> "$GITHUB_ENV"
+          "$(brew --prefix)/bin/bash" --version | head -1
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Check the toolchain
+        # The runner's Flutter MUST equal .toolchain.json — that is the version
+        # which re-renders goldens and perturbs seeded determinism. Its Xcode
+        # and CocoaPods are logged as WARN instead: the image's Xcode is not
+        # ours to pin to 26.6, and failing on a fact we do not control is not a
+        # gate.
+        run: TOOLCHAIN_HOST_TOOLS=warn bash tool/check_toolchain.sh
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Check generated code is committed and fresh
+        # The decision is that generated code is COMMITTED, and a
+        # committed-generated-code policy without its freshness gate is not a
+        # policy. No build_runner generator is wired yet, so that half passes
+        # trivially today; the gen-l10n half is live from E01.
+        #
+        # `git status --porcelain`, not `git diff`: git diff compares TRACKED
+        # files only, so a newly CREATED generated file is invisible to it.
+        # That is not hypothetical — when E04 adds app_de.arb, gen-l10n emits a
+        # new lib/l10n/app_localizations_de.dart, and forgetting to commit it
+        # would leave a diff-based gate green over an incomplete generated set.
+        run: |
+          changed=$(git status --porcelain -- \
+            '*.g.dart' '*.freezed.dart' '*.drift.dart' \
+            'lib/l10n/app_localizations*.dart')
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            echo "::error::Generated output is stale or uncommitted. Run 'flutter gen-l10n' and 'dart run build_runner build', then commit the result."
+            exit 1
+          fi
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Test
+        run: flutter test --test-randomize-ordering-seed random --reporter expanded
+
+      - name: Run the skill gates
+        # A block scalar, because `run: "$BASH5" tool/...` is NOT valid YAML —
+        # content after a closing quote is a parse error, and GitHub rejects the
+        # whole file before any job starts. Every run on every branch had been
+        # failing in 0s with "this run likely failed because of a workflow file
+        # issue", which reads like infrastructure rather than a bug in the file.
+        run: |
+          "$BASH5" tool/skill_gates.sh
+
+      - name: Check directional geometry
+        # Named separately as well as inside the runner, because this is the one
+        # gate whose failure a reviewer needs to see BY NAME in the checks list.
+        # The contract: geometry stays Directional, so E04's RTL work is a
+        # string job rather than a layout rewrite across a built catalog.
+        run: .claude/skills/i18n-rtl-l10n/scripts/check_i18n_bans.sh lib
+
+  build-ios:
+    # VERIFY: same label question as above.
+    runs-on: macos-15
+    timeout-minutes: 40
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.6'
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Build for iOS without signing
+        # One named contract: THE TREE COMPILES FOR THE SHIPPING PLATFORM, not
+        # merely analyzes. A sealed-switch exhaustiveness failure is a compile
+        # error and not a lint, so an analyze-only pipeline goes green over code
+        # that will not build (lint-and-style-config rule 7).
+        # --no-codesign is what makes this runnable with no signing identity in
+        # the repository; signing belongs to E11.
+        run: flutter build ios --no-codesign
