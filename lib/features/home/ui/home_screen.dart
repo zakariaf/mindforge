@@ -4,17 +4,22 @@ import 'package:go_router/go_router.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
+import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
+import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/features/shell/widgets/wordmark.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/game_strings.dart';
+import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/l10n/score_formatter_provider.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/game_card.dart';
+import 'package:mindforge/ui/components/pop_chip.dart';
+import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 
 /// The game hub.
 ///
@@ -43,7 +48,23 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Row(children: <Widget>[Wordmark()]),
+              // THE LOCKUP KEEPS ITS WIDTH AND THE CHIP TAKES WHAT IS LEFT.
+              // A Spacer between two natural-width children overflows at a
+              // large text scale, and of the two things that could give way
+              // the brand is the wrong one: a wrapped "No streak yet" is still
+              // readable, a truncated "MindFo…" is a defect.
+              const Row(
+                children: <Widget>[
+                  Wordmark(),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: _StreakChip(),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               Text(
                 l10n.homeGreeting(hub.daypart.selector),
@@ -66,9 +87,37 @@ class HomeScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
             children: <Widget>[
-              Text(
-                l10n.yourGamesTitle,
-                style: type.title.copyWith(color: colours.textPrimary),
+              const _DailyMix(),
+              const SizedBox(height: 18),
+              // app.html: `.seclab` is a baseline-aligned row, the heading at
+              // the start edge and the count at the end. Not a title and a
+              // caption stacked: the count belongs BESIDE the thing it counts.
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: <Widget>[
+                  // The HEADING gives way, not the count. "Deine Spiele" and
+                  // "2 freigeschaltet" together are wider than 350 in German,
+                  // and a truncated count would state the wrong number.
+                  Expanded(
+                    child: Text(
+                      l10n.yourGamesTitle,
+                      style: type.sectionTitle.copyWith(
+                        color: colours.textPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.gamesUnlocked(
+                      hub.unlockedCount,
+                      ref.watch(localeNumbersProvider).count(hub.unlockedCount),
+                    ),
+                    style: type.sectionCount.copyWith(
+                      color: colours.textSecondary,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               for (final game in hub.games) ...<Widget>[
@@ -81,6 +130,42 @@ class HomeScreen extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// The daily streak, as a chip.
+///
+/// **An ICU plural, including at zero.** "No streak yet" is the `=0` branch of
+/// the same message, not a second string and not a chip reading "0 day streak"
+/// — which is what string concatenation produces and what a plural exists to
+/// prevent.
+class _StreakChip extends ConsumerWidget {
+  const _StreakChip();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final days = ref.watch(streakProvider).value?.currentDays ?? 0;
+
+    return PopChip(
+      glyph: SunburstGlyph.flame,
+      label: AppLocalizations.of(context).streakDays(
+        days,
+        ref.watch(localeNumbersProvider).count(days),
+      ),
+    );
+  }
+}
+
+/// The Daily Mix card in its grape skin.
+class _DailyMix extends ConsumerWidget {
+  const _DailyMix();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => DailyMixCard(
+    title: AppLocalizations.of(context).dailyMixTitle,
+    summary: dailyMixSummary(context, ref),
+    onTap: () =>
+        context.go(Routes.gameDetail(ref.read(homeHubProvider).dailyPick)),
+  );
 }
 
 /// One card, built entirely from a [GameDefinition].

@@ -47,11 +47,18 @@ class PopChip extends StatelessWidget {
             SunburstGlyphIcon(mark, size: 16, colour: colours.textPrimary),
             const SizedBox(width: SunburstShape.space2),
           ],
-          Text(
-            label,
-            style: type.chip.copyWith(color: colours.textPrimary),
-            textAlign: TextAlign.start,
-            maxLines: 2,
+          // FLEXIBLE, or maxLines is a promise the layout cannot keep. A
+          // Text with no width bound takes its natural width and overflows the
+          // row it was given; two lines only happen once something has told it
+          // how wide it may be. Measured on Home, where the zero-streak chip
+          // is the longest string the row ever carries.
+          Flexible(
+            child: Text(
+              label,
+              style: type.chip.copyWith(color: colours.textPrimary),
+              textAlign: TextAlign.start,
+              maxLines: 2,
+            ),
           ),
         ],
       ),
