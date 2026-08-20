@@ -133,8 +133,11 @@ class ResultsScreen extends ConsumerWidget {
                 variant: PopButtonVariant.success,
                 leading: SunburstGlyph.go,
                 expand: true,
-                // A NEW SEED, therefore a new notifier, therefore a fresh run
-                // rather than a resumed one.
+                // BACK TO THE GAME, not straight into another run. The seed is
+                // drawn on the detail screen, so a fresh seed — and therefore a
+                // fresh notifier and a fresh round — is what returning there
+                // produces; and the player gets to change difficulty, which is
+                // the thing most worth changing after a run that went badly.
                 onPressed: () => context.go(Routes.gameDetail(config.gameId)),
               ),
               const SizedBox(height: 10),

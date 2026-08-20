@@ -64,16 +64,22 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
     // without Blitz, and a screen that offered all three would start a run the
     // definition refuses.
     final offered = definition.difficulties;
+    // THE SELECTION IS VALIDATED AGAINST THIS GAME'S MENU, not just read.
+    // Walking from one game's detail to another REPLACES THE WIDGET AND KEEPS
+    // THE STATE — same screen, different game — so a Blitz chosen on a game
+    // that offers it survives onto one that does not, `indexOf` returns -1,
+    // and the segmented control renders with nothing selected. Measured.
+    //
     // CLASSIC IS THE DEFAULT WHERE IT IS OFFERED, not the first entry.
-    // `app.html` shows Classic selected, and it is the right default for a
-    // reason a list index cannot express: Chill is for someone who wants no
-    // pressure and Blitz is for someone chasing a number, while Classic is
-    // what the game IS. A game that does not offer it falls back to its first.
-    final chosen =
-        _chosen ??
-        (offered.contains(Difficulty.classic)
-            ? Difficulty.classic
-            : offered.first);
+    // `app.html` shows Classic selected, and it is right for a reason a list
+    // index cannot express: Chill is for someone who wants no pressure and
+    // Blitz is for someone chasing a number, while Classic is what the game
+    // IS. A game that does not offer it falls back to its first.
+    final chosen = offered.contains(_chosen)
+        ? _chosen!
+        : (offered.contains(Difficulty.classic)
+              ? Difficulty.classic
+              : offered.first);
 
     return SafeArea(
       child: Column(

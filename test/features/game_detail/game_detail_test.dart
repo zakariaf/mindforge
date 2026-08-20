@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
@@ -179,6 +180,60 @@ void main() {
         AppLocalizations.of(
           tester.element(find.byType(GameDetailScreen)),
         ).difficultyClassic,
+      );
+    });
+
+    testWidgets('a difficulty chosen for ANOTHER game does not survive', (
+      tester,
+    ) async {
+      // Going from one game's detail to another's replaces the widget and
+      // Flutter KEEPS THE STATE — same screen, different game. A selection the
+      // new game does not offer leaves indexOf at -1, and the segmented
+      // control renders with nothing selected.
+      final threeWay = fixtureWithDifficulties(Difficulty.values);
+      final chillOnly = GameDefinition(
+        id: GameId('placeholder_turquoise'),
+        accent: placeholderTurquoiseDefinition.accent,
+        colourRole: placeholderTurquoiseDefinition.colourRole,
+        scoreFormat: placeholderTurquoiseDefinition.scoreFormat,
+        scoreSource: placeholderTurquoiseDefinition.scoreSource,
+        strings: placeholderTurquoiseDefinition.strings,
+        difficulties: const <Difficulty>[Difficulty.chill],
+        boardBackground: placeholderTurquoiseDefinition.boardBackground,
+        buildBoard: placeholderTurquoiseDefinition.buildBoard,
+        buildArtwork: placeholderTurquoiseDefinition.buildArtwork,
+        bindBoard: placeholderTurquoiseDefinition.bindBoard,
+      );
+
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        games: <GameDefinition>[threeWay, chillOnly],
+        initialLocation: Routes.gameDetail(threeWay.id),
+      );
+
+      // Pick Blitz on the three-way game.
+      await tester.tap(
+        find.text(
+          AppLocalizations.of(
+            tester.element(find.byType(GameDetailScreen)),
+          ).difficultyBlitz,
+        ),
+      );
+      await tester.pump();
+
+      // Then walk to the game that offers only Chill.
+      GoRouter.of(
+        tester.element(find.byType(GameDetailScreen)),
+      ).go(Routes.gameDetail(chillOnly.id));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(
+        tester
+            .widget<DifficultySegmented>(find.byType(DifficultySegmented))
+            .selectedIndex,
+        0,
+        reason: 'Blitz is not on the menu of the game now on screen',
       );
     });
 

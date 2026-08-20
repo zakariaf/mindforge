@@ -144,13 +144,22 @@ class _Chart extends ConsumerWidget {
     // divides by a fixed 10.5, which clips silently above about 1560: two runs
     // one better than the other would draw the same bar.
     final peak = values.reduce(math.max);
+    final floor = values.reduce(math.min);
     final bestValue = switch (game.scoreFormat) {
-      ScoreFormat.points => values.reduce(math.max),
-      // Lower is better for a timed game, so the BEST run is the shortest one
-      // — while the bar heights still follow the values, because a chart whose
-      // tallest bar meant "worst" for one game and "best" for another would be
-      // unreadable across a registry.
-      ScoreFormat.duration => values.reduce(math.min),
+      ScoreFormat.points => peak,
+      // Lower is better for a timed game: the BEST run is the shortest one.
+      ScoreFormat.duration => floor,
+    };
+
+    // TALLER IS BETTER IN BOTH DIRECTIONS. Plotting a duration raw makes the
+    // SLOWEST run the tallest bar and the sunshine "best" one the shortest —
+    // a chart whose shape means the opposite thing for the game beside it is
+    // worse than no chart. A timed run is plotted as the best time over this
+    // one, so the best run is the full-height bar and a slower run is a
+    // shorter one. Both still stand on a true-zero axis.
+    double ratioOf(int value) => switch (game.scoreFormat) {
+      ScoreFormat.points => peak == 0 ? 0 : value / peak,
+      ScoreFormat.duration => value == 0 ? 0 : floor / value,
     };
 
     return PopCard(
@@ -177,7 +186,7 @@ class _Chart extends ConsumerWidget {
             bars: <ChartBar>[
               for (final value in values)
                 ChartBar(
-                  ratio: peak == 0 ? 0 : value / peak,
+                  ratio: ratioOf(value),
                   isBest: value == bestValue,
                   label: formatter.format(game.scoreFormat, value),
                 ),

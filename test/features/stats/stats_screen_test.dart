@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/calendar_day.dart';
+import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/game_stats.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_metric.dart';
@@ -12,6 +13,8 @@ import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/shell/widgets/best_card.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/features/stats/widgets/run_bar_chart.dart';
+import 'package:mindforge/games/game_definition.dart';
+import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 
@@ -282,5 +285,75 @@ void main() {
 
   test('the second scope exists so the fixture reads as a registry', () {
     expect(turquoiseScope.gameId, 'placeholder_turquoise');
+  });
+
+  group('a timed game plots the other way up', () {
+    testWidgets('so the best run is still the tallest bar', (tester) async {
+      // Plotting a duration raw makes the SLOWEST run the tallest bar and the
+      // sunshine "best" one the shortest — a chart whose shape means the
+      // opposite thing for the game beside it is worse than no chart.
+      final timed = GameDefinition(
+        id: GameId('placeholder_coral'),
+        accent: placeholderCoralDefinition.accent,
+        colourRole: placeholderCoralDefinition.colourRole,
+        scoreFormat: ScoreFormat.duration,
+        scoreSource: placeholderCoralDefinition.scoreSource,
+        strings: placeholderCoralDefinition.strings,
+        difficulties: placeholderCoralDefinition.difficulties,
+        boardBackground: placeholderCoralDefinition.boardBackground,
+        buildBoard: placeholderCoralDefinition.buildBoard,
+        buildArtwork: placeholderCoralDefinition.buildArtwork,
+        bindBoard: placeholderCoralDefinition.bindBoard,
+      );
+
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        games: <GameDefinition>[timed],
+        initialLocation: Routes.stats,
+        bests: <String, Result<RunMetric?, DataFailure>>{
+          'placeholder_coral': const Ok<RunMetric?, DataFailure>(
+            RunMetric.duration(18600),
+          ),
+        },
+        stats: <RunScope, GameStats>{
+          coralScope: const GameStats(
+            gamesPlayed: 3,
+            timeTrainedMs: 60000,
+            correctCount: 0,
+            wrongCount: 0,
+            totalReactionMs: 0,
+            longestCombo: 0,
+          ),
+        },
+        chartSeries: <RunScope, List<RunRecord>>{
+          // Newest first, the DAO's order: 40s, then 20s, then 60s.
+          coralScope: <RunRecord>[
+            record(40000, 3),
+            record(20000, 2),
+            record(60000, 1),
+          ],
+        },
+      );
+
+      await tester.scrollUntilVisible(
+        find.byType(RunBarChart),
+        160,
+        scrollable: find.byType(Scrollable).last,
+      );
+
+      final bars = tester.widget<RunBarChart>(find.byType(RunBarChart)).bars;
+
+      // Oldest first: 60s, 20s, 40s. The 20s run is the best and draws full
+      // height; the 60s run is a third of it and the 40s run a half.
+      expect(
+        bars.map((bar) => bar.ratio),
+        <Matcher>[
+          closeTo(20000 / 60000, 1e-9),
+          closeTo(1, 1e-9),
+          closeTo(20000 / 40000, 1e-9),
+        ],
+      );
+      expect(bars.where((bar) => bar.isBest).single.ratio, closeTo(1, 1e-9));
+    });
   });
 }
