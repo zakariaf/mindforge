@@ -184,4 +184,62 @@ void main() {
       expect(drawn, '7', reason: 'the isolate marks were boxed as characters');
     });
   });
+
+  group('a value that is not only a number', () {
+    testWidgets('is drawn as ONE text, because Arabic letters join', (
+      tester,
+    ) async {
+      // THE DEFECT THIS EXISTS FOR. Stats' "time trained" is a whole sentence
+      // in Persian — `۰ ساعت و ۰ دقیقه` — and this widget splits a value into
+      // one box per character. Each box is its own paragraph, so every letter
+      // is shaped in ISOLATED form and the joins that make Arabic script
+      // readable are gone; the row is then laid out LTR, which reverses the
+      // words on top of it. On screen it was an unreadable smear that also
+      // overflowed its box.
+      //
+      // Latin never showed it: `0h 0m` split into boxes still reads, because
+      // Latin letters do not join. So this is a defect only the RTL sweep
+      // could find.
+      await tester.pumpPopComponent(
+        const TabularText(
+          '۰ ساعت و ۰ دقیقه',
+          style: TextStyle(fontSize: 20),
+        ),
+      );
+
+      final drawn = tester.widgetList<Text>(
+        find.descendant(
+          of: find.byType(TabularText),
+          matching: find.byType(Text),
+        ),
+      );
+
+      expect(
+        drawn,
+        hasLength(1),
+        reason: 'a joined script must be shaped as one run, not per character',
+      );
+    });
+
+    testWidgets('and a number with a unit still gets its fixed pitch', (
+      tester,
+    ) async {
+      // The other half: `18.6s` is a NUMBER with a unit glued on, Latin
+      // letters do not join, and the whole reason this widget exists is that
+      // its digits must not shimmer as the value changes.
+      await tester.pumpPopComponent(
+        const TabularText('18.6s', style: TextStyle(fontSize: 20)),
+      );
+
+      expect(
+        tester.widgetList<Text>(
+          find.descendant(
+            of: find.byType(TabularText),
+            matching: find.byType(Text),
+          ),
+        ),
+        hasLength(greaterThan(1)),
+      );
+    });
+  });
 }

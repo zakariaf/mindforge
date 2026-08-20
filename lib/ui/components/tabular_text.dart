@@ -45,6 +45,21 @@ class TabularText extends StatelessWidget {
     // The ANNOUNCEMENT keeps the original: `Semantics(label:)` takes a string,
     // not a layout, and the marks are harmless there.
     final drawn = BidiText.strip(value);
+
+    // A JOINED SCRIPT IS SHAPED AS ONE RUN OR IT IS NOT SHAPED AT ALL. Every
+    // box below is its own paragraph, so an Arabic-script letter inside one is
+    // rendered in ISOLATED form and the joins that make the script readable
+    // are gone — and the LTR row then reverses the words on top of it. Stats'
+    // "time trained" is a whole Persian sentence, and it drew as an unreadable
+    // smear that overflowed its box.
+    //
+    // Latin never showed it, because Latin letters do not join: `0h 0m` split
+    // into boxes still reads. So the guard is about the SCRIPT, not about
+    // whether letters are present.
+    if (_hasJoiningScript(drawn)) {
+      return Text(value, style: style, textAlign: TextAlign.center);
+    }
+
     final pitch = _widestDigit(drawn, style, scaler, direction);
 
     // ONE semantic node carrying the whole value. Without it a screen reader
@@ -104,6 +119,24 @@ class TabularText extends StatelessWidget {
       ),
     );
   }
+
+  /// Whether [value] contains a letter from a script whose glyphs join.
+  ///
+  /// Arabic script only, which is every joining script this app ships.
+  ///
+  /// The block holds more than letters, and the exclusions are the whole
+  /// subtlety: both DIGIT ranges live in it, and so do the numeric marks a
+  /// Persian number is built from — `٪` U+066A, `٫` U+066B and `٬` U+066C. A
+  /// guard that took the whole block sent `۱٬۴۸۰` down the plain-text path and
+  /// took its fixed pitch away, which is the one thing this widget is for.
+  static bool _hasJoiningScript(String value) => value.runes.any((rune) {
+    if (rune < 0x0600 || rune > 0x06FF) return false;
+    if (rune >= 0x0660 && rune <= 0x0669) return false;
+    if (rune >= 0x06F0 && rune <= 0x06F9) return false;
+    if (rune >= 0x066A && rune <= 0x066C) return false;
+
+    return true;
+  });
 
   /// Whether [character] is a digit in any script this app renders.
   static bool _isDigit(String character) {
