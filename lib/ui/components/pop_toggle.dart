@@ -120,11 +120,18 @@ class _Word extends StatelessWidget {
   final SunburstColors colours;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-    child: Text(
-      label,
-      style: type.label.copyWith(color: colours.textPrimary),
+  Widget build(BuildContext context) => Flexible(
+    // FLEXIBLE, because the word is TRANSLATED. "ON" and "OFF" are two and
+    // three characters; Sorani's are five and seven, and at a large text scale
+    // the track is wider than the row it sits in. The word wraps rather than
+    // overflowing — the state is still legible, and the track still says which
+    // side the knob is on.
+    child: Padding(
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
+      child: Text(
+        label,
+        style: type.label.copyWith(color: colours.textPrimary),
+      ),
     ),
   );
 }

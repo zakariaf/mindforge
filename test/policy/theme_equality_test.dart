@@ -65,6 +65,12 @@ void main() {
         'chartBarRadiusBottom': base.copyWith(
           chartBarRadiusBottom: const Radius.circular(99),
         ),
+        'settingsChipRadius': base.copyWith(
+          settingsChipRadius: const Radius.circular(99),
+        ),
+        'paletteSwatchRadius': base.copyWith(
+          paletteSwatchRadius: const Radius.circular(99),
+        ),
       };
 
       for (final entry in variants.entries) {
@@ -111,10 +117,10 @@ void main() {
   group('and the source still declares what these tests enumerate', () {
     // If a seventh shape slot lands, this count moves and the test above stops
     // being exhaustive — so the count is pinned rather than assumed.
-    test('SunburstShape declares 32 instance fields', () {
+    test('SunburstShape declares 34 instance fields', () {
       expect(
         declaredFieldsOf('lib/theme/sunburst_shape.dart', 'SunburstShape'),
-        32,
+        34,
       );
     });
   });

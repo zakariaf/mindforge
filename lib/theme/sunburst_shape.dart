@@ -38,6 +38,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.eChip,
     required this.chartBarRadiusTop,
     required this.chartBarRadiusBottom,
+    required this.settingsChipRadius,
+    required this.paletteSwatchRadius,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -175,6 +177,17 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
 
   /// A chart bar's bottom corners, where it sits on the axis.
   final Radius chartBarRadiusBottom;
+
+  /// The icon chip on a settings row.
+  ///
+  /// `app.html`: `.srow .si{border-radius:11px}`. Eleven, not [radiusSm]'s ten.
+  /// A point either way is invisible in isolation and obvious in a column of
+  /// six chips beside a 22pt card corner, which is why the design states it
+  /// separately.
+  final Radius settingsChipRadius;
+
+  /// A palette swatch. `app.html`: `.cbprev i{border-radius:5px}`.
+  final Radius paletteSwatchRadius;
 
   /// The ink edge on a surface drawn **inside** another surface.
   ///
@@ -315,6 +328,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     eChip,
     chartBarRadiusTop,
     chartBarRadiusBottom,
+    settingsChipRadius,
+    paletteSwatchRadius,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -368,6 +383,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Offset? eChip,
     Radius? chartBarRadiusTop,
     Radius? chartBarRadiusBottom,
+    Radius? settingsChipRadius,
+    Radius? paletteSwatchRadius,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -401,6 +418,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     eChip: eChip ?? this.eChip,
     chartBarRadiusTop: chartBarRadiusTop ?? this.chartBarRadiusTop,
     chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
+    settingsChipRadius: settingsChipRadius ?? this.settingsChipRadius,
+    paletteSwatchRadius: paletteSwatchRadius ?? this.paletteSwatchRadius,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -446,6 +465,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
         chartBarRadiusBottom,
         other.chartBarRadiusBottom,
       ),
+      settingsChipRadius: r(settingsChipRadius, other.settingsChipRadius),
+      paletteSwatchRadius: r(paletteSwatchRadius, other.paletteSwatchRadius),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -488,6 +509,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     eChip: Offset(2, 2),
     chartBarRadiusTop: Radius.circular(8),
     chartBarRadiusBottom: Radius.circular(3),
+    settingsChipRadius: Radius.circular(11),
+    paletteSwatchRadius: Radius.circular(5),
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,

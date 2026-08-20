@@ -73,11 +73,14 @@ extension PumpShell on WidgetTester {
         const <String, Result<RunMetric?, DataFailure>>{},
     Map<RunScope, GameStats> stats = const <RunScope, GameStats>{},
     StreakStatus streak = const StreakStatus.empty(),
+    List<AppSettings>? settingsWrites,
     Map<RunScope, List<RunRecord>> chartSeries =
         const <RunScope, List<RunRecord>>{},
   }) async {
     final resolved = localeCase ?? LocaleCase.english;
     final seeded = settings.withLocaleOverride(resolved.locale);
+    // The live value a write mutates, so a second write sees the first one.
+    var current = seeded;
 
     useDevice(this, device);
 
@@ -114,6 +117,17 @@ extension PumpShell on WidgetTester {
           settingsProvider.overrideWith(
             (ref) => Stream<AppSettings>.value(seeded),
           ),
+          // The settings WRITE seam, recorded rather than persisted. Without
+          // it a toggle or the language row reaches the repository, which
+          // opens a database — see the note above on why that deadlocks. It is
+          // a list rather than a flag so a test can assert the ORDER of two
+          // writes, which is what persist-before-publish means.
+          writeSettingsProvider.overrideWithValue((change) async {
+            current = change(current);
+            settingsWrites?.add(current);
+
+            return Ok<AppSettings, DataFailure>(current);
+          }),
           if (games != null) gameRegistryProvider.overrideWithValue(games),
           // The same wiring bootstrap() does: the registry decides which ids
           // the repository will accept. Without it every save fails, silently.
