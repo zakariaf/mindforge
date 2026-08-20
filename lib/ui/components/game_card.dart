@@ -123,7 +123,11 @@ class GameCard extends StatelessWidget {
           // second layout.
           if (art != null) ...[
             const SizedBox(width: SunburstShape.space4),
-            art,
+            // THE ART IS DECORATION AND THE SHELL SAYS SO, not the game. A
+            // definition contributes a preview widget; whether it is worth
+            // announcing is a card-level decision, and the answer is no — the
+            // title and tagline beside it already name the game.
+            ExcludeSemantics(child: art),
           ],
         ],
       ),

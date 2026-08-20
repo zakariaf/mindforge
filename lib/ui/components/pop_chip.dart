@@ -44,7 +44,16 @@ class PopChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (mark != null) ...[
-            SunburstGlyphIcon(mark, size: 16, colour: colours.textPrimary),
+            // DECORATION. The chip's label already says what the chip says —
+            // "4 day streak" — and a flame announced beside it is a second
+            // stop that adds nothing.
+            ExcludeSemantics(
+              child: SunburstGlyphIcon(
+                mark,
+                size: 16,
+                colour: colours.textPrimary,
+              ),
+            ),
             const SizedBox(width: SunburstShape.space2),
           ],
           // FLEXIBLE, or maxLines is a promise the layout cannot keep. A

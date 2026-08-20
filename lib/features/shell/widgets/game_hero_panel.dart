@@ -118,7 +118,9 @@ class GameHeroPanel extends StatelessWidget {
                   ),
                   if (artwork != null) ...<Widget>[
                     const SizedBox(height: 14),
-                    artwork,
+                    // Decoration, by the same rule as the card's: the panel
+                    // above it has already named the game three ways.
+                    ExcludeSemantics(child: artwork),
                   ],
                 ],
               ),

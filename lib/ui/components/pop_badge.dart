@@ -106,7 +106,15 @@ class PopBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (glyph != null) ...[
-              SunburstGlyphIcon(glyph, size: 14, colour: colours.textPrimary),
+              // DECORATION, like the chip's: the badge's own label carries the
+              // meaning and the star beside it is emphasis.
+              ExcludeSemantics(
+                child: SunburstGlyphIcon(
+                  glyph,
+                  size: 14,
+                  colour: colours.textPrimary,
+                ),
+              ),
               const SizedBox(width: SunburstShape.space1),
             ],
             Text(

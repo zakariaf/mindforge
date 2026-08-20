@@ -49,8 +49,11 @@ class StatBox extends StatelessWidget {
     final shape = SunburstShape.of(context);
     final type = SunburstType.of(context);
 
-    // app.html says it on the rule: "ink-2 is for paper and cream only — on a
-    // saturated fill the label goes ink". textSecondary on sunshine is 3.1:1.
+    // app.html: "ink-2 is for paper and cream only — on a saturated fill the
+    // label goes ink". On SUNSHINE that is a style decision rather than a
+    // floor — ink-2 measures 4.91:1 there and would pass — but it is a floor on
+    // coral (2.77) and turquoise (3.66), and one rule a reader can hold beats
+    // three. Measured in shell_contrast_test, both halves.
     final labelColour = switch (tone) {
       StatBoxTone.paper => colours.textSecondary,
       StatBoxTone.accent => colours.textPrimary,
