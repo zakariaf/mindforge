@@ -34,50 +34,34 @@ class ScoreSlab extends StatelessWidget {
     final shape = SunburstShape.of(context);
     final type = SunburstType.of(context);
 
-    // ONE stop, stated rather than merged. The value sits inside a scroll
-    // view below, and a Scrollable is a semantics boundary that MergeSemantics
-    // cannot reach across — so merging would have quietly announced the
-    // caption and the score as two unrelated things.
-    return Semantics(
-      label: '$label. $value',
-      child: ExcludeSemantics(
-        child: PopSurface(
-          fill: colours.surfaceRaised,
-          radius: BorderRadiusDirectional.all(shape.radiusXl),
-          elevation: PopElevation.e3,
-          minTarget: 0,
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 18, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: type.slabLabel.copyWith(color: colours.textSecondary),
+    return MergeSemantics(
+      child: PopSurface(
+        fill: colours.surfaceRaised,
+        radius: BorderRadiusDirectional.all(shape.radiusXl),
+        elevation: PopElevation.e3,
+        minTarget: 0,
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 18, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: type.slabLabel.copyWith(color: colours.textSecondary),
+            ),
+            const SizedBox(height: 4),
+            TabularText(
+              value,
+              style: type.scoreHero.copyWith(
+                color: colours.textPrimary,
+                shadows: <Shadow>[
+                  // Zero blur is the whole look. A soft one reads as a print
+                  // misregistration rather than a deliberate offset.
+                  Shadow(color: colours.accent, offset: shadowOffset),
+                ],
               ),
-              const SizedBox(height: 4),
-              // IT SCROLLS RATHER THAN SHRINKS. At text scale 2.0 a four-digit
-              // score at 76pt is genuinely wider than a 350pt pane, and the two
-              // other ways out are both wrong: scaling the glyphs down to fit
-              // makes the number SMALLER for exactly the player who asked for
-              // bigger text, and clipping hides digits. Panning is the only one
-              // that keeps the score readable and complete.
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: TabularText(
-                  value,
-                  style: type.scoreHero.copyWith(
-                    color: colours.textPrimary,
-                    shadows: <Shadow>[
-                      // Zero blur is the whole look. A soft one reads as a print
-                      // misregistration rather than a deliberate offset.
-                      Shadow(color: colours.accent, offset: shadowOffset),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

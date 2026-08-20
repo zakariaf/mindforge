@@ -61,47 +61,33 @@ class ResultStatCell extends StatelessWidget {
       ResultStatTone.cool || ResultStatTone.warm => colours.textPrimary,
     };
 
-    // ONE stop, stated rather than merged, for the same reason as ScoreSlab:
-    // the value sits inside a scroll view and a Scrollable is a semantics
-    // boundary MergeSemantics cannot reach across.
-    return Semantics(
-      label: '$label. $value',
-      child: ExcludeSemantics(
-        child: PopSurface(
-          fill: switch (tone) {
-            ResultStatTone.cool => colours.accentCool,
-            ResultStatTone.paper => colours.surfaceRaised,
-            ResultStatTone.warm => colours.accentWarm,
-          },
-          radius: BorderRadiusDirectional.all(shape.radiusMd),
-          elevation: PopElevation.e1,
-          minTarget: 0,
-          padding: const EdgeInsetsDirectional.fromSTEB(8, 11, 8, 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: type.resultStatLabel.copyWith(color: labelColour),
+    return MergeSemantics(
+      child: PopSurface(
+        fill: switch (tone) {
+          ResultStatTone.cool => colours.accentCool,
+          ResultStatTone.paper => colours.surfaceRaised,
+          ResultStatTone.warm => colours.accentWarm,
+        },
+        radius: BorderRadiusDirectional.all(shape.radiusMd),
+        elevation: PopElevation.e1,
+        minTarget: 0,
+        padding: const EdgeInsetsDirectional.fromSTEB(8, 11, 8, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: type.resultStatLabel.copyWith(color: labelColour),
+            ),
+            const SizedBox(height: 4),
+            TabularText(
+              value,
+              style: type.resultStatValue.copyWith(
+                color: colours.textPrimary,
               ),
-              const SizedBox(height: 4),
-              // A third of the pane wide, holding a number whose length the
-              // shell does not control. It pans rather than shrinking or
-              // clipping — the same choice ScoreSlab makes, and the same
-              // reason: a value the player asked to see larger must not get
-              // smaller, and a clipped digit is a wrong number.
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: TabularText(
-                  value,
-                  style: type.resultStatValue.copyWith(
-                    color: colours.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

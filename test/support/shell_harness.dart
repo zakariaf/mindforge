@@ -6,6 +6,7 @@ import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/game_stats.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_metric.dart';
+import 'package:mindforge/core/run_record.dart';
 import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/core/streak_status.dart';
 import 'package:mindforge/data/data_failure.dart';
@@ -72,6 +73,8 @@ extension PumpShell on WidgetTester {
         const <String, Result<RunMetric?, DataFailure>>{},
     Map<RunScope, GameStats> stats = const <RunScope, GameStats>{},
     StreakStatus streak = const StreakStatus.empty(),
+    Map<RunScope, List<RunRecord>> chartSeries =
+        const <RunScope, List<RunRecord>>{},
   }) async {
     final resolved = localeCase ?? LocaleCase.english;
     final seeded = settings.withLocaleOverride(resolved.locale);
@@ -94,6 +97,11 @@ extension PumpShell on WidgetTester {
           runStatsProvider.overrideWith(
             (ref, scope) => Stream<GameStats>.value(
               stats[scope] ?? const GameStats.empty(),
+            ),
+          ),
+          chartSeriesProvider.overrideWith(
+            (ref, scope) => Stream<List<RunRecord>>.value(
+              chartSeries[scope] ?? const <RunRecord>[],
             ),
           ),
           streakProvider.overrideWith(
