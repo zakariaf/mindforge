@@ -50,12 +50,8 @@ String _withoutAsserts(String code) {
 /// A key held as a string and a getter called by E08 can drift apart silently:
 /// nothing compiles against a key. These three assertions are the bridge.
 void main() {
-  /// Every `.dart` under `lib/games/`.
-  List<File> registryFiles() => Directory('lib/games')
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((file) => file.path.endsWith('.dart'))
-      .toList();
+  /// Every hand-written `.dart` under `lib/games/`.
+  Iterable<File> registryFiles() => dartFilesUnder('lib/games');
 
   group('no user-facing literal lives in the registry', () {
     test('every string literal is an id or an ARB key', () {

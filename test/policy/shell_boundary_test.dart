@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/source_text.dart';
@@ -17,17 +15,6 @@ import 'support/source_text.dart';
 /// registry. That is exactly when a tripwire should be written, because after
 /// E08, E09 and E10 it is a tripwire someone would have to write around.
 void main() {
-  List<File> dartFilesUnder(String directory) {
-    final root = Directory(directory);
-    if (!root.existsSync()) return const <File>[];
-
-    return root
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((file) => file.path.endsWith('.dart'))
-        .toList();
-  }
-
   test('no file under lib/features imports a specific game', () {
     // `games/game_registry.dart` is the one allowed target: the pattern needs a
     // SECOND slash, so `games/stroop_rush/...` fails while the registry passes.
@@ -64,17 +51,7 @@ void main() {
       'runNotifierProvider',
     ];
 
-    final offenders = <String>[];
-
-    for (final file in dartFilesUnder('lib/games')) {
-      final code = withoutDartComments(file.readAsStringSync());
-
-      for (final token in banned) {
-        if (code.contains(token)) offenders.add('${file.path}: $token');
-      }
-    }
-
-    expect(offenders, isEmpty);
+    expect(bannedTokenHits(dartFilesUnder('lib/games'), banned), isEmpty);
   });
 
   test('and no file under lib/games reaches up into lib/features', () {

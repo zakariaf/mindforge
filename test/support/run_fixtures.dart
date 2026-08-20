@@ -1,6 +1,7 @@
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/run_draft.dart';
 import 'package:mindforge/core/score_format.dart';
+import 'package:mindforge/core/seeded_generator.dart';
 
 /// Builds a deterministic run set from an integer seed.
 ///
@@ -16,11 +17,12 @@ List<RunDraft> seededDrafts({
   ScoreFormat format = ScoreFormat.points,
   int firstDaySerial = 20680,
 }) {
-  var state = (seed * 2654435761) % 2147483647;
-  int next(int bound) {
-    state = (state * 1103515245 + 12345) % 2147483647;
-    return state % bound;
-  }
+  // SeededGenerator, not a second PRNG. lib/core/seeded_generator.dart states
+  // that there is no other generator in this repository, and a hand-rolled LCG
+  // here made that claim false — in a file whose whole job is producing
+  // reproducible fixtures.
+  final random = SeededGenerator(seed);
+  int next(int bound) => random.nextInt(bound);
 
   return List<RunDraft>.generate(count, (i) {
     final correct = next(50);

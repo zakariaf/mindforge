@@ -6,7 +6,6 @@ import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/calendar_day.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
-import 'package:mindforge/core/id_generator.dart';
 import 'package:mindforge/core/result_stat.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_draft.dart';
@@ -20,8 +19,10 @@ import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 
 import '../core/seed_vectors.dart';
+import '../support/fake_id_generator.dart';
 import '../support/fake_save_run.dart';
 import '../support/fixture_game.dart';
+import '../support/locale_matrix.dart';
 
 /// The engine does not depend on the language.
 ///
@@ -35,30 +36,19 @@ import '../support/fixture_game.dart';
 /// vendored delegate trio and E04's test. A green run here is not evidence that
 /// the app can switch to Kurdish Sorani.
 void main() {
-  const tags = <String>['en', 'de', 'fa', 'ckb'];
-
-  String? previousLocale;
-
-  setUp(() {
-    TestWidgetsFlutterBinding.ensureInitialized();
-    previousLocale = Intl.defaultLocale;
-  });
-
-  tearDown(() => Intl.defaultLocale = previousLocale);
-
-  /// Runs [body] once per shipped locale, with `intl` actually switched.
-  void underEachLocale(void Function(String tag) body) {
-    for (final tag in tags) {
-      Intl.defaultLocale = tag;
-      Intl.withLocale(tag, () => body(tag));
-    }
-  }
+  // localeMatrix and forEachLocale are E02's, derived from SupportedLocale so
+  // there is no second list of shipped locales anywhere in the repository.
+  // This file had grown a third one — a hardcoded four-tag literal plus its own
+  // save/set/restore — in the epic that most loudly claims locale independence.
+  // The shared helper also restores in a `finally` rather than a `tearDown`, so
+  // a failure in one locale cannot leak into the next.
+  setUp(TestWidgetsFlutterBinding.ensureInitialized);
 
   group('seeded generation', () {
-    test('reproduces the frozen vector table under every locale', () {
+    test('reproduces the frozen vector table under every locale', () async {
       // THE TEST THIS EPIC'S LOCALE DELTA EXISTS FOR. If it ever goes red, a
       // formatter has reached the generation path.
-      underEachLocale((tag) {
+      await forEachLocale((tag) async {
         for (final vector in kSeedVectors) {
           expect(
             fnv1a64(vector.key),
@@ -97,7 +87,7 @@ void main() {
         // durationMs, format and value at once.
         final drafts = <String, RunDraft>{};
 
-        for (final tag in tags) {
+        for (final tag in localeMatrix) {
           Intl.defaultLocale = tag;
 
           final save = FakeSaveRun();
@@ -110,7 +100,7 @@ void main() {
               clockProvider.overrideWithValue(Clock.fixed(DateTime.utc(2026))),
               // A fixed id, so the comparison is about the locale rather than
               // about entropy.
-              idGeneratorProvider.overrideWithValue(const _FixedId()),
+              idGeneratorProvider.overrideWithValue(FakeIdGenerator()),
             ],
           );
           addTearDown(container.dispose);
@@ -135,8 +125,8 @@ void main() {
       },
     );
 
-    test('and every scope string is ASCII under every locale', () {
-      underEachLocale((tag) {
+    test('and every scope string is ASCII under every locale', () async {
+      await forEachLocale((tag) async {
         for (final difficulty in Difficulty.values) {
           final scope = RunScope.of(GameId('fixture_game'), difficulty);
 
@@ -157,12 +147,12 @@ void main() {
       });
     });
 
-    test('and playedOnDay is Gregorian under fa and ckb', () {
+    test('and playedOnDay is Gregorian under fa and ckb', () async {
       // 2026-03-21 is 1405-01-01 in the Persian calendar — Nowruz, the first
       // day of the year. If a calendar projection ever reached the database,
       // this is the date it would show up on. Projection is a render-time
       // concern; the column is a civil date.
-      underEachLocale((tag) {
+      await forEachLocale((tag) async {
         final day = CalendarDay.fromLocal(DateTime.utc(2026, 3, 21));
         final reference = CalendarDay.fromLocal(DateTime.utc(2026, 3, 20));
 
@@ -218,11 +208,3 @@ final _config = RunConfig(
   difficulty: Difficulty.classic,
   seed: 7,
 );
-
-/// A generator that always returns the same key.
-final class _FixedId implements IdGenerator {
-  const _FixedId();
-
-  @override
-  String newId() => 'fixed_run_key';
-}

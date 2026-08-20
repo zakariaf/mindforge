@@ -56,17 +56,7 @@ void main() {
       'package:intl',
     ];
 
-    final offenders = <String>[];
-
-    for (final file in contractFiles()) {
-      final code = withoutDartComments(file.readAsStringSync());
-
-      for (final token in banned) {
-        if (code.contains(token)) offenders.add('${file.path}: $token');
-      }
-    }
-
-    expect(offenders, isEmpty);
+    expect(bannedTokenHits(contractFiles(), banned), isEmpty);
   });
 
   test('and HudTone is imported, never declared twice', () {

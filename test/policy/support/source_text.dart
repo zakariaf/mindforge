@@ -67,17 +67,55 @@ String _stripLine(String line, String marker) {
 /// [skip] adds further path fragments to exclude, for a test that legitimately
 /// exempts one file (usually the one that DEFINES the thing being banned).
 Iterable<File> dartFilesUnderLib({Set<String> skip = const <String>{}}) =>
-    Directory('lib')
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((f) => f.path.endsWith('.dart'))
-        .where((f) => !_isGenerated(f.path))
-        // Written with `every` rather than the negation of its Iterable
-        // sibling, which check_test_hygiene.sh cannot distinguish from
-        // mocktail's argument matcher of the same name — it greps test/ for
-        // the bare call and fires on the collision. The gate is right to be
-        // crude about it; this is the cheaper side to move.
-        .where((f) => skip.every((fragment) => !f.path.contains(fragment)));
+    dartFilesUnder('lib', skip: skip);
+
+/// Every **hand-written** `.dart` file under [root].
+///
+/// The same walk as [dartFilesUnderLib], for a gate scanning one subtree. Four
+/// policy tests had re-rolled it — and none of them inherited the generated-file
+/// exclusion, so a future `.g.dart` under `lib/games/` would have been scanned
+/// by two gates that would then have been weakened rather than fixed.
+///
+/// Returns nothing when [root] does not exist, so a gate written before the
+/// directory it guards passes vacuously instead of throwing.
+Iterable<File> dartFilesUnder(
+  String root, {
+  Set<String> skip = const <String>{},
+}) {
+  final directory = Directory(root);
+  if (!directory.existsSync()) return const <File>[];
+
+  return directory
+      .listSync(recursive: true)
+      .whereType<File>()
+      .where((f) => f.path.endsWith('.dart'))
+      .where((f) => !_isGenerated(f.path))
+      // Written with `every` rather than the negation of its Iterable
+      // sibling, which check_test_hygiene.sh cannot distinguish from
+      // mocktail's argument matcher of the same name — it greps test/ for
+      // the bare call and fires on the collision. The gate is right to be
+      // crude about it; this is the cheaper side to move.
+      .where((f) => skip.every((fragment) => !f.path.contains(fragment)));
+}
+
+/// Every `path:token` in [files] whose CODE contains one of [tokens].
+///
+/// Comments are stripped first, so a sentence explaining why a construct is
+/// absent does not trip the gate that checks it is absent. Six policy tests had
+/// written this loop out.
+List<String> bannedTokenHits(Iterable<File> files, List<String> tokens) {
+  final hits = <String>[];
+
+  for (final file in files) {
+    final code = withoutDartComments(file.readAsStringSync());
+
+    for (final token in tokens) {
+      if (code.contains(token)) hits.add('${file.path}: $token');
+    }
+  }
+
+  return hits;
+}
 
 bool _isGenerated(String path) =>
     path.endsWith('.g.dart') ||

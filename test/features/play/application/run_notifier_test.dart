@@ -7,23 +7,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/board_snapshot.dart';
-import 'package:mindforge/core/difficulty.dart';
-import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/result_stat.dart';
-import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/data/data_failure.dart';
-import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
-
 import 'package:mindforge/features/play/domain/run_phase.dart';
-import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/games/game_registry.dart';
 
 import '../../../policy/support/source_text.dart';
+import '../../../support/engine_harness.dart';
 import '../../../support/fake_save_run.dart';
 import '../../../support/fixture_game.dart';
+import '../../../support/locale_matrix.dart';
 
 /// The run lifecycle, headless.
 ///
@@ -63,38 +58,26 @@ void main() {
     ),
   );
 
-  final config = RunConfig(
-    gameId: GameId('fixture_game'),
-    difficulty: Difficulty.classic,
-    seed: 7,
-  );
+  final config = fixtureConfig();
 
   ({ProviderContainer container, FakeSaveRun save}) harness({
     Duration? runLimit,
     bool isPersonalBest = false,
     DataFailure? failure,
-    DateTime? at,
+    Clock? clock,
+    AppSettings? settings,
   }) {
-    final save = FakeSaveRun(
-      isPersonalBest: isPersonalBest,
-      failure: failure,
-    );
+    final save = FakeSaveRun(isPersonalBest: isPersonalBest, failure: failure);
 
-    final game = fixtureGame(
-      isTimed: runLimit != null,
-      runLimitFor: runLimit == null ? null : (_) => runLimit,
+    final container = engineContainer(
+      game: fixtureGame(
+        isTimed: runLimit != null,
+        runLimitFor: runLimit == null ? null : (_) => runLimit,
+      ),
+      save: save,
+      clock: clock,
+      settings: settings,
     );
-
-    final container = ProviderContainer(
-      overrides: [
-        gameRegistryProvider.overrideWithValue(<GameDefinition>[game]),
-        saveRunProvider.overrideWithValue(save.call),
-        clockProvider.overrideWithValue(
-          Clock.fixed(at ?? DateTime.utc(2026)),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
 
     save.observePhase = () => container.read(runNotifierProvider(config)).phase;
 
@@ -313,17 +296,10 @@ void main() {
     test('when remaining hits zero', () {
       fakeAsync((async) {
         withClock(async.getClock(DateTime.utc(2026)), () {
-          final save = FakeSaveRun();
-          final container = ProviderContainer(
-            overrides: [
-              gameRegistryProvider.overrideWithValue(<GameDefinition>[
-                fixtureGame(runLimitFor: (_) => const Duration(seconds: 60)),
-              ]),
-              saveRunProvider.overrideWithValue(save.call),
-              clockProvider.overrideWithValue(clock),
-            ],
-          );
-          addTearDown(container.dispose);
+          final container = harness(
+            runLimit: const Duration(seconds: 60),
+            clock: clock,
+          ).container;
 
           container.read(runNotifierProvider(config).notifier)
             ..start()
@@ -346,16 +322,7 @@ void main() {
       // still going — which is exactly why the limit lives on the game.
       fakeAsync((async) {
         withClock(async.getClock(DateTime.utc(2026)), () {
-          final container = ProviderContainer(
-            overrides: [
-              gameRegistryProvider.overrideWithValue(<GameDefinition>[
-                fixtureGame(isTimed: false),
-              ]),
-              saveRunProvider.overrideWithValue(FakeSaveRun().call),
-              clockProvider.overrideWithValue(clock),
-            ],
-          );
-          addTearDown(container.dispose);
+          final container = harness(clock: clock).container;
 
           container.read(runNotifierProvider(config).notifier)
             ..start()
@@ -379,16 +346,10 @@ void main() {
       // fifty ticks is a rattle rather than a signal.
       fakeAsync((async) {
         withClock(async.getClock(DateTime.utc(2026)), () {
-          final container = ProviderContainer(
-            overrides: [
-              gameRegistryProvider.overrideWithValue(<GameDefinition>[
-                fixtureGame(runLimitFor: (_) => const Duration(seconds: 60)),
-              ]),
-              saveRunProvider.overrideWithValue(FakeSaveRun().call),
-              clockProvider.overrideWithValue(clock),
-            ],
-          );
-          addTearDown(container.dispose);
+          final container = harness(
+            runLimit: const Duration(seconds: 60),
+            clock: clock,
+          ).container;
 
           var flips = 0;
           final subscription = container.listen(
@@ -485,25 +446,12 @@ void main() {
       // the first version of this test was.
       final states = <String, Object>{};
 
-      for (final tag in <String>['en', 'de', 'fa', 'ckb']) {
+      for (final tag in localeMatrix) {
         final settings = const AppSettings.defaults().withLocaleOverride(
           SupportedLocale.values.firstWhere((l) => l.tag == tag),
         );
 
-        final container = ProviderContainer(
-          overrides: [
-            gameRegistryProvider.overrideWithValue(<GameDefinition>[
-              fixtureGame(),
-            ]),
-            saveRunProvider.overrideWithValue(FakeSaveRun().call),
-            clockProvider.overrideWithValue(Clock.fixed(DateTime.utc(2026))),
-            initialAppSettingsProvider.overrideWithValue(settings),
-            settingsProvider.overrideWith(
-              (ref) => Stream<AppSettings>.value(settings),
-            ),
-          ],
-        );
-        addTearDown(container.dispose);
+        final container = harness(settings: settings).container;
 
         container.read(runNotifierProvider(config).notifier)
           ..start()

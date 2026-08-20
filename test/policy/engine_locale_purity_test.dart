@@ -15,10 +15,9 @@ void main() {
   List<File> generationPath() => <File>[
     File('lib/core/seeded_generator.dart'),
     File('lib/features/play/application/seeded_random_provider.dart'),
-    ...Directory('lib/core')
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((file) => file.path.endsWith('.dart')),
+    // The whole contract layer, through the shared walk — which skips
+    // generated files, unlike the copy this replaced.
+    ...dartFilesUnder('lib/core'),
   ];
 
   test('the path has files on it', () {
@@ -41,18 +40,8 @@ void main() {
       'Intl.',
     ];
 
-    final offenders = <String>[];
-
-    for (final file in generationPath()) {
-      final code = withoutDartComments(file.readAsStringSync());
-
-      for (final token in banned) {
-        if (code.contains(token)) offenders.add('${file.path}: $token');
-      }
-    }
-
     expect(
-      offenders,
+      bannedTokenHits(generationPath(), banned),
       isEmpty,
       reason:
           'a generator seeded off a formatted string, or a domain value holding '
