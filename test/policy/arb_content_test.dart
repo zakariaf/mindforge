@@ -143,6 +143,7 @@ void main() {
         SupportedLocale.de: <String>{
           'bestLabel', // BEST
           'colourOrange', // Orange — the German colour word IS "Orange"
+          'stroopWordOrange', // ORANGE — the same word, in the stimulus form
           'difficultyBlitz', // Blitz — an English loanword FROM German
           'unitMilliseconds', // ms
           'unitSeconds', // s

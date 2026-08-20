@@ -43,6 +43,59 @@
   "colourPurple": "بنفش",
   "colourOrange": "نارنجی",
   "colourPink": "صورتی",
+  "stroopWordRed": "قرمز",
+  "@stroopWordRed": {
+    "description": "The colour word \"Red\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordBlue": "آبی",
+  "@stroopWordBlue": {
+    "description": "The colour word \"Blue\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordGreen": "سبز",
+  "@stroopWordGreen": {
+    "description": "The colour word \"Green\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordYellow": "زرد",
+  "@stroopWordYellow": {
+    "description": "The colour word \"Yellow\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordPurple": "بنفش",
+  "@stroopWordPurple": {
+    "description": "The colour word \"Purple\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordOrange": "نارنجی",
+  "@stroopWordOrange": {
+    "description": "The colour word \"Orange\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordPink": "صورتی",
+  "@stroopWordPink": {
+    "description": "The colour word \"Pink\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopPrompt": "روی رنگ بزن، نه روی واژه",
+  "@stroopPrompt": {
+    "description": "The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopStimulusValue": "{word}، چاپ‌شده با رنگ {ink}",
+  "@stroopStimulusValue": {
+    "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "ink": {
+        "type": "String"
+      }
+    },
+    "x-review": "native-speaker-pending"
+  },
   "resultsTitle": "اجرای خوبی بود!",
   "newPersonalBest": "رکورد شخصی تازه",
   "finalScore": "امتیاز نهایی",

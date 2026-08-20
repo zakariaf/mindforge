@@ -365,6 +365,60 @@ abstract class AppLocalizations {
   /// **'Pink'**
   String get colourPink;
 
+  /// The colour word "Red" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed.
+  ///
+  /// In en, this message translates to:
+  /// **'RED'**
+  String get stroopWordRed;
+
+  /// The colour word "Blue" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'BLUE'**
+  String get stroopWordBlue;
+
+  /// The colour word "Green" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'GREEN'**
+  String get stroopWordGreen;
+
+  /// The colour word "Yellow" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow.
+  ///
+  /// In en, this message translates to:
+  /// **'YELLOW'**
+  String get stroopWordYellow;
+
+  /// The colour word "Purple" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple.
+  ///
+  /// In en, this message translates to:
+  /// **'PURPLE'**
+  String get stroopWordPurple;
+
+  /// The colour word "Orange" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange.
+  ///
+  /// In en, this message translates to:
+  /// **'ORANGE'**
+  String get stroopWordOrange;
+
+  /// The colour word "Pink" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink.
+  ///
+  /// In en, this message translates to:
+  /// **'PINK'**
+  String get stroopWordPink;
+
+  /// The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP THE COLOUR, NOT THE WORD'**
+  String get stroopPrompt;
+
+  /// What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'{word}, printed in {ink}'**
+  String stroopStimulusValue(String word, String ink);
+
   /// The heading on the results screen. Warm and short; it is celebratory, not an evaluation of the score.
   ///
   /// In en, this message translates to:

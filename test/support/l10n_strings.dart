@@ -84,6 +84,18 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'colourPurple': l10n.colourPurple,
     'colourOrange': l10n.colourOrange,
     'colourPink': l10n.colourPink,
+    'stroopWordRed': l10n.stroopWordRed,
+    'stroopWordBlue': l10n.stroopWordBlue,
+    'stroopWordGreen': l10n.stroopWordGreen,
+    'stroopWordYellow': l10n.stroopWordYellow,
+    'stroopWordPurple': l10n.stroopWordPurple,
+    'stroopWordOrange': l10n.stroopWordOrange,
+    'stroopWordPink': l10n.stroopWordPink,
+    'stroopPrompt': l10n.stroopPrompt,
+    'stroopStimulusValue': l10n.stroopStimulusValue(
+      l10n.colourBlue,
+      l10n.colourRed,
+    ),
     'resultsTitle': l10n.resultsTitle,
     'newPersonalBest': l10n.newPersonalBest,
     'finalScore': l10n.finalScore,
@@ -194,6 +206,28 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'colourPurple': (step: 'button', lines: 1),
   'colourOrange': (step: 'button', lines: 1),
   'colourPink': (step: 'button', lines: 1),
+  // The stimulus form of the same seven, budgeted at the COMPACT step — the
+  // one the board guarantees to fall back to. Declaring the full 78 here would
+  // declare a budget the narrowest shipped device cannot meet: YELLOW is 320
+  // points wide at 78 and even a 390pt screen leaves 318.
+  //
+  // TWO LINES, and only because of text scale 2.0. At 1.0 and 1.3 the compact
+  // step draws every one of them on one line at every shipped width; at 2.0 a
+  // six-letter word is 460 points and no honest step fits it. A wrapped
+  // stimulus is a stimulus the player reads twice, and that is the right cost
+  // to pay for someone who needs the text that large.
+  'stroopWordRed': (step: 'stimulusCompact', lines: 2),
+  'stroopWordBlue': (step: 'stimulusCompact', lines: 2),
+  'stroopWordGreen': (step: 'stimulusCompact', lines: 2),
+  'stroopWordYellow': (step: 'stimulusCompact', lines: 2),
+  'stroopWordPurple': (step: 'stimulusCompact', lines: 2),
+  'stroopWordOrange': (step: 'stimulusCompact', lines: 2),
+  'stroopWordPink': (step: 'stimulusCompact', lines: 2),
+  // The prompt sits above the glyph and is allowed to wrap: German is more
+  // than twice the English length and the card is 350 points wide.
+  'stroopPrompt': (step: 'label', lines: 2),
+  // Announced, never drawn, so its budget is the announcement's.
+  'stroopStimulusValue': (step: 'caption', lines: 2),
   'resultsTitle': (step: 'displayXl', lines: 2),
   'newPersonalBest': (step: 'label', lines: 1),
   'finalScore': (step: 'label', lines: 1),
@@ -245,6 +279,8 @@ TextStyle styleForStep(SunburstType type, String step) => switch (step) {
   'caption' => type.caption,
   'label' => type.label,
   'stimulus' => type.stimulus,
+  'stimulusCompact' => type.stimulusCompact,
+  'buttonCompact' => type.buttonCompact,
   'buttonLarge' => type.buttonLarge,
   'chip' => type.chip,
   // E08's six.

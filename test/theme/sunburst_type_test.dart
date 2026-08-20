@@ -49,6 +49,11 @@ const kTypeSteps = <String>[
   'chartValueLabel', // .bar u      — 10/600, no tracking, tabular
   'countdownReady', // .count .ready — 30/700, -.01em
   'lockedTitle', // .locked .ct  — 19/600, -.01em
+  // E09 T09.5. A smaller BASE style for a long word, never a shrink: the
+  // a11y contract bans scaling text down to fit, and a board that meets a
+  // word it cannot draw at the full step draws it at the compact one.
+  'stimulusCompact', // DERIVED 62 against stimulus's 78
+  'buttonCompact', // DERIVED 15 against button's 18
 ];
 
 /// Reads every step off a scale, so a test can assert over all of them.
@@ -82,6 +87,8 @@ List<TextStyle> allSteps(SunburstType type) => <TextStyle>[
   type.chartValueLabel,
   type.countdownReady,
   type.lockedTitle,
+  type.stimulusCompact,
+  type.buttonCompact,
 ];
 void main() {
   const latin = SunburstType.sunburstPop;

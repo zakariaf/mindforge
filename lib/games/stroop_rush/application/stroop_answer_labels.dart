@@ -72,17 +72,33 @@ String answerWord(
   ),
 };
 
-/// The word printed as the stimulus.
+/// The word printed as the stimulus, in its display form.
 ///
-/// Separate from [answerLabel] rather than an alias, because the design gives
-/// the two different display forms — the stimulus is the 78pt three-pass glyph
-/// and the key label is a 16pt line — and a single function would eventually
-/// grow a `isStimulus` flag that decides typography from the domain.
+/// **A second ARB group, not [answerWord] with a case applied.** The design
+/// prints the stimulus at 78pt in caps and the key label in title case; casing
+/// in Dart is a no-op in Arabic script, which has no case, and wrong in German,
+/// where the eszett uppercases to a double S and changes the length of the very
+/// string this game has to fit. In `fa` and `ckb` the two ARB values are
+/// deliberately identical — the caller must not have to know which locale it
+/// is in.
 ///
-/// It resolves through the same key, so a swapped hue is swapped in both places
-/// or in neither.
+/// It resolves through the same swapped key as [answerWord], so a hue swapped
+/// by the colour-blind palette is swapped in both places or in neither.
 String stimulusWord(
   PlayAnswer answer, {
   required bool colourBlind,
   required AppLocalizations l10n,
-}) => answerWord(answer, colourBlind: colourBlind, l10n: l10n);
+}) => switch (answerWordKey(answer, colourBlind: colourBlind)) {
+  'colourRed' => l10n.stroopWordRed,
+  'colourBlue' => l10n.stroopWordBlue,
+  'colourGreen' => l10n.stroopWordGreen,
+  'colourYellow' => l10n.stroopWordYellow,
+  'colourPurple' => l10n.stroopWordPurple,
+  'colourOrange' => l10n.stroopWordOrange,
+  'colourPink' => l10n.stroopWordPink,
+  final String key => throw StateError(
+    'no stimulus word is registered for "$key". The two groups are extended '
+    'together: a colour with a key label and no stimulus form would render '
+    'blank at 78pt.',
+  ),
+};

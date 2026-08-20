@@ -233,6 +233,50 @@
   "@colourPink": {
     "description": "A Stroop answer colour word that exists ONLY under the colour-blind palette: it is the label PlayAnswer.red takes there, because that palette paints red as pink. There is no PlayAnswer.pink and there must not be."
   },
+  "stroopWordRed": "RED",
+  "@stroopWordRed": {
+    "description": "The colour word \"Red\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed."
+  },
+  "stroopWordBlue": "BLUE",
+  "@stroopWordBlue": {
+    "description": "The colour word \"Blue\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue."
+  },
+  "stroopWordGreen": "GREEN",
+  "@stroopWordGreen": {
+    "description": "The colour word \"Green\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen."
+  },
+  "stroopWordYellow": "YELLOW",
+  "@stroopWordYellow": {
+    "description": "The colour word \"Yellow\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow."
+  },
+  "stroopWordPurple": "PURPLE",
+  "@stroopWordPurple": {
+    "description": "The colour word \"Purple\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple."
+  },
+  "stroopWordOrange": "ORANGE",
+  "@stroopWordOrange": {
+    "description": "The colour word \"Orange\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange."
+  },
+  "stroopWordPink": "PINK",
+  "@stroopWordPink": {
+    "description": "The colour word \"Pink\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink."
+  },
+  "stroopPrompt": "TAP THE COLOUR, NOT THE WORD",
+  "@stroopPrompt": {
+    "description": "The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on."
+  },
+  "stroopStimulusValue": "{word}, printed in {ink}",
+  "@stroopStimulusValue": {
+    "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "ink": {
+        "type": "String"
+      }
+    }
+  },
   "@colourYellow": {
     "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
   },

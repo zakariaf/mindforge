@@ -198,6 +198,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get colourPink => 'Pink';
 
   @override
+  String get stroopWordRed => 'RED';
+
+  @override
+  String get stroopWordBlue => 'BLUE';
+
+  @override
+  String get stroopWordGreen => 'GREEN';
+
+  @override
+  String get stroopWordYellow => 'YELLOW';
+
+  @override
+  String get stroopWordPurple => 'PURPLE';
+
+  @override
+  String get stroopWordOrange => 'ORANGE';
+
+  @override
+  String get stroopWordPink => 'PINK';
+
+  @override
+  String get stroopPrompt => 'TAP THE COLOUR, NOT THE WORD';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word, printed in $ink';
+  }
+
+  @override
   String get resultsTitle => 'Nice run!';
 
   @override

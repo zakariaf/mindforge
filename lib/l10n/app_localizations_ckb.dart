@@ -194,6 +194,35 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get colourPink => 'پەمەیی';
 
   @override
+  String get stroopWordRed => 'سوور';
+
+  @override
+  String get stroopWordBlue => 'شین';
+
+  @override
+  String get stroopWordGreen => 'سەوز';
+
+  @override
+  String get stroopWordYellow => 'زەرد';
+
+  @override
+  String get stroopWordPurple => 'مۆر';
+
+  @override
+  String get stroopWordOrange => 'نارەنجی';
+
+  @override
+  String get stroopWordPink => 'پەمەیی';
+
+  @override
+  String get stroopPrompt => 'دەست بنێ بە ڕەنگەکە، نەک وشەکە';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word، بە ڕەنگی $ink چاپکراوە';
+  }
+
+  @override
   String get resultsTitle => 'خولێکی باش بوو!';
 
   @override

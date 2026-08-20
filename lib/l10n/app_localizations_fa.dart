@@ -194,6 +194,35 @@ class AppLocalizationsFa extends AppLocalizations {
   String get colourPink => 'صورتی';
 
   @override
+  String get stroopWordRed => 'قرمز';
+
+  @override
+  String get stroopWordBlue => 'آبی';
+
+  @override
+  String get stroopWordGreen => 'سبز';
+
+  @override
+  String get stroopWordYellow => 'زرد';
+
+  @override
+  String get stroopWordPurple => 'بنفش';
+
+  @override
+  String get stroopWordOrange => 'نارنجی';
+
+  @override
+  String get stroopWordPink => 'صورتی';
+
+  @override
+  String get stroopPrompt => 'روی رنگ بزن، نه روی واژه';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word، چاپ‌شده با رنگ $ink';
+  }
+
+  @override
   String get resultsTitle => 'اجرای خوبی بود!';
 
   @override
