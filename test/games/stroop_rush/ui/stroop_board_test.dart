@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/run_config.dart';
-import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/stroop_rush/application/stroop_board_notifier.dart';
 import 'package:mindforge/games/stroop_rush/domain/stroop_board_state.dart';
 import 'package:mindforge/games/stroop_rush/ui/board/answer_key.dart';
@@ -36,20 +34,10 @@ void main() {
     TextScaler textScaler = TextScaler.noScaling,
     double height = 560,
   }) => tester.pumpPopComponent(
-    ProviderScope(
-      overrides: [
-        initialAppSettingsProvider.overrideWithValue(
-          const AppSettings.defaults(),
-        ),
-        settingsProvider.overrideWith(
-          (ref) => Stream<AppSettings>.value(const AppSettings.defaults()),
-        ),
-      ],
-      child: SizedBox(
-        width: device.logicalSize.width - 40,
-        height: height,
-        child: StroopBoard(run: run),
-      ),
+    SizedBox(
+      width: device.logicalSize.width - 40,
+      height: height,
+      child: StroopBoard(run: run),
     ),
     localeCase: localeCase,
     device: device,

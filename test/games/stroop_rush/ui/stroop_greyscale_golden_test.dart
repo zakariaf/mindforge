@@ -2,13 +2,11 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/run_config.dart';
-import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/stroop_rush/ui/stroop_board.dart';
 
 import '../../../support/component_harness.dart';
@@ -43,32 +41,21 @@ void main() {
     required LocaleCase localeCase,
     required bool colourBlind,
   }) => tester.pumpPopComponent(
-    ProviderScope(
-      overrides: [
-        initialAppSettingsProvider.overrideWithValue(
-          const AppSettings.defaults().copyWith(
-            isColourBlindPalette: colourBlind,
-          ),
-        ),
-        settingsProvider.overrideWith(
-          (ref) => Stream<AppSettings>.value(
-            const AppSettings.defaults().copyWith(
-              isColourBlindPalette: colourBlind,
-            ),
-          ),
-        ),
-      ],
-      child: RepaintBoundary(
-        child: Greyscale(
-          child: SizedBox(
-            width: 350,
-            height: 520,
-            child: StroopBoard(run: run),
-          ),
-        ),
+    // THE HARNESS'S OWN `settings:`, not a nested ProviderScope. A nested
+    // scope overriding `settingsProvider` moves nothing: `appSettingsProvider`
+    // is not itself scoped there, so it resolves in the ROOT container and
+    // reads the root's settings. Both colour-blind goldens were byte-identical
+    // to their default siblings for exactly that reason, and the cvd lane was
+    // proving nothing while looking like coverage.
+    RepaintBoundary(
+      child: Greyscale(
+        child: SizedBox(width: 350, height: 520, child: StroopBoard(run: run)),
       ),
     ),
     localeCase: localeCase,
+    settings: const AppSettings.defaults().copyWith(
+      isColourBlindPalette: colourBlind,
+    ),
   );
 
   for (final localeCase in LocaleCase.bothDirections) {

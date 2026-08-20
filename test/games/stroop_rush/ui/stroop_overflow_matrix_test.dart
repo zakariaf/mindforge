@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/core/run_config.dart';
-import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/stroop_rush/ui/board/answer_key.dart';
 import 'package:mindforge/games/stroop_rush/ui/stroop_board.dart';
 
@@ -51,33 +49,24 @@ void main() {
     bool boldText = false,
     bool colourBlind = false,
   }) => tester.pumpPopComponent(
-    ProviderScope(
-      overrides: [
-        initialAppSettingsProvider.overrideWithValue(
-          const AppSettings.defaults().copyWith(
-            isColourBlindPalette: colourBlind,
-          ),
-        ),
-        settingsProvider.overrideWith(
-          (ref) => Stream<AppSettings>.value(
-            const AppSettings.defaults().copyWith(
-              isColourBlindPalette: colourBlind,
-            ),
-          ),
-        ),
-      ],
-      child: SizedBox(
-        // The board's own rectangle: the shell's 20pt gutter on each side, and
-        // what is left under the play band on the shortest shipped device.
-        width: device.logicalSize.width - 40,
-        height: 520,
-        child: StroopBoard(run: run),
-      ),
+    // `settings:` rather than a nested ProviderScope — see the note in
+    // stroop_greyscale_golden_test.dart. A nested scope leaves
+    // `appSettingsProvider` resolving in the root container, which made the
+    // colour-blind lane of this matrix identical to the default one.
+    SizedBox(
+      // The board's own rectangle: the shell's 20pt gutter on each side, and
+      // what is left under the play band on the shortest shipped device.
+      width: device.logicalSize.width - 40,
+      height: 520,
+      child: StroopBoard(run: run),
     ),
     localeCase: localeCase,
     device: device,
     textScaler: TextScaler.linear(scale),
     boldText: boldText,
+    settings: const AppSettings.defaults().copyWith(
+      isColourBlindPalette: colourBlind,
+    ),
   );
 
   /// Every answer label sits inside its own key.
