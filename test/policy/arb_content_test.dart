@@ -211,6 +211,9 @@ void main() {
       'hudScore',
       'hudStreak',
       'hudFound',
+      'hudNext',
+      'schulteMissesLabel',
+      'schulteTilesLabel',
     };
 
     for (final locale in <SupportedLocale>[

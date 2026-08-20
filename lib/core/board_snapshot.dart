@@ -21,6 +21,7 @@ final class HudSlot {
     required this.format,
     this.tone = HudTone.neutral,
     this.source = HudSource.board,
+    this.total,
   });
 
   /// The ARB key naming this slot.
@@ -42,6 +43,9 @@ final class HudSlot {
   /// Who fills [canonicalValue].
   final HudSource source;
 
+  /// The denominator, for [StatFormat.fraction]. Null for every other format.
+  final int? total;
+
   /// A copy of this slot showing [canonicalValue] instead.
   HudSlot withValue(int canonicalValue) => HudSlot(
     labelKey: labelKey,
@@ -49,6 +53,7 @@ final class HudSlot {
     format: format,
     tone: tone,
     source: source,
+    total: total,
   );
 
   @override
@@ -59,11 +64,12 @@ final class HudSlot {
           other.canonicalValue == canonicalValue &&
           other.format == format &&
           other.tone == tone &&
-          other.source == source;
+          other.source == source &&
+          other.total == total;
 
   @override
   int get hashCode =>
-      Object.hash(labelKey, canonicalValue, format, tone, source);
+      Object.hash(labelKey, canonicalValue, format, tone, source, total);
 
   @override
   String toString() => 'HudSlot($labelKey, $canonicalValue, ${tone.name})';

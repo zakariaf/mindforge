@@ -18,6 +18,7 @@ final class SchulteBoardState {
     required this.nextValue,
     required this.started,
     required this.wrongTapId,
+    this.wrongCount = 0,
     this.wrongIndex,
   });
 
@@ -37,6 +38,13 @@ final class SchulteBoardState {
   /// `lib/games/**` fails `check_motion_tokens.sh`. `ShakeOnWrong` owns the
   /// 480ms the shake takes; the state just remembers which tile it was.
   final int? wrongIndex;
+
+  /// How many taps landed out of order, over the whole run.
+  ///
+  /// Distinct from [wrongTapId], which exists only to give the shake a new
+  /// identity: this one is a score the results screen shows, and it keeps
+  /// counting a tile the player mistakes twice.
+  final int wrongCount;
 
   /// A counter that changes on every wrong tap.
   ///
@@ -87,12 +95,14 @@ final class SchulteBoardState {
     int? wrongIndex,
     bool clearWrong = false,
     int? wrongTapId,
+    int? wrongCount,
   }) => SchulteBoardState(
     cells: cells ?? this.cells,
     nextValue: nextValue ?? this.nextValue,
     started: started ?? this.started,
     wrongIndex: clearWrong ? null : (wrongIndex ?? this.wrongIndex),
     wrongTapId: wrongTapId ?? this.wrongTapId,
+    wrongCount: wrongCount ?? this.wrongCount,
   );
 
   @override
@@ -103,7 +113,8 @@ final class SchulteBoardState {
           other.nextValue == nextValue &&
           other.started == started &&
           other.wrongIndex == wrongIndex &&
-          other.wrongTapId == wrongTapId;
+          other.wrongTapId == wrongTapId &&
+          other.wrongCount == wrongCount;
 
   /// Whether two cell lists hold the same values in the same order.
   ///
@@ -129,5 +140,6 @@ final class SchulteBoardState {
     started,
     wrongIndex,
     wrongTapId,
+    wrongCount,
   );
 }

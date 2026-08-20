@@ -189,5 +189,13 @@
   "aboutThirdParty": "مۆڵەتنامە سەرچاوەکراوەکان",
   "@aboutThirdParty": {
     "x-review": "native-speaker-pending"
+  },
+  "schulteMissesLabel": "هەڵەکان",
+  "@schulteMissesLabel": {
+    "x-review": "native-speaker-pending"
+  },
+  "schulteTilesLabel": "خانەکان",
+  "@schulteTilesLabel": {
+    "x-review": "native-speaker-pending"
   }
 }

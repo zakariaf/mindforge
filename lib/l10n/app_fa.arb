@@ -189,5 +189,13 @@
   "aboutThirdParty": "پروانه‌های متن‌باز",
   "@aboutThirdParty": {
     "x-review": "native-speaker-pending"
+  },
+  "schulteMissesLabel": "خطاها",
+  "@schulteMissesLabel": {
+    "x-review": "native-speaker-pending"
+  },
+  "schulteTilesLabel": "خانه‌ها",
+  "@schulteTilesLabel": {
+    "x-review": "native-speaker-pending"
   }
 }

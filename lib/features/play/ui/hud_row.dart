@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/result_stat.dart';
+import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
 
@@ -90,6 +91,20 @@ class HudRow extends ConsumerWidget {
               slot.canonicalValue,
               numbers.count(slot.canonicalValue),
             ),
+      // ISOLATED, unlike the multiplier, and for the opposite reason. A
+      // fraction has to keep reading numerator-first in every language, and
+      // `۶ / ۲۵` inside an RTL line renders as `۲۵ / ۶` without this: the
+      // spaces and the slash are neutrals that take the paragraph direction.
+      // FSI resolves to LTR here because the run carries no strong character,
+      // which is exactly the direction a fraction wants.
+      StatFormat.fraction => BidiText.isolate(
+        ref
+            .watch(appLocalizationsProvider)
+            .foundOfTotal(
+              numbers.count(slot.canonicalValue),
+              numbers.count(slot.total ?? 0),
+            ),
+      ),
       StatFormat.points || StatFormat.count => numbers.count(
         slot.canonicalValue,
       ),

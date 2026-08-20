@@ -11,6 +11,7 @@ import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
 import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
@@ -183,6 +184,8 @@ class _StatCell extends ConsumerWidget {
       label: switch (stat.labelKey) {
         'accuracyLabel' => l10n.accuracyLabel,
         'longestStreakLabel' => l10n.longestStreakLabel,
+        'schulteMissesLabel' => l10n.schulteMissesLabel,
+        'schulteTilesLabel' => l10n.schulteTilesLabel,
         'avgReactionLabel' => l10n.avgReactionLabel,
         _ => throw StateError(
           'no results label is registered for "${stat.labelKey}"',
@@ -205,6 +208,14 @@ class _StatCell extends ConsumerWidget {
         StatFormat.multiplier => l10n.streakMultiplier(
           stat.canonicalValue,
           numbers.count(stat.canonicalValue),
+        ),
+        // The same isolate the HUD applies, for the same reason: a fraction
+        // reads numerator-first in every language.
+        StatFormat.fraction => BidiText.isolate(
+          l10n.foundOfTotal(
+            numbers.count(stat.canonicalValue),
+            numbers.count(stat.total ?? 0),
+          ),
         ),
         StatFormat.points || StatFormat.count => numbers.count(
           stat.canonicalValue,

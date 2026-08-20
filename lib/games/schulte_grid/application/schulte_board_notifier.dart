@@ -61,6 +61,7 @@ final class SchulteBoardNotifier extends Notifier<SchulteBoardState> {
         // A NEW IDENTITY on every wrong tap, so tapping the same wrong tile
         // twice shakes twice.
         wrongTapId: state.wrongTapId + 1,
+        wrongCount: state.wrongCount + 1,
       );
 
       return;

@@ -159,7 +159,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get hudFound => 'GEFUNDEN';
 
   @override
-  String get hudNext => 'Nächste';
+  String get hudNext => 'NÄCHSTE';
 
   @override
   String streakMultiplier(int count, String formatted) {
@@ -389,4 +389,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get aboutThirdParty => 'Open-Source-Lizenzen';
+
+  @override
+  String get schulteMissesLabel => 'FEHLER';
+
+  @override
+  String get schulteTilesLabel => 'FELDER';
 }
