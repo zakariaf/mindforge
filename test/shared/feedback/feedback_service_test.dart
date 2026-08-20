@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/shared/feedback/feedback_failure.dart';
 import 'package:mindforge/shared/feedback/feedback_service.dart';
 import 'package:mindforge/shared/feedback/haptic_verb.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
@@ -8,16 +9,19 @@ import 'package:mindforge/shared/feedback/moment_catalog.dart';
 import 'package:mindforge/shared/feedback/sound_cue.dart';
 import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 
+import '../../support/fake_log_sink.dart';
+
 void main() {
   LiveFeedbackService serviceOver(
     FakeHapticGateway gateway, {
     bool haptics = true,
     bool sound = true,
+    FakeLogSink? logSink,
   }) => LiveFeedbackService(
     gateway: gateway,
     hapticsEnabled: haptics,
     soundEnabled: sound,
-    onError: (_, _) {},
+    logSink: logSink ?? FakeLogSink(),
   );
 
   group('firing', () {
@@ -115,18 +119,25 @@ void main() {
       // A device with no taptic engine must not take a screen down over a buzz
       // that did not happen.
       final gateway = FakeHapticGateway.failing();
-      final errors = <Object>[];
+      final logSink = FakeLogSink();
 
-      LiveFeedbackService(
-        gateway: gateway,
-        hapticsEnabled: true,
-        soundEnabled: true,
-        onError: (error, _) => errors.add(error),
-      ).fire(Moment.buttonCommit);
-
+      serviceOver(gateway, logSink: logSink).fire(Moment.buttonCommit);
       await Future<void>.delayed(Duration.zero);
 
-      expect(errors, hasLength(1));
+      expect(logSink.codes, <String>['feedback.haptic_unavailable']);
+      expect(
+        logSink.recorded.single,
+        const HapticUnavailable(HapticVerb.lightImpact),
+        reason: 'the failure names WHICH verb did not play',
+      );
+      expect(
+        logSink.stackTraces.single,
+        isNotNull,
+        reason:
+            'the stack survives. The bespoke onError this replaced named it at '
+            'the call site and then dropped it, which looks identical from the '
+            'outside to recording it',
+      );
       expect(gateway.played, <HapticVerb>[HapticVerb.lightImpact]);
     });
   });

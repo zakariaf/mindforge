@@ -149,3 +149,20 @@ final chartSeriesProvider = StreamProvider.autoDispose
 final streakProvider = StreamProvider.autoDispose<StreakStatus>(
   (ref) => ref.watch(runRepositoryProvider).watchStreak(),
 );
+
+/// The settings the app reads, with the seed as their pre-stream value.
+///
+/// **One fold, not one per consumer.** `localeProvider` and the three feedback
+/// gates had each written `settingsProvider.value ?? initialAppSettingsProvider`
+/// out, with a paragraph each explaining the same policy — two places to change
+/// it and two provider instances doing identical work.
+///
+/// The seed matters for exactly the reason both paragraphs gave: the first
+/// frame has to already be right. A Persian player's cold start must not paint
+/// an English LTR frame and flip, and a player who turned haptics off must not
+/// get one buzz on launch while the stream catches up.
+final Provider<AppSettings> appSettingsProvider = Provider<AppSettings>(
+  (ref) =>
+      ref.watch(settingsProvider).value ??
+      ref.watch(initialAppSettingsProvider),
+);

@@ -7,10 +7,11 @@
 /// choose, what that feels like.
 ///
 /// Transcribed from `sunburst-motion-and-haptics`' catalog table, in its order.
-/// **E06 owns the map from a moment to its haptic, its sound and its
-/// animation.** This file deliberately holds no behaviour: adding a case here
-/// is a design decision, and an exhaustive `switch` in E06 is what makes that
-/// decision impossible to forget.
+/// **`moment_catalog.dart` owns the map from a moment to its haptic, sound,
+/// curve, duration and animation.** This file deliberately holds no behaviour:
+/// adding a value here is a design decision, and a total catalog — asserted
+/// total, and reached through `specFor` — is what makes that decision
+/// impossible to forget.
 ///
 /// Every moment carries a non-motion residue — a state that survives Sound off,
 /// Haptics off and Reduce motion on — which is why the acknowledgement is never

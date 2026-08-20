@@ -10,7 +10,6 @@ import 'package:mindforge/shared/feedback/moment.dart';
 import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 import 'package:mindforge/shared/motion/pop_celebration.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
-import 'package:mindforge/theme/sunburst_shape.dart';
 
 import '../../support/component_harness.dart';
 import '../../support/locale_cases.dart';
@@ -18,13 +17,11 @@ import '../../support/locale_cases.dart';
 /// The celebration: one pass, no loop, and nothing in the player's way.
 void main() {
   const motion = SunburstMotion.sunburstPop;
-  const shape = SunburstShape.sunburstPop;
 
   const badge = Key('badge');
 
   Widget celebration({
     Moment moment = Moment.personalBest,
-    double tiltDegrees = 0,
     String? freshMount,
   }) => PopCelebration(
     // A key only where a test needs a FRESH State. Re-pumping the same widget
@@ -33,7 +30,6 @@ void main() {
     // behaviour one test asserts and the reason another needs a new key.
     key: freshMount == null ? null : ValueKey<String>(freshMount),
     moment: moment,
-    restingTiltDegrees: tiltDegrees,
     child: const SizedBox(key: badge, width: 80, height: 40),
   );
 
@@ -192,17 +188,16 @@ void main() {
       expect(scaleOf(tester), closeTo(1, 0.0001));
     });
 
-    testWidgets('and the resting tilt survives reduce motion', (tester) async {
-      // A resting transform is a STATE, not motion. A badge that sat straight
-      // for a player with animation off would be a different badge.
-      await tester.pumpPopComponent(
-        celebration(tiltDegrees: shape.badgeTiltDegrees),
-        disableAnimations: true,
-      );
-      await tester.pump();
+    testWidgets('and it applies no rotation of its own', (tester) async {
+      // The -2.5deg of .badge.new is the BADGE's resting geometry and PopBadge
+      // applies it from the token. A restingTiltDegrees inlet here was a raw
+      // degrees number any call site could pass a literal to, which is exactly
+      // what the token exists to prevent — and it left the token with no
+      // production consumer at all.
+      await tester.pumpPopComponent(celebration());
+      await tester.pump(motion.durCelebrate);
 
-      expect(rotationOf(tester), lessThan(0));
-      expect(scaleOf(tester), 1.0);
+      expect(rotationOf(tester), 0);
     });
   });
 
@@ -252,10 +247,7 @@ void main() {
 
       for (final localeCase in LocaleCase.all) {
         await tester.pumpPopComponent(
-          celebration(
-            tiltDegrees: shape.badgeTiltDegrees,
-            freshMount: localeCase.tag,
-          ),
+          celebration(freshMount: localeCase.tag),
           localeCase: localeCase,
         );
 

@@ -1,98 +1,77 @@
-import 'dart:async';
-import 'dart:math' as math;
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/shared/feedback/feedback_service.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
-import 'package:mindforge/shared/feedback/moment_catalog.dart';
-import 'package:mindforge/shared/motion/motion_role.dart';
-import 'package:mindforge/theme/sunburst_motion.dart';
+import 'package:mindforge/shared/motion/moment_drive.dart';
+import 'package:mindforge/theme/sunburst_shape.dart';
 
 /// A single bounded scale pop, played once when the thing it wraps arrives.
 ///
-/// **`MotionAxis.none`.** A scale has no reading direction to have, and the
-/// resting tilt is a shape constant of the badge — the same class of decision
-/// as the hard offset shadow, and for the same reason. So this file reads no
+/// The pop has no reading direction to have, so this file reads no
 /// `Directionality` and negates no sign, in any locale.
 ///
-/// The stop condition is that there is no loop: one `forward`, no `repeat`, no
-/// re-entry. The latch is set before any early return, so a celebration that
-/// declined to animate has still been played and will not play later.
+/// The stop condition is that there is no loop: `MomentDrive` plays the number
+/// of passes the catalog row declares, and `personalBest` declares one. The
+/// latch is set before any early return, so a celebration that declined to
+/// animate has still been played and will not play later.
 ///
 /// It wraps rather than paints, and it **blocks nothing** — no `AbsorbPointer`,
 /// no `IgnorePointer`, no barrier. A celebration that swallowed input would eat
 /// the "play again" tap for the length of its own pop.
+///
+/// **It carries no tilt.** The `-2.5deg` of `.badge.new` is the badge's own
+/// resting geometry and `PopBadge` applies it from `SunburstShape`. A
+/// `restingTiltDegrees` inlet here would be a raw-degrees number any call site
+/// could pass a literal to, which is exactly what the token exists to prevent.
 class PopCelebration extends ConsumerStatefulWidget {
   /// Celebrates [moment] over [child].
   const PopCelebration({
     required this.moment,
     required this.child,
-    this.restingTiltDegrees = 0,
     super.key,
   });
 
-  /// The moment being celebrated. Its haptic and sound come from the catalog.
+  /// The moment being celebrated. Its haptic, sound, curve, duration and pass
+  /// count all come from its catalog row.
   final Moment moment;
 
   /// What is being celebrated.
   final Widget child;
-
-  /// A fixed angle the child sits at, in degrees.
-  ///
-  /// Applied **outside** the animation, because it is a state rather than a
-  /// motion: it survives reduce motion, and it is still there long after the
-  /// pop has finished.
-  final double restingTiltDegrees;
 
   @override
   ConsumerState<PopCelebration> createState() => _PopCelebrationState();
 }
 
 class _PopCelebrationState extends ConsumerState<PopCelebration>
-    with SingleTickerProviderStateMixin {
-  /// Rests at 1, so a celebration that never plays is already at its end state.
-  ///
-  /// Every interruption — reduce motion, an off-route mount, disposal
-  /// mid-flight — therefore lands on the finished frame rather than on a
-  /// shrunken one.
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    value: 1,
-  );
+    with SingleTickerProviderStateMixin, MomentDrive<PopCelebration> {
+  @override
+  Moment get moment => widget.moment;
 
   /// The pop, as a value shape rather than a timing.
   ///
-  /// `system.html` section 10: scale 0.86 -> 1.06 -> 1.0, never looping.
-  ///
-  /// The curve is chained onto each SEGMENT, and the controller runs linearly.
-  /// `AnimationController` clamps its own value to `[0, 1]` and `easePop` is
-  /// named for overshooting past 1, so driving the controller with it throws
-  /// the spring away and arrives early — the same trap `PressPhysics`
-  /// documents. `TweenSequence` also expects its input in `[0, 1]` and
-  /// extrapolates outside it, so an overshooting curve in FRONT of the sequence
-  /// would push the tail below 1.0 and leave the badge smaller than it started.
-  /// Inside a segment the overshoot lands where it belongs: measured, the peak
-  /// is 1.075 rather than the nominal 1.06.
+  /// `system.html`: scale `celebrationScaleFrom` -> `celebrationScalePeak` ->
+  /// 1.0, never looping. The curve is chained onto each segment by
+  /// [MomentDrive.curved]; measured, the peak lands at 1.0753 rather than the
+  /// nominal 1.06, because a curve chained onto a tween sequence produces the
+  /// numbers neither one names alone.
   late final Animation<double> _scale = TweenSequence<double>(
     <TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 0.86, end: 1.06).chain(_pop),
+        tween: Tween<double>(
+          begin: SunburstShape.of(context).celebrationScaleFrom,
+          end: SunburstShape.of(context).celebrationScalePeak,
+        ).chain(curved),
         weight: 60,
       ),
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 1.06, end: 1).chain(_pop),
+        tween: Tween<double>(
+          begin: SunburstShape.of(context).celebrationScalePeak,
+          end: 1,
+        ).chain(curved),
         weight: 40,
       ),
     ],
-  ).animate(_controller);
-
-  /// The moment's own curve, read off the catalog.
-  late final Animatable<double> _pop = CurveTween(
-    curve: SunburstMotion.of(
-      context,
-    ).curveFor(kMomentCatalog[widget.moment]?.curve ?? CurveRole.pop),
-  );
+  ).animate(controller);
 
   /// Whether this celebration has already happened.
   ///
@@ -102,15 +81,18 @@ class _PopCelebrationState extends ConsumerState<PopCelebration>
   bool _hasPlayed = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _playOnce();
+  void initState() {
+    super.initState();
+    // Rests at its END state, so a celebration that never plays — reduce
+    // motion, an off-route mount, disposal mid-flight — is already finished
+    // rather than shrunken.
+    controller.value = 1;
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _playOnce();
   }
 
   void _playOnce() {
@@ -123,32 +105,20 @@ class _PopCelebrationState extends ConsumerState<PopCelebration>
     // line is the bug the ordering exists to prevent.
     ref.read(feedbackServiceProvider).fire(widget.moment);
 
-    if (MediaQuery.disableAnimationsOf(context)) return;
-
     // Nobody is looking at a screen under a sheet or behind a pushed route.
     if (ModalRoute.of(context)?.isCurrent == false) return;
 
-    final motion = SunburstMotion.of(context);
-    final spec = kMomentCatalog[widget.moment];
-
-    _controller.duration = motion.durationFor(
-      spec?.duration ?? MotionRole.celebrate,
-    );
-
-    // forward(from: 0), not animateTo from the resting 1: animateTo(1) from 1
-    // is a no-op, and resetting the value afterwards cancels the run it was
-    // supposed to start. The controller runs LINEARLY; the curve lives in the
-    // tween sequence above.
-    unawaited(_controller.forward(from: 0));
+    playUnawaited();
   }
 
   @override
-  Widget build(BuildContext context) {
-    // The tilt sits OUTSIDE the animated scale: a resting transform is a state
-    // and survives reduce motion, while the pop is motion and does not.
-    return Transform.rotate(
-      angle: widget.restingTiltDegrees * math.pi / 180,
-      child: ScaleTransition(scale: _scale, child: widget.child),
-    );
-  }
+  Widget build(BuildContext context) => ScaleTransition(
+    scale: _scale,
+    // A RepaintBoundary as the passed-through child: ScaleTransition pushes a
+    // transform layer but still REPAINTS the child inside it every frame, so a
+    // badge with text, an ink border and a hard shadow re-rasterizes for the
+    // whole celebration. With the boundary it is one rasterization and a layer
+    // transform.
+    child: RepaintBoundary(child: widget.child),
+  );
 }

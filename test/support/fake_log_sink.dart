@@ -14,6 +14,13 @@ final class FakeLogSink implements LogSink {
   /// The codes recorded, in order — the usual thing to assert on.
   List<String> get codes => recorded.map((f) => f.code).toList();
 
+  /// The stack traces recorded alongside them, in the same order.
+  ///
+  /// Kept so a test can assert the stack SURVIVED. A reporting path that
+  /// captures a stack and then drops it looks identical, from the outside, to
+  /// one that records the failure properly.
+  final List<StackTrace?> stackTraces = <StackTrace?>[];
+
   @override
   void recordFailure(
     Failure failure, {
@@ -21,5 +28,6 @@ final class FakeLogSink implements LogSink {
     StackTrace? stackTrace,
   }) {
     recorded.add(failure);
+    stackTraces.add(stackTrace);
   }
 }

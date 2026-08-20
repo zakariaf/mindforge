@@ -32,29 +32,13 @@ class DirectionalSlide extends StatelessWidget {
   ///
   /// `Offset(1, 0)` means "one width toward the end edge" — physically right in
   /// English and physically left in Persian.
-  DirectionalSlide({
+  const DirectionalSlide({
     required this.t,
     required this.beginStart,
-    required this.axis,
     required this.moment,
     required this.child,
     super.key,
-  }) : assert(
-         axis != MotionAxis.fixed,
-         'A fixed-axis motion travels toward the light source and never '
-         'mirrors. The press is the one that does that, and it belongs in '
-         'PressPhysics — routing it here would mirror it.',
-       ),
-       assert(
-         axis != MotionAxis.none,
-         'A none-axis moment translates nothing. There is no slide to build.',
-       ),
-       assert(
-         axis != MotionAxis.inline || beginStart.dx != 0,
-         'An inline slide with no dx is a vertical motion that was declared '
-         'inline. Say vertical, and it stops asking for a direction it does '
-         'not use.',
-       );
+  });
 
   /// How far into the slide it is.
   final Animation<double> t;
@@ -62,40 +46,67 @@ class DirectionalSlide extends StatelessWidget {
   /// Where the child starts, in start-edge terms.
   final Offset beginStart;
 
-  /// Which axis this motion travels along.
-  final MotionAxis axis;
-
-  /// The moment this slide belongs to. Its timing comes from the catalog.
+  /// The moment this slide belongs to.
+  ///
+  /// **Its axis, duration and curve all come from the catalog row.** The axis
+  /// used to be a second required parameter beside it, which meant
+  /// `DirectionalSlide(moment: routeTransition, axis: vertical)` compiled, passed
+  /// every assert, and silently stopped the route transition mirroring under
+  /// Persian — the exact defect the axis column was invented to make
+  /// impossible. A widget cannot both read a table and let its caller
+  /// contradict it.
   final Moment moment;
+
+  /// Which axis this motion travels along, per the catalog.
+  MotionAxis get axis => specFor(moment).axis;
 
   /// What slides.
   final Widget child;
 
   /// The duration this slide runs at, already resolved for reduce motion.
-  Duration durationIn(BuildContext context) {
-    final motion = SunburstMotion.of(context);
-
-    return motion.resolve(
-      context,
-      motion.durationFor(kMomentCatalog[moment]?.duration ?? MotionRole.move),
-    );
-  }
+  ///
+  /// `resolvedDurationFor` rather than the composition written out: it is the
+  /// one helper whose job is to never forget the reduce-motion fold, and it had
+  /// no callers while two sites re-derived it by hand.
+  Duration durationIn(BuildContext context) => SunburstMotion.of(
+    context,
+  ).resolvedDurationFor(context, specFor(moment).duration);
 
   /// The curve this slide runs on.
   Curve curveIn(BuildContext context) => SunburstMotion.of(
     context,
-  ).curveFor(kMomentCatalog[moment]?.curve ?? CurveRole.inOut);
+  ).curveFor(specFor(moment).curve ?? CurveRole.inOut);
 
   @override
-  Widget build(BuildContext context) => SlideTransition(
-    position: Tween<Offset>(begin: beginStart, end: Offset.zero).animate(
-      CurvedAnimation(parent: t, curve: curveIn(context)),
-    ),
-    // THE WHOLE MIRRORING MECHANISM. A direction here makes SlideTransition
-    // read the x offset in reading order; null makes it read canvas
-    // coordinates. Vertical motion gets null, because up is up in every
-    // language and handing it a direction would be a claim it does not make.
-    textDirection: axis.mirrorsUnderRtl ? Directionality.of(context) : null,
-    child: child,
-  );
+  Widget build(BuildContext context) {
+    assert(
+      axis != MotionAxis.fixed && axis != MotionAxis.none,
+      '${moment.name} is ${axis.name}: it does not slide. A fixed-axis motion '
+      'travels toward the light source and belongs in PressPhysics; a '
+      'none-axis moment translates nothing at all.',
+    );
+    assert(
+      axis != MotionAxis.inline || beginStart.dx != 0,
+      'An inline slide with no dx is a vertical motion wearing an inline '
+      "moment's row. Check the offset, not the axis.",
+    );
+
+    return SlideTransition(
+      // .chain(CurveTween(...)), not CurvedAnimation: a CurvedAnimation
+      // registers a status listener on `t` and has to be disposed, and one
+      // built in build() is allocated on every rebuild and never disposed —
+      // a listener leak on the route's own animation. A chained Animatable is
+      // a pure value transform with nothing to register and nothing to free.
+      position: Tween<Offset>(
+        begin: beginStart,
+        end: Offset.zero,
+      ).chain(CurveTween(curve: curveIn(context))).animate(t),
+      // THE WHOLE MIRRORING MECHANISM. A direction here makes SlideTransition
+      // read the x offset in reading order; null makes it read canvas
+      // coordinates. Vertical motion gets null, because up is up in every
+      // language and handing it a direction would be a claim it does not make.
+      textDirection: axis.mirrorsUnderRtl ? Directionality.of(context) : null,
+      child: child,
+    );
+  }
 }

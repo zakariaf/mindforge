@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
+import 'package:mindforge/shared/motion/motion_role.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
@@ -54,6 +55,7 @@ class PopProgressBar extends StatelessWidget {
     final colours = SunburstColors.of(context);
     final shape = SunburstShape.of(context);
     final motion = SunburstMotion.of(context);
+    final filled = value.clamp(0.0, 1.0);
 
     return Semantics(
       label: semanticLabel,
@@ -80,12 +82,13 @@ class PopProgressBar extends StatelessWidget {
               // zero under reduce motion, and TweenAnimationBuilder lands on
               // the end value on the same frame when it does.
               child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(
-                  begin: value.clamp(0.0, 1.0),
-                  end: value.clamp(0.0, 1.0),
-                ),
-                duration: motion.resolve(context, motion.durState),
-                curve: motion.easeOut,
+                // No `begin:`. TweenAnimationBuilder defaults it to `end` on
+                // the first build and ignores it after, so writing it out is
+                // the default spelled twice — and it was clamping the same
+                // value a second time to do it.
+                tween: Tween<double>(end: filled),
+                duration: motion.resolvedDurationFor(context, MotionRole.state),
+                curve: motion.curveFor(CurveRole.out),
                 // Built once and passed through: the stripe does not depend on
                 // how far along the tween is, only on how wide it is drawn.
                 child: RepaintBoundary(
@@ -155,13 +158,13 @@ class _StripePainter extends CustomPainter {
     final radians = angle * math.pi / 180;
     final step = pitch / math.cos(radians);
     final reach = size.width + size.height;
+    // Hoisted: the fill is tweened now, so this loop runs on every frame of
+    // every advance, and a transcendental per stripe per frame is real work on
+    // a running HUD.
+    final lean = size.height * math.tan(radians);
 
     for (var x = -size.height; x < reach; x += step) {
-      canvas.drawLine(
-        Offset(x, size.height),
-        Offset(x + size.height * math.tan(radians), 0),
-        _stripe,
-      );
+      canvas.drawLine(Offset(x, size.height), Offset(x + lean, 0), _stripe);
     }
 
     canvas.restore();

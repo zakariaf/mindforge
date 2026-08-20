@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
@@ -57,7 +59,7 @@ class PopBadge extends StatelessWidget {
     final type = SunburstType.of(context);
     final glyph = variant.glyph;
 
-    return MergeSemantics(
+    final badge = MergeSemantics(
       child: PopSurface(
         fill: variant.fill(colours),
         radius: BorderRadiusDirectional.all(shape.radiusPill),
@@ -86,5 +88,20 @@ class PopBadge extends StatelessWidget {
         ),
       ),
     );
+
+    // `.badge.new{transform:rotate(-2.5deg)}` in system.html. A RESTING
+    // transform, applied here rather than by whatever animates the badge: it is
+    // the badge's own geometry, it survives reduce motion, and it is still
+    // there long after any celebration has finished.
+    //
+    // It does not mirror, for the same reason the hard offset shadow does not.
+    // Tilting the Persian badge the other way would be a change nobody could
+    // name a reason for.
+    return variant == PopBadgeVariant.best
+        ? Transform.rotate(
+            angle: shape.badgeTiltDegrees * math.pi / 180,
+            child: badge,
+          )
+        : badge;
   }
 }

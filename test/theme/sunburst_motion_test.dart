@@ -46,7 +46,7 @@ void main() {
       }
     });
 
-    test('there are exactly four durations, three curves and one amplitude', () {
+    test('there are exactly four durations and three curves', () {
       final fields = DesignSource.dartFieldNames(
         'lib/theme/sunburst_motion.dart',
         'SunburstMotion',
@@ -62,13 +62,14 @@ void main() {
           'easePop',
           'easeOut',
           'easeInOut',
-          'shakeAmplitude',
         ],
         reason:
-            'a fifth duration is a new moment nobody catalogued. '
-            'shakeAmplitude is the one non-timing member: system.html sets the '
-            'wrong-answer sweep in its keyframe rather than in a variable, and '
-            'it is a motion value rather than a shape one',
+            'a fifth duration is a new moment nobody catalogued. This scale is '
+            'a WHEN and nothing else: shakeAmplitude passed through here '
+            'briefly and the list had to carry a sentence calling it "the one '
+            'non-timing member", which is a test pinning an anomaly rather '
+            'than resolving it. Magnitudes live on SunburstShape, beside '
+            'e1..e4, focusGap and pressScale',
       );
     });
 

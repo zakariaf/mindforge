@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
+import 'package:mindforge/shared/feedback/moment_catalog.dart';
 import 'package:mindforge/shared/motion/directional_slide.dart';
 import 'package:mindforge/shared/motion/motion_axis.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
@@ -27,14 +28,18 @@ void main() {
 
   tearDown(() => controller.dispose());
 
+  /// A slide for [moment], whose AXIS comes from the catalog row.
+  ///
+  /// There is no axis parameter to pass. It used to be one, beside the moment,
+  /// which meant a caller could hand a route transition a vertical axis and
+  /// silently stop it mirroring under Persian — a combination the catalog
+  /// already answers and no widget should let a caller contradict.
   Widget slide({
     required Offset beginStart,
-    required MotionAxis axis,
     Moment moment = Moment.routeTransition,
   }) => DirectionalSlide(
     t: controller,
     beginStart: beginStart,
-    axis: axis,
     moment: moment,
     child: const SizedBox(key: child, width: 100, height: 100),
   );
@@ -51,11 +56,10 @@ void main() {
     WidgetTester tester,
     LocaleCase localeCase, {
     required Offset beginStart,
-    required MotionAxis axis,
     Moment moment = Moment.routeTransition,
   }) async {
     await tester.pumpPopComponent(
-      slide(beginStart: beginStart, axis: axis, moment: moment),
+      slide(beginStart: beginStart, moment: moment),
       localeCase: localeCase,
     );
 
@@ -78,7 +82,6 @@ void main() {
           tester,
           LocaleCase.english,
           beginStart: const Offset(1, 0),
-          axis: MotionAxis.inline,
         ),
         100,
         reason: 'one child width toward the physical RIGHT in English',
@@ -94,7 +97,6 @@ void main() {
             tester,
             localeCase,
             beginStart: const Offset(1, 0),
-            axis: MotionAxis.inline,
           ),
           -100,
           reason:
@@ -113,7 +115,7 @@ void main() {
 
       for (final localeCase in LocaleCase.bothDirections) {
         await tester.pumpPopComponent(
-          slide(beginStart: const Offset(1, 0), axis: MotionAxis.inline),
+          slide(beginStart: const Offset(1, 0)),
           localeCase: localeCase,
         );
         controller.value = 1;
@@ -136,7 +138,6 @@ void main() {
         await tester.pumpPopComponent(
           slide(
             beginStart: const Offset(0, 1),
-            axis: MotionAxis.vertical,
             moment: Moment.sheetTransition,
           ),
           localeCase: localeCase,
@@ -171,7 +172,6 @@ void main() {
           tester,
           localeCase,
           beginStart: const Offset(0.3, 1),
-          axis: MotionAxis.vertical,
           moment: Moment.sheetTransition,
         );
       }
@@ -190,47 +190,77 @@ void main() {
   });
 
   group('what it refuses to be', () {
-    testWidgets('a fixed axis is rejected: the press does not belong here', (
+    /// Pumps a slide and returns whatever it threw.
+    ///
+    /// The asserts moved from the constructor to `build()` when the axis
+    /// stopped being a parameter: there is nothing to check until the moment's
+    /// row can be read, and the row is the same on every build.
+    Future<Object?> pumpAndCatch(
+      WidgetTester tester, {
+      required Offset beginStart,
+      required Moment moment,
+    }) async {
+      await tester.pumpPopComponent(
+        slide(beginStart: beginStart, moment: moment),
+      );
+
+      return tester.takeException();
+    }
+
+    testWidgets('a fixed-axis moment: the press does not belong here', (
       tester,
     ) async {
       expect(
-        () => DirectionalSlide(
-          t: controller,
+        await pumpAndCatch(
+          tester,
           beginStart: const Offset(1, 1),
-          axis: MotionAxis.fixed,
           moment: Moment.buttonPress,
-          child: const SizedBox.shrink(),
         ),
-        throwsAssertionError,
+        isAssertionError,
       );
     });
 
-    testWidgets('a none axis is rejected: nothing to slide', (tester) async {
-      expect(
-        () => DirectionalSlide(
-          t: controller,
-          beginStart: const Offset(0, 1),
-          axis: MotionAxis.none,
-          moment: Moment.runStart,
-          child: const SizedBox.shrink(),
-        ),
-        throwsAssertionError,
-      );
-    });
-
-    testWidgets('and an inline slide with no dx is a mis-declared vertical', (
+    testWidgets('a none-axis moment: there is nothing to slide', (
       tester,
     ) async {
       expect(
-        () => DirectionalSlide(
-          t: controller,
+        await pumpAndCatch(
+          tester,
           beginStart: const Offset(0, 1),
-          axis: MotionAxis.inline,
-          moment: Moment.routeTransition,
-          child: const SizedBox.shrink(),
+          moment: Moment.runStart,
         ),
-        throwsAssertionError,
+        isAssertionError,
       );
+    });
+
+    testWidgets('and an inline moment handed an offset with no dx', (
+      tester,
+    ) async {
+      // The mis-declaration is now in the OFFSET rather than in the axis: the
+      // moment says inline and the offset does not move along that axis.
+      expect(
+        await pumpAndCatch(
+          tester,
+          beginStart: const Offset(0, 1),
+          moment: Moment.routeTransition,
+        ),
+        isAssertionError,
+      );
+    });
+
+    testWidgets('and the axis cannot be contradicted at all', (tester) async {
+      // There is no axis parameter. This is the assertion that the whole
+      // change exists for: the only way to say which axis a slide travels on
+      // is to name a moment, and the catalog answers for it.
+      const slide = DirectionalSlide(
+        t: kAlwaysCompleteAnimation,
+        beginStart: Offset(1, 0),
+        moment: Moment.sheetTransition,
+        child: SizedBox.shrink(),
+      );
+
+      expect(slide.axis, specFor(Moment.sheetTransition).axis);
+      expect(slide.axis, MotionAxis.vertical);
     });
   });
 
@@ -248,7 +278,6 @@ void main() {
             tester,
             LocaleCase.all.firstWhere((c) => c.tag == tag),
             beginStart: const Offset(1, 0),
-            axis: MotionAxis.inline,
           ),
         );
       }
@@ -269,9 +298,7 @@ void main() {
     testWidgets('a route transition runs at durMove on easeInOut', (
       tester,
     ) async {
-      final built =
-          slide(beginStart: const Offset(1, 0), axis: MotionAxis.inline)
-              as DirectionalSlide;
+      final built = slide(beginStart: const Offset(1, 0)) as DirectionalSlide;
 
       await tester.pumpPopComponent(built);
 
@@ -282,9 +309,7 @@ void main() {
     });
 
     testWidgets('and collapses to zero under reduce motion', (tester) async {
-      final built =
-          slide(beginStart: const Offset(1, 0), axis: MotionAxis.inline)
-              as DirectionalSlide;
+      final built = slide(beginStart: const Offset(1, 0)) as DirectionalSlide;
 
       await tester.pumpPopComponent(built, disableAnimations: true);
 

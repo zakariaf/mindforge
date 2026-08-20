@@ -2,15 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/shared/feedback/moment.dart';
+import 'package:mindforge/shared/feedback/moment_catalog.dart';
 import 'package:mindforge/shared/motion/shake_on_wrong.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
+import 'package:mindforge/theme/sunburst_shape.dart';
 
+import '../../policy/support/source_text.dart';
 import '../../support/component_harness.dart';
 import '../../support/locale_cases.dart';
 
-/// The wrong-answer shake: two cycles, and the absence of a third.
+/// The wrong-answer shake: as many passes as its catalog row declares, and
+/// nothing after them.
 void main() {
   const motion = SunburstMotion.sunburstPop;
+  const shape = SunburstShape.sunburstPop;
   const key = Key('key');
 
   Widget shake({required bool isWrong}) => ShakeOnWrong(
@@ -79,19 +85,61 @@ void main() {
       expect(dxOf(tester), 0);
     });
 
-    testWidgets('and the source has no third pass and no repeat', (
+    testWidgets('for exactly as many passes as the catalog declares', (
       tester,
     ) async {
-      // The stop condition IS the absence of a third line. Asserted, because
-      // "there is no loop" is invisible in a diff that adds one.
-      final code = File('lib/shared/motion/shake_on_wrong.dart')
-          .readAsStringSync()
-          .split('\n')
-          .where((line) => !line.trimLeft().startsWith('//'))
-          .join('\n');
+      // THE STOP CONDITION IS A NUMBER IN THE TABLE, and this is what makes
+      // that true rather than decorative. It used to be two unrolled forward()
+      // calls with a comment saying there was no third, and a source grep
+      // counting them — so editing cycles: 2 to 3 in the catalog changed
+      // nothing at all.
+      final cycles = specFor(Moment.answerWrong).cycles;
+      expect(cycles, 2, reason: 'the row this test is calibrated against');
 
-      expect(code, isNot(contains('.repeat(')));
-      expect('forward('.allMatches(code), hasLength(2));
+      await tester.pumpPopComponent(shake(isWrong: false));
+      await tester.pumpPopComponent(shake(isWrong: true));
+
+      // Pass by pass, not one long pump. A single pump past several passes
+      // advances the clock and produces ONE frame: the awaited TickerFuture
+      // resolves and the next pass starts, but nothing renders it, so the
+      // widget still reads zero and the test would fail on a shake that is
+      // working perfectly. Each pass gets its own pump, plus a SHORT one — not
+      // a zero-duration pump — for the microtask that starts the next pass,
+      // because the new controller measures its elapsed time from the first
+      // frame after it begins.
+      for (var pass = 0; pass < cycles - 1; pass++) {
+        await tester.pump(motion.durCelebrate);
+        await tester.pump(const Duration(milliseconds: 1));
+      }
+
+      // A quarter into the LAST pass, where the sweep is at its extreme. Not
+      // one frame before the end: every pass finishes at zero, so that instant
+      // cannot tell a shake that ran its passes from one that stopped early.
+      await tester.pump(motion.durCelebrate ~/ 4);
+      final insideTheLastPass = dxOf(tester);
+
+      // And past the last one the table allows, nothing moves again.
+      await tester.pump(motion.durCelebrate);
+      expect(dxOf(tester), 0);
+
+      await tester.pump(motion.durCelebrate);
+      expect(dxOf(tester), 0);
+
+      expect(
+        insideTheLastPass,
+        isNot(0),
+        reason:
+            'with cycles at $cycles the sweep is still running here; with one '
+            'fewer it would already have rested',
+      );
+    });
+
+    testWidgets('and it never repeats', (tester) async {
+      final code = File(
+        'lib/shared/motion/shake_on_wrong.dart',
+      ).readAsStringSync();
+
+      expect(withoutDartComments(code), isNot(contains('.repeat(')));
     });
   });
 
@@ -178,8 +226,8 @@ void main() {
       final leftmost = samples.reduce((a, b) => a < b ? a : b);
       final rightmost = samples.reduce((a, b) => a > b ? a : b);
 
-      expect(leftmost, closeTo(-motion.shakeAmplitude, 0.2));
-      expect(rightmost, closeTo(motion.shakeAmplitude, 0.2));
+      expect(leftmost, closeTo(-shape.shakeAmplitude, 0.2));
+      expect(rightmost, closeTo(shape.shakeAmplitude, 0.2));
       expect(
         leftmost + rightmost,
         closeTo(0, 0.2),

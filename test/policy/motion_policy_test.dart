@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_text.dart';
+
 /// The motion and feedback invariants that are textually decidable, silent when
 /// broken, and one line to break.
 ///
@@ -9,38 +11,20 @@ import 'package:flutter_test/flutter_test.dart';
 /// fails once with a message a stranger can act on. A gate that fails on the
 /// first offender makes a ten-file regression into ten runs.
 void main() {
-  /// Every Dart file under [directory], excluding generated output.
-  List<File> dartFilesUnder(String directory) {
-    final root = Directory(directory);
-    if (!root.existsSync()) return const <File>[];
-
-    return root
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((file) => file.path.endsWith('.dart'))
-        .toList();
-  }
-
-  /// [file]'s source with comment-only lines removed.
-  ///
-  /// The gates are about CODE. A sentence explaining why a thing is absent
-  /// should not trip the gate that checks it is absent, and rewording accurate
-  /// prose to satisfy a substring match makes the comment worse and the gate no
-  /// stronger.
-  String codeOf(File file) => file
-      .readAsStringSync()
-      .split('\n')
-      .where((line) => !line.trimLeft().startsWith('//'))
-      .join('\n');
-
   /// Every `lib/` file whose code contains [needle], as `path:line`.
+  ///
+  /// `dartFilesUnderLib` and `withoutDartComments` are E04's, shared by every
+  /// policy test, and they are strictly better than the copies this file first
+  /// grew: the walk skips generated output, so a ban does not fire on code
+  /// nobody can edit, and the strip is quote-aware, so a `//` inside a string
+  /// does not truncate the rest of the line before the scan sees it.
   List<String> hitsFor(String needle, {Set<String> permitted = const {}}) {
     final hits = <String>[];
 
-    for (final file in dartFilesUnder('lib')) {
+    for (final file in dartFilesUnderLib()) {
       if (permitted.contains(file.path)) continue;
 
-      final lines = codeOf(file).split('\n');
+      final lines = withoutDartComments(file.readAsStringSync()).split('\n');
       for (var i = 0; i < lines.length; i++) {
         if (lines[i].contains(needle)) hits.add('${file.path}:${i + 1}');
       }
@@ -104,13 +88,13 @@ void main() {
       // word would go red that day and get deleted rather than fixed.
       final offenders = <String>[];
 
-      for (final file in dartFilesUnder('lib')) {
+      for (final file in dartFilesUnderLib()) {
         if (file.path.startsWith('lib/shared/feedback/')) continue;
         if (file.path.startsWith('lib/features/settings/')) continue;
         if (file.path.startsWith('lib/data/')) continue;
         if (file.path == 'lib/core/app_settings.dart') continue;
 
-        final code = codeOf(file);
+        final code = withoutDartComments(file.readAsStringSync());
         if (code.contains('isHapticsEnabled') && code.contains('.fire(')) {
           offenders.add(file.path);
         }
@@ -129,8 +113,12 @@ void main() {
 
   group('one implementation each', () {
     /// The files whose code declares [className].
-    List<String> declarationsOf(String className) => dartFilesUnder('lib')
-        .where((file) => codeOf(file).contains('class $className'))
+    List<String> declarationsOf(String className) => dartFilesUnderLib()
+        .where(
+          (file) => withoutDartComments(
+            file.readAsStringSync(),
+          ).contains('class $className'),
+        )
         .map((file) => file.path)
         .toList();
 
@@ -174,7 +162,7 @@ void main() {
       final offenders = <String>[];
 
       for (final path in fixedOrNone) {
-        final code = codeOf(File(path));
+        final code = withoutDartComments(File(path).readAsStringSync());
 
         for (final needle in <String>['Directionality', 'TextDirection']) {
           if (code.contains(needle)) offenders.add('$path: $needle');
@@ -195,8 +183,8 @@ void main() {
       final offenders = <String>[];
       final negation = RegExp(r'rtl.*-.*dx|dx.*\*.*-1|-\s*\w*[Dd]x\b');
 
-      for (final file in dartFilesUnder('lib')) {
-        final lines = codeOf(file).split('\n');
+      for (final file in dartFilesUnderLib()) {
+        final lines = withoutDartComments(file.readAsStringSync()).split('\n');
         for (var i = 0; i < lines.length; i++) {
           if (negation.hasMatch(lines[i])) {
             offenders.add('${file.path}:${i + 1}');
@@ -221,12 +209,14 @@ void main() {
       // in changes what fires, how hard, or for how long.
       final offenders = <String>[];
 
-      for (final directory in <String>[
-        'lib/shared/feedback',
-        'lib/shared/motion',
-      ]) {
-        for (final file in dartFilesUnder(directory)) {
-          final code = codeOf(file);
+      for (final file in dartFilesUnderLib()) {
+        if (!file.path.startsWith('lib/shared/feedback') &&
+            !file.path.startsWith('lib/shared/motion')) {
+          continue;
+        }
+
+        {
+          final code = withoutDartComments(file.readAsStringSync());
 
           if (code.contains('app_localizations')) {
             offenders.add('${file.path}: AppLocalizations');

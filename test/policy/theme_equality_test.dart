@@ -50,6 +50,9 @@ void main() {
         'e1': base.copyWith(e1: const Offset(99, 99)),
         'pressScale': base.copyWith(pressScale: 0.1),
         'badgeTiltDegrees': base.copyWith(badgeTiltDegrees: 99),
+        'shakeAmplitude': base.copyWith(shakeAmplitude: 99),
+        'celebrationScaleFrom': base.copyWith(celebrationScaleFrom: 99),
+        'celebrationScalePeak': base.copyWith(celebrationScalePeak: 99),
         'focusGap': base.copyWith(focusGap: 99),
         'stripePitch': base.copyWith(stripePitch: 99),
       };
@@ -98,10 +101,10 @@ void main() {
   group('and the source still declares what these tests enumerate', () {
     // If a seventh shape slot lands, this count moves and the test above stops
     // being exhaustive — so the count is pinned rather than assumed.
-    test('SunburstShape declares 23 instance fields', () {
+    test('SunburstShape declares 26 instance fields', () {
       expect(
         declaredFieldsOf('lib/theme/sunburst_shape.dart', 'SunburstShape'),
-        23,
+        26,
       );
     });
   });

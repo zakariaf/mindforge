@@ -212,3 +212,13 @@ const Map<Moment, MomentSpec> kMomentCatalog = <Moment, MomentSpec>{
     residueNote: 'a cross-fade',
   ),
 };
+
+/// The row for [moment], which always exists.
+///
+/// Total by construction and asserted total by `moment_catalog_test.dart`, so
+/// this returns a non-null `MomentSpec` and callers stop writing `?.` and a
+/// private default. Six of those had accumulated across three files with four
+/// DIFFERENT fallbacks, every one of them on a branch the coverage test makes
+/// unreachable — so each file was privately deciding what a missing row would
+/// have meant, and none of those decisions could ever be tested.
+MomentSpec specFor(Moment moment) => kMomentCatalog[moment]!;

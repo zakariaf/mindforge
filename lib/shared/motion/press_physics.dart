@@ -65,8 +65,9 @@ typedef PressBuilder =
 /// the gesture detector moves the target out from under the finger and eats the
 /// tap, which is the single most common way this effect is built wrong.
 ///
-/// **E06 replaces the implementation and owns the moment-to-haptic map. It does
-/// not add a second press controller.**
+/// **It owns no haptic.** `PopSurface` fires the commit moment through
+/// `FeedbackService`, so the acknowledgement is decided by the catalog and this
+/// widget only decides where the surface goes.
 class PressPhysics extends StatefulWidget {
   /// Creates a press controller over [builder].
   const PressPhysics({
@@ -120,6 +121,12 @@ class PressPhysicsState extends State<PressPhysics>
   /// controller with the curve threw the spring away and, worse, arrived early:
   /// measured, the travel reached its end at 30ms of a 120ms press and then sat
   /// still for 90ms.
+  ///
+  /// A `CurveTween` chained onto the controller, not a `CurvedAnimation`. A
+  /// `CurvedAnimation` registers a status listener on its parent and has to be
+  /// disposed; one built per drive is two per tap, never released until the
+  /// controller is, so a player who taps two hundred times in a run leaves four
+  /// hundred live listeners on it. A chained `Animatable` registers nothing.
   late Animation<double> _curved;
 
   @override
@@ -160,7 +167,7 @@ class PressPhysicsState extends State<PressPhysics>
 
     // The CURVE is applied to the controller's output, not passed to
     // animateTo: passing it makes the controller clamp the overshoot away.
-    _curved = CurvedAnimation(parent: _controller, curve: motion.easePop);
+    _curved = _controller.drive(CurveTween(curve: motion.easePop));
 
     // unawaited: the returned TickerFuture completes when the animation
     // finishes or is cancelled by the next press, and neither is something a

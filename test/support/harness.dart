@@ -8,6 +8,7 @@ import 'package:mindforge/l10n/ckb_localizations.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
 import 'package:mindforge/shared/feedback/haptic_gateway.dart';
 import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
+import 'package:mindforge/shared/motion/motion_preference_scope.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
 import 'locale_cases.dart';
@@ -135,6 +136,12 @@ extension PumpApp on WidgetTester {
             localizationsDelegates: localizationsDelegatesFor(
               AppLocalizations.localizationsDelegates,
             ),
+            // MotionPreferenceScope, exactly as lib/app.dart mounts it. Without
+            // it a tree pumped with settings.isReduceMotionEnabled: true
+            // animates fully — a configuration production cannot produce — and
+            // the harness's two knobs for one thing disagree.
+            builder: (context, child) =>
+                MotionPreferenceScope(child: child ?? const SizedBox.shrink()),
             home: Builder(
               builder: (context) {
                 resolved = Directionality.of(context);

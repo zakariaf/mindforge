@@ -24,6 +24,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.pressScale,
     required this.pressScaleSmall,
     required this.badgeTiltDegrees,
+    required this.shakeAmplitude,
+    required this.celebrationScaleFrom,
+    required this.celebrationScalePeak,
     required this.focusGap,
     required this.focusWidth,
     required this.stripePitch,
@@ -90,6 +93,32 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// shadow: mirroring it would tilt the Persian badge the other way for no
   /// reason a reader could name.
   final double badgeTiltDegrees;
+
+  /// How far the wrong-answer shake travels to each side.
+  ///
+  /// `system.html`: `@keyframes shake{0%,100%{translateX(0)}
+  /// 25%{translateX(-4px)}75%{translateX(4px)}}`.
+  ///
+  /// A DISTANCE, so it lives here beside `e1`..`e4` and `focusGap` rather than
+  /// on `SunburstMotion`, which is four durations and three curves — a *when*,
+  /// not a *how far*. It sat there briefly, and the field-list test had to
+  /// carry a sentence calling it "the one non-timing member", which is a test
+  /// pinning an anomaly instead of resolving it.
+  final double shakeAmplitude;
+
+  /// Where the celebration pop starts.
+  ///
+  /// `system.html` section 10: scale 0.86 -> 1.06 -> 1.0. A magnitude, by the
+  /// same rule as [shakeAmplitude] and [pressScale] — and a token rather than a
+  /// literal in `lib/shared/motion/`, where working agreement 2 does not allow
+  /// one.
+  final double celebrationScaleFrom;
+
+  /// The nominal top of the celebration pop.
+  ///
+  /// Nominal because the moment's curve is chained onto each segment and
+  /// overshoots inside it: the measured peak is 1.0753.
+  final double celebrationScalePeak;
 
   /// The gap between a surface's edge and its focus ring.
   final double focusGap;
@@ -236,6 +265,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale,
     pressScaleSmall,
     badgeTiltDegrees,
+    shakeAmplitude,
+    celebrationScaleFrom,
+    celebrationScalePeak,
     focusGap,
     focusWidth,
     stripePitch,
@@ -280,6 +312,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? pressScale,
     double? pressScaleSmall,
     double? badgeTiltDegrees,
+    double? shakeAmplitude,
+    double? celebrationScaleFrom,
+    double? celebrationScalePeak,
     double? focusGap,
     double? focusWidth,
     double? stripePitch,
@@ -304,6 +339,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale: pressScale ?? this.pressScale,
     pressScaleSmall: pressScaleSmall ?? this.pressScaleSmall,
     badgeTiltDegrees: badgeTiltDegrees ?? this.badgeTiltDegrees,
+    shakeAmplitude: shakeAmplitude ?? this.shakeAmplitude,
+    celebrationScaleFrom: celebrationScaleFrom ?? this.celebrationScaleFrom,
+    celebrationScalePeak: celebrationScalePeak ?? this.celebrationScalePeak,
     focusGap: focusGap ?? this.focusGap,
     focusWidth: focusWidth ?? this.focusWidth,
     stripePitch: stripePitch ?? this.stripePitch,
@@ -337,6 +375,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       pressScale: d(pressScale, other.pressScale),
       pressScaleSmall: d(pressScaleSmall, other.pressScaleSmall),
       badgeTiltDegrees: d(badgeTiltDegrees, other.badgeTiltDegrees),
+      shakeAmplitude: d(shakeAmplitude, other.shakeAmplitude),
+      celebrationScaleFrom: d(celebrationScaleFrom, other.celebrationScaleFrom),
+      celebrationScalePeak: d(celebrationScalePeak, other.celebrationScalePeak),
       focusGap: d(focusGap, other.focusGap),
       focusWidth: d(focusWidth, other.focusWidth),
       stripePitch: d(stripePitch, other.stripePitch),
@@ -365,6 +406,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale: 0.98,
     pressScaleSmall: 0.97,
     badgeTiltDegrees: -2.5,
+    shakeAmplitude: 4,
+    celebrationScaleFrom: 0.86,
+    celebrationScalePeak: 1.06,
     // DERIVED: system.html §12 draws the focus ring as a 4px grape-pop outline
     // offset 3px from the surface. Neither number is a :root custom property.
     focusGap: 3,
