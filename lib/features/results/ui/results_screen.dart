@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/result_stat.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/features/play/application/run_notifier.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
+import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/l10n/score_formatter_provider.dart';
 import 'package:mindforge/routing/routes.dart';
@@ -17,7 +21,6 @@ import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_badge.dart';
 import 'package:mindforge/ui/components/pop_button.dart';
-import 'package:mindforge/ui/components/pop_card.dart';
 
 /// What a finished run says.
 ///
@@ -52,12 +55,24 @@ class ResultsScreen extends ConsumerWidget {
           fill: colours.success,
           rays: colours.headerRayResults,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              // The game and difficulty, above the shout. app.html:
+              // `.res-hdr .kicker` — the run this screen is about, in one
+              // line, before the celebration.
+              Text(
+                l10n.gameAndDifficulty(
+                  ref.watch(gameStringsProvider)(definition).title,
+                  _difficultyLabel(l10n, config.difficulty),
+                ),
+                textAlign: TextAlign.center,
+                style: type.sectionLabel.copyWith(color: colours.textPrimary),
+              ),
+              const SizedBox(height: 6),
               Semantics(
                 header: true,
                 child: Text(
                   l10n.resultsTitle,
+                  textAlign: TextAlign.center,
                   style: type.displayL.copyWith(color: colours.textPrimary),
                 ),
               ),
@@ -79,36 +94,34 @@ class ResultsScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
             children: <Widget>[
-              PopCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      l10n.finalScore,
-                      style: type.sectionLabel.copyWith(
-                        color: colours.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      formatter.format(
-                        definition.scoreFormat,
-                        run.snapshot.score,
-                      ),
-                      style: type.scoreHero.copyWith(
-                        color: colours.textPrimary,
-                      ),
-                    ),
-                  ],
+              ScoreSlab(
+                label: l10n.finalScore,
+                value: formatter.format(
+                  definition.scoreFormat,
+                  run.snapshot.score,
                 ),
               ),
               const SizedBox(height: 16),
               if (outcome is RunCompleted)
-                Row(
-                  children: <Widget>[
-                    for (final stat in outcome.stats)
-                      Expanded(child: _StatCell(stat: stat)),
-                  ],
+                // TONED BY POSITION, not by what each stat means. app.html
+                // gives the trio turquoise, paper and coral in reading order,
+                // and a cell that picked its colour from its label would
+                // re-order itself the day a game reports different stats.
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      for (final (index, stat) in outcome.stats.indexed) ...[
+                        if (index > 0) const SizedBox(width: 10),
+                        Expanded(
+                          child: _StatCell(
+                            stat: stat,
+                            tone: _toneAt(index),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               const SizedBox(height: 24),
               PopButton(
@@ -134,52 +147,63 @@ class ResultsScreen extends ConsumerWidget {
   }
 }
 
+/// Which tone the cell at [index] takes.
+///
+/// app.html tones `.tri` by `:nth-child`, so the trio always reads turquoise,
+/// paper, coral regardless of which three stats a game reports.
+ResultStatTone _toneAt(int index) => switch (index) {
+  0 => ResultStatTone.cool,
+  2 => ResultStatTone.warm,
+  _ => ResultStatTone.paper,
+};
+
+/// The ARB label for [difficulty].
+String _difficultyLabel(AppLocalizations l10n, Difficulty difficulty) =>
+    switch (difficulty) {
+      Difficulty.chill => l10n.difficultyChill,
+      Difficulty.classic => l10n.difficultyClassic,
+      Difficulty.blitz => l10n.difficultyBlitz,
+    };
+
 /// One cell of the results trio.
 class _StatCell extends ConsumerWidget {
-  const _StatCell({required this.stat});
+  const _StatCell({required this.stat, required this.tone});
 
   final ResultStat stat;
 
+  final ResultStatTone tone;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colours = SunburstColors.of(context);
-    final type = SunburstType.of(context);
     final l10n = ref.watch(appLocalizationsProvider);
     final numbers = ref.watch(localeNumbersProvider);
 
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(end: 10),
-      child: PopCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              switch (stat.labelKey) {
-                'accuracyLabel' => l10n.accuracyLabel,
-                'longestStreakLabel' => l10n.longestStreakLabel,
-                'avgReactionLabel' => l10n.avgReactionLabel,
-                _ => throw StateError(
-                  'no results label is registered for "${stat.labelKey}"',
-                ),
-              },
-              style: type.sectionLabel.copyWith(color: colours.textSecondary),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              switch (stat.format) {
-                StatFormat.percent => numbers.percent(
-                  stat.canonicalValue / 1000,
-                ),
-                StatFormat.duration => numbers.seconds(stat.canonicalValue),
-                StatFormat.points || StatFormat.count => numbers.count(
-                  stat.canonicalValue,
-                ),
-              },
-              style: type.statValue.copyWith(color: colours.textPrimary),
-            ),
-          ],
+    return ResultStatCell(
+      tone: tone,
+      label: switch (stat.labelKey) {
+        'accuracyLabel' => l10n.accuracyLabel,
+        'longestStreakLabel' => l10n.longestStreakLabel,
+        'avgReactionLabel' => l10n.avgReactionLabel,
+        _ => throw StateError(
+          'no results label is registered for "${stat.labelKey}"',
         ),
-      ),
+      },
+      value: switch (stat.format) {
+        StatFormat.percent => numbers.percent(stat.canonicalValue / 1000),
+        // MILLISECONDS UNDER A SECOND, seconds above it. A reaction time is
+        // the sub-second case and `0.6s` throws away the digit that matters;
+        // a Schulte run time is the other, and `18600ms` is unreadable. The
+        // unit is an ARB string rendered as its own run, never glued to the
+        // number — a value hand-joined to its unit is what breaks in RTL.
+        StatFormat.duration =>
+          stat.canonicalValue < Duration.millisecondsPerSecond
+              ? '${numbers.count(stat.canonicalValue)}'
+                    '${l10n.unitMilliseconds}'
+              : '${numbers.seconds(stat.canonicalValue)}${l10n.unitSeconds}',
+        StatFormat.points || StatFormat.count => numbers.count(
+          stat.canonicalValue,
+        ),
+      },
     );
   }
 }
