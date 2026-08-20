@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -195,56 +196,93 @@ class _CountdownScreenState extends ConsumerState<CountdownScreen> {
                       ),
                     ),
                     Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          PopSurface(
-                            fill: colours.accent,
-                            radius: BorderRadiusDirectional.all(
-                              shape.radiusPill,
-                            ),
-                            elevation: PopElevation.e4,
-                            minTarget: 0,
-                            child: SizedBox(
-                              width: shape.countdownRing,
-                              height: shape.countdownRing,
-                              // ONE live region, updated in place. Three
-                              // separate announcements would talk over each
-                              // other at one-second intervals.
-                              child: Semantics(
-                                liveRegion: true,
-                                child: Center(
-                                  child: Text(
-                                    numbers.count(_remaining),
-                                    style: type.countdownNumeral.copyWith(
-                                      color: colours.textPrimary,
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          // THE RING FOLLOWS THE NUMERAL, and both are bounded
+                          // by the screen. At text scale 2.0 a 132pt numeral is
+                          // 264 points tall and the design's 238pt ring cannot
+                          // hold it; growing the ring to fit is right until the
+                          // ring is wider than a 320pt phone. So it takes the
+                          // larger of the token and the scaled numeral, capped
+                          // at what the screen actually has. Nothing is
+                          // clamped and nothing is scaled down — the ring is
+                          // geometry and it is allowed to move.
+                          final scaled =
+                              MediaQuery.textScalerOf(context).scale(
+                                type.countdownNumeral.fontSize!,
+                              ) *
+                              _ringToNumeral;
+                          final ring = math.min(
+                            constraints.maxWidth - _ringGutter,
+                            math.max(shape.countdownRing, scaled),
+                          );
+
+                          // IT SCROLLS RATHER THAN CLIPPING. At text scale
+                          // 2.0 the ring, the gap and a two-line "Get ready"
+                          // are taller than the band between the title row and
+                          // the beat dots. Centred while it fits, pannable when
+                          // it does not — nothing is scaled down and nothing is
+                          // cut off.
+                          return SingleChildScrollView(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  PopSurface(
+                                    fill: colours.accent,
+                                    radius: BorderRadiusDirectional.all(
+                                      shape.radiusPill,
+                                    ),
+                                    elevation: PopElevation.e4,
+                                    minTarget: 0,
+                                    child: SizedBox(
+                                      width: ring,
+                                      height: ring,
+                                      // ONE live region, updated in place. Three
+                                      // separate announcements would talk over each
+                                      // other at one-second intervals.
+                                      child: Semantics(
+                                        liveRegion: true,
+                                        child: Center(
+                                          child: Text(
+                                            numbers.count(_remaining),
+                                            style: type.countdownNumeral
+                                                .copyWith(
+                                                  color: colours.textPrimary,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 26),
-                          // The screen's one h1. "Get ready" is what this
-                          // screen IS, and a screen with no heading is one a
-                          // screen-reader user arrives on with no idea where
-                          // they are.
-                          Semantics(
-                            header: true,
-                            child: Text(
-                              l10n.getReady,
-                              style: type.countdownReady.copyWith(
-                                color: colours.textInvert,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    color: colours.border,
-                                    offset: shape.countdownReadyShadow,
+                                  const SizedBox(height: 26),
+                                  // The screen's one h1. "Get ready" is what this
+                                  // screen IS, and a screen with no heading is one a
+                                  // screen-reader user arrives on with no idea where
+                                  // they are.
+                                  Semantics(
+                                    header: true,
+                                    child: Text(
+                                      l10n.getReady,
+                                      style: type.countdownReady.copyWith(
+                                        color: colours.textInvert,
+                                        shadows: <Shadow>[
+                                          Shadow(
+                                            color: colours.border,
+                                            offset: shape.countdownReadyShadow,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
                     Padding(
@@ -271,6 +309,14 @@ class _CountdownScreenState extends ConsumerState<CountdownScreen> {
         Difficulty.blitz => l10n.difficultyBlitz,
       };
 }
+
+/// How much wider the ring is than the numeral it holds.
+///
+/// 238 / 132, the design's own proportion, kept when either moves.
+const double _ringToNumeral = 238 / 132;
+
+/// How much of the screen's width the ring leaves on either side.
+const double _ringGutter = 40;
 
 /// Three dots, one filling per beat.
 ///

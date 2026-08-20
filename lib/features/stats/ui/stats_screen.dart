@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/features/shell/widgets/best_card.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/shell_pane.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/features/stats/application/stats_notifier.dart';
 import 'package:mindforge/features/stats/widgets/run_bar_chart.dart';
@@ -36,94 +37,86 @@ class StatsScreen extends ConsumerWidget {
     final strings = ref.watch(gameStringsProvider);
     final stats = ref.watch(statsHubProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ShellPane(
+      header: RayHeader(
+        // NO RAYS. `app.html`'s `.stats-hdr` carries the dot lattice and no
+        // ray layer at all, and this is the header the "all three glow the
+        // same" defect shows up on first.
+        fill: colours.accentCool,
+        rays: null,
+        padding: RayHeader.tabInset,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              l10n.statsAllTime,
+              style: type.greeting.copyWith(color: colours.textPrimary),
+            ),
+            Semantics(
+              header: true,
+              child: Text(
+                l10n.statsTitle,
+                style: type.displayL.copyWith(color: colours.textPrimary),
+              ),
+            ),
+          ],
+        ),
+      ),
       children: <Widget>[
-        RayHeader(
-          // NO RAYS. `app.html`'s `.stats-hdr` carries the dot lattice and no
-          // ray layer at all, and this is the header the "all three glow the
-          // same" defect shows up on first.
-          fill: colours.accentCool,
-          rays: null,
-          padding: RayHeader.tabInset,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                l10n.statsAllTime,
-                style: type.greeting.copyWith(color: colours.textPrimary),
+        for (final entry in stats.bests) ...<Widget>[
+          BestCard(
+            // WHICH KIND OF BEST, from the game's own score format: a
+            // points game has a best SCORE and a timed one a best TIME,
+            // and one shared caption would be wrong for half the
+            // registry.
+            label: switch (entry.definition.scoreFormat) {
+              ScoreFormat.points => l10n.bestScore,
+              ScoreFormat.duration => l10n.bestTime,
+            },
+            gameName: strings(entry.definition).title,
+            value: switch (entry.metric) {
+              // An em dash, not a zero: punctuation, not a number.
+              null => '—',
+              final metric => formatter.format(
+                entry.definition.scoreFormat,
+                metric.value,
               ),
-              Semantics(
-                header: true,
-                child: Text(
-                  l10n.statsTitle,
-                  style: type.displayL.copyWith(color: colours.textPrimary),
+            },
+            accent: entry.definition.accent,
+          ),
+          const SizedBox(height: 12),
+        ],
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: StatBox(
+                  label: l10n.gamesPlayed,
+                  value: numbers.count(stats.gamesPlayed),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: StatBox(
+                  label: l10n.timeTrained,
+                  value: l10n.durationHoursMinutes(
+                    numbers.count(
+                      stats.timeTrainedMs ~/ Duration.millisecondsPerHour,
+                    ),
+                    numbers.count(
+                      stats.timeTrainedMs %
+                          Duration.millisecondsPerHour ~/
+                          Duration.millisecondsPerMinute,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-            children: <Widget>[
-              for (final entry in stats.bests) ...<Widget>[
-                BestCard(
-                  // WHICH KIND OF BEST, from the game's own score format: a
-                  // points game has a best SCORE and a timed one a best TIME,
-                  // and one shared caption would be wrong for half the
-                  // registry.
-                  label: switch (entry.definition.scoreFormat) {
-                    ScoreFormat.points => l10n.bestScore,
-                    ScoreFormat.duration => l10n.bestTime,
-                  },
-                  gameName: strings(entry.definition).title,
-                  value: switch (entry.metric) {
-                    // An em dash, not a zero: punctuation, not a number.
-                    null => '—',
-                    final metric => formatter.format(
-                      entry.definition.scoreFormat,
-                      metric.value,
-                    ),
-                  },
-                  accent: entry.definition.accent,
-                ),
-                const SizedBox(height: 12),
-              ],
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Expanded(
-                      child: StatBox(
-                        label: l10n.gamesPlayed,
-                        value: numbers.count(stats.gamesPlayed),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: StatBox(
-                        label: l10n.timeTrained,
-                        value: l10n.durationHoursMinutes(
-                          numbers.count(
-                            stats.timeTrainedMs ~/ Duration.millisecondsPerHour,
-                          ),
-                          numbers.count(
-                            stats.timeTrainedMs %
-                                Duration.millisecondsPerHour ~/
-                                Duration.millisecondsPerMinute,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              const _Chart(),
-            ],
-          ),
-        ),
+        const SizedBox(height: 12),
+        const _Chart(),
       ],
     );
   }

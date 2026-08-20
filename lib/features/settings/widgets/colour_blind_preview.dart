@@ -23,8 +23,11 @@ class ColourBlindPreview extends StatelessWidget {
     final shape = SunburstShape.of(context);
 
     return ExcludeSemantics(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      // A WRAP, not a Row. Four swatches at 24pt plus their gaps are 116 wide,
+      // and on a 320pt screen the label column they sit under is 95 — measured
+      // by the overflow matrix, at scale 1.0, in English. They wrap to a second
+      // line rather than running off the card.
+      child: Wrap(
         children: <Widget>[
           for (final colour in <Color>[
             colours.cbBlue,
@@ -33,7 +36,7 @@ class ColourBlindPreview extends StatelessWidget {
             colours.cbPink,
           ])
             Padding(
-              padding: const EdgeInsetsDirectional.only(end: 5),
+              padding: const EdgeInsetsDirectional.only(end: 5, bottom: 5),
               child: Container(
                 width: swatchSize.width,
                 height: swatchSize.height,

@@ -62,6 +62,18 @@ class Wordmark extends StatelessWidget {
               // THE PIN. Not the ambient direction: a Latin run in an RTL
               // paragraph is reordered without it.
               textDirection: TextDirection.ltr,
+              // AND THE LOCKUP DOES NOT SCALE WITH DYNAMIC TYPE. It is a
+              // logotype, not copy: iOS ships app marks as artwork and does
+              // not grow them with the text setting, and at scale 2.0 on a
+              // 320pt screen the tile and the name are wider than the header —
+              // measured by the overflow matrix, in all four locales.
+              //
+              // This is NOT a clamp on content. Nothing here is information a
+              // player needs at a larger size: the accessible name is the
+              // Semantics label above, which a screen reader announces
+              // regardless of how the mark is drawn, and every other string on
+              // both screens that use it scales normally.
+              textScaler: TextScaler.noScaling,
               style: type.titleBar.copyWith(color: colours.textPrimary),
             ),
           ],

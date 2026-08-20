@@ -7,6 +7,7 @@ import 'package:mindforge/features/settings/ui/language_sheet.dart';
 import 'package:mindforge/features/settings/widgets/colour_blind_preview.dart';
 import 'package:mindforge/features/settings/widgets/settings_row.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/shell_pane.dart';
 import 'package:mindforge/features/shell/widgets/wordmark.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
@@ -38,112 +39,102 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final settings = ref.watch(appSettingsProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ShellPane(
+      header: RayHeader(
+        fill: colours.accentAlt,
+        // .3, not .5: Settings is a reading screen.
+        rays: colours.headerRaySettings,
+        padding: RayHeader.tabInset,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Wordmark(),
+            const SizedBox(height: 4),
+            Semantics(
+              header: true,
+              child: Text(
+                l10n.settingsTitle,
+                style: type.displayL.copyWith(color: colours.textInvert),
+              ),
+            ),
+          ],
+        ),
+      ),
       children: <Widget>[
-        RayHeader(
-          fill: colours.accentAlt,
-          // .3, not .5: Settings is a reading screen.
-          rays: colours.headerRaySettings,
-          padding: RayHeader.tabInset,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Wordmark(),
-              const SizedBox(height: 4),
-              Semantics(
-                header: true,
-                child: Text(
-                  l10n.settingsTitle,
-                  style: type.displayL.copyWith(color: colours.textInvert),
-                ),
+        SettingsGroup(
+          rows: <Widget>[
+            _Toggle(
+              glyph: SunburstGlyph.sound,
+              label: l10n.settingSound,
+              value: settings.isSoundEnabled,
+              onChanged: (value) => _write(
+                ref,
+                (current) => current.copyWith(isSoundEnabled: value),
               ),
-            ],
-          ),
+            ),
+            _Toggle(
+              glyph: SunburstGlyph.haptics,
+              label: l10n.settingHaptics,
+              value: settings.isHapticsEnabled,
+              onChanged: (value) => _write(
+                ref,
+                (current) => current.copyWith(isHapticsEnabled: value),
+              ),
+            ),
+            _Toggle(
+              glyph: SunburstGlyph.motion,
+              label: l10n.settingReduceMotion,
+              value: settings.isReduceMotionEnabled,
+              onChanged: (value) => _write(
+                ref,
+                (current) => current.copyWith(isReduceMotionEnabled: value),
+              ),
+            ),
+            _Toggle(
+              glyph: SunburstGlyph.contrast,
+              label: l10n.settingColourBlind,
+              value: settings.isColourBlindPalette,
+              // THE PREVIEW SHOWS WHAT THE SETTING SWAPS IN, not what is
+              // on screen now. The row is an offer, and previewing the
+              // current palette would tell the player nothing about it.
+              below: const ColourBlindPreview(),
+              onChanged: (value) => _write(
+                ref,
+                (current) => current.copyWith(isColourBlindPalette: value),
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-            children: <Widget>[
-              SettingsGroup(
-                rows: <Widget>[
-                  _Toggle(
-                    glyph: SunburstGlyph.sound,
-                    label: l10n.settingSound,
-                    value: settings.isSoundEnabled,
-                    onChanged: (value) => _write(
-                      ref,
-                      (current) => current.copyWith(isSoundEnabled: value),
-                    ),
-                  ),
-                  _Toggle(
-                    glyph: SunburstGlyph.haptics,
-                    label: l10n.settingHaptics,
-                    value: settings.isHapticsEnabled,
-                    onChanged: (value) => _write(
-                      ref,
-                      (current) => current.copyWith(isHapticsEnabled: value),
-                    ),
-                  ),
-                  _Toggle(
-                    glyph: SunburstGlyph.motion,
-                    label: l10n.settingReduceMotion,
-                    value: settings.isReduceMotionEnabled,
-                    onChanged: (value) => _write(
-                      ref,
-                      (current) =>
-                          current.copyWith(isReduceMotionEnabled: value),
-                    ),
-                  ),
-                  _Toggle(
-                    glyph: SunburstGlyph.contrast,
-                    label: l10n.settingColourBlind,
-                    value: settings.isColourBlindPalette,
-                    // THE PREVIEW SHOWS WHAT THE SETTING SWAPS IN, not what is
-                    // on screen now. The row is an offer, and previewing the
-                    // current palette would tell the player nothing about it.
-                    below: const ColourBlindPreview(),
-                    onChanged: (value) => _write(
-                      ref,
-                      (current) =>
-                          current.copyWith(isColourBlindPalette: value),
-                    ),
-                  ),
-                ],
+        const SizedBox(height: 16),
+        SettingsGroup(
+          rows: <Widget>[
+            SettingsRow(
+              glyph: SunburstGlyph.language,
+              label: l10n.settingsLanguage,
+              semanticValue: _languageName(l10n, settings.localeOverride),
+              trailing: _Value(
+                text: _languageName(l10n, settings.localeOverride),
               ),
-              const SizedBox(height: 16),
-              SettingsGroup(
-                rows: <Widget>[
-                  SettingsRow(
-                    glyph: SunburstGlyph.language,
-                    label: l10n.settingsLanguage,
-                    semanticValue: _languageName(l10n, settings.localeOverride),
-                    trailing: _Value(
-                      text: _languageName(l10n, settings.localeOverride),
-                    ),
-                    onTap: () => LanguageSheet.show(context),
-                  ),
-                  SettingsRow(
-                    glyph: SunburstGlyph.info,
-                    label: l10n.aboutTitle,
-                    trailing: const _Chevron(),
-                    // NOT A DEAD ROW. There is no About screen in E08, so it
-                    // opens the platform's own licence page — which is where
-                    // the bundled font licences registered at startup are
-                    // actually readable, and the only legally required screen
-                    // in the app.
-                    onTap: () => showLicensePage(
-                      context: context,
-                      applicationName: Wordmark.name,
-                    ),
-                  ),
-                ],
+              onTap: () => LanguageSheet.show(context),
+            ),
+            SettingsRow(
+              glyph: SunburstGlyph.info,
+              label: l10n.aboutTitle,
+              trailing: const _Chevron(),
+              // NOT A DEAD ROW. There is no About screen in E08, so it
+              // opens the platform's own licence page — which is where
+              // the bundled font licences registered at startup are
+              // actually readable, and the only legally required screen
+              // in the app.
+              onTap: () => showLicensePage(
+                context: context,
+                applicationName: Wordmark.name,
               ),
-              const SizedBox(height: 26),
-              const _Footer(),
-            ],
-          ),
+            ),
+          ],
         ),
+        const SizedBox(height: 26),
+        const _Footer(),
       ],
     );
   }

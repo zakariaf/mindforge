@@ -7,6 +7,7 @@ import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
+import 'package:mindforge/features/shell/widgets/shell_pane.dart';
 import 'package:mindforge/features/shell/widgets/wordmark.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
@@ -39,94 +40,86 @@ class HomeScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final hub = ref.watch(homeHubProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ShellPane(
+      header: RayHeader(
+        fill: colours.accent,
+        rays: colours.headerRay,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // A WRAP, so the chip DROPS BELOW the lockup rather than
+            // either of them giving way. On a 320pt screen at text scale
+            // 1.3 they do not fit on one line — measured by the overflow
+            // matrix — and both alternatives are worse: a truncated
+            // "MindFo…" is a defect, and a wrapped streak chip beside a
+            // wrapped wordmark is two ragged columns. Dropping one line is
+            // what a person would do with the same constraint.
+            const SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 12,
+                runSpacing: 10,
+                children: <Widget>[Wordmark(), _StreakChip()],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.homeGreeting(hub.daypart.selector),
+              style: type.greeting.copyWith(color: colours.textPrimary),
+            ),
+            const SizedBox(height: 4),
+            // THE ONE h1 ON THIS SCREEN. A screen reader's heading list is
+            // only useful if exactly one thing claims to be the heading.
+            Semantics(
+              header: true,
+              child: Text(
+                l10n.homeReadyPrompt,
+                style: type.displayXl.copyWith(color: colours.textPrimary),
+              ),
+            ),
+          ],
+        ),
+      ),
       children: <Widget>[
-        RayHeader(
-          fill: colours.accent,
-          rays: colours.headerRay,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              // THE LOCKUP KEEPS ITS WIDTH AND THE CHIP TAKES WHAT IS LEFT.
-              // A Spacer between two natural-width children overflows at a
-              // large text scale, and of the two things that could give way
-              // the brand is the wrong one: a wrapped "No streak yet" is still
-              // readable, a truncated "MindFo…" is a defect.
-              const Row(
-                children: <Widget>[
-                  Wordmark(),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: _StreakChip(),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.homeGreeting(hub.daypart.selector),
-                style: type.greeting.copyWith(color: colours.textPrimary),
-              ),
-              const SizedBox(height: 4),
-              // THE ONE h1 ON THIS SCREEN. A screen reader's heading list is
-              // only useful if exactly one thing claims to be the heading.
-              Semantics(
-                header: true,
-                child: Text(
-                  l10n.homeReadyPrompt,
-                  style: type.displayXl.copyWith(color: colours.textPrimary),
+        const _DailyMix(),
+        const SizedBox(height: 18),
+        // app.html: `.seclab` is a baseline-aligned row, the heading at
+        // the start edge and the count at the end. Not a title and a
+        // caption stacked: the count belongs BESIDE the thing it counts.
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+            // The HEADING gives way, not the count. "Deine Spiele" and
+            // "2 freigeschaltet" together are wider than 350 in German,
+            // and a truncated count would state the wrong number.
+            Expanded(
+              child: Text(
+                l10n.yourGamesTitle,
+                style: type.sectionTitle.copyWith(
+                  color: colours.textPrimary,
                 ),
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-            children: <Widget>[
-              const _DailyMix(),
-              const SizedBox(height: 18),
-              // app.html: `.seclab` is a baseline-aligned row, the heading at
-              // the start edge and the count at the end. Not a title and a
-              // caption stacked: the count belongs BESIDE the thing it counts.
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: <Widget>[
-                  // The HEADING gives way, not the count. "Deine Spiele" and
-                  // "2 freigeschaltet" together are wider than 350 in German,
-                  // and a truncated count would state the wrong number.
-                  Expanded(
-                    child: Text(
-                      l10n.yourGamesTitle,
-                      style: type.sectionTitle.copyWith(
-                        color: colours.textPrimary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.gamesUnlocked(
-                      hub.unlockedCount,
-                      ref.watch(localeNumbersProvider).count(hub.unlockedCount),
-                    ),
-                    style: type.sectionCount.copyWith(
-                      color: colours.textSecondary,
-                    ),
-                  ),
-                ],
+            ),
+            const SizedBox(width: 8),
+            Text(
+              l10n.gamesUnlocked(
+                hub.unlockedCount,
+                ref.watch(localeNumbersProvider).count(hub.unlockedCount),
               ),
-              const SizedBox(height: 12),
-              for (final game in hub.games) ...<Widget>[
-                _RegistryCard(definition: game),
-                const SizedBox(height: 12),
-              ],
-            ],
-          ),
+              style: type.sectionCount.copyWith(
+                color: colours.textSecondary,
+              ),
+            ),
+          ],
         ),
+        const SizedBox(height: 12),
+        for (final game in hub.games) ...<Widget>[
+          _RegistryCard(definition: game),
+          const SizedBox(height: 12),
+        ],
       ],
     );
   }
