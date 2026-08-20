@@ -92,9 +92,9 @@ class PopGridTile extends StatelessWidget {
         // THE CELL GROWS WITH THE TEXT. It never shrinks its label to fit:
         // measured, two Eastern Arabic digits at 2.0x do not fit a 64pt cell,
         // and the answer accessibility-as-code rules 4 and 5 give is that the
-        // slot grows — a FittedBox or a clamped scaler would make the number
-        // on a Schulte board unreadable for exactly the player who asked for
-        // larger text.
+        // slot grows. Scaling the glyph down to the box instead would make the
+        // number on a Schulte board unreadable for exactly the player who
+        // asked for larger text.
         final needed = _labelExtent(context, scaler) + SunburstShape.space4;
         final side = base > needed ? base : needed;
 

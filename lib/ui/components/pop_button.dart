@@ -73,9 +73,10 @@ enum PopButtonSize {
 /// two flags to disagree — the mistake being avoided is a button that looks
 /// enabled and does nothing.
 ///
-/// The label never shrinks to fit. It wraps to two lines, at its own type step,
-/// with no `overflow` and no `FittedBox`: a label that does not fit is a
-/// failure of the layout matrix, not something to hide on a player's phone.
+/// The label never shrinks to fit. It wraps to two lines at its own type step,
+/// with no overflow treatment and nothing scaling it down to the box: a label
+/// that does not fit is a failure of the layout matrix, not something to hide
+/// on a player's phone.
 class PopButton extends StatelessWidget {
   /// Creates a button labelled [label].
   const PopButton({
