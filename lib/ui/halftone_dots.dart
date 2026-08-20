@@ -206,3 +206,10 @@ class HalftoneLayer extends StatelessWidget {
     ),
   );
 }
+
+/// The pitch of the dot lattice on a play field.
+///
+/// `app.html`: `.playfill .wdots{background-size:16px 16px}`. It lives here
+/// rather than in a game because the FIELD is the shell's — the definition
+/// names a background and this texture comes with it.
+const double kBoardDotPitch = 16;

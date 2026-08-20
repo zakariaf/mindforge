@@ -24,6 +24,7 @@ import 'package:mindforge/ui/components/pop_icon_button.dart';
 import 'package:mindforge/ui/components/pop_progress_bar.dart';
 import 'package:mindforge/ui/components/pop_sheet.dart';
 import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
+import 'package:mindforge/ui/halftone_dots.dart';
 
 /// The screen a run happens in.
 ///
@@ -76,11 +77,14 @@ class PlayScaffold extends ConsumerWidget {
 
         ref.read(runNotifierProvider(config).notifier).pause();
       },
+      // THE APP'S OWN SURFACE BEHIND THE CHROME. The board's background stops
+      // at the band, and screen 05 is where that becomes visible: Schulte's
+      // field is turquoise and its top bar is CREAM, like every other top bar
+      // in the app. Painting the board colour behind the whole column put the
+      // pause button and the game's name on turquoise. It was invisible for
+      // Stroop Rush, whose field is a shade of the same cream.
       child: ColoredBox(
-        color: switch (definition.boardBackground) {
-          BoardBackground.surfaceSunk => colours.surfaceSunk,
-          BoardBackground.gameAccent => accent,
-        },
+        color: colours.surface,
         child: SafeArea(
           bottom: false,
           child: Column(
@@ -140,13 +144,44 @@ class PlayScaffold extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  // THE GUTTER IS THE SHELL'S. A board that inset itself would
-                  // be deciding its own margins, and two games would disagree.
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 20),
-                  child: SafeArea(
-                    top: false,
-                    child: definition.buildBoard(context, config),
+                // THE FIELD, WITH ITS TEXTURE. Both are the shell's: the
+                // definition names a background and the field's dot lattice
+                // comes with it, at the strength `app.html` gives `.wdots` on
+                // every playfill. A board that painted its own would be the
+                // second owner of the same surface, and the two games did
+                // exactly that before this moved up.
+                child: ColoredBox(
+                  color: switch (definition.boardBackground) {
+                    BoardBackground.surfaceSunk => colours.surfaceSunk,
+                    BoardBackground.gameAccent => accent,
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: HalftoneLayer(
+                          scene: HalftoneScene(
+                            ink: colours.boardDots,
+                            ray: null,
+                            pitch: kBoardDotPitch,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        // THE GUTTER IS THE SHELL'S. A board that inset itself
+                        // would be deciding its own margins, and two games
+                        // would disagree.
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                          20,
+                          12,
+                          20,
+                          20,
+                        ),
+                        child: SafeArea(
+                          top: false,
+                          child: definition.buildBoard(context, config),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
