@@ -71,7 +71,7 @@ void main() {
     test('and the difficulty is part of the seed, not just the length', () {
       // Two difficulties sharing a seed must not deal the same opening rounds
       // — otherwise Blitz is Classic with extra innings.
-      final classic = roundsFor(difficulty: Difficulty.classic).take(20);
+      final classic = roundsFor().take(20);
       final chill = roundsFor(difficulty: Difficulty.chill).take(20);
 
       expect(
