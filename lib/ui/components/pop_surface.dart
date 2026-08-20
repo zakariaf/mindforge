@@ -300,29 +300,36 @@ class _PaintedSurface extends StatelessWidget {
       child: Padding(padding: padding, child: child),
     );
 
+    // Each CustomPaint gets a RepaintBoundary: the dashed edge and the focus
+    // ring repaint on their own schedule, and without a boundary every one of
+    // those repaints dirties the whole surface above them.
     final edged = borderStyle == PopBorderStyle.dashed
-        ? CustomPaint(
-            foregroundPainter: DashedInkBorder(
-              radius: resolved,
-              colour: ink,
-              strokeWidth: shape.borderWidth,
-              dashOn: shape.dashOn,
-              dashOff: shape.dashOff,
+        ? RepaintBoundary(
+            child: CustomPaint(
+              foregroundPainter: DashedInkBorder(
+                radius: resolved,
+                colour: ink,
+                strokeWidth: shape.borderWidth,
+                dashOn: shape.dashOn,
+                dashOff: shape.dashOff,
+              ),
+              child: surface,
             ),
-            child: surface,
           )
         : surface;
 
     final ringed = focused
-        ? CustomPaint(
-            foregroundPainter: _FocusRingPainter(
-              radius: resolved,
-              ring: focusRing,
-              gap: gapColour,
-              gapWidth: shape.focusGap,
-              ringWidth: shape.focusWidth,
+        ? RepaintBoundary(
+            child: CustomPaint(
+              foregroundPainter: _FocusRingPainter(
+                radius: resolved,
+                ring: focusRing,
+                gap: gapColour,
+                gapWidth: shape.focusGap,
+                ringWidth: shape.focusWidth,
+              ),
+              child: edged,
             ),
-            child: edged,
           )
         : edged;
 
