@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_text.dart';
+
 /// Nothing decides whether to animate by reading app state.
 ///
 /// `MotionPreferenceScope` folds the app's toggle into
@@ -16,7 +18,6 @@ void main() {
     'lib/core/app_settings.dart': 'the field itself',
     'lib/data/db/tables/settings.dart': 'the column',
     'lib/data/db/app_database.dart': 'the schema',
-    'lib/data/db/app_database.drift.dart': 'generated from the schema',
     'lib/data/daos/settings_dao.dart': 'the read and the write',
     'lib/shared/feedback/feedback_gates.dart': 'the one provider exposing it',
     'lib/shared/motion/motion_preference_scope.dart':
@@ -31,13 +32,15 @@ void main() {
   test('the setting is read in exactly one place outside its own plumbing', () {
     final offenders = <String>[];
 
-    for (final entity in Directory('lib').listSync(recursive: true)) {
-      if (entity is! File || !entity.path.endsWith('.dart')) continue;
-      if (permitted.containsKey(entity.path)) continue;
-      if (isSettingsFeature(entity.path)) continue;
+    for (final file in dartFilesUnderLib()) {
+      if (permitted.containsKey(file.path)) continue;
+      if (isSettingsFeature(file.path)) continue;
 
-      if (entity.readAsStringSync().contains('isReduceMotionEnabled')) {
-        offenders.add(entity.path);
+      // Stripped, so a comment about the setting is not a read of it.
+      if (withoutDartComments(
+        file.readAsStringSync(),
+      ).contains('isReduceMotionEnabled')) {
+        offenders.add(file.path);
       }
     }
 
@@ -67,15 +70,18 @@ void main() {
     // watches it is still deciding from app state.
     final offenders = <String>[];
 
-    for (final entity in Directory('lib').listSync(recursive: true)) {
-      if (entity is! File || !entity.path.endsWith('.dart')) continue;
-      if (entity.path == 'lib/shared/feedback/feedback_gates.dart') continue;
-      if (entity.path == 'lib/shared/motion/motion_preference_scope.dart') {
-        continue;
-      }
+    const owners = <String>{
+      'lib/shared/feedback/feedback_gates.dart',
+      'lib/shared/motion/motion_preference_scope.dart',
+    };
 
-      if (entity.readAsStringSync().contains('reduceMotionEnabledProvider')) {
-        offenders.add(entity.path);
+    for (final file in dartFilesUnderLib()) {
+      if (owners.contains(file.path)) continue;
+
+      if (withoutDartComments(
+        file.readAsStringSync(),
+      ).contains('reduceMotionEnabledProvider')) {
+        offenders.add(file.path);
       }
     }
 

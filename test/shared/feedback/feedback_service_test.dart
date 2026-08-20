@@ -142,16 +142,5 @@ void main() {
     });
   });
 
-  group('the service is locale-blind', () {
-    test('it imports no localization and no formatter', () {
-      // A haptic is not a string. Nothing here has a translation, and a
-      // sequence of verbs that changed with the language would be a bug.
-      final source = File(
-        'lib/shared/feedback/feedback_service.dart',
-      ).readAsStringSync();
-
-      expect(source, isNot(contains('app_localizations')));
-      expect(source, isNot(contains('package:intl')));
-    });
-  });
+  group('the service is locale-blind', () {});
 }

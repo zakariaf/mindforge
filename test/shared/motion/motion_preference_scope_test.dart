@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
-import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/shared/motion/motion_preference_scope.dart';
+
+import '../../support/harness.dart';
 
 void main() {
   /// Pumps the scope over a probe and returns the flag the probe sees.
@@ -18,13 +18,8 @@ void main() {
     );
 
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          initialAppSettingsProvider.overrideWithValue(settings),
-          settingsProvider.overrideWith(
-            (ref) => Stream<AppSettings>.value(settings),
-          ),
-        ],
+      settingsScope(
+        settings: settings,
         child: MediaQuery(
           data: MediaQueryData(disableAnimations: platformSaysOff),
           child: MotionPreferenceScope(
@@ -78,7 +73,6 @@ void main() {
       // silently drops the size, the text scaler, the padding and every other
       // accessibility flag the app reads.
       late MediaQueryData seen;
-      const settings = AppSettings.defaults();
       const source = MediaQueryData(
         size: Size(390, 844),
         devicePixelRatio: 2,
@@ -88,13 +82,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            initialAppSettingsProvider.overrideWithValue(settings),
-            settingsProvider.overrideWith(
-              (ref) => Stream<AppSettings>.value(settings),
-            ),
-          ],
+        settingsScope(
           child: MediaQuery(
             data: source,
             child: MotionPreferenceScope(
@@ -120,16 +108,9 @@ void main() {
       // A scope that quietly pinned a Directionality would make every RTL
       // screen below it read left-to-right, and the mistake would be invisible
       // on a developer device set to English.
-      const settings = AppSettings.defaults();
 
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            initialAppSettingsProvider.overrideWithValue(settings),
-            settingsProvider.overrideWith(
-              (ref) => Stream<AppSettings>.value(settings),
-            ),
-          ],
+        settingsScope(
           child: const MediaQuery(
             data: MediaQueryData(),
             child: MotionPreferenceScope(child: SizedBox.shrink()),

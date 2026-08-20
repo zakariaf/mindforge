@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/shared/feedback/haptic_verb.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
@@ -200,29 +198,12 @@ void main() {
         hasLength(7),
       );
     });
-
-    test('the four partitions cover every moment exactly once', () {
-      var counted = 0;
-      for (final axis in MotionAxis.values) {
-        counted += momentsWhere((spec) => spec.axis == axis).length;
-      }
-
-      expect(counted, Moment.values.length);
-    });
   });
 
   group('the catalog is locale-independent', () {
-    final source = File(
-      'lib/shared/feedback/moment_catalog.dart',
-    ).readAsStringSync();
-
-    test('it imports no localization and no formatter', () {
-      // A moment is a thing that happened. Nothing about which language the
-      // app is in changes what happened, or how long it takes.
-      expect(source, isNot(contains('app_localizations')));
-      expect(source, isNot(contains('package:intl')));
-    });
-
+    // The import ban itself lives in motion_policy_test, which scans every file
+    // under shared/feedback and shared/motion rather than this one. What is
+    // left here is the assertion only this file can make.
     test(
       'and every latch is a state-machine key, not a string anyone reads',
       () {

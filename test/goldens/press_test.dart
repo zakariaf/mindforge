@@ -82,22 +82,6 @@ void main() {
     return gesture;
   }
 
-  Offset travelOf(WidgetTester tester) {
-    final transform = tester.widget<Transform>(
-      find
-          .descendant(
-            of: find.byType(PopButton),
-            matching: find.byType(Transform),
-          )
-          .first,
-    );
-
-    return Offset(
-      transform.transform.getTranslation().x,
-      transform.transform.getTranslation().y,
-    );
-  }
-
   testWidgets('at rest', (tester) async {
     // The frame the whole catalog is compared against. If this one moves, a
     // press change leaked into the resting chrome.
@@ -177,7 +161,7 @@ void main() {
       // travelling there.
       await pumpButton(tester, LocaleCase.english, disableAnimations: true);
 
-      final rest = travelOf(tester);
+      final rest = translationUnder(tester, find.byType(PopButton));
 
       final gesture = await tester.startGesture(
         tester.getCenter(find.byType(PopButton)),
@@ -185,7 +169,7 @@ void main() {
       addTearDown(gesture.up);
       await tester.pump();
 
-      final onTouchDown = travelOf(tester);
+      final onTouchDown = translationUnder(tester, find.byType(PopButton));
       await tester.pump(motion.durTap);
       await tester.pump(motion.durTap);
 
@@ -193,7 +177,7 @@ void main() {
       expect(onTouchDown, isNot(Offset.zero));
       expect(
         onTouchDown,
-        travelOf(tester),
+        translationUnder(tester, find.byType(PopButton)),
         reason:
             'reduce motion collapses the duration to zero, so the first frame '
             'IS the final one — which is also why pop_button_pressed.png and '
@@ -209,11 +193,11 @@ void main() {
       // else. Without this, a mirrored press would ship as "the RTL golden
       // looks different, as expected".
       final english = await holdButton(tester, LocaleCase.english);
-      final englishTravel = travelOf(tester);
+      final englishTravel = translationUnder(tester, find.byType(PopButton));
       await english.up();
 
       final persian = await holdButton(tester, LocaleCase.persian);
-      final persianTravel = travelOf(tester);
+      final persianTravel = translationUnder(tester, find.byType(PopButton));
       await persian.up();
 
       expect(persianTravel, englishTravel);

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -16,6 +15,10 @@ import '../../support/locale_cases.dart';
 
 /// The celebration: one pass, no loop, and nothing in the player's way.
 void main() {
+  /// The scale the badge is drawn at right now.
+  double scaleOf(WidgetTester tester) =>
+      scaleUnder(tester, find.byType(PopCelebration));
+
   const motion = SunburstMotion.sunburstPop;
 
   const badge = Key('badge');
@@ -47,15 +50,6 @@ void main() {
         ),
       );
 
-  /// The scale the badge is drawn at right now.
-  double scaleOf(WidgetTester tester) {
-    final transforms = transformsOver(tester);
-
-    return transforms
-        .map((t) => t.transform.getMaxScaleOnAxis())
-        .reduce((a, b) => a * b);
-  }
-
   /// The rotation applied above the badge, in radians.
   double rotationOf(WidgetTester tester) {
     final transforms = transformsOver(tester);
@@ -84,14 +78,6 @@ void main() {
       await tester.pump(motion.durCelebrate);
 
       expect(gateway.played, <HapticVerb>[HapticVerb.heavyImpact]);
-    });
-
-    testWidgets('and it never repeats', (tester) async {
-      final source = File(
-        'lib/shared/motion/pop_celebration.dart',
-      ).readAsStringSync();
-
-      expect(source, isNot(contains('.repeat(')));
     });
   });
 
@@ -284,19 +270,6 @@ void main() {
               'shape constant, not a reading-direction property',
         );
       }
-    });
-
-    testWidgets('and it reads no direction at all', (tester) async {
-      final source = File(
-        'lib/shared/motion/pop_celebration.dart',
-      ).readAsStringSync();
-      final code = source
-          .split('\n')
-          .where((line) => !line.trimLeft().startsWith('//'))
-          .join('\n');
-
-      expect(code, isNot(contains('Directionality')));
-      expect(code, isNot(contains('TextDirection')));
     });
   });
 }

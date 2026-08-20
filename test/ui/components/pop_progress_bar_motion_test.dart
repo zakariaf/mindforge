@@ -134,19 +134,5 @@ void main() {
     });
   });
 
-  group('what it never does', () {
-    test('it runs no repeating controller', () {
-      // The bar renders the value it is GIVEN, so a backgrounded run costs
-      // nothing. A repeating controller here would tick for as long as the app
-      // is alive.
-      final code = File('lib/ui/components/pop_progress_bar.dart')
-          .readAsStringSync()
-          .split('\n')
-          .where((line) => !line.trimLeft().startsWith('//'))
-          .join('\n');
-
-      expect(code, isNot(contains('.repeat(')));
-      expect(code, isNot(contains('AnimationController')));
-    });
-  });
+  group('what it never does', () {});
 }

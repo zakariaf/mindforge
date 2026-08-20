@@ -13,6 +13,32 @@ import 'package:mindforge/theme/sunburst_theme.dart';
 
 import 'locale_cases.dart';
 
+/// A `ProviderScope` seeded with [settings] and a recording haptic gateway.
+///
+/// Both settings providers, because the gates and `localeProvider` read the
+/// SEED on the first frame and the stream after — and a widget test has no
+/// database behind them. And the gateway because it throws until overridden,
+/// deliberately, so a missing override in `bootstrap()` is loud.
+///
+/// It returns the scope rather than a list of overrides because
+/// `flutter_riverpod` does not export `Override`, so the list cannot be given a
+/// type. Three files had written the pair out.
+ProviderScope settingsScope({
+  required Widget child,
+  AppSettings settings = const AppSettings.defaults(),
+  FakeHapticGateway? gateway,
+  Stream<AppSettings>? stream,
+}) => ProviderScope(
+  overrides: [
+    hapticGatewayProvider.overrideWithValue(gateway ?? FakeHapticGateway()),
+    initialAppSettingsProvider.overrideWithValue(settings),
+    settingsProvider.overrideWith(
+      (ref) => stream ?? Stream<AppSettings>.value(settings),
+    ),
+  ],
+  child: child,
+);
+
 /// A logical viewport a test can render at.
 ///
 /// Every preset is at **DPR 2**, deliberately: that is the exact geometry
@@ -99,25 +125,9 @@ extension PumpApp on WidgetTester {
     late TextDirection resolved;
 
     await pumpWidget(
-      ProviderScope(
-        // The haptic gateway THROWS until it is overridden — deliberately, so a
-        // missing override in bootstrap() is loud. Every pumped tree therefore
-        // needs one, and a recording fake is the right default: it makes the
-        // feedback path observable in any test that wants it and silent in
-        // every test that does not.
-        overrides: [
-          hapticGatewayProvider.overrideWithValue(
-            hapticGateway ?? FakeHapticGateway(),
-          ),
-          // The settings a component tree reads its feedback gates from. Both
-          // the seed and the stream, because the gates read the seed on the
-          // first frame and the stream after — and a component test has no
-          // database to open behind them.
-          initialAppSettingsProvider.overrideWithValue(settings),
-          settingsProvider.overrideWith(
-            (ref) => Stream<AppSettings>.value(settings),
-          ),
-        ],
+      settingsScope(
+        settings: settings,
+        gateway: hapticGateway,
         // MediaQuery is layered ABOVE MaterialApp, and built with
         // MediaQueryData.fromView rather than a bare MediaQueryData():
         // constructing one from scratch drops padding, view insets and every

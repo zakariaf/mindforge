@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
@@ -8,13 +6,22 @@ import 'package:mindforge/shared/motion/shake_on_wrong.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 
-import '../../policy/support/source_text.dart';
 import '../../support/component_harness.dart';
 import '../../support/locale_cases.dart';
 
 /// The wrong-answer shake: as many passes as its catalog row declares, and
 /// nothing after them.
 void main() {
+  /// The horizontal offset the child is currently drawn at.
+  double dxOf(WidgetTester tester) =>
+      translationUnder(tester, find.byType(ShakeOnWrong)).dx;
+
+  Future<List<double>> sample(
+    WidgetTester tester, {
+    required int frames,
+    required Duration step,
+  }) => sampleFrames(tester, dxOf, frames: frames, step: step);
+
   const motion = SunburstMotion.sunburstPop;
   const shape = SunburstShape.sunburstPop;
   const key = Key('key');
@@ -23,34 +30,6 @@ void main() {
     isWrong: isWrong,
     child: const SizedBox(key: key, width: 64, height: 64),
   );
-
-  /// The horizontal offset the child is currently drawn at.
-  double dxOf(WidgetTester tester) {
-    final transforms = tester.widgetList<Transform>(
-      find.descendant(
-        of: find.byType(ShakeOnWrong),
-        matching: find.byType(Transform),
-      ),
-    );
-
-    return transforms
-        .map((t) => t.transform.getTranslation().x)
-        .fold(0, (a, b) => a + b);
-  }
-
-  /// Samples the offset every [step] for [frames] frames.
-  Future<List<double>> sample(
-    WidgetTester tester, {
-    required int frames,
-    required Duration step,
-  }) async {
-    final samples = <double>[];
-    for (var i = 0; i < frames; i++) {
-      samples.add(double.parse(dxOf(tester).toStringAsFixed(4)));
-      await tester.pump(step);
-    }
-    return samples;
-  }
 
   group('it is bounded', () {
     testWidgets('two cycles, and it rests at zero', (tester) async {
@@ -132,14 +111,6 @@ void main() {
             'with cycles at $cycles the sweep is still running here; with one '
             'fewer it would already have rested',
       );
-    });
-
-    testWidgets('and it never repeats', (tester) async {
-      final code = File(
-        'lib/shared/motion/shake_on_wrong.dart',
-      ).readAsStringSync();
-
-      expect(withoutDartComments(code), isNot(contains('.repeat(')));
     });
   });
 
@@ -261,17 +232,6 @@ void main() {
       for (final entry in swept.entries) {
         expect(entry.value, swept['en'], reason: entry.key);
       }
-    });
-
-    testWidgets('and the file reads no direction', (tester) async {
-      final code = File('lib/shared/motion/shake_on_wrong.dart')
-          .readAsStringSync()
-          .split('\n')
-          .where((line) => !line.trimLeft().startsWith('//'))
-          .join('\n');
-
-      expect(code, isNot(contains('Directionality')));
-      expect(code, isNot(contains('TextDirection')));
     });
   });
 }

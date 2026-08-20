@@ -38,23 +38,6 @@ void main() {
   PressGeometry geometryIn(WidgetTester tester) =>
       tester.widget<PressPhysics>(find.byType(PressPhysics)).geometry;
 
-  Offset translationIn(WidgetTester tester) {
-    // The OUTER Transform is the travel; the inner one is the scale.
-    final transform = tester.widget<Transform>(
-      find
-          .descendant(
-            of: find.byType(PressPhysics),
-            matching: find.byType(Transform),
-          )
-          .first,
-    );
-
-    return Offset(
-      transform.transform.getTranslation().x,
-      transform.transform.getTranslation().y,
-    );
-  }
-
   group('the geometry is derived, never a literal', () {
     testWidgets('e2 takes the e2 shadow and the full press scale', (
       tester,
@@ -165,7 +148,7 @@ void main() {
 
       expect(taps, 0);
       expect(gateway.played, isEmpty);
-      expect(translationIn(tester), Offset.zero);
+      expect(translationUnder(tester, find.byType(PressPhysics)), Offset.zero);
     });
 
     testWidgets('and a disabled surface never drives anything', (tester) async {
@@ -227,7 +210,10 @@ void main() {
         await tester.pump(motion.durTap);
         await tester.pump(motion.durTap);
 
-        travelled[localeCase.tag] = translationIn(tester);
+        travelled[localeCase.tag] = translationUnder(
+          tester,
+          find.byType(PressPhysics),
+        );
 
         await gesture.up();
         await tester.pump(motion.durTap);

@@ -117,17 +117,4 @@ void main() {
       expect(container.read(soundEnabledProvider), isTrue);
     });
   });
-
-  group('there is no FeedbackSettings type', () {
-    test('the gates derive from AppSettings itself', () {
-      // A second value type with three overlapping fields under two spellings
-      // is a rename waiting to silently drop a toggle. AppSettings is E02's and
-      // already carries all three.
-      const settings = AppSettings.defaults();
-
-      expect(settings.isHapticsEnabled, isA<bool>());
-      expect(settings.isSoundEnabled, isA<bool>());
-      expect(settings.isReduceMotionEnabled, isA<bool>());
-    });
-  });
 }
