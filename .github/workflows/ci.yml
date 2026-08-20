@@ -122,6 +122,36 @@ jobs:
             exit 1
           fi
 
+      - name: Check the RTL design strings are current
+        # The Persian reference screenshots read their strings from this file,
+        # which is generated from lib/l10n/app_fa.arb. Editing an ARB without
+        # re-dumping would leave the reference and the app disagreeing — and
+        # the reference is what every RTL screen is built against.
+        #
+        # The dump WRITES, so it is tagged `tool` and excluded from the default
+        # test lane: a gate that regenerates what it checks asserts nothing.
+        # Here it is run first and then diffed, which is the same
+        # generate-then-diff shape as the codegen gate above.
+        run: |
+          flutter test --tags tool tool/dump_design_strings_test.dart
+          changed=$(git status --porcelain -- design/sunburst-pop/rtl/strings-fa.json)
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            echo "::error::design/sunburst-pop/rtl/strings-fa.json is stale. Run 'flutter test --tags tool tool/dump_design_strings_test.dart' and commit the result."
+            exit 1
+          fi
+
+      - name: Check the reference screenshots match their sources
+        # The manifest capture-screens.sh wrote records the sha256 of app.html,
+        # of strings-fa.json, and of every PNG. CI has no Chrome and cannot
+        # re-render, but it can recompute hashes — which is exactly enough to
+        # catch a source edited without a re-capture.
+        #
+        # Not hypothetical: app.html once carried data-num="640" while the
+        # committed 06-results.png still showed a Latin 640, with every gate
+        # green and only a human opening the PNG noticing.
+        run: flutter test test/policy/reference_manifest_test.dart
+
       - name: Check the schema snapshots are current
         # The committed v1 snapshot must match the live schema, or the
         # migration harness in test/data/migration/ verifies against a stale
@@ -147,7 +177,34 @@ jobs:
         run: flutter analyze --fatal-infos --fatal-warnings
 
       - name: Test
-        run: flutter test --test-randomize-ordering-seed random --reporter expanded
+        # Two tags are excluded here and each has its own step:
+        #   tool    WRITES a tracked file, and is run above where its output is
+        #           diffed. A gate that regenerates what it checks asserts
+        #           nothing.
+        #   golden  compares pixels, needs the real bundled faces, and belongs
+        #           in a lane that can be read on its own when it fails.
+        #
+        #
+        # ONE --exclude-tags with a boolean selector, not two flags.
+        # flutter_tools declares it as a single addOption, so repeating it
+        # LAST-WINS and silently drops the first. Measured: `--exclude-tags
+        # golden --exclude-tags tool` ran all six golden tests.
+        run: |
+          flutter test --test-randomize-ordering-seed random \
+            --exclude-tags "tool || golden" --reporter expanded
+
+      - name: Golden lane
+        # COMPARE ONLY. There is deliberately no --update-goldens step anywhere
+        # in this repository: re-blessing a golden is a local, reviewed act in a
+        # commit that says so, because a pipeline that can bless its own output
+        # cannot fail.
+        #
+        # Six PNGs under test/goldens/rtl/. They detect a CHANGE in shaping,
+        # mirroring or digit block. They do not prove the shaping is correct and
+        # they prove nothing about translation — that is the human comparison
+        # against design/sunburst-pop/screens/rtl/ and E11's native-speaker
+        # review.
+        run: flutter test --tags golden --reporter expanded
 
       - name: Run the skill gates
         # A block scalar, because `run: "$BASH5" tool/...` is NOT valid YAML —

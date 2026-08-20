@@ -1,0 +1,18 @@
+# The tags the suites use.
+#
+# Declaring a tag here guards a typo in a test file's `@Tags([...])`, NOT one in
+# the CLI selector: `flutter test --tags bogusnothing` prints no unknown-tag
+# warning. A mistyped lane still fails, but through exit 79 (no tests ran)
+# rather than through this file.
+#
+# Both are EXCLUDED from the default lane, for different reasons:
+#
+#   golden  compares rendered pixels against checked-in PNGs. It needs the real
+#           bundled faces and the pinned runner, and it is re-blessed by a
+#           local, reviewed act — never by a CI step. There is deliberately no
+#           `--update-goldens` anywhere in .github/.
+#   tool    WRITES a file the repository tracks. A gate that regenerates what it
+#           checks asserts nothing, so CI runs it and then diffs the result.
+tags:
+  golden:
+  tool:

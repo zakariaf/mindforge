@@ -5,6 +5,8 @@
 /// which is how one of them ends up not stripping what it thinks it strips.
 library;
 
+import 'dart:io';
+
 /// [source] with every `//` line comment removed.
 ///
 /// Policy tests that ban a construct must strip comments first, because the
@@ -52,3 +54,32 @@ String _stripLine(String line, String marker) {
 
   return line;
 }
+
+/// Every **hand-written** `.dart` file under `lib/`.
+///
+/// The generated files are excluded here rather than in each caller: a policy
+/// test that scans `app_localizations.dart` or a `.drift.dart` is asserting
+/// over code nobody can edit, and the usual response is to weaken the rule
+/// rather than the scan. Ten copies of this walk had accumulated, each with a
+/// slightly different skip list — which is the same failure this file's
+/// comment-stripping helpers were extracted to stop.
+///
+/// [skip] adds further path fragments to exclude, for a test that legitimately
+/// exempts one file (usually the one that DEFINES the thing being banned).
+Iterable<File> dartFilesUnderLib({Set<String> skip = const <String>{}}) =>
+    Directory('lib')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.dart'))
+        .where((f) => !_isGenerated(f.path))
+        // Written with `every` rather than the negation of its Iterable
+        // sibling, which check_test_hygiene.sh cannot distinguish from
+        // mocktail's argument matcher of the same name — it greps test/ for
+        // the bare call and fires on the collision. The gate is right to be
+        // crude about it; this is the cheaper side to move.
+        .where((f) => skip.every((fragment) => !f.path.contains(fragment)));
+
+bool _isGenerated(String path) =>
+    path.endsWith('.g.dart') ||
+    path.endsWith('.drift.dart') ||
+    path.contains('app_localizations');

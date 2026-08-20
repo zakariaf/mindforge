@@ -2,10 +2,17 @@
 
 | | |
 |---|---|
-| **Status** | Accepted |
+| **Status** | **Superseded by [ADR 0002](0002-four-locales-and-rtl.md)** |
 | **Date** | 2026-08-19 |
 | **Epic** | E01 T01.9 |
 | **Supersedes** | nothing |
+| **Superseded by** | [0002 — Four locales and RTL](0002-four-locales-and-rtl.md), 2026-08-19 |
+
+> **Superseded.** ADR 0002 carries the shipping decision. This record is kept
+> unedited below, because the point of a decision record is what was decided
+> when — not what the answer turned out to be. Nothing here was reversed; ADR
+> 0002 adds the three locales, the `ckb` delegate, the numeral policy and the
+> RTL posture that this document deferred.
 
 ## Context
 

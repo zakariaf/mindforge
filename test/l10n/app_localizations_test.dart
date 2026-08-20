@@ -21,10 +21,10 @@ void main() {
     );
 
     expect(l10n.appTitle, 'MindForge');
-    expect(l10n.homeTagline, 'Train your brain. No wifi needed.');
-    expect(l10n.homeYourGames, 'Your games');
-    expect(l10n.actionPlay, 'Play');
-    expect(l10n.labelBest, 'BEST');
+    expect(l10n.aboutTagline, 'Train your brain. No wifi needed.');
+    expect(l10n.yourGamesTitle, 'Your games');
+    expect(l10n.playButton, 'Play');
+    expect(l10n.bestLabel, 'BEST');
     expect(l10n.settingsLanguage, 'Language');
   });
 }

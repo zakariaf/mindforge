@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: ./capture-screens.sh
+# Usage: ./capture-screens.sh [--rtl]
 #
 # Regenerates screens/*.png — the reference screenshots every implementation is
 # compared against. Run this whenever app.html changes, and commit the result.
@@ -12,10 +12,32 @@ set -euo pipefail
 
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RTL=0
+case "${1:-}" in
+  "")     RTL=0 ;;
+  --rtl)  RTL=1 ;;
+  # An unrecognised argument used to fall through and silently capture LTR, so
+  # `--rtl-only` or `--RTL` regenerated screens/, printed eight OK lines, and
+  # left the operator believing the RTL set had been refreshed.
+  *) echo "FAIL: unknown argument '$1'. Usage: $0 [--rtl]" >&2; exit 2 ;;
+esac
+
 SRC="$HERE/app.html"
-OUT="$HERE/screens"
+# The COMMITTED source, kept even when SRC is repointed at the rendered RTL
+# copy below: the manifest must record what a reviewer can diff, not a temp
+# file that no longer exists.
+SOURCE_HTML="$HERE/app.html"
+DEST="$HERE/screens"
+if [ "$RTL" -eq 1 ]; then DEST="$HERE/screens/rtl"; fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
+
+# Captures land in a staging directory and are moved into place only once ALL
+# of them succeeded. Writing straight into the tracked directory meant a Chrome
+# failure on screen five left four new and four old PNGs behind — a set that
+# looks complete and is half a version old.
+OUT="$TMP/out"
+mkdir -p "$OUT"
 
 if [ ! -x "$CHROME" ]; then
   echo "FAIL: Chrome not found at '$CHROME'. Set CHROME=/path/to/chrome and retry." >&2
@@ -24,6 +46,16 @@ fi
 if [ ! -f "$SRC" ]; then
   echo "FAIL: '$SRC' not found." >&2
   exit 1
+fi
+
+if [ "$RTL" -eq 1 ]; then
+  # Rendered into the temp directory and never committed: a second copy of the
+  # design source in git is how two sources of truth are born. The Persian
+  # strings come straight out of lib/l10n/app_fa.arb via strings-fa.json, so
+  # the reference and the app cannot disagree.
+  python3 "$HERE/rtl/render-rtl.py" "$SRC" "$HERE/rtl/strings-fa.json" \
+    "$TMP/app-rtl.html"
+  SRC="$TMP/app-rtl.html"
 fi
 
 mkdir -p "$OUT"
@@ -74,6 +106,9 @@ PY
     --window-size=390,844 --screenshot="$OUT/$name.png" \
     "file://$TMP/$name.html" >/dev/null 2>&1
 
+  # -s alone would pass on the PREVIOUS run's file, which is why the capture
+  # writes to an empty staging directory: a Chrome invocation that exits 0
+  # without writing is then indistinguishable from nothing at all, and fails.
   if [ ! -s "$OUT/$name.png" ]; then
     echo "FAIL: $name.png was not written." >&2
     exit 1
@@ -81,4 +116,16 @@ PY
   printf '  %-22s %s\n' "$name.png" "$(du -h "$OUT/$name.png" | cut -f1)"
 done
 
-echo "OK: ${#SCREENS[@]} reference screens written to screens/."
+for entry in "${SCREENS[@]}"; do
+  name="${entry##*:}"
+  mv "$OUT/$name.png" "$DEST/$name.png"
+done
+
+# The manifest is what ties the committed PNGs to the sources they were
+# rendered from. Without it the reference and app.html drift silently and CI
+# cannot tell -- that happened: app.html carried data-num="640" while the
+# committed 06-results.png still showed a Latin 640, with every gate green.
+# test/policy/reference_manifest_test.dart recomputes every hash here.
+python3 "$HERE/rtl/write-manifest.py" "$DEST" "$SOURCE_HTML" "$HERE/rtl/strings-fa.json" "$RTL"
+
+echo "OK: ${#SCREENS[@]} reference screens written to ${DEST#"$HERE/"}/."

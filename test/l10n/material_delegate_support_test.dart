@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/number_symbols_data.dart' show numberFormatSymbols;
@@ -52,6 +52,27 @@ void main() {
       }
     });
 
+    test('DefaultMaterialLocalizations serves en and nothing else', () async {
+      // The LOUD half. WidgetsApp's built-in Material fallback claims only
+      // English, and Localizations._loadAll filters delegates by isSupported —
+      // so under fa or ckb with no Global and no vendored delegate there is no
+      // MaterialLocalizations in scope AT ALL, and the first Tooltip, SnackBar
+      // or AppBar back button asserts.
+      expect(
+        DefaultMaterialLocalizations.delegate.isSupported(const Locale('en')),
+        isTrue,
+      );
+      for (final code in <String>['de', 'fa', 'ckb', 'ar']) {
+        expect(
+          DefaultMaterialLocalizations.delegate.isSupported(Locale(code)),
+          isFalse,
+          reason:
+              'measured: the Material fallback is en-only, so $code has no '
+              'MaterialLocalizations without a delegate that claims it',
+        );
+      }
+    });
+
     test(
       'DefaultWidgetsLocalizations claims every locale and is always LTR',
       () async {
@@ -96,20 +117,13 @@ void main() {
         numberFormatSymbols.containsKey('ckb'),
         isFalse,
         reason:
-            'with no entry, a NumberFormat for ckb falls back to Latin '
-            'digits SILENTLY. A Sorani UI full of 1480 reads as untranslated, '
-            'not as a cosmetic slip. E04 pins ckb to fa symbol data',
+            'MEASURED IN E04, and it corrects what ADR 0001 assumed: with no '
+            'entry, NumberFormat does not fall back to Latin digits quietly — '
+            'it THROWS ArgumentError: Invalid locale "ckb". Loud rather than '
+            'silent, and fatal rather than cosmetic. '
+            'intl_symbol_coverage_test.dart proves the throw; E04 pins ckb to '
+            "fa's symbol data so it never happens",
       );
-    });
-
-    test("fa's symbols are the Eastern Arabic block CLAUDE.md mandates", () {
-      final fa = numberFormatSymbols['fa']!;
-
-      // U+06F0, NOT the Arabic-Indic block U+0660, whose 4, 5 and 6 are
-      // different glyphs. This is what makes fa a safe donor for ckb.
-      expect(fa.ZERO_DIGIT, '۰');
-      expect(fa.DECIMAL_SEP, '٫');
-      expect(fa.GROUP_SEP, '٬');
     });
   });
 }

@@ -100,6 +100,10 @@ RUN_TABLE=(
   # This is the gate that keeps E04's RTL work a string job rather than a layout
   # rewrite, so it runs from E01 onward and CI names it as a separate step too.
   "i18n-rtl-l10n/scripts/check_i18n_bans.sh|lib"
+  # Moved out of the skip table by E04, in the same PR that landed app_de.arb,
+  # app_fa.arb and app_ckb.arb. E01 measured it exiting 2 on a directory
+  # holding only the template; there are four locales now and it exits 0.
+  "i18n-rtl-l10n/scripts/check_arb_parity.sh|lib/l10n"
 
   # --- narrowed targets, each for a stated reason -----------------------------
   # Its own header says to point it at "the Flutter-free package or directory
@@ -128,7 +132,6 @@ RUN_TABLE=(
 # Every reason names a structural fact. "It fails" is never a reason.
 # =============================================================================
 SKIP_TABLE=(
-  "i18n-rtl-l10n/scripts/check_arb_parity.sh|measured: exits 2 on a directory holding only the template (FAIL: no locale ARB files (app_*.arb) beside the template). E01 ships app_en.arb alone. E04 MOVES THIS ROW TO THE RUN TABLE with the argument lib/l10n, in the same PR that lands app_de.arb, app_fa.arb and app_ckb.arb."
   "ci-pipeline-and-gates/scripts/ci-gates.sh|a runner, not a gate: it re-runs format/analyze/test/build_runner, which the workflow already runs as named steps. Nesting them hides which one failed."
   "codegen-and-toolchain/scripts/regen.sh|mutates the tree. A gate verifies; it never blesses (ci-pipeline-and-gates rule 9)."
   "lint-and-style-config/scripts/lint-gates.sh|a format/analyze wrapper duplicating two named workflow steps."

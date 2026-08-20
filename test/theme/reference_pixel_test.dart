@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 
+import '../support/design_source.dart';
+
 /// Samples the shipped reference PNGs and asserts the sampled hexes are the
 /// slots the theme declares.
 ///
@@ -43,39 +45,36 @@ void main() {
   }
 
   group('the reference PNGs', () {
-    test('are all 780x1688 — 390x844 at 2x', () async {
-      final files = Directory(screens)
-          .listSync()
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.png'))
-          .toList();
-
-      expect(
-        files,
-        hasLength(8),
-        reason:
-            'eight screens: home, game detail, countdown, stroop, schulte, '
-            'results, stats, settings',
-      );
-
-      for (final file in files) {
-        final codec = await ui.instantiateImageCodec(
-          await file.readAsBytes(),
-        );
-        final frame = await codec.getNextFrame();
+    // BOTH sets. The RTL captures are laid directly beside these, so a set
+    // rendered at another size is not comparable and the human comparison step
+    // silently stops meaning anything.
+    for (final dir in <String>[screens, '$screens/rtl']) {
+      test('$dir holds the eight screens at 780x1688 — 390x844 at 2x', () {
+        final files = Directory(dir)
+            .listSync()
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.png'))
+            .toList();
 
         expect(
-          <int>[frame.image.width, frame.image.height],
-          <int>[780, 1688],
-          reason:
-              '${file.path} is not the geometry the canonical simulator '
-              'renders at',
+          files
+              .map((f) => f.uri.pathSegments.last.replaceAll('.png', ''))
+              .toList()
+            ..sort(),
+          kScreenBasenames,
         );
 
-        frame.image.dispose();
-        codec.dispose();
-      }
-    });
+        for (final file in files) {
+          expect(
+            pngSize(file),
+            kReferencePixelSize,
+            reason:
+                '${file.path} is not the geometry the canonical simulator '
+                'renders at',
+          );
+        }
+      });
+    }
   });
 
   group('sampled hexes are the shipped slots', () {

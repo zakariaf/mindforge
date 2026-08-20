@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/ckb_localizations.dart';
+import 'package:mindforge/l10n/supported_locales.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
+
+import 'locale_cases.dart';
 
 /// A logical viewport a test can render at.
 ///
@@ -54,17 +59,6 @@ final class Device {
   String toString() => 'Device($name @${dpr}x)';
 }
 
-/// The locales the harness offers.
-///
-/// A stand-in for the real `supportedLocales`, which **E04 owns** once the ARB
-/// files and the `ckb` delegate land.
-const List<Locale> _kHarnessLocales = <Locale>[
-  Locale('en'),
-  Locale('de'),
-  Locale('fa'),
-  Locale('ckb'),
-];
-
 /// Sizes the test viewport to `device` and restores it afterwards.
 void useDevice(WidgetTester tester, Device device) {
   final view = tester.view
@@ -76,7 +70,105 @@ void useDevice(WidgetTester tester, Device device) {
 
 /// Pumps a widget inside the app shell a real screen sees.
 extension PumpApp on WidgetTester {
+  /// Pumps [child] in [localeCase]'s locale, with the **real** delegate list.
+  ///
+  /// This is what E05 and every later epic use for a locale matrix, and it
+  /// differs from [pumpApp] in the way that matters: it does **not** take a
+  /// `textDirection`. Direction follows the locale through `Localizations`,
+  /// exactly as it does in production, so a component that assumed a physical
+  /// side fails here rather than being pinned upright by the harness.
+  ///
+  /// It also asserts the direction it got, so a delegate regression surfaces as
+  /// a failure in whichever test noticed rather than as silently mirrored
+  /// pixels in a golden nobody re-read.
+  Future<void> pumpLocalized(
+    Widget child,
+    LocaleCase localeCase, {
+    ThemeData? theme,
+    bool disableAnimations = false,
+    TextScaler textScaler = TextScaler.noScaling,
+  }) async {
+    late TextDirection resolved;
+
+    await pumpWidget(
+      ProviderScope(
+        // MediaQuery is layered ABOVE MaterialApp, and built with
+        // MediaQueryData.fromView rather than a bare MediaQueryData():
+        // constructing one from scratch drops padding, view insets and every
+        // accessibility flag the real app reads, and layering it below
+        // MaterialApp would leave MaterialApp itself reading the unscaled one.
+        child: MediaQuery(
+          data: MediaQueryData.fromView(view).copyWith(
+            disableAnimations: disableAnimations,
+            textScaler: textScaler,
+          ),
+          child: MaterialApp(
+            theme: theme ?? buildSunburstTheme(),
+            locale: localeCase.flutterLocale,
+            supportedLocales: supportedLocales,
+            localizationsDelegates: localizationsDelegatesFor(
+              AppLocalizations.localizationsDelegates,
+            ),
+            home: Builder(
+              builder: (context) {
+                resolved = Directionality.of(context);
+                return child;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      resolved,
+      localeCase.direction,
+      reason:
+          'the ambient direction under ${localeCase.tag} is not what the '
+          'locale requires. That is a delegate regression, and it would '
+          'otherwise show up as silently mirrored pixels in a golden nobody '
+          're-read',
+    );
+  }
+
+  /// Pumps a throwaway tree in [localeCase] and returns [read] of its context.
+  ///
+  /// The `late X captured; pumpLocalized(Builder(...))` idiom was written out
+  /// eight times across four files, ten lines each, to get one value out of a
+  /// pumped tree. Usually the value is an inherited lookup:
+  ///
+  /// ```dart
+  /// final l10n = await tester.readInLocale(localeCase, AppLocalizations.of);
+  /// ```
+  Future<T> readInLocale<T>(
+    LocaleCase localeCase,
+    T Function(BuildContext context) read, {
+    ThemeData? theme,
+  }) async {
+    late T value;
+
+    await pumpLocalized(
+      Builder(
+        builder: (context) {
+          value = read(context);
+          return const SizedBox.shrink();
+        },
+      ),
+      localeCase,
+      theme: theme,
+    );
+
+    return value;
+  }
+
   /// Pumps [child] under a `MaterialApp` carrying [theme].
+  ///
+  /// **It takes no `textDirection`, deliberately.** It used to, as a test-only
+  /// stand-in for the absent `GlobalWidgetsLocalizations` — E04 vendored those
+  /// delegates, so direction now follows the locale here exactly as it does in
+  /// production. A hardcoded root `Directionality` is precisely what hides a
+  /// physical-side bug: it happens to look right. Use [pumpLocalized] when the
+  /// locale matters.
   ///
   /// [theme] defaults to `buildSunburstTheme()`, the one theme the app ships.
   /// A task testing a single extension in isolation passes an inline
@@ -88,29 +180,27 @@ extension PumpApp on WidgetTester {
   /// nothing to override anyway. E05 adds it, by whatever means Riverpod
   /// exposes then.
   ///
-  /// [textDirection], when non-null, wraps [child] in a `Directionality`. That
-  /// is a **test-only stand-in** for the absent `GlobalWidgetsLocalizations`:
-  /// measured on Flutter 3.44.6, `DefaultWidgetsLocalizations.textDirection` is
-  /// hardcoded LTR, so pumping `locale: fa` alone yields an LTR tree silently.
-  /// Production code must never do this — a hardcoded root `Directionality` is
-  /// exactly what hides a physical-side bug — and E04 removes the need for it.
   Future<void> pumpApp(
     Widget child, {
     ThemeData? theme,
     Locale locale = const Locale('en'),
-    TextDirection? textDirection,
     bool disableAnimations = false,
   }) {
-    final content = textDirection == null
-        ? child
-        : Directionality(textDirection: textDirection, child: child);
-
     return pumpWidget(
       ProviderScope(
         child: MaterialApp(
           theme: theme ?? buildSunburstTheme(),
           locale: locale,
-          supportedLocales: _kHarnessLocales,
+          supportedLocales: supportedLocales,
+          // The REAL delegate list. Without it MaterialApp falls through to
+          // DefaultWidgetsLocalizations, whose textDirection is hardcoded LTR
+          // — measured: pumpApp(locale: Locale('ckb')) resolved to ltr, and a
+          // test that calls takeException() ate the framework's warning and
+          // then rendered Sorani left-to-right. The doc below said direction
+          // followed the locale here; it did not until this line.
+          localizationsDelegates: localizationsDelegatesFor(
+            AppLocalizations.localizationsDelegates,
+          ),
           home: Builder(
             builder: (context) => MediaQuery(
               // Layered ABOVE MaterialApp and built from .copyWith, never from
@@ -120,7 +210,7 @@ extension PumpApp on WidgetTester {
               data: MediaQuery.of(context).copyWith(
                 disableAnimations: disableAnimations,
               ),
-              child: content,
+              child: child,
             ),
           ),
         ),

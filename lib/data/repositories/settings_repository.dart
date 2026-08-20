@@ -78,6 +78,34 @@ final class SettingsRepository {
         return settings;
       }, logSink: _logSink);
 
+  /// Applies [change] to the stored settings **inside one transaction**.
+  ///
+  /// The read-modify-write every single-field setter needs. Doing it as
+  /// `read()` then `update()` is two round trips outside any transaction, and
+  /// [update] writes the whole row rather than one column — so two settings
+  /// changed close together lose one of each other. Measured shape: on E08's
+  /// Settings screen, tapping a language and then a toggle before the first
+  /// write lands makes whichever commits second write back the other field's
+  /// stale value, silently, with both callers holding an `Ok`.
+  ///
+  /// [change] runs on the value read inside the transaction and must be pure —
+  /// it may be called with settings that differ from anything the caller saw.
+  @useResult
+  Future<Result<AppSettings, DataFailure>> mutate(
+    AppSettings Function(AppSettings current) change,
+  ) => guardStore(() async {
+    return _database.transaction(() async {
+      final updated = change(_reportDegradation(await _dao.read()));
+      final stamp = nextWriteStamp(_clock, await _dao.readRevision());
+      await _dao.write(
+        updated,
+        updatedAtUtcMs: stamp.updatedAtUtcMs,
+        rowRevision: stamp.rowRevision,
+      );
+      return updated;
+    });
+  }, logSink: _logSink);
+
   /// Reports an unrecognised stored `locale_tag` and returns the degraded
   /// value.
   ///

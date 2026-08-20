@@ -112,19 +112,14 @@ void main() {
       );
     });
 
-    test('check_arb_parity.sh is skipped and names E04 as its mover', () {
+    test('check_arb_parity.sh now runs, over the four-locale directory', () {
       const script = 'i18n-rtl-l10n/scripts/check_arb_parity.sh';
 
-      expect(
-        skipRows,
-        contains(script),
-        reason: 'measured: it exits 2 on a directory holding only the template',
-      );
-      expect(
-        skipRows[script],
-        contains('E04'),
-        reason: 'a skip whose mover is unnamed becomes permanent',
-      );
+      // E01 measured it exiting 2 on a directory holding only the template and
+      // parked it in the skip table naming E04 as its mover. This is that move,
+      // and this assertion is what stops it drifting back.
+      expect(skipRows, isNot(contains(script)));
+      expect(runRows[script], 'lib/l10n');
     });
   });
 }

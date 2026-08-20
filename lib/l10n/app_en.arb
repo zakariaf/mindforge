@@ -1,33 +1,394 @@
 {
   "@@locale": "en",
-
   "appTitle": "MindForge",
   "@appTitle": {
-    "description": "The application name. Shown as the app title and as the wordmark at the top of the Home screen. A proper noun: it is never translated, only transliterated where a script demands it, and in fa and ckb it is a Latin run inside RTL copy that needs bidi isolation."
+    "description": "The application name and the wordmark at the top of Home and Settings. A proper noun: it stays 'MindForge' in ALL FOUR locales. In fa and ckb it is a Latin run inside RTL copy and is bidi-isolated at render."
   },
-
-  "homeTagline": "Train your brain. No wifi needed.",
-  "@homeTagline": {
-    "description": "Subtitle under the wordmark on the Home screen (01-home.png). Two short sentences. The second one is the product promise: the app works with no network connection at all, ever."
+  "navPlay": "Play",
+  "@navPlay": {
+    "description": "Bottom navigation tab leading to the game hub. A noun here, not a verb — it names a destination, unlike playButton which is an action."
   },
-
-  "homeYourGames": "Your games",
-  "@homeYourGames": {
-    "description": "Section heading on the Home screen (01-home.png) above the grid of game cards. Sentence case, not title case."
+  "navStats": "Stats",
+  "@navStats": {
+    "description": "Bottom navigation tab leading to the statistics screen."
   },
-
-  "actionPlay": "Play",
-  "@actionPlay": {
-    "description": "Label on the primary button that starts a round, on the game detail screen (02-game-detail.png). An imperative verb, as short as the language allows — it sits inside a fixed-width chunky button."
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Bottom navigation tab leading to settings."
   },
-
-  "labelBest": "BEST",
-  "@labelBest": {
-    "description": "Label on the pill showing the player's best score for a game (01-home.png). Rendered in capitals in English; a script without letter case renders it in its normal form rather than being forced."
+  "homeGreeting": "{daypart, select, morning{Good morning} afternoon{Good afternoon} evening{Good evening} other{Hello}}",
+  "@homeGreeting": {
+    "description": "Greeting at the top of Home, chosen by time of day. A select rather than a Dart switch in a widget, so a locale that greets differently at different hours can say so in its own ARB.",
+    "placeholders": {
+      "daypart": {
+        "type": "String"
+      }
+    }
   },
-
+  "homeReadyPrompt": "Ready to train?",
+  "@homeReadyPrompt": {
+    "description": "Subtitle under the greeting on Home."
+  },
+  "streakDays": "{count, plural, =0{No streak yet} one{{formatted} day streak} other{{formatted} day streak}}",
+  "@streakDays": {
+    "description": "The streak chip on Home. A plural, not a concatenation: 'day' and 'days' differ in en, and Persian and Sorani have their own category rules. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "formatted": {
+        "type": "String"
+      }
+    }
+  },
+  "dailyMixTitle": "Daily Mix",
+  "@dailyMixTitle": {
+    "description": "Heading of the suggested-session card on Home and game detail."
+  },
+  "dailyMixSummary": "{games, plural, one{{formattedGames} game} other{{formattedGames} games}}, {minutes, plural, one{{formattedMinutes} minute} other{{formattedMinutes} minutes}}",
+  "@dailyMixSummary": {
+    "description": "The Daily Mix summary line, e.g. '3 games, 4 minutes'. BOTH counts are pluralised inside ONE message: splicing two separately localized fragments is what produces ungrammatical output in languages that inflect the joiner. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "games": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      },
+      "formattedGames": {
+        "type": "String"
+      },
+      "formattedMinutes": {
+        "type": "String"
+      }
+    }
+  },
+  "yourGamesTitle": "Your games",
+  "@yourGamesTitle": {
+    "description": "Section heading above the game cards on Home. Sentence case."
+  },
+  "gamesUnlocked": "{count, plural, one{{formatted} unlocked} other{{formatted} unlocked}}",
+  "@gamesUnlocked": {
+    "description": "Count chip beside the 'Your games' heading. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "formatted": {
+        "type": "String"
+      }
+    }
+  },
+  "bestLabel": "BEST",
+  "@bestLabel": {
+    "description": "Label on the best-score pill. Authored in capitals: casing belongs in the string table, and SunburstType.label is the only step that permits caps. A script with no letter case renders it in its normal form rather than being forced."
+  },
+  "comingSoon": "Coming soon",
+  "@comingSoon": {
+    "description": "Badge on a game card that is not yet playable."
+  },
+  "gameStroopRushName": "Stroop Rush",
+  "@gameStroopRushName": {
+    "description": "The name of the first game. IT IS TRANSLATED — this is a description, not a brand, and E07's GameDefinition therefore carries this ARB KEY rather than a display string."
+  },
+  "gameStroopRushTagline": "Tap the colour, not the word",
+  "@gameStroopRushTagline": {
+    "description": "One-line description of Stroop Rush, on its card and its detail screen. It is also the on-board instruction during play."
+  },
+  "gameSchulteGridName": "Schulte Grid",
+  "@gameSchulteGridName": {
+    "description": "The name of the second game. Translated, for the same reason as gameStroopRushName."
+  },
+  "gameSchulteGridTagline": "Find 1 to 25, fast",
+  "@gameSchulteGridTagline": {
+    "description": "One-line description of Schulte Grid. The '1 to 25' is prose describing the fixed range of the grid, not a formatted value, so it is authored in the string."
+  },
+  "gameNBackName": "N-Back",
+  "@gameNBackName": {
+    "description": "The name of the third game, shown as a coming-soon card."
+  },
+  "gameTagsReactionFocus": "Reaction · Focus",
+  "@gameTagsReactionFocus": {
+    "description": "The category tags on a game detail header. The interpunct is authored in the string so an RTL locale can place it."
+  },
+  "gameAndDifficulty": "{game} · {difficulty}",
+  "@gameAndDifficulty": {
+    "description": "A game and its difficulty together, in the countdown and play headers. The separator is inside the message so an RTL locale can move it.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "yourBest": "Your best",
+  "@yourBest": {
+    "description": "Label on the personal-best figure on game detail."
+  },
+  "gamesPlayed": "Games played",
+  "@gamesPlayed": {
+    "description": "Label on the run-count figure on game detail and on Stats."
+  },
+  "difficultyTitle": "Difficulty",
+  "@difficultyTitle": {
+    "description": "Heading above the difficulty selector."
+  },
+  "difficultyChill": "Chill",
+  "@difficultyChill": {
+    "description": "The easiest difficulty. An adjective describing the pace, not a proper noun."
+  },
+  "difficultyClassic": "Classic",
+  "@difficultyClassic": {
+    "description": "The default difficulty."
+  },
+  "difficultyBlitz": "Blitz",
+  "@difficultyBlitz": {
+    "description": "The hardest and fastest difficulty."
+  },
+  "playButton": "Play",
+  "@playButton": {
+    "description": "The primary button that starts a round. An imperative verb, as short as the language allows — it sits inside a fixed-width chunky button."
+  },
+  "getReady": "Get ready",
+  "@getReady": {
+    "description": "The line under the countdown numeral. The numeral itself is a formatted number, never part of this string."
+  },
+  "hudTime": "Time",
+  "@hudTime": {
+    "description": "HUD label above the elapsed or remaining clock."
+  },
+  "hudScore": "Score",
+  "@hudScore": {
+    "description": "HUD label above the running score."
+  },
+  "hudStreak": "Streak",
+  "@hudStreak": {
+    "description": "HUD label above the combo multiplier."
+  },
+  "hudFound": "Found",
+  "@hudFound": {
+    "description": "HUD label above the found-tile count in Schulte Grid."
+  },
+  "hudNext": "Next",
+  "@hudNext": {
+    "description": "HUD label above the next number to find in Schulte Grid."
+  },
+  "streakMultiplier": "{count, plural, other{×{formatted}}}",
+  "@streakMultiplier": {
+    "description": "The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "formatted": {
+        "type": "String"
+      }
+    }
+  },
+  "foundOfTotal": "{found} / {total}",
+  "@foundOfTotal": {
+    "description": "How many tiles have been found out of the total, e.g. '6 / 25'. Both values are placeholders so the separator can change per locale. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "found": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "colourRed": "Red",
+  "@colourRed": {
+    "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
+  },
+  "colourBlue": "Blue",
+  "@colourBlue": {
+    "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
+  },
+  "colourGreen": "Green",
+  "@colourGreen": {
+    "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
+  },
+  "colourYellow": "Yellow",
+  "@colourYellow": {
+    "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
+  },
+  "resultsTitle": "Nice run!",
+  "@resultsTitle": {
+    "description": "The heading on the results screen. Warm and short; it is celebratory, not an evaluation of the score."
+  },
+  "newPersonalBest": "New personal best",
+  "@newPersonalBest": {
+    "description": "Badge shown on results when the run beat every previous run in its scope."
+  },
+  "finalScore": "Final score",
+  "@finalScore": {
+    "description": "Label above the large results score."
+  },
+  "accuracyLabel": "Accuracy",
+  "@accuracyLabel": {
+    "description": "Label on the accuracy figure on results."
+  },
+  "avgReactionLabel": "Avg reaction",
+  "@avgReactionLabel": {
+    "description": "Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow."
+  },
+  "unitMilliseconds": "ms",
+  "unitSeconds": "s",
+  "@unitSeconds": {
+    "description": "The seconds unit, rendered as its OWN run beside the number, e.g. \"18.6\" + \"s\". A separate key for the same reason as unitMilliseconds: a value hand-glued to its unit is what breaks in RTL."
+  },
+  "@unitMilliseconds": {
+    "description": "The millisecond unit, rendered as its OWN run beside the number. A separate key so the value and its unit are never hand-glued, which is what breaks in RTL."
+  },
+  "longestStreakLabel": "Longest streak",
+  "@longestStreakLabel": {
+    "description": "Label on the best-combo figure on results."
+  },
+  "playAgain": "Play again",
+  "@playAgain": {
+    "description": "Button on results that starts another round of the same game and difficulty."
+  },
+  "homeButton": "Home",
+  "@homeButton": {
+    "description": "Button on results that returns to the hub."
+  },
+  "statsTitle": "Stats",
+  "@statsTitle": {
+    "description": "The statistics screen heading."
+  },
+  "statsAllTime": "All time",
+  "@statsAllTime": {
+    "description": "The scope chip on Stats, saying the figures below cover every run ever."
+  },
+  "bestScore": "Best score",
+  "@bestScore": {
+    "description": "Label on the best-points figure on Stats."
+  },
+  "bestTime": "Best time",
+  "@bestTime": {
+    "description": "Label on the fastest-completion figure on Stats."
+  },
+  "timeTrained": "Time trained",
+  "@timeTrained": {
+    "description": "Label on the total-play-time figure on Stats."
+  },
+  "durationHoursMinutes": "{hours}h {minutes}m",
+  "@durationHoursMinutes": {
+    "description": "A duration in hours and minutes, e.g. '3h 12m'. The unit markers are INSIDE the message so de can say '3 Std. 12 Min.' and fa can say its own form. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "lastNRuns": "{count, plural, one{Last {formatted} run} other{Last {formatted} runs}}",
+  "@lastNRuns": {
+    "description": "Heading above the recent-runs chart on Stats. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered \"4\" instead of \"۴\" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat(\"ckb\") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "formatted": {
+        "type": "String"
+      }
+    }
+  },
+  "chartSubtitle": "{game} · best {score}",
+  "@chartSubtitle": {
+    "description": "The subtitle under the chart heading, naming the game and its best score. The score arrives already formatted for the locale.",
+    "placeholders": {
+      "game": {
+        "type": "String"
+      },
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "chartOldest": "Oldest",
+  "@chartOldest": {
+    "description": "Axis label at the older end of the recent-runs chart. Its POSITION mirrors in RTL; the word does not change."
+  },
+  "chartLatest": "Latest",
+  "@chartLatest": {
+    "description": "Axis label at the newer end of the recent-runs chart."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "The settings screen heading."
+  },
+  "settingSound": "Sound",
+  "@settingSound": {
+    "description": "Row label for the sound-effects toggle."
+  },
+  "settingHaptics": "Haptics",
+  "@settingHaptics": {
+    "description": "Row label for the haptic-feedback toggle."
+  },
+  "settingReduceMotion": "Reduce motion",
+  "@settingReduceMotion": {
+    "description": "Row label for the reduce-motion toggle. This is the app's own setting, independent of the OS one; either turning motion off is enough."
+  },
+  "settingColourBlind": "Colour-blind friendly palette",
+  "@settingColourBlind": {
+    "description": "Row label for the colour-blind answer palette. It re-points gameplay answer colours only and never moves UI chrome."
+  },
+  "toggleOn": "ON",
+  "@toggleOn": {
+    "description": "The on state of a toggle, printed INSIDE the switch track. Authored in capitals. Its rendered width is a hard layout constraint: German EIN and Persian روشن are wider, and the track grows rather than the text shrinking."
+  },
+  "toggleOff": "OFF",
+  "@toggleOff": {
+    "description": "The off state of a toggle, printed inside the switch track. Same width constraint as toggleOn."
+  },
   "settingsLanguage": "Language",
   "@settingsLanguage": {
-    "description": "Row label in Settings (08-settings.png) that opens the language picker. The noun, not the imperative 'choose a language'."
+    "description": "Settings row label that opens the language picker. The noun, not 'choose a language'."
+  },
+  "settingsLanguageSystem": "Use device language",
+  "@settingsLanguageSystem": {
+    "description": "The option in the language picker that clears the override and follows the system locale. THIS one is translated; the language names beside it are not."
+  },
+  "aboutTitle": "About MindForge",
+  "@aboutTitle": {
+    "description": "Heading of the about section in Settings."
+  },
+  "aboutTagline": "Train your brain. No wifi needed.",
+  "@aboutTagline": {
+    "description": "The product tagline, in the about section. The second sentence is the promise: the app works with no network connection at all, ever."
+  },
+  "pauseTitle": "Paused",
+  "@pauseTitle": {
+    "description": "Heading of the pause sheet. No reference PNG exists for this sheet; it comes from system.html section 10."
+  },
+  "pauseResume": "Resume",
+  "@pauseResume": {
+    "description": "Button on the pause sheet that continues the run."
+  },
+  "pauseQuit": "Quit run",
+  "@pauseQuit": {
+    "description": "Button on the pause sheet that abandons the run. It discards the run rather than saving it, so the wording must not sound like 'finish'."
+  },
+  "languageNameEn": "English",
+  "@languageNameEn": {
+    "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
+  },
+  "languageNameDe": "Deutsch",
+  "@languageNameDe": {
+    "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
+  },
+  "languageNameFa": "فارسی",
+  "@languageNameFa": {
+    "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
+  },
+  "languageNameCkb": "کوردیی ناوەندی",
+  "@languageNameCkb": {
+    "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
   }
 }

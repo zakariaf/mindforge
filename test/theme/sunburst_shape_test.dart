@@ -6,6 +6,7 @@ import 'package:mindforge/theme/sunburst_shape.dart';
 
 import '../support/design_source.dart';
 import '../support/harness.dart';
+import '../support/locale_cases.dart';
 
 void main() {
   const shape = SunburstShape.sunburstPop;
@@ -95,11 +96,17 @@ void main() {
       // ILLUMINATION does not. One imaginary light for the whole app.
       final byDirection = <TextDirection, Offset>{};
 
-      for (final direction in TextDirection.values) {
-        await tester.pumpApp(
+      // Driven by LOCALE, not by a hardcoded Directionality: the question is
+      // whether the shadow follows reading direction, and pinning the tree
+      // upright is exactly what would hide the answer.
+      for (final localeCase in <LocaleCase>[
+        LocaleCase.all.first,
+        LocaleCase.rightToLeft.first,
+      ]) {
+        await tester.pumpLocalized(
           Builder(
             builder: (context) {
-              byDirection[direction] =
+              byDirection[Directionality.of(context)] =
                   SunburstShape.of(
                         context,
                       )
@@ -109,15 +116,17 @@ void main() {
               return const SizedBox.shrink();
             },
           ),
+          localeCase,
           theme: ThemeData(
             extensions: const <ThemeExtension<dynamic>>[
               shape,
               SunburstColors.sunburstPop,
             ],
           ),
-          textDirection: direction,
         );
       }
+
+      expect(byDirection.keys, hasLength(2), reason: 'both directions ran');
 
       expect(
         byDirection[TextDirection.rtl],
