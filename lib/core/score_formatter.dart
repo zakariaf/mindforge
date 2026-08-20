@@ -11,9 +11,12 @@ import 'package:mindforge/core/score_format.dart';
 /// this is the file most likely to break it: it is the one place in the engine
 /// whose whole job is to produce a string a person reads.
 ///
-/// The unit is composed rather than concatenated by hand. `18.6` and `s` are
-/// two runs, and gluing a value to its unit is what breaks in RTL — the ARB
-/// pattern decides where the unit goes, per locale.
+/// The unit arrives as a **closure**, so this file cannot know the word for
+/// "seconds". Where the unit goes is that closure's decision, made in
+/// `lib/l10n/` where the locale is: today it appends, matching the `18.6s` in
+/// the reference screens. This doc used to claim an ARB pattern decided the
+/// placement per locale. It does not — there is no such key — and saying so was
+/// the difference between a design decision and an accident.
 @immutable
 final class ScoreFormatter {
   /// Creates a formatter from the closures a locale supplies.

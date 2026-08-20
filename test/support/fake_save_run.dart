@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_commit.dart';
 import 'package:mindforge/core/run_draft.dart';
@@ -28,10 +30,23 @@ final class FakeSaveRun {
   /// Called at the moment of a save, so the test can see the phase then.
   Object? Function()? observePhase;
 
+  /// When set, every save waits on it.
+  ///
+  /// The engine's dangerous window is the await inside `_finish`: the phase
+  /// deliberately stays `playing` until the write returns, so a board emission
+  /// arriving DURING the save is the one that gets through. A fake that
+  /// completes immediately closes that window before a test can use it, which
+  /// is why a double-save test written against one passes with or without the
+  /// guard.
+  Completer<void>? gate;
+
   /// The function to hand to `saveRunProvider`.
   Future<Result<RunCommit, DataFailure>> call(RunDraft draft) async {
     saved.add(draft);
     phaseAtSave.add(observePhase?.call());
+
+    final pending = gate;
+    if (pending != null) await pending.future;
 
     final error = failure;
     if (error != null) {

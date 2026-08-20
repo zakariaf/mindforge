@@ -67,9 +67,22 @@ final logSinkProvider = Provider<LogSink>((ref) => const DebugLogSink());
 
 /// Which `gameId`s this build ships.
 ///
-/// A placeholder that accepts nothing until E07's registry overrides it. It
-/// refuses rather than accepts, so a run written against an unregistered game
-/// fails in a test rather than in a user's history.
+/// **Overridden by `bootstrap()` from the game registry.**
+///
+/// `RunRepository.saveRun` refuses any id outside this set, so while nothing
+/// supplied one, every finished run of every real game would have failed to
+/// save the moment one was registered — silently, because every engine test
+/// overrides the write path with a fake. E02's doc said the registry would fill
+/// it; nothing did until a review asked.
+///
+/// It is filled at the COMPOSITION ROOT rather than derived here, because
+/// deriving it would make `lib/data/` enumerate the game registry — a layer
+/// inversion, and a second file doing the one thing `game_registry.dart` claims
+/// to be alone in doing.
+///
+/// The default refuses rather than accepts, which is the right polarity: a run
+/// written against an unregistered game fails loudly instead of landing in a
+/// player's history under an id nothing can render.
 final registeredGameIdsProvider = Provider<Set<String>>((ref) => const {});
 
 /// Single-table queries over `settings`. Not exposed above the repository.

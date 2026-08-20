@@ -16,14 +16,28 @@ import 'support/source_text.dart';
 /// E08, E09 and E10 it is a tripwire someone would have to write around.
 void main() {
   test('no file under lib/features imports a specific game', () {
-    // `games/game_registry.dart` is the one allowed target: the pattern needs a
-    // SECOND slash, so `games/stroop_rush/...` fails while the registry passes.
+    // Matches on the ALLOWED TARGET rather than on the folder shape. The
+    // shape version required a second slash to exempt the registry, which
+    // meant a game shipped as a single file — `lib/games/schulte_grid.dart` —
+    // could be imported by a screen without tripping the gate that exists to
+    // stop exactly that.
+    // The two ENGINE-level files under lib/games. Anything else there is a
+    // specific game.
+    const allowed = <String>{
+      'games/game_definition.dart',
+      'games/game_registry.dart',
+    };
+    final anyGameImport = RegExp("import '[^']*games/([^']+)'");
+
     final offenders = <String>[];
-    final specificGame = RegExp(r"import\s+'[^']*games/[a-z0-9_]+/");
 
     for (final file in dartFilesUnder('lib/features')) {
-      if (specificGame.hasMatch(withoutDartComments(file.readAsStringSync()))) {
-        offenders.add(file.path);
+      final code = withoutDartComments(file.readAsStringSync());
+
+      for (final match in anyGameImport.allMatches(code)) {
+        if (allowed.contains('games/${match.group(1)}')) continue;
+
+        offenders.add('${file.path}: ${match.group(0)}');
       }
     }
 
@@ -81,8 +95,18 @@ void main() {
   });
 
   test('and the registry is the only file in lib that enumerates games', () {
+    // bootstrap.dart is the composition root and the one other place allowed
+    // to read the registry: it fills registeredGameIdsProvider, which decides
+    // which ids the repository accepts. Deriving that inside lib/data would
+    // make the data layer enumerate games, which is the inversion this rule
+    // exists to stop.
+    const composition = <String>{
+      'lib/games/game_registry.dart',
+      'lib/bootstrap.dart',
+    };
+
     final offenders = dartFilesUnderLib()
-        .where((file) => file.path != 'lib/games/game_registry.dart')
+        .where((file) => !composition.contains(file.path))
         .where(
           (file) => withoutDartComments(
             file.readAsStringSync(),

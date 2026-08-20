@@ -4,7 +4,7 @@ import 'package:mindforge/core/run_outcome.dart';
 
 void main() {
   const stat = ResultStat(
-    labelKey: 'statAccuracy',
+    labelKey: 'accuracyLabel',
     canonicalValue: 923,
     format: StatFormat.percent,
   );
@@ -37,7 +37,7 @@ void main() {
             first: stat,
             second: stat,
             third: ResultStat(
-              labelKey: 'statOther',
+              labelKey: 'bestLabel',
               canonicalValue: 1,
               format: StatFormat.count,
             ),

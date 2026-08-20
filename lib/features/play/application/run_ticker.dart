@@ -78,6 +78,15 @@ final class RunTicker {
     _timer = null;
   }
 
+  /// Forgets every banked segment, so [elapsed] starts from zero again.
+  ///
+  /// [stop] freezes time; this discards it. An abandoned run keeps neither —
+  /// without it, starting again resumed the old clock.
+  void reset() {
+    stop();
+    _banked = Duration.zero;
+  }
+
   /// Stops and releases the timer.
   void dispose() {
     _timer?.cancel();

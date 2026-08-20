@@ -101,17 +101,17 @@ void main() {
           progress: 1,
           outcome: const RunOutcome.completed(
             first: ResultStat(
-              labelKey: 'statAccuracy',
+              labelKey: 'accuracyLabel',
               canonicalValue: 923,
               format: StatFormat.percent,
             ),
             second: ResultStat(
-              labelKey: 'statBestCombo',
+              labelKey: 'longestStreakLabel',
               canonicalValue: 7,
               format: StatFormat.count,
             ),
             third: ResultStat(
-              labelKey: 'statAverageReaction',
+              labelKey: 'avgReactionLabel',
               canonicalValue: 640,
               format: StatFormat.duration,
             ),

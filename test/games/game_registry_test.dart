@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 
@@ -86,6 +89,34 @@ void main() {
         containerWith(games).read(gameRegistryProvider).map((g) => g.id.value),
         <String>['second_game', 'fixture_game'],
       );
+    });
+  });
+
+  group('the repository accepts what the registry ships', () {
+    test('bootstrap fills registeredGameIdsProvider from the registry', () {
+      // RunRepository.saveRun REFUSES any id outside that set. While nothing
+      // filled it, every finished run of every real game would have failed to
+      // save the moment one was registered — and silently, because every
+      // engine test overrides the write path with a fake. E02's doc said the
+      // registry would fill it and nothing did until a review asked.
+      //
+      // Asserted by reading bootstrap, because the wiring IS the fix: the
+      // provider's own default is deliberately still an empty set.
+      final code = withoutDartComments(
+        File('lib/bootstrap.dart').readAsStringSync(),
+      );
+
+      expect(code, contains('registeredGameIdsProvider.overrideWith'));
+      expect(code, contains('gameRegistryProvider'));
+    });
+
+    test('and its default still refuses, which is the right polarity', () {
+      // A run written against an unregistered game should fail loudly rather
+      // than land in a player's history under an id nothing can render.
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      expect(container.read(registeredGameIdsProvider), isEmpty);
     });
   });
 

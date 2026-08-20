@@ -10,7 +10,7 @@ void main() {
   group('a result stat', () {
     test('carries an ARB key and a canonical integer', () {
       const stat = ResultStat(
-        labelKey: 'statAccuracy',
+        labelKey: 'accuracyLabel',
         canonicalValue: 923,
         format: StatFormat.percent,
       );
@@ -40,7 +40,7 @@ void main() {
 
     test('and no field value carries prose or a non-ASCII rune', () {
       const stat = ResultStat(
-        labelKey: 'statAccuracy',
+        labelKey: 'accuracyLabel',
         canonicalValue: 923,
         format: StatFormat.percent,
       );

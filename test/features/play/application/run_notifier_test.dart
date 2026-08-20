@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:clock/clock.dart';
@@ -41,17 +42,17 @@ void main() {
     totalReactionMs: 14720,
     outcome: RunOutcome.completed(
       first: ResultStat(
-        labelKey: 'statAccuracy',
+        labelKey: 'accuracyLabel',
         canonicalValue: 923,
         format: StatFormat.percent,
       ),
       second: ResultStat(
-        labelKey: 'statBestCombo',
+        labelKey: 'longestStreakLabel',
         canonicalValue: 7,
         format: StatFormat.count,
       ),
       third: ResultStat(
-        labelKey: 'statAverageReaction',
+        labelKey: 'avgReactionLabel',
         canonicalValue: 640,
         format: StatFormat.duration,
       ),
@@ -266,6 +267,105 @@ void main() {
         }
       },
     );
+  });
+
+  group('a run is saved exactly once', () {
+    test(
+      'a second terminal snapshot mid-save does not write a second row',
+      () async {
+        // THE CRASH THIS PREVENTS. The phase deliberately does not leave
+        // `playing` until AFTER the write returns, so the phase cannot be the
+        // guard: any board emission carrying an outcome during the await ran
+        // _finish again. Measured before the latch — two rows with different
+        // clientRunKeys, both counting toward stats and both able to claim a
+        // personal best, then `over -> over is not a legal run transition`.
+        //
+        // A board keeps its terminal snapshot in its own provider state, so a
+        // late tap or an end-of-round animation frame re-fires it.
+        // THE SAVE IS HELD OPEN. That is the whole window: the phase stays
+        // `playing` until the write returns, so only an emission arriving
+        // DURING the save gets through. Three earlier versions of this test
+        // were green against the bug — publishing the same value twice
+        // (Riverpod skips an equal state), publishing twice synchronously
+        // (listeners arrive on a microtask, so the two collapse into one), and
+        // letting the save complete between them (which the phase check then
+        // correctly blocks).
+        final gate = Completer<void>();
+        final h = harness()..save.gate = gate;
+        final board = h.container.read(fixtureBoardProvider.notifier);
+
+        notifierIn(h.container)
+          ..start()
+          ..beginPlaying();
+
+        board.publish(finishedSnapshot);
+        await pumpEventQueue();
+
+        board.publish(
+          BoardSnapshot(
+            hud: finishedSnapshot.hud,
+            score: 1490,
+            outcome: finishedSnapshot.outcome,
+          ),
+        );
+        await pumpEventQueue();
+
+        gate.complete();
+        await pumpEventQueue();
+
+        expect(h.save.saved, hasLength(1));
+        expect(phaseIn(h.container), RunPhase.over);
+      },
+    );
+
+    test('and a late snapshot does not rewrite the results', () async {
+      // The figures on the results screen are the ones that were persisted.
+      final h = harness();
+      final board = h.container.read(fixtureBoardProvider.notifier);
+
+      notifierIn(h.container)
+        ..start()
+        ..beginPlaying();
+
+      board.publish(finishedSnapshot);
+      await pumpEventQueue();
+
+      board.publish(
+        const BoardSnapshot(
+          hud: GameHud(leading: slot, middle: slot),
+          score: 99999,
+        ),
+      );
+
+      expect(
+        h.container.read(runNotifierProvider(config)).snapshot.score,
+        1480,
+      );
+    });
+  });
+
+  group('abandoning resets the run', () {
+    test('it does not merely relabel it', () async {
+      // playing -> paused -> countdown -> idle is a legal path, so a run can
+      // reach idle after thirty seconds of play. Relabelling left elapsed, the
+      // alarm latch, the snapshot and the ticker's banked time intact — and
+      // the next run started at 0:00:31 with 29 seconds left of sixty.
+      final h = harness(runLimit: const Duration(seconds: 60));
+
+      notifierIn(h.container)
+        ..start()
+        ..beginPlaying()
+        ..pause()
+        ..keepPlaying()
+        ..abandon();
+
+      final state = h.container.read(runNotifierProvider(config));
+
+      expect(state.phase, RunPhase.idle);
+      expect(state.elapsed, Duration.zero);
+      expect(state.hasFiredTimerAlarm, isFalse);
+      expect(state.remaining, const Duration(seconds: 60));
+    });
   });
 
   group('over is terminal', () {

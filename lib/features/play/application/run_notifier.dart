@@ -38,6 +38,21 @@ class RunNotifier extends Notifier<RunState> {
   /// What is being played.
   final RunConfig config;
 
+  /// Whether a save is in flight.
+  ///
+  /// **The phase does not leave `playing` until AFTER the write returns**, by
+  /// design — that ordering is the point of `_finish`. Which means the phase
+  /// cannot be the guard against a second finish: any board emission carrying
+  /// an outcome during the await runs `_finish` again. Measured: two rows
+  /// committed with different clientRunKeys, both counting toward stats and
+  /// both able to claim a personal best, and then
+  /// `over -> over is not a legal run transition` from the second `toOver`.
+  ///
+  /// A board keeps its terminal snapshot in its own provider state, so any
+  /// later emission — an end-of-round animation frame, a late tap — re-fires
+  /// it. This is what stops that.
+  bool _finishing = false;
+
   /// Non-nullable, and reassigned on every build.
   ///
   /// It was nullable, which bought six `?.` call sites where a missing clock
@@ -107,10 +122,32 @@ class RunNotifier extends Notifier<RunState> {
     if (_moveTo(RunPhase.playing)) _ticker.start();
   }
 
-  /// The player backed out during the countdown.
+  /// The player backed out. Writes nothing, and RESETS.
   ///
-  /// Writes nothing: a run that never started is not a run.
-  void abandon() => _moveTo(RunPhase.idle);
+  /// Not just a phase change. `playing -> paused -> countdown -> idle` is a
+  /// legal path, so a run can reach `idle` after thirty seconds of play — and
+  /// relabelling it left `elapsed`, the alarm latch, the board's snapshot and
+  /// the ticker's banked time all intact. Measured: abandoning a 30-second run
+  /// and starting again reported `elapsed 0:00:31` one second in, with 29
+  /// seconds left on a 60-second limit.
+  ///
+  /// A run that never started is not a run, and neither is one that was
+  /// abandoned — so both leave nothing behind.
+  void abandon() {
+    if (!state.phase.canTransitionTo(RunPhase.idle)) return;
+
+    _ticker.reset();
+
+    // A fresh idle state rather than a phase change: RunState.idle IS the
+    // starting state, so rebuilding it clears elapsed, the alarm latch and the
+    // best/failure flags in one move. Legality is checked above, which is the
+    // same guard transitionTo asserts.
+    state = RunState.idle(
+      config: state.config,
+      snapshot: state.snapshot,
+      runLimit: state.runLimit,
+    );
+  }
 
   /// The player paused. The clock stops rather than slowing.
   void pause() {
@@ -134,11 +171,15 @@ class RunNotifier extends Notifier<RunState> {
 
   /// The board reported. Ends the run if the report carries an outcome.
   void onSnapshot(BoardSnapshot snapshot) {
+    // A late snapshot must not mutate the results screen's figures after the
+    // row is written, so the phase is checked BEFORE the state is updated
+    // rather than only before finishing.
+    if (state.phase != RunPhase.playing || _finishing) return;
+
     state = state.copyWith(snapshot: snapshot);
 
     final outcome = snapshot.outcome;
     if (outcome == null) return;
-    if (state.phase != RunPhase.playing) return;
 
     unawaited(_finish(outcome));
   }
@@ -175,17 +216,17 @@ class RunNotifier extends Notifier<RunState> {
   /// are the neutral placeholders the results grid needs to have three cells.
   RunOutcome _expiredOutcome() => const RunOutcome.completed(
     first: ResultStat(
-      labelKey: 'statAccuracy',
+      labelKey: 'accuracyLabel',
       canonicalValue: 0,
       format: StatFormat.percent,
     ),
     second: ResultStat(
-      labelKey: 'statBestCombo',
+      labelKey: 'longestStreakLabel',
       canonicalValue: 0,
       format: StatFormat.count,
     ),
     third: ResultStat(
-      labelKey: 'statAverageReaction',
+      labelKey: 'avgReactionLabel',
       canonicalValue: 0,
       format: StatFormat.duration,
     ),
@@ -197,6 +238,9 @@ class RunNotifier extends Notifier<RunState> {
   /// results screen celebrate a personal best whose row never landed, and the
   /// player would find it gone on the next launch.
   Future<void> _finish(RunOutcome outcome) async {
+    if (_finishing) return;
+    _finishing = true;
+
     _ticker.stop();
 
     final now = ref.read(clockProvider).now();

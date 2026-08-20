@@ -12,6 +12,7 @@ import 'package:mindforge/data/db/app_database_opener.dart';
 import 'package:mindforge/data/db/connection.dart';
 import 'package:mindforge/data/log_sink.dart';
 import 'package:mindforge/data/repositories/settings_repository.dart';
+import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/shared/feedback/haptic_gateway.dart';
 import 'package:mindforge/theme/font_licences.dart';
 
@@ -66,6 +67,17 @@ Future<void> bootstrap() async {
         // what makes it real — and its absence is a loud failure at the first
         // tap rather than a silent app with no feedback.
         hapticGatewayProvider.overrideWithValue(const LiveHapticGateway()),
+        // The registry decides which ids the repository will accept. Without
+        // this, RunRepository.saveRun refuses every run of every real game —
+        // and does it silently, because every engine test overrides the write
+        // path with a fake. Here rather than derived inside lib/data, which
+        // would make the data layer enumerate the game registry.
+        registeredGameIdsProvider.overrideWith(
+          (ref) => ref
+              .watch(gameRegistryProvider)
+              .map((definition) => definition.id.value)
+              .toSet(),
+        ),
       ],
       child: const MindForgeApp(),
     ),
