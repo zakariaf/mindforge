@@ -43,19 +43,56 @@ class StroopArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ExcludeSemantics(
+      // NOT A GRIDVIEW, and not for tidiness. A scroll viewport resolves its
+      // own constraints, and on the canonical simulator this one laid the
+      // quads out below the 48pt frame and clipped them — the tile drew as an
+      // empty cream square with two dark slivers at its bottom edge, while
+      // every widget test of it passed. Four fixed boxes need no viewport, no
+      // delegate and no physics; two rows of two fill whatever they are given.
+      // SQUARE ON ITS OWN TERMS. The frame centres its child, which hands
+      // this one LOOSE constraints — and a Column of Expanded rows under a
+      // loose height resolves to nothing. AspectRatio takes the width it is
+      // offered and states the height, which is true of the tile anyway.
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Column(
+          // STRETCH, or the rows take their minimum width — which for a Row of
+          // Expanded children is zero, and the tile draws nothing at all.
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(child: _QuadRow(answers: quads.sublist(0, 2))),
+            const SizedBox(height: SunburstShape.space1),
+            Expanded(child: _QuadRow(answers: quads.sublist(2))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One row of the 2x2.
+class _QuadRow extends StatelessWidget {
+  const _QuadRow({required this.answers});
+
+  final List<PlayAnswer> answers;
+
+  @override
+  Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
     final shape = SunburstShape.of(context);
 
-    return ExcludeSemantics(
-      child: GridView.count(
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisSpacing: SunburstShape.space1,
-        mainAxisSpacing: SunburstShape.space1,
-        children: <Widget>[
-          for (final answer in quads)
-            DecoratedBox(
+    return Row(
+      // STRETCH on this axis too. Expanded bounds the WIDTH; the height stays
+      // loose, and a DecoratedBox with no child collapses to nothing under a
+      // loose constraint — which draws two hairlines instead of two swatches.
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (final answer in answers) ...<Widget>[
+          if (answer != answers.first)
+            const SizedBox(width: SunburstShape.space1),
+          Expanded(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 color: colours.answerColour(answer),
                 borderRadius: BorderRadius.all(shape.paletteSwatchRadius),
@@ -65,8 +102,9 @@ class StroopArtwork extends StatelessWidget {
                 ),
               ),
             ),
+          ),
         ],
-      ),
+      ],
     );
   }
 }

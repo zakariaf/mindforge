@@ -129,4 +129,67 @@ void main() {
       expect(code, contains('answerColour'));
     });
   });
+
+  group('it fills the frame it is given', () {
+    testWidgets('four quads, in a 2x2, with the design own gap', (
+      tester,
+    ) async {
+      // MEASURED, because "it renders" is not the question. On the canonical
+      // simulator the tile drew as an empty cream square with two dark slivers
+      // at its bottom edge — the quads were laid out below the frame and
+      // clipped — while every widget test of it passed. The difference was a
+      // GridView: a scroll viewport resolves its own constraints, and a static
+      // 2x2 ornament has no reason to be one.
+      const frame = 48.0;
+
+      await tester.pumpPopComponent(
+        const SizedBox.square(
+          dimension: frame,
+          child: Center(child: StroopArtwork()),
+        ),
+      );
+
+      final quads = find.descendant(
+        of: find.byType(StroopArtwork),
+        matching: find.byType(DecoratedBox),
+      );
+      final frameRect = tester.getRect(find.byType(StroopArtwork));
+      final rects = quads
+          .evaluate()
+          .map((e) => tester.getRect(find.byWidget(e.widget)))
+          .toList();
+
+      expect(rects, hasLength(4));
+
+      for (final rect in rects) {
+        expect(
+          frameRect.contains(rect.topLeft) &&
+              frameRect.contains(rect.bottomRight - const Offset(0.01, 0.01)),
+          isTrue,
+          reason: '$rect escaped the $frameRect frame',
+        );
+        expect(rect.width, greaterThan(frame / 3));
+        expect(rect.height, greaterThan(frame / 3));
+      }
+
+      // app.html: `.gart .quad{gap:5px}` — SunburstShape.space1 here.
+      expect(rects[1].left - rects[0].right, moreOrLessEquals(4, epsilon: 0.5));
+      expect(rects[2].top - rects[0].bottom, moreOrLessEquals(4, epsilon: 0.5));
+    });
+
+    testWidgets('and it is not a scrollable', (tester) async {
+      // The regression guard, stated as the mechanism rather than the symptom.
+      await tester.pumpPopComponent(
+        const SizedBox.square(dimension: 48, child: StroopArtwork()),
+      );
+
+      expect(
+        find.descendant(
+          of: find.byType(StroopArtwork),
+          matching: find.byType(Scrollable),
+        ),
+        findsNothing,
+      );
+    });
+  });
 }
