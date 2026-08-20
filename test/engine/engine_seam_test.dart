@@ -67,12 +67,19 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final notifier = container.read(runNotifierProvider(config).notifier)
+      container.read(runNotifierProvider(config).notifier)
         ..start()
-        ..beginPlaying()
-        ..onSnapshot(snapshotAt(100, progress: 0.25))
-        ..onSnapshot(snapshotAt(700, progress: 0.5))
-        ..onSnapshot(snapshotAt(1480, progress: 0.75));
+        ..beginPlaying();
+
+      // PUBLISHED THROUGH THE BOARD'S OWN PROVIDER, not by calling the
+      // notifier. That is how a real game reports a move, and it is the path
+      // the first version of this test skipped: it called onSnapshot directly
+      // against a fixture that returned a CONSTANT, so it never exercised what
+      // a board update does to the run.
+      final board = container.read(fixtureBoardProvider.notifier)
+        ..publish(snapshotAt(100, progress: 0.25))
+        ..publish(snapshotAt(700, progress: 0.5))
+        ..publish(snapshotAt(1480, progress: 0.75));
 
       final mid = container.read(runNotifierProvider(config));
 
@@ -81,7 +88,7 @@ void main() {
       expect(mid.hud.leading.canonicalValue, 1480);
       expect(mid.hud.trailing?.canonicalValue, 4);
 
-      notifier.onSnapshot(
+      board.publish(
         snapshotAt(
           1480,
           progress: 1,
@@ -115,6 +122,35 @@ void main() {
       expect(end.progress, 1);
       expect(save.saved.single.metricValue, 1480);
       expect((end.outcome! as RunCompleted).stats, hasLength(3));
+    });
+
+    test('and a board update does not end the run', () {
+      // THE DEFECT THIS EXISTS FOR. bindBoard used to be a read, and a game
+      // implements a read with ref.watch — the natural spelling — which made
+      // every board update re-run the notifier's build and hand back a fresh
+      // RunState.idle. Measured before the fix: the score updated to 99 and the
+      // phase went from playing back to idle on the first tap.
+      final container = ProviderContainer(
+        overrides: [
+          gameRegistryProvider.overrideWithValue(<GameDefinition>[
+            fixtureGame(),
+          ]),
+          saveRunProvider.overrideWithValue(FakeSaveRun().call),
+          clockProvider.overrideWithValue(Clock.fixed(DateTime.utc(2026))),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      container.read(runNotifierProvider(config).notifier)
+        ..start()
+        ..beginPlaying();
+
+      container.read(fixtureBoardProvider.notifier).publish(snapshotAt(99));
+
+      final state = container.read(runNotifierProvider(config));
+
+      expect(state.phase, RunPhase.playing, reason: 'the run survived');
+      expect(state.hud.leading.canonicalValue, 99, reason: 'and it updated');
     });
 
     test('and its HUD carries keys and integers, never words', () {

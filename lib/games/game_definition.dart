@@ -98,7 +98,7 @@ final class GameDefinition {
     required this.boardBackground,
     required this.buildBoard,
     required this.buildArtwork,
-    required this.snapshotOf,
+    required this.bindBoard,
     this.isTimed = true,
     this.isLocked = false,
     RunLimitLookup? runLimitFor,
@@ -164,18 +164,36 @@ final class GameDefinition {
   /// Builds the home-card artwork.
   final GameArtworkBuilder buildArtwork;
 
-  /// Reads this game's current snapshot, watching whatever provider holds it.
+  /// Subscribes the run to this game's board, and returns its current value.
   ///
-  /// **A callback over `Ref`, not a `ProviderListenable`.** That type is the
-  /// common supertype of every provider shape and `flutter_riverpod` does not
-  /// export it, so naming it would drag riverpod's internals into `lib/games/`.
-  /// A callback works for any shape a game chooses.
+  /// **A subscription, not a read, and the difference is the whole run.** The
+  /// first version of this field was `BoardSnapshot Function(Ref, RunConfig)`,
+  /// called from `RunNotifier.build`. A game implements such a thing with
+  /// `ref.watch(myBoardProvider)` — which is the natural spelling — and that
+  /// makes every board update re-run `build`, which returns a fresh
+  /// `RunState.idle`. Measured: the score updated and the phase went from
+  /// `playing` back to `idle` on the first tap. Every test passed, because the
+  /// fixture returned a CONSTANT snapshot and so never invalidated anything.
+  ///
+  /// A game implements this by listening and reading:
+  ///
+  /// ```dart
+  /// bindBoard: (ref, run, onChanged) {
+  ///   ref.listen(myBoardProvider(run), (_, next) => onChanged(next));
+  ///   return ref.read(myBoardProvider(run));
+  /// }
+  /// ```
   ///
   /// `Ref` rather than `WidgetRef` because the only caller is `RunNotifier`:
   /// the shell reads a snapshot through `RunState`, never directly, so a
-  /// board's provider is watched in exactly one place and every screen sees the
-  /// same one.
-  final BoardSnapshot Function(Ref ref, RunConfig run) snapshotOf;
+  /// board's provider is subscribed to in exactly one place and every screen
+  /// sees the same one.
+  final BoardSnapshot Function(
+    Ref ref,
+    RunConfig run,
+    void Function(BoardSnapshot snapshot) onChanged,
+  )
+  bindBoard;
 
   final RunLimitLookup? _runLimitFor;
 

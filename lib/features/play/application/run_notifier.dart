@@ -61,7 +61,10 @@ class RunNotifier extends Notifier<RunState> {
 
     return RunState.idle(
       config: config,
-      snapshot: definition.snapshotOf(ref, config),
+      // bindBoard SUBSCRIBES and returns the current value. Watching it here
+      // instead would re-run this build on every board update and hand back a
+      // fresh idle state, ending the run on the player's first tap.
+      snapshot: definition.bindBoard(ref, config, onSnapshot),
       runLimit: definition.runLimitFor(config.difficulty),
     );
   }
