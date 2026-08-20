@@ -53,6 +53,8 @@ final class BarScene {
     required this.shadow,
     required this.pitch,
     required this.angle,
+    required this.topRadius,
+    required this.bottomRadius,
   });
 
   /// The base colour.
@@ -77,6 +79,12 @@ final class BarScene {
   /// Stripe angle, in degrees.
   final double angle;
 
+  /// The corners where the bar ends.
+  final Radius topRadius;
+
+  /// The corners where it meets the axis.
+  final Radius bottomRadius;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -87,11 +95,22 @@ final class BarScene {
           other.borderWidth == borderWidth &&
           other.shadow == shadow &&
           other.pitch == pitch &&
-          other.angle == angle;
+          other.angle == angle &&
+          other.topRadius == topRadius &&
+          other.bottomRadius == bottomRadius;
 
   @override
-  int get hashCode =>
-      Object.hash(fill, stripe, ink, borderWidth, shadow, pitch, angle);
+  int get hashCode => Object.hash(
+    fill,
+    stripe,
+    ink,
+    borderWidth,
+    shadow,
+    pitch,
+    angle,
+    topRadius,
+    bottomRadius,
+  );
 }
 
 /// Paints one striped, ink-bordered bar with its hard offset shadow.
@@ -120,20 +139,14 @@ class BarPainter extends CustomPainter {
   final Paint _border;
   final Paint _stripe;
 
-  /// The bar's corner radii. `app.html`: `border-radius:8px 8px 3px 3px`.
-  static const Radius topRadius = Radius.circular(8);
-
-  /// The bottom corners, which sit on the axis.
-  static const Radius bottomRadius = Radius.circular(3);
-
   @override
   void paint(Canvas canvas, Size size) {
     final body = RRect.fromRectAndCorners(
       Offset.zero & size,
-      topLeft: topRadius,
-      topRight: topRadius,
-      bottomLeft: bottomRadius,
-      bottomRight: bottomRadius,
+      topLeft: scene.topRadius,
+      topRight: scene.topRadius,
+      bottomLeft: scene.bottomRadius,
+      bottomRight: scene.bottomRadius,
     );
 
     // The shadow first, offset, and it does NOT mirror: one imaginary light
@@ -210,9 +223,8 @@ class RunBarChart extends StatelessWidget {
     final shape = SunburstShape.of(context);
     final type = SunburstType.of(context);
 
-    final labelStyle = type.label.copyWith(
+    final labelStyle = type.chartValueLabel.copyWith(
       color: colours.textSecondary,
-      letterSpacing: 0,
     );
 
     final ordinary = BarScene(
@@ -223,6 +235,8 @@ class RunBarChart extends StatelessWidget {
       shadow: shape.eChip,
       pitch: shape.stripePitch,
       angle: shape.stripeAngle,
+      topRadius: shape.chartBarRadiusTop,
+      bottomRadius: shape.chartBarRadiusBottom,
     );
     final best = BarScene(
       fill: colours.accent,
@@ -232,6 +246,8 @@ class RunBarChart extends StatelessWidget {
       shadow: shape.eChip,
       pitch: shape.stripePitch,
       angle: shape.stripeAngle,
+      topRadius: shape.chartBarRadiusTop,
+      bottomRadius: shape.chartBarRadiusBottom,
     );
 
     return Semantics(

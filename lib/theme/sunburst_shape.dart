@@ -36,6 +36,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.stripePitch,
     required this.stripeAngle,
     required this.eChip,
+    required this.chartBarRadiusTop,
+    required this.chartBarRadiusBottom,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -162,6 +164,17 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// badges were built against that sentence, so all three variants shipped a
   /// step too low, and the segment that does want 2px was built at 3px.
   final Offset eChip;
+
+  /// A chart bar's top corners. `app.html`: `.bar i{border-radius:8px 8px ...}`.
+  ///
+  /// Its own pair rather than the radius scale: 8 and 3 are BELOW `radiusSm`,
+  /// and they are not a smaller version of a card corner — they are the shape
+  /// of a bar standing on an axis, rounded where it ends and square where it
+  /// meets the line.
+  final Radius chartBarRadiusTop;
+
+  /// A chart bar's bottom corners, where it sits on the axis.
+  final Radius chartBarRadiusBottom;
 
   /// The ink edge on a surface drawn **inside** another surface.
   ///
@@ -300,6 +313,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     stripePitch,
     stripeAngle,
     eChip,
+    chartBarRadiusTop,
+    chartBarRadiusBottom,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -351,6 +366,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? stripePitch,
     double? stripeAngle,
     Offset? eChip,
+    Radius? chartBarRadiusTop,
+    Radius? chartBarRadiusBottom,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -382,6 +399,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     stripePitch: stripePitch ?? this.stripePitch,
     stripeAngle: stripeAngle ?? this.stripeAngle,
     eChip: eChip ?? this.eChip,
+    chartBarRadiusTop: chartBarRadiusTop ?? this.chartBarRadiusTop,
+    chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -422,6 +441,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       stripePitch: d(stripePitch, other.stripePitch),
       stripeAngle: d(stripeAngle, other.stripeAngle),
       eChip: o(eChip, other.eChip),
+      chartBarRadiusTop: r(chartBarRadiusTop, other.chartBarRadiusTop),
+      chartBarRadiusBottom: r(
+        chartBarRadiusBottom,
+        other.chartBarRadiusBottom,
+      ),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -462,6 +486,8 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     stripeAngle: 45,
     // DERIVED: half of e1. See the field docs for the evidence behind each.
     eChip: Offset(2, 2),
+    chartBarRadiusTop: Radius.circular(8),
+    chartBarRadiusBottom: Radius.circular(3),
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,

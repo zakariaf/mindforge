@@ -60,6 +60,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.dailyTitle,
     required this.sectionTitle,
     required this.sectionCount,
+    required this.chartValueLabel,
   });
 
   /// The Latin display face.
@@ -249,6 +250,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// `app.html`: `.seclab s` — 12/800, body face.
   final TextStyle sectionCount;
 
+  /// The value printed above a chart bar.
+  ///
+  /// `app.html`: `.bar u` — 10/600 with **no tracking** and tabular figures.
+  /// Not [label] with its tracking zeroed out: a step is a role, and a widget
+  /// overriding one field of another role is a raw value wearing a token's
+  /// name.
+  final TextStyle chartValueLabel;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -326,6 +335,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       dailyTitle: arabic(dailyTitle, isDisplay: true),
       sectionTitle: arabic(sectionTitle, isDisplay: true),
       sectionCount: arabic(sectionCount, isDisplay: false),
+      chartValueLabel: arabic(chartValueLabel, isDisplay: true),
     );
   }
 
@@ -356,6 +366,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     dailyTitle,
     sectionTitle,
     sectionCount,
+    chartValueLabel,
   ];
 
   @override
@@ -403,6 +414,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? dailyTitle,
     TextStyle? sectionTitle,
     TextStyle? sectionCount,
+    TextStyle? chartValueLabel,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -430,6 +442,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     dailyTitle: dailyTitle ?? this.dailyTitle,
     sectionTitle: sectionTitle ?? this.sectionTitle,
     sectionCount: sectionCount ?? this.sectionCount,
+    chartValueLabel: chartValueLabel ?? this.chartValueLabel,
   );
 
   @override
@@ -464,6 +477,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       dailyTitle: s(dailyTitle, other.dailyTitle),
       sectionTitle: s(sectionTitle, other.sectionTitle),
       sectionCount: s(sectionCount, other.sectionCount),
+      chartValueLabel: s(chartValueLabel, other.chartValueLabel),
     );
   }
 
@@ -708,6 +722,15 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontWeight: FontWeight.w800,
       fontSize: 12,
       height: 1.2,
+    ),
+    // .bar u — 10/600, no tracking, tabular-nums.
+    chartValueLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1.2,
+      fontFeatures: _tabular,
     ),
   );
 }
