@@ -46,6 +46,12 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.caption,
     required this.label,
     required this.stimulus,
+    required this.titleBar,
+    required this.greeting,
+    required this.sectionLabel,
+    required this.heroTitle,
+    required this.countdownNumeral,
+    required this.statValue,
   });
 
   /// The Latin display face.
@@ -142,6 +148,52 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// The Stroop stimulus word.
   final TextStyle stimulus;
 
+  /// The play and detail top-bar title.
+  ///
+  /// DERIVED from `app.html` `.topbar .tt`: Fredoka 600 at 17, tracking
+  /// -.01em. `system.html` section 04 names ten steps and this is not among
+  /// them, which is why every step below carries its evidence.
+  final TextStyle titleBar;
+
+  /// The home hub's greeting line.
+  ///
+  /// DERIVED from `app.html` `.greet`: Nunito 800 at 14, tracking .02em. A
+  /// BODY step — it is the one new step that is not Fredoka.
+  final TextStyle greeting;
+
+  /// The small upper label above a section.
+  ///
+  /// DERIVED from `app.html` `.hero .kicker`: Fredoka 600 at 10, tracking
+  /// .16em, uppercase.
+  ///
+  /// **The uppercase is authored into the ARB value, not applied in Dart.**
+  /// `fa` and `ckb` have no case, and `toUpperCase()` on a Persian string is a
+  /// no-op that still says the author thought casing was a rendering
+  /// decision. The tracking is zeroed for Arabic script by [forScript], because
+  /// .16em on a cursive script breaks the joins — `کۆ` spaced out is not a
+  /// style, it is broken text.
+  final TextStyle sectionLabel;
+
+  /// The game detail hero title.
+  ///
+  /// DERIVED from `app.html` `.hero .ht`: Fredoka 700 at 38, line 0.98,
+  /// tracking -.03em.
+  final TextStyle heroTitle;
+
+  /// The 3-2-1 numeral.
+  ///
+  /// DERIVED from `app.html` `.bigring b`: Fredoka 700 at 132, line 1,
+  /// tracking -.04em. Tabular, so 3 and 2 and 1 occupy the same box and the
+  /// ring does not appear to breathe as it counts.
+  final TextStyle countdownNumeral;
+
+  /// A stat box's value, and each cell of the results trio.
+  ///
+  /// DERIVED from `app.html` `.statbox b`: Fredoka 700 at 26, tracking -.02em,
+  /// `font-variant-numeric: tabular-nums`. Tabular because a stats grid whose
+  /// columns shift when a digit changes reads as a layout bug.
+  final TextStyle statValue;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -205,6 +257,12 @@ class SunburstType extends ThemeExtension<SunburstType> {
       caption: arabic(caption, isDisplay: false),
       label: arabic(label, isDisplay: false),
       stimulus: arabic(stimulus, isDisplay: true),
+      titleBar: arabic(titleBar, isDisplay: true),
+      greeting: arabic(greeting, isDisplay: false),
+      sectionLabel: arabic(sectionLabel, isDisplay: true),
+      heroTitle: arabic(heroTitle, isDisplay: true),
+      countdownNumeral: arabic(countdownNumeral, isDisplay: true),
+      statValue: arabic(statValue, isDisplay: true),
     );
   }
 
@@ -221,6 +279,12 @@ class SunburstType extends ThemeExtension<SunburstType> {
     caption,
     label,
     stimulus,
+    titleBar,
+    greeting,
+    sectionLabel,
+    heroTitle,
+    countdownNumeral,
+    statValue,
   ];
 
   @override
@@ -254,6 +318,12 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? caption,
     TextStyle? label,
     TextStyle? stimulus,
+    TextStyle? titleBar,
+    TextStyle? greeting,
+    TextStyle? sectionLabel,
+    TextStyle? heroTitle,
+    TextStyle? countdownNumeral,
+    TextStyle? statValue,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -267,6 +337,12 @@ class SunburstType extends ThemeExtension<SunburstType> {
     caption: caption ?? this.caption,
     label: label ?? this.label,
     stimulus: stimulus ?? this.stimulus,
+    titleBar: titleBar ?? this.titleBar,
+    greeting: greeting ?? this.greeting,
+    sectionLabel: sectionLabel ?? this.sectionLabel,
+    heroTitle: heroTitle ?? this.heroTitle,
+    countdownNumeral: countdownNumeral ?? this.countdownNumeral,
+    statValue: statValue ?? this.statValue,
   );
 
   @override
@@ -287,6 +363,12 @@ class SunburstType extends ThemeExtension<SunburstType> {
       caption: s(caption, other.caption),
       label: s(label, other.label),
       stimulus: s(stimulus, other.stimulus),
+      titleBar: s(titleBar, other.titleBar),
+      greeting: s(greeting, other.greeting),
+      sectionLabel: s(sectionLabel, other.sectionLabel),
+      heroTitle: s(heroTitle, other.heroTitle),
+      countdownNumeral: s(countdownNumeral, other.countdownNumeral),
+      statValue: s(statValue, other.statValue),
     );
   }
 
@@ -399,6 +481,64 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontSize: 78,
       height: 1,
       letterSpacing: 0.78,
+    ),
+    // .topbar .tt — 17/600, -.01em.
+    titleBar: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 17,
+      height: 1.2,
+      letterSpacing: -0.17,
+    ),
+    // .greet — Nunito 800 at 14, +.02em. The one new step that is BODY, so it
+    // takes the body fallback cascade rather than the display one.
+    greeting: TextStyle(
+      fontFamily: bodyFace,
+      fontFamilyFallback: bodyFallback,
+      fontWeight: FontWeight.w800,
+      fontSize: 14,
+      height: 1.3,
+      letterSpacing: 0.28,
+    ),
+    // .hero .kicker — 10/600, +.16em, uppercase authored into the ARB.
+    sectionLabel: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1.2,
+      letterSpacing: 1.6,
+    ),
+    // .hero .ht — 38/700, line .98, -.03em.
+    heroTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 38,
+      height: 0.98,
+      letterSpacing: -1.14,
+    ),
+    // .bigring b — 132/700, line 1, -.04em. Tabular, so the ring does not
+    // appear to breathe as the numeral changes.
+    countdownNumeral: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 132,
+      height: 1,
+      letterSpacing: -5.28,
+      fontFeatures: _tabular,
+    ),
+    // .statbox b — 26/700, -.02em, tabular-nums.
+    statValue: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 26,
+      height: 1.1,
+      letterSpacing: -0.52,
+      fontFeatures: _tabular,
     ),
   );
 }

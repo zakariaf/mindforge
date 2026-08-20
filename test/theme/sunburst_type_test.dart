@@ -1,8 +1,10 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
+import '../policy/support/source_text.dart';
 import '../support/design_source.dart';
 import '../support/harness.dart';
 
@@ -25,6 +27,14 @@ const kTypeSteps = <String>[
   'caption',
   'label',
   'stimulus',
+  // E08 T08.0. Each DERIVED from app.html, which is authoritative over the
+  // eight screens; system.html section 04 names ten steps and none of these.
+  'titleBar', // .topbar .tt   — 17/600, -.01em
+  'greeting', // .greet        — Nunito 800 at 14, +.02em
+  'sectionLabel', // .hero .kicker — 10/600, +.16em, uppercase in the ARB
+  'heroTitle', // .hero .ht     — 38/700, line .98, -.03em
+  'countdownNumeral', // .bigring b    — 132/700, line 1, -.04em, tabular
+  'statValue', // .statbox b    — 26/700, -.02em, tabular
 ];
 
 /// Reads every step off a scale, so a test can assert over all of them.
@@ -42,11 +52,9 @@ List<TextStyle> allSteps(SunburstType type) => <TextStyle>[
   type.label,
   type.stimulus,
 ];
-
 void main() {
   const latin = SunburstType.sunburstPop;
   final arabic = latin.forScript(SunburstScript.arabic);
-
   group('the scale', () {
     test('ships exactly the steps its source file declares', () {
       expect(
@@ -58,19 +66,16 @@ void main() {
         reason: 'an unlisted step is a new role nobody designed',
       );
     });
-
     test('buttonLarge is Fredoka 21/24 and chip is Fredoka 600 14/18', () {
       expect(latin.buttonLarge.fontSize, 21);
       expect(latin.buttonLarge.height, 24 / 21);
       expect(latin.buttonLarge.fontWeight, FontWeight.w600);
       expect(latin.buttonLarge.fontFamily, SunburstType.display);
-
       expect(latin.chip.fontSize, 14);
       expect(latin.chip.height, 18 / 14);
       expect(latin.chip.fontWeight, FontWeight.w600);
       expect(latin.chip.fontFamily, SunburstType.display);
     });
-
     test('buttonLarge and chip carry the Arabic-script fallback', () {
       // Fredoka covers NO Arabic script at all, so a display step without a
       // fallback renders a chip label as tofu in half the shipped locales.
@@ -81,12 +86,10 @@ void main() {
         expect(style.fontFamilyFallback, contains(SunburstType.arabicFace));
       }
     });
-
     test('and both resolve to that face under the Arabic script', () {
       expect(arabic.buttonLarge.fontFamily, SunburstType.arabicFace);
       expect(arabic.chip.fontFamily, SunburstType.arabicFace);
     });
-
     test('every step declares an explicit size and family', () {
       for (final style in allSteps(latin)) {
         expect(style.fontSize, isNotNull);
@@ -94,7 +97,6 @@ void main() {
         expect(style.fontWeight, isNotNull);
       }
     });
-
     test('the two numeric steps are tabular', () {
       // An HUD value that reflows mid-run reads as a glitch, and the player is
       // watching it while doing something else.
@@ -105,7 +107,6 @@ void main() {
         );
       }
     });
-
     test('every Latin cascade ends in a face that can draw Arabic', () {
       // design-system-structure rule 10. A glyph falling through to an OS font
       // is a defect, not a graceful fallback, and it is invisible on the
@@ -125,7 +126,6 @@ void main() {
       }
     });
   });
-
   group('forScript(arabic)', () {
     test('re-points every step at the Arabic face', () {
       for (final style in allSteps(arabic)) {
@@ -133,7 +133,6 @@ void main() {
         expect(style.fontFamilyFallback, <String>[SunburstType.arabicFace]);
       }
     });
-
     test('zeroes letterSpacing on every step', () {
       // Not a stylistic preference. Arabic script is CURSIVE: adjacent letters
       // join, and tracking breaks those joins, turning a word into
@@ -147,13 +146,11 @@ void main() {
         );
       }
     });
-
     test('gives every step a taller line box than its Latin counterpart', () {
       // Arabic has deeper descenders and taller diacritics than Latin at the
       // same point size, so a height tuned for Fredoka shears them.
       final latinSteps = allSteps(latin);
       final arabicSteps = allSteps(arabic);
-
       for (var i = 0; i < latinSteps.length; i++) {
         expect(
           arabicSteps[i].height,
@@ -162,7 +159,6 @@ void main() {
         );
       }
     });
-
     test('keeps the size of every step', () {
       // Only the family, weight, line box and tracking change. A different
       // size would be a different design, not the same design in another
@@ -170,7 +166,6 @@ void main() {
       // at.
       final latinSteps = allSteps(latin);
       final arabicSteps = allSteps(arabic);
-
       for (var i = 0; i < latinSteps.length; i++) {
         expect(
           arabicSteps[i].fontSize,
@@ -179,7 +174,6 @@ void main() {
         );
       }
     });
-
     test('keeps the tabular figures on the numeric steps', () {
       // The Schulte tiles ARE the numbers, and in fa/ckb they are Eastern
       // Arabic digits with their own advance widths. Losing tabular here would
@@ -191,12 +185,10 @@ void main() {
         );
       }
     });
-
     test('latin returns the identical instance', () {
       expect(identical(latin.forScript(SunburstScript.latin), latin), isTrue);
     });
   });
-
   group('SunburstScript.forLocale', () {
     test('maps the four shipped locales', () {
       expect(
@@ -216,7 +208,6 @@ void main() {
         SunburstScript.arabic,
       );
     });
-
     test('an unknown locale falls back to latin', () {
       expect(
         SunburstScript.forLocale(const Locale('zz')),
@@ -225,7 +216,6 @@ void main() {
       );
     });
   });
-
   group('of(context) resolves from the ambient locale', () {
     testWidgets('and no call site ever names a font', (tester) async {
       const expected = <String, String>{
@@ -234,10 +224,8 @@ void main() {
         'fa': SunburstType.arabicFace,
         'ckb': SunburstType.arabicFace,
       };
-
       for (final entry in expected.entries) {
         late SunburstType resolved;
-
         await tester.pumpApp(
           Builder(
             builder: (context) {
@@ -249,7 +237,6 @@ void main() {
           locale: Locale(entry.key),
         );
         if (entry.key != 'en') tester.takeException();
-
         expect(
           resolved.title.fontFamily,
           entry.value,
@@ -257,10 +244,8 @@ void main() {
         );
       }
     });
-
     testWidgets('asserts when the extension is missing', (tester) async {
       Object? error;
-
       await tester.pumpApp(
         Builder(
           builder: (context) {
@@ -274,11 +259,9 @@ void main() {
         ),
         theme: ThemeData(),
       );
-
       expect(error, isA<AssertionError>());
     });
   });
-
   group('no widget may name a font family', () {
     test('the family strings appear only in the type layer', () {
       final offenders = Directory('lib')
@@ -295,7 +278,6 @@ void main() {
           })
           .map((f) => f.path)
           .toList();
-
       expect(
         offenders,
         isEmpty,
@@ -303,6 +285,127 @@ void main() {
             'a widget naming a family is a widget that will tofu in one of '
             'the four locales: $offenders',
       );
+    });
+  });
+  group('the six shell steps', () {
+    const type = SunburstType.sunburstPop;
+    test('are transcribed from app.html', () {
+      // family, weight, size, height and tracking, per step, against the rule
+      // each was measured from.
+      const expected = <String, (String, FontWeight, double, double, double)>{
+        'titleBar': (
+          SunburstType.display,
+          FontWeight.w600,
+          17,
+          1.2,
+          -0.17,
+        ),
+        'greeting': (
+          SunburstType.bodyFace,
+          FontWeight.w800,
+          14,
+          1.3,
+          0.28,
+        ),
+        'sectionLabel': (
+          SunburstType.display,
+          FontWeight.w600,
+          10,
+          1.2,
+          1.6,
+        ),
+        'heroTitle': (
+          SunburstType.display,
+          FontWeight.w700,
+          38,
+          0.98,
+          -1.14,
+        ),
+        'countdownNumeral': (
+          SunburstType.display,
+          FontWeight.w700,
+          132,
+          1,
+          -5.28,
+        ),
+        'statValue': (
+          SunburstType.display,
+          FontWeight.w700,
+          26,
+          1.1,
+          -0.52,
+        ),
+      };
+      final steps = <String, TextStyle>{
+        'titleBar': type.titleBar,
+        'greeting': type.greeting,
+        'sectionLabel': type.sectionLabel,
+        'heroTitle': type.heroTitle,
+        'countdownNumeral': type.countdownNumeral,
+        'statValue': type.statValue,
+      };
+      expect(steps.keys.toSet(), expected.keys.toSet());
+      for (final entry in expected.entries) {
+        final step = steps[entry.key]!;
+        final (family, weight, size, height, tracking) = entry.value;
+        expect(step.fontFamily, family, reason: entry.key);
+        expect(step.fontWeight, weight, reason: entry.key);
+        expect(step.fontSize, size, reason: entry.key);
+        expect(step.height, height, reason: entry.key);
+        expect(step.letterSpacing, closeTo(tracking, 0.001), reason: entry.key);
+      }
+    });
+    test('and every one carries a fallback cascade', () {
+      // A step that omits it renders TOFU in fa and ckb — and renders it only
+      // in a golden nobody looks at twice.
+      for (final step in <TextStyle>[
+        type.titleBar,
+        type.sectionLabel,
+        type.heroTitle,
+        type.countdownNumeral,
+        type.statValue,
+      ]) {
+        expect(step.fontFamilyFallback, type.displayXl.fontFamilyFallback);
+      }
+      expect(type.greeting.fontFamilyFallback, type.body.fontFamilyFallback);
+    });
+    test('and sectionLabel drops its tracking under Arabic script', () {
+      // .16em on a cursive script breaks the joins. `کۆ` spaced out is not a
+      // style choice, it is broken text. Resolved in SunburstType so no screen
+      // conditionalises.
+      final arabic = type.forScript(SunburstScript.arabic);
+      expect(type.sectionLabel.letterSpacing, greaterThan(0));
+      expect(arabic.sectionLabel.letterSpacing, 0);
+      expect(arabic.countdownNumeral.letterSpacing, 0);
+    });
+    test('and the two numeric steps ask for tabular figures', () {
+      // A digit change must not reflow: a countdown ring that breathes as it
+      // counts, or a stats grid whose columns shift, both read as layout bugs.
+      for (final step in <TextStyle>[type.countdownNumeral, type.statValue]) {
+        expect(
+          step.fontFeatures,
+          contains(const FontFeature.tabularFigures()),
+        );
+      }
+    });
+  });
+  group('no shell string is cased in Dart', () {
+    test('the uppercase in sectionLabel is authored into the ARB', () {
+      // fa and ckb have no case, so toUpperCase() on a Persian label is a
+      // no-op that still says the author thought casing was a rendering
+      // decision. It is a property of the STRING, per locale.
+      final offenders = <String>[];
+      for (final file in dartFilesUnderLib()) {
+        if (!file.path.startsWith('lib/features/') &&
+            !file.path.startsWith('lib/ui/')) {
+          continue;
+        }
+        final code = withoutDartComments(file.readAsStringSync());
+        if (code.contains('toUpperCase()') || code.contains('toLowerCase()')) {
+          offenders.add(file.path);
+        }
+      }
+      expect(offenders, isEmpty);
     });
   });
 }

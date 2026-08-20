@@ -90,3 +90,27 @@ flutter:
 Ship `assets/fonts/OFL.txt` and register it through `LicenseRegistry.addLicense` — both families are SIL Open Font License. If you bundle the variable `.ttf` instead of static instances, drive weight with `FontWeight` (which drives the `wght` axis) and never a redundant `FontVariation`; the mechanics are owned by `design-system-structure`.
 
 **DERIVED:** the design names "Baloo 2" as Fredoka's fallback, but an offline app ships no third face, so `SunburstType.displayFallback` is `['Nunito']` — the bundled body face is the closest round sans actually present on the device.
+
+## The six shell steps (E08 T08.0)
+
+`system.html` section 04 names ten steps; E05 added two and E08 adds six, taking the scale to
+eighteen. These six are **DERIVED from `app.html`**, which is authoritative over the eight screens,
+and each carries its rule in a `//` at the point of declaration.
+
+| Step | `app.html` rule | Value |
+|---|---|---|
+| `titleBar` | `.topbar .tt` | Fredoka 600 / 17 / -.01em |
+| `greeting` | `.greet` | Nunito 800 / 14 / +.02em — the one BODY step of the six |
+| `sectionLabel` | `.hero .kicker` | Fredoka 600 / 10 / +.16em, uppercase |
+| `heroTitle` | `.hero .ht` | Fredoka 700 / 38 / line .98 / -.03em |
+| `countdownNumeral` | `.bigring b` | Fredoka 700 / 132 / line 1 / -.04em, tabular |
+| `statValue` | `.statbox b` | Fredoka 700 / 26 / -.02em, tabular |
+
+Two rules they inherit rather than restate:
+
+- **The tracking is zeroed under Arabic script** by `SunburstType.forScript`. `.16em` on a cursive
+  script breaks the joins — a spaced-out `کۆ` is broken text, not a style. No screen conditionalises.
+- **The uppercase in `sectionLabel` is authored into the ARB value**, per locale, and never applied
+  with `toUpperCase()`. Persian and Sorani have no case, so casing in Dart is a no-op that still
+  states the author thought it was a rendering decision. A test greps `lib/features/` and `lib/ui/`
+  for both casing calls.
