@@ -4,6 +4,12 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<!-- MindForge performs no encryption: there is no network code for it to
+	     encrypt, and no HTTP client in the dependency tree. Declaring the
+	     answer here removes the export-compliance question from every future
+	     upload rather than answering it by hand each time. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleLocalizations</key>
