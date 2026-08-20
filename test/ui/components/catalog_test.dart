@@ -587,6 +587,80 @@ void main() {
         );
       }
     });
+
+    testWidgets('and its own elevation and edge, per system.html', (
+      tester,
+    ) async {
+      // Section 09, transcribed as one rule: `.badge` carries --sh-1 (3px),
+      // `.badge.new` overrides it with --sh-2 (5px) in the SAME declaration as
+      // the tilt, and `.badge.lock` sets box-shadow:none with a dashed edge.
+      //
+      // All three used to be PopElevation.chip (2px), on the strength of a
+      // token doc claiming the badges were drawn at 2px. They are not — the
+      // only 2px offset in the stylesheet belongs to a selected segment, which
+      // was itself built at 3px.
+      const expected = <PopBadgeVariant, (Offset?, PopBorderStyle)>{
+        PopBadgeVariant.neutral: (Offset(3, 3), PopBorderStyle.solid),
+        PopBadgeVariant.best: (Offset(5, 5), PopBorderStyle.solid),
+        PopBadgeVariant.locked: (null, PopBorderStyle.dashed),
+      };
+
+      expect(expected.keys.toSet(), PopBadgeVariant.values.toSet());
+
+      for (final entry in expected.entries) {
+        await tester.pumpPopComponent(
+          PopBadge(label: 'New', variant: entry.key),
+        );
+
+        final surface = tester.widget<PopSurface>(
+          find
+              .descendant(
+                of: find.byType(PopBadge),
+                matching: find.byType(PopSurface),
+              )
+              .first,
+        );
+
+        expect(
+          surface.elevation.restOffset(shape),
+          entry.value.$1,
+          reason: '${entry.key} shadow',
+        );
+        expect(
+          surface.borderStyle,
+          entry.value.$2,
+          reason: '${entry.key} edge',
+        );
+      }
+    });
+
+    testWidgets('and only the personal best is tilted', (tester) async {
+      for (final variant in PopBadgeVariant.values) {
+        await tester.pumpPopComponent(
+          PopBadge(label: 'New', variant: variant),
+        );
+
+        // ABOVE the surface, not anywhere inside it: PopSurface always renders
+        // the press translate and scale, so a bare descendant search finds
+        // those and reports every variant as tilted.
+        final tilted = find
+            .ancestor(
+              of: find.byType(PopSurface),
+              matching: find.descendant(
+                of: find.byType(PopBadge),
+                matching: find.byType(Transform),
+              ),
+            )
+            .evaluate()
+            .isNotEmpty;
+
+        expect(
+          tilted,
+          variant == PopBadgeVariant.best,
+          reason: '$variant: only .badge.new carries rotate(-2.5deg)',
+        );
+      }
+    });
   });
 
   group('the findings the correctness review turned up', () {

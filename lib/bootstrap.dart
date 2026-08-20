@@ -12,6 +12,7 @@ import 'package:mindforge/data/db/app_database_opener.dart';
 import 'package:mindforge/data/db/connection.dart';
 import 'package:mindforge/data/log_sink.dart';
 import 'package:mindforge/data/repositories/settings_repository.dart';
+import 'package:mindforge/shared/feedback/haptic_gateway.dart';
 import 'package:mindforge/theme/font_licences.dart';
 
 /// Starts MindForge.
@@ -61,6 +62,10 @@ Future<void> bootstrap() async {
       overrides: [
         appDatabaseProvider.overrideWithValue(database),
         initialAppSettingsProvider.overrideWithValue(initialSettings),
+        // The haptic gateway throws until it is overridden, so this line is
+        // what makes it real — and its absence is a loud failure at the first
+        // tap rather than a silent app with no feedback.
+        hapticGatewayProvider.overrideWithValue(const LiveHapticGateway()),
       ],
       child: const MindForgeApp(),
     ),

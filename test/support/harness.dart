@@ -1,12 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
+import 'package:mindforge/shared/feedback/haptic_gateway.dart';
+import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
+import 'package:mindforge/shared/motion/motion_preference_scope.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
 import 'locale_cases.dart';
+
+/// A `ProviderScope` seeded with [settings] and a recording haptic gateway.
+///
+/// Both settings providers, because the gates and `localeProvider` read the
+/// SEED on the first frame and the stream after — and a widget test has no
+/// database behind them. And the gateway because it throws until overridden,
+/// deliberately, so a missing override in `bootstrap()` is loud.
+///
+/// It returns the scope rather than a list of overrides because
+/// `flutter_riverpod` does not export `Override`, so the list cannot be given a
+/// type. Three files had written the pair out.
+ProviderScope settingsScope({
+  required Widget child,
+  AppSettings settings = const AppSettings.defaults(),
+  FakeHapticGateway? gateway,
+  Stream<AppSettings>? stream,
+}) => ProviderScope(
+  overrides: [
+    hapticGatewayProvider.overrideWithValue(gateway ?? FakeHapticGateway()),
+    initialAppSettingsProvider.overrideWithValue(settings),
+    settingsProvider.overrideWith(
+      (ref) => stream ?? Stream<AppSettings>.value(settings),
+    ),
+  ],
+  child: child,
+);
 
 /// A logical viewport a test can render at.
 ///
@@ -88,11 +119,15 @@ extension PumpApp on WidgetTester {
     bool disableAnimations = false,
     TextScaler textScaler = TextScaler.noScaling,
     bool boldText = false,
+    FakeHapticGateway? hapticGateway,
+    AppSettings settings = const AppSettings.defaults(),
   }) async {
     late TextDirection resolved;
 
     await pumpWidget(
-      ProviderScope(
+      settingsScope(
+        settings: settings,
+        gateway: hapticGateway,
         // MediaQuery is layered ABOVE MaterialApp, and built with
         // MediaQueryData.fromView rather than a bare MediaQueryData():
         // constructing one from scratch drops padding, view insets and every
@@ -111,6 +146,12 @@ extension PumpApp on WidgetTester {
             localizationsDelegates: localizationsDelegatesFor(
               AppLocalizations.localizationsDelegates,
             ),
+            // MotionPreferenceScope, exactly as lib/app.dart mounts it. Without
+            // it a tree pumped with settings.isReduceMotionEnabled: true
+            // animates fully — a configuration production cannot produce — and
+            // the harness's two knobs for one thing disagree.
+            builder: (context, child) =>
+                MotionPreferenceScope(child: child ?? const SizedBox.shrink()),
             home: Builder(
               builder: (context) {
                 resolved = Directionality.of(context);

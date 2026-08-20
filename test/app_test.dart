@@ -5,6 +5,7 @@ import 'package:mindforge/app.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/data/data_providers.dart';
+import 'package:mindforge/shared/motion/motion_preference_scope.dart';
 
 import 'support/test_database.dart';
 
@@ -57,5 +58,58 @@ void main() {
       TextDirection.rtl,
       reason: 'and the direction is right on that same first frame',
     );
+  });
+
+  group('the reduce-motion fold', () {
+    testWidgets('is mounted, so the setting reaches every screen', (
+      tester,
+    ) async {
+      // MotionPreferenceScope was built, tested and NOT INSTALLED. Every unit
+      // test of it passed and the setting did nothing in the running app,
+      // because nothing above the screens folded it into MediaQuery. This
+      // asserts the wiring rather than the widget.
+      await tester.pumpWidget(
+        bootedApp(
+          initial: const AppSettings.defaults().copyWith(
+            isReduceMotionEnabled: true,
+          ),
+        ),
+      );
+
+      expect(
+        MediaQuery.disableAnimationsOf(tester.element(find.byType(Scaffold))),
+        isTrue,
+      );
+    });
+
+    testWidgets('and it leaves animation alone when nobody asked', (
+      tester,
+    ) async {
+      await tester.pumpWidget(bootedApp());
+
+      expect(
+        MediaQuery.disableAnimationsOf(tester.element(find.byType(Scaffold))),
+        isFalse,
+      );
+    });
+
+    testWidgets('it sits INSIDE MaterialApp, so it sees the real MediaQuery', (
+      tester,
+    ) async {
+      // Above MaterialApp there is no MediaQuery to copyWith from — the one the
+      // app reads is inserted BY MaterialApp from the view. A fold placed above
+      // it would either build a bare MediaQueryData, dropping the size, the
+      // text scaler and every accessibility flag, or read a MediaQuery that is
+      // not the one the screens below are reading.
+      await tester.pumpWidget(bootedApp());
+
+      expect(
+        find.descendant(
+          of: find.byType(MaterialApp),
+          matching: find.byType(MotionPreferenceScope),
+        ),
+        findsOneWidget,
+      );
+    });
   });
 }

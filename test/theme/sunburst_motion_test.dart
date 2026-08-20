@@ -63,7 +63,13 @@ void main() {
           'easeOut',
           'easeInOut',
         ],
-        reason: 'a fifth duration is a new moment nobody catalogued',
+        reason:
+            'a fifth duration is a new moment nobody catalogued. This scale is '
+            'a WHEN and nothing else: shakeAmplitude passed through here '
+            'briefly and the list had to carry a sentence calling it "the one '
+            'non-timing member", which is a test pinning an anomaly rather '
+            'than resolving it. Magnitudes live on SunburstShape, beside '
+            'e1..e4, focusGap and pressScale',
       );
     });
 

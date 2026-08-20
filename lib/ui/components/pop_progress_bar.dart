@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
+import 'package:mindforge/shared/motion/motion_role.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/theme/sunburst_motion.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 
@@ -14,6 +16,12 @@ import 'package:mindforge/ui/components/pop_surface.dart';
 /// The stripe is the non-colour channel: the bar still says how full it is with
 /// every colour removed, which is what makes it legible to a player with a
 /// colour vision deficiency and in a greyscale screenshot.
+///
+/// **An advancing fill tweens; it does not jump.** The bar still renders the
+/// value it is GIVEN — there is no controller of its own and nothing repeating,
+/// so a backgrounded run costs nothing — but a change in that value eases over
+/// `durState`, and collapses to the same end value on the same frame under
+/// reduce motion.
 class PopProgressBar extends StatelessWidget {
   /// Creates a bar filled to [value], a ratio in `[0, 1]`.
   const PopProgressBar({
@@ -46,6 +54,8 @@ class PopProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
     final shape = SunburstShape.of(context);
+    final motion = SunburstMotion.of(context);
+    final filled = value.clamp(0.0, 1.0);
 
     return Semantics(
       label: semanticLabel,
@@ -66,8 +76,21 @@ class PopProgressBar extends StatelessWidget {
               // AlignmentDirectional: the fill grows from the START edge, so
               // it grows leftward in an RTL layout without a second code path.
               alignment: AlignmentDirectional.centerStart,
-              child: FractionallySizedBox(
-                widthFactor: value.clamp(0.0, 1.0),
+              // TweenAnimationBuilder, not a controller: the bar owns no
+              // ticker, holds no state and animates only when the value it is
+              // handed actually changes. resolve() collapses the duration to
+              // zero under reduce motion, and TweenAnimationBuilder lands on
+              // the end value on the same frame when it does.
+              child: TweenAnimationBuilder<double>(
+                // No `begin:`. TweenAnimationBuilder defaults it to `end` on
+                // the first build and ignores it after, so writing it out is
+                // the default spelled twice — and it was clamping the same
+                // value a second time to do it.
+                tween: Tween<double>(end: filled),
+                duration: motion.resolvedDurationFor(context, MotionRole.state),
+                curve: motion.curveFor(CurveRole.out),
+                // Built once and passed through: the stripe does not depend on
+                // how far along the tween is, only on how wide it is drawn.
                 child: RepaintBoundary(
                   child: CustomPaint(
                     // size: Size.infinite, because a CustomPaint with no child
@@ -83,6 +106,10 @@ class PopProgressBar extends StatelessWidget {
                       radius: shape.radiusPill,
                     ),
                   ),
+                ),
+                builder: (context, widthFactor, child) => FractionallySizedBox(
+                  widthFactor: widthFactor,
+                  child: child,
                 ),
               ),
             ),
@@ -131,13 +158,13 @@ class _StripePainter extends CustomPainter {
     final radians = angle * math.pi / 180;
     final step = pitch / math.cos(radians);
     final reach = size.width + size.height;
+    // Hoisted: the fill is tweened now, so this loop runs on every frame of
+    // every advance, and a transcendental per stripe per frame is real work on
+    // a running HUD.
+    final lean = size.height * math.tan(radians);
 
     for (var x = -size.height; x < reach; x += step) {
-      canvas.drawLine(
-        Offset(x, size.height),
-        Offset(x + size.height * math.tan(radians), 0),
-        _stripe,
-      );
+      canvas.drawLine(Offset(x, size.height), Offset(x + lean, 0), _stripe);
     }
 
     canvas.restore();

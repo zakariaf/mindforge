@@ -23,6 +23,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.e4,
     required this.pressScale,
     required this.pressScaleSmall,
+    required this.badgeTiltDegrees,
+    required this.shakeAmplitude,
+    required this.celebrationScaleFrom,
+    required this.celebrationScalePeak,
     required this.focusGap,
     required this.focusWidth,
     required this.stripePitch,
@@ -78,6 +82,44 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// larger scale is imperceptible on it, so the smaller surfaces shrink harder.
   final double pressScaleSmall;
 
+  /// The angle a "new best" badge sits at, in degrees.
+  ///
+  /// `system.html` §09: `.badge.new{transform:rotate(-2.5deg)}`. A RESTING
+  /// TRANSFORM, not motion — it survives reduce motion, because a badge that
+  /// sat straight for a player with animation off would be a different badge.
+  ///
+  /// Negative, and it stays negative in every locale. The tilt is a shape
+  /// constant of the badge, the same class of decision as the hard offset
+  /// shadow: mirroring it would tilt the Persian badge the other way for no
+  /// reason a reader could name.
+  final double badgeTiltDegrees;
+
+  /// How far the wrong-answer shake travels to each side.
+  ///
+  /// `system.html`: `@keyframes shake{0%,100%{translateX(0)}
+  /// 25%{translateX(-4px)}75%{translateX(4px)}}`.
+  ///
+  /// A DISTANCE, so it lives here beside `e1`..`e4` and `focusGap` rather than
+  /// on `SunburstMotion`, which is four durations and three curves — a *when*,
+  /// not a *how far*. It sat there briefly, and the field-list test had to
+  /// carry a sentence calling it "the one non-timing member", which is a test
+  /// pinning an anomaly instead of resolving it.
+  final double shakeAmplitude;
+
+  /// Where the celebration pop starts.
+  ///
+  /// `system.html` section 10: scale 0.86 -> 1.06 -> 1.0. A magnitude, by the
+  /// same rule as [shakeAmplitude] and [pressScale] — and a token rather than a
+  /// literal in `lib/shared/motion/`, where working agreement 2 does not allow
+  /// one.
+  final double celebrationScaleFrom;
+
+  /// The nominal top of the celebration pop.
+  ///
+  /// Nominal because the moment's curve is chained onto each segment and
+  /// overshoots inside it: the measured peak is 1.0753.
+  final double celebrationScalePeak;
+
   /// The gap between a surface's edge and its focus ring.
   final double focusGap;
 
@@ -90,12 +132,19 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// The stripe angle, in degrees.
   final double stripeAngle;
 
-  /// The half-step below [e1], for chips and badges.
+  /// The half-step below [e1].
   ///
-  /// DERIVED: `system.html` has no `--sh-chip` custom property. The chips in
-  /// §04 and the badges in §09 are drawn with a 2px hard offset, which is half
-  /// of `--sh-1`'s 3px — small enough that the surface reads as lifted off the
-  /// page rather than standing on it.
+  /// DERIVED only in the sense that `system.html` has no `--sh-chip` custom
+  /// property; the VALUE is transcribed, from
+  /// `.seg-i.on{box-shadow:2px 2px 0 var(--ink)}` in section 07. That selected
+  /// segment is the one surface in the stylesheet drawn at 2px, and it pairs
+  /// the offset with a `translate(-1px,-1px)` lift — the `difficultySelect`
+  /// moment.
+  ///
+  /// The doc here used to say the badges in section 09 were drawn at 2px. They
+  /// are not: `.badge` carries `--sh-1` and `.badge.new` carries `--sh-2`. The
+  /// badges were built against that sentence, so all three variants shipped a
+  /// step too low, and the segment that does want 2px was built at 3px.
   final Offset eChip;
 
   /// The ink edge on a surface drawn **inside** another surface.
@@ -222,6 +271,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     e4,
     pressScale,
     pressScaleSmall,
+    badgeTiltDegrees,
+    shakeAmplitude,
+    celebrationScaleFrom,
+    celebrationScalePeak,
     focusGap,
     focusWidth,
     stripePitch,
@@ -265,6 +318,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Offset? e4,
     double? pressScale,
     double? pressScaleSmall,
+    double? badgeTiltDegrees,
+    double? shakeAmplitude,
+    double? celebrationScaleFrom,
+    double? celebrationScalePeak,
     double? focusGap,
     double? focusWidth,
     double? stripePitch,
@@ -288,6 +345,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     e4: e4 ?? this.e4,
     pressScale: pressScale ?? this.pressScale,
     pressScaleSmall: pressScaleSmall ?? this.pressScaleSmall,
+    badgeTiltDegrees: badgeTiltDegrees ?? this.badgeTiltDegrees,
+    shakeAmplitude: shakeAmplitude ?? this.shakeAmplitude,
+    celebrationScaleFrom: celebrationScaleFrom ?? this.celebrationScaleFrom,
+    celebrationScalePeak: celebrationScalePeak ?? this.celebrationScalePeak,
     focusGap: focusGap ?? this.focusGap,
     focusWidth: focusWidth ?? this.focusWidth,
     stripePitch: stripePitch ?? this.stripePitch,
@@ -320,6 +381,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       e4: o(e4, other.e4),
       pressScale: d(pressScale, other.pressScale),
       pressScaleSmall: d(pressScaleSmall, other.pressScaleSmall),
+      badgeTiltDegrees: d(badgeTiltDegrees, other.badgeTiltDegrees),
+      shakeAmplitude: d(shakeAmplitude, other.shakeAmplitude),
+      celebrationScaleFrom: d(celebrationScaleFrom, other.celebrationScaleFrom),
+      celebrationScalePeak: d(celebrationScalePeak, other.celebrationScalePeak),
       focusGap: d(focusGap, other.focusGap),
       focusWidth: d(focusWidth, other.focusWidth),
       stripePitch: d(stripePitch, other.stripePitch),
@@ -347,6 +412,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     e4: Offset(10, 10),
     pressScale: 0.98,
     pressScaleSmall: 0.97,
+    badgeTiltDegrees: -2.5,
+    shakeAmplitude: 4,
+    celebrationScaleFrom: 0.86,
+    celebrationScalePeak: 1.06,
     // DERIVED: system.html §12 draws the focus ring as a 4px grape-pop outline
     // offset 3px from the surface. Neither number is a :root custom property.
     focusGap: 3,

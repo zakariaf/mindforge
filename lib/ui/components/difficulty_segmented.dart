@@ -60,8 +60,13 @@ class DifficultySegmented extends StatelessWidget {
                 radius: BorderRadiusDirectional.all(shape.radiusPill),
                 // The chosen item is the only one that is raised. The others
                 // are flat and draw no shadow at all.
+                //
+                // `.seg-i.on{box-shadow:2px 2px 0 var(--ink)}` in system.html
+                // section 07 — the chip step, not e1's 3px. This is where the
+                // 2px offset in the stylesheet actually lives; the token's own
+                // doc used to attribute it to badges, which carry 3px and 5px.
                 elevation: i == selectedIndex
-                    ? PopElevation.e1
+                    ? PopElevation.chip
                     : PopElevation.flat,
                 borderStyle: i == selectedIndex
                     ? PopBorderStyle.solid

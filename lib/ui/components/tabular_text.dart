@@ -43,10 +43,22 @@ class TabularText extends StatelessWidget {
       child: ExcludeSemantics(
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          // The RUN is laid out in reading order like any other text; only the
-          // per-digit pitch is fixed. A number is not re-ordered by this
-          // widget.
-          textDirection: direction,
+          // ALWAYS LTR, whatever the page reads. A number is displayed left to
+          // right in every language — Unicode lays a numeric run out that way
+          // inside an RTL paragraph — and splitting one into a box per
+          // character destroys that rule, because each character becomes its
+          // own paragraph and this Row does the ordering instead.
+          //
+          // Inheriting the ambient direction painted 1,480 as 0,841 reversed
+          // on the canonical simulator under fa and ckb. The RTL golden lane
+          // could not see it: it renders plain Text, where the bidi algorithm
+          // still applies. The comment that used to sit here claimed "a number
+          // is not re-ordered by this widget", which was the opposite of what
+          // it did.
+          //
+          // Only the run's INTERNAL order is fixed. Where the run sits on the
+          // screen is still the parent's decision, and the parent mirrors.
+          textDirection: TextDirection.ltr,
           children: [
             for (final character in value.characters)
               if (_isDigit(character))

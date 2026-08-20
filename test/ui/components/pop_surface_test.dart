@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/shared/feedback/haptic_verb.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
+import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 import 'package:mindforge/shared/motion/press_physics.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
@@ -233,28 +236,53 @@ void main() {
       await tester.pump();
     });
 
-    testWidgets('resolves a tap exactly once', (tester) async {
-      // NAMED FOR WHAT IT ASSERTS. It counts taps, not fired moments: the
-      // recording fake and the harness override that would let it observe the
-      // FeedbackService are E06's, which is the epic that gives the service
-      // something to do.
+    testWidgets('fires its commit moment exactly once per tap', (tester) async {
+      // Observed through the recording gateway, not counted as taps. E05 could
+      // only assert the callback because FeedbackService did nothing; E06 gave
+      // it something to do and the harness a fake to watch it with.
       var taps = 0;
+      final gateway = FakeHapticGateway();
 
       await tester.pumpPopComponent(
         PopSurface(
           fill: colours.accent,
           // A non-default moment, so this asserts the wiring rather than the
-          // default value.
+          // default value. difficultySelect's verb is selectionClick.
           commitMoment: Moment.difficultySelect,
           onTap: () => taps++,
           child: const SizedBox(width: 80, height: 60),
         ),
+        hapticGateway: gateway,
       );
 
       await tester.tap(find.byType(PopSurface));
       await tester.pump();
 
       expect(taps, 1);
+      expect(gateway.played, <HapticVerb>[HapticVerb.selectionClick]);
+    });
+
+    testWidgets('and fires nothing when the player turned haptics off', (
+      tester,
+    ) async {
+      final gateway = FakeHapticGateway();
+
+      await tester.pumpPopComponent(
+        PopSurface(
+          fill: colours.accent,
+          onTap: () {},
+          child: const SizedBox(width: 80, height: 60),
+        ),
+        hapticGateway: gateway,
+        settings: const AppSettings.defaults().copyWith(
+          isHapticsEnabled: false,
+        ),
+      );
+
+      await tester.tap(find.byType(PopSurface));
+      await tester.pump();
+
+      expect(gateway.played, isEmpty);
     });
   });
 

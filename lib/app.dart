@@ -4,6 +4,7 @@ import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
 import 'package:mindforge/l10n/locale_resolution.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
+import 'package:mindforge/shared/motion/motion_preference_scope.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
 /// The delegate list `MaterialApp` is handed, built once.
@@ -28,6 +29,11 @@ final List<LocalizationsDelegate<dynamic>> appLocalizationsDelegates =
 /// system locale and then to `en`. The direction follows it: nothing here names
 /// a `TextDirection`, because a hardcoded one is exactly what hides a
 /// physical-side bug.
+///
+/// It mounts `MotionPreferenceScope` and nothing else above the screens. That
+/// is the one place the app's reduce-motion setting turns into
+/// `MediaQuery.disableAnimations`, so no widget below decides whether to
+/// animate by reading app state.
 class MindForgeApp extends ConsumerWidget {
   /// Creates the root widget.
   const MindForgeApp({super.key});
@@ -46,6 +52,14 @@ class MindForgeApp extends ConsumerWidget {
       // alphabetically, so its first entry is ckb and Flutter's fallback for an
       // unsupported system locale would be Kurdish Sorani.
       supportedLocales: supportedLocales,
+      // INSIDE MaterialApp, through builder:, not wrapped around it. Above
+      // MaterialApp there is no MediaQuery to copyWith from — the one the app
+      // reads is inserted BY MaterialApp from the view — so a fold placed
+      // outside would either construct a bare MediaQueryData, dropping the
+      // size, the text scaler and every accessibility flag, or read a
+      // MediaQuery that is not the one the screens below are reading.
+      builder: (context, child) =>
+          MotionPreferenceScope(child: child ?? const SizedBox.shrink()),
       home: const Scaffold(),
     );
   }

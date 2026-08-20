@@ -103,16 +103,10 @@ base class SystemLocales extends Notifier<List<Locale>>
 /// broken" is not a reason to also get the language wrong, and it is not a
 /// reason to change it either.
 final localeProvider = Provider<SupportedLocale>((ref) {
-  // The explicit type is load-bearing: without it the null-coalesce infers
-  // AppSettings? from the left operand and the field access below is a
-  // compile error.
-  // ignore: omit_local_variable_types
-  final AppSettings settings =
-      ref.watch(settingsProvider).value ??
-      ref.watch(initialAppSettingsProvider);
-
   return resolveLocale(
-    override: settings.localeOverride,
+    override: ref.watch(
+      appSettingsProvider.select((settings) => settings.localeOverride),
+    ),
     systemLocales: ref.watch(systemLocalesProvider),
   );
 });

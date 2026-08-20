@@ -215,6 +215,31 @@ jobs:
         run: |
           "$BASH5" tool/skill_gates.sh
 
+      - name: Check the motion and haptic contracts
+        # Named separately as well as inside the runner, for the same reason the
+        # directional-geometry gate is: a reviewer needs to see WHICH contract
+        # broke without opening a log.
+        #
+        # WHAT THIS PIPELINE CANNOT PROVE, stated here rather than assumed:
+        #
+        #   * NO HAPTIC IS REAL IN CI OR IN A SIMULATOR. The iOS Simulator has
+        #     no Taptic Engine. The fake gateway proves call COUNT and ordering
+        #     and nothing about intensity, about a burst that reads as a rattle,
+        #     or about iOS's Taptic Engine being asleep right after
+        #     foregrounding. Those are physical-iPhone checks and belong to
+        #     E11's design-review sweep, graded BLOCKER.
+        #   * NO AUDIO EXISTS AT ALL. Nine named slots, no assets, no player.
+        #     Every sound assertion in this repository is about which NAME a
+        #     moment maps to.
+        #   * NOTHING HERE IS VERIFIED ON ANDROID. Android is deferred; this
+        #     workflow builds and tests for iOS only, and no gate in it implies
+        #     parity.
+        #   * TRANSLATION QUALITY IS NOT A GATE. The fa and de goldens prove
+        #     that Arabic-script and long German labels render and fit. They say
+        #     nothing about whether the words are right — that is E04's open
+        #     item and E11's native-speaker sign-off.
+        run: .claude/skills/sunburst-motion-and-haptics/scripts/check_motion_tokens.sh lib
+
       - name: Check directional geometry
         # Named separately as well as inside the runner, because this is the one
         # gate whose failure a reviewer needs to see BY NAME in the checks list.

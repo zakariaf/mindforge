@@ -25,7 +25,7 @@ enum PopElevation {
   /// ring of ink around the surface. Flat means nothing is drawn.
   flat,
 
-  /// The half-step below [e1], for chips and badges.
+  /// The half-step below [e1], for the selected segment.
   ///
   /// Its own step rather than a number a component types: without it
   /// `SunburstShape.eChip` is a token nothing can reach, since `restOffset` is
@@ -181,9 +181,21 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
 
   bool get _isInteractive => widget.enabled && widget.onTap != null;
 
+  /// Runs the tap, then acknowledges it.
+  ///
+  /// **The callback comes first, and the order is load-bearing.** Feedback
+  /// depends on providers an entry point has to supply — the persisted settings
+  /// among them — and any scope that forgets one made `fire()` throw out of the
+  /// gesture handler, so every button, tile and toggle in the app went inert
+  /// rather than merely silent. A missing override should cost the buzz, never
+  /// the button.
+  ///
+  /// The moment is still fired on the same frame, so nothing is perceptibly
+  /// later; and a failure in it still surfaces, because it is not swallowed
+  /// here. It just no longer takes the tap with it.
   void _handleTap() {
-    ref.read(feedbackServiceProvider).fire(widget.commitMoment);
     widget.onTap?.call();
+    ref.read(feedbackServiceProvider).fire(widget.commitMoment);
   }
 
   @override

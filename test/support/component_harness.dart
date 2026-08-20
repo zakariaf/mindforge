@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
@@ -32,6 +34,8 @@ extension PopHarness on WidgetTester {
     TextScaler textScaler = TextScaler.noScaling,
     bool boldText = false,
     bool disableAnimations = false,
+    FakeHapticGateway? hapticGateway,
+    AppSettings settings = const AppSettings.defaults(),
   }) async {
     useDevice(this, device);
 
@@ -41,6 +45,8 @@ extension PopHarness on WidgetTester {
       textScaler: textScaler,
       boldText: boldText,
       disableAnimations: disableAnimations,
+      hapticGateway: hapticGateway,
+      settings: settings,
     );
   }
 }
@@ -212,3 +218,51 @@ bool isMirrored(WidgetTester tester, Finder finder) => find
     .descendant(of: finder, matching: find.byType(Transform))
     .evaluate()
     .isNotEmpty;
+
+/// The total translation applied by every `Transform` under [finder].
+///
+/// **Scoped, not an ancestor walk.** `MaterialApp`'s page transition wraps the
+/// whole route in transforms of its own, so an unscoped walk multiplies the
+/// route's entry animation into the reading — which looks exactly like a
+/// widget whose animation starts ninety milliseconds late. That cost an hour
+/// once; it is written down here so it costs nobody else one.
+///
+/// Four tests had written this out, three of them character-identical apart
+/// from which type they searched under.
+Offset translationUnder(WidgetTester tester, Finder finder) => tester
+    .widgetList<Transform>(
+      find.descendant(of: finder, matching: find.byType(Transform)),
+    )
+    .fold(Offset.zero, (total, t) {
+      final v = t.transform.getTranslation();
+
+      return total + Offset(v.x, v.y);
+    });
+
+/// The product of every scale applied by the `Transform`s under [finder].
+double scaleUnder(WidgetTester tester, Finder finder) => tester
+    .widgetList<Transform>(
+      find.descendant(of: finder, matching: find.byType(Transform)),
+    )
+    .map((t) => t.transform.getMaxScaleOnAxis())
+    .fold(1, (total, scale) => total * scale);
+
+/// Samples [read] every [step] for [frames] frames, pumping between each.
+///
+/// Rounded to four places, because a frame-for-frame comparison of raw doubles
+/// across locales is a comparison of floating-point noise.
+Future<List<double>> sampleFrames(
+  WidgetTester tester,
+  double Function(WidgetTester tester) read, {
+  required int frames,
+  required Duration step,
+}) async {
+  final samples = <double>[];
+
+  for (var i = 0; i < frames; i++) {
+    samples.add(double.parse(read(tester).toStringAsFixed(4)));
+    await tester.pump(step);
+  }
+
+  return samples;
+}
