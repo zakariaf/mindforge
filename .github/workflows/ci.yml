@@ -215,6 +215,34 @@ jobs:
         run: |
           "$BASH5" tool/skill_gates.sh
 
+      - name: Check the engine is locale-independent
+        # Named separately so a failure names itself in the job log rather than
+        # being one line inside a thousand-test run.
+        #
+        # THE CONTRACT: seeded generation and every persisted value are
+        # locale-independent, and localisation happens at render. A generator
+        # seeded off a formatted string, a Jalali date in the runs table, or an
+        # Eastern Arabic numeral in a column a personal-best query compares with
+        # MAX() would all compile and all pass an English-only suite.
+        #
+        # HONEST LIMIT: these tests exercise intl formatting and the engine's
+        # own values. They do not pump a MaterialApp, so a green run here is NOT
+        # evidence that the app can switch to Kurdish Sorani — that is E04's
+        # vendored delegate trio and E04's test.
+        run: |
+          flutter test \
+            test/engine/locale_independence_test.dart \
+            test/policy/engine_locale_purity_test.dart \
+            --reporter expanded
+
+      - name: Check the shell and game seam
+        # The claim this whole engine exists to defend: a second game ships
+        # without editing lib/features. Asserted from both sides — the shell
+        # imports no specific game, and no game builds shell chrome.
+        run: |
+          .claude/skills/sunburst-shell-screens/scripts/check_shell_boundaries.sh lib
+          .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/core
+
       - name: Check the motion and haptic contracts
         # Named separately as well as inside the runner, for the same reason the
         # directional-geometry gate is: a reviewer needs to see WHICH contract
