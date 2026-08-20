@@ -30,8 +30,11 @@ command -v ffmpeg >/dev/null || {
 # golden is always captured RGBA, so the master always has one. `sips` cannot
 # remove a channel; ffmpeg re-encodes to rgb24 losslessly, which is exact for
 # the flat colours this mark is made of.
-OPAQUE="$(mktemp -t mindforge-icon).png"
-trap 'rm -f "$OPAQUE"' EXIT
+# Both names are cleaned up: appending .png to mktemp's path leaves the
+# zero-byte file it actually created behind on every run.
+STEM="$(mktemp -t mindforge-icon)"
+OPAQUE="$STEM.png"
+trap 'rm -f "$STEM" "$OPAQUE"' EXIT
 ffmpeg -y -loglevel error -i "$MASTER" -pix_fmt rgb24 "$OPAQUE"
 
 # Every file Contents.json names, with the pixel size it must be.

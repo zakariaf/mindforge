@@ -27,9 +27,18 @@ void main() {
     'TextOverflow.ellipsis':
         'a truncated VALUE turns a wrong number into a plausible one; only a '
         'title may ellipse, and it says so at the line',
-    'copyWith(fontSize:':
-        'a size chosen at a call site is a token nobody can find; add a step '
-        'to SunburstType',
+    // A NUMERIC size, anywhere. Not anchored to `copyWith(`: `dart format`
+    // reorders and wraps the arguments, so `copyWith(color: …, fontSize: 13)`
+    // slipped past a version anchored that way — measured, by adding exactly
+    // that to a chip. And the ban is about a WRITTEN number: `fontSize:
+    // type.title.fontSize` is one step borrowing another's, which is a
+    // composition of tokens and findable from either end.
+    //
+    // The scale itself is the one file that must write them, and it is on the
+    // allow-list below for that reason.
+    r'fontSize:\s*[\d.]':
+        'a size WRITTEN outside the scale is a token nobody can find; add a '
+        'step to SunburstType, or compose one from another step',
   };
 
   /// Files allowed one of these, each with the reason at the line.
@@ -37,11 +46,12 @@ void main() {
     'lib/features/shell/widgets/top_bar.dart':
         'the bar title ellipses so a long game name cannot push the '
         'difficulty chip off the end — a title, not a value',
+    'lib/theme/sunburst_type.dart':
+        'the scale itself, which is where every step is defined and therefore '
+        'the one file that writes a size',
     'lib/games/stroop_rush/ui/stroop_board.dart':
         'the prompt is bounded to the two lines it is MEASURED at; a Text free '
         'to take a third made the whitespace budget a fiction',
-    'lib/theme/sunburst_type.dart':
-        'the scale itself, where every step is defined',
   };
 
   test('none of them appears in lib/, outside a named file', () {
@@ -58,7 +68,9 @@ void main() {
       final code = withoutDartComments(file.readAsStringSync());
 
       for (final ban in bans.keys) {
-        if (code.contains(ban)) {
+        // Matched as a pattern rather than a substring, so a formatter's line
+        // break cannot hide one. The plain tokens are regex-inert.
+        if (RegExp(ban).hasMatch(code)) {
           offenders.add('${file.path}: $ban — ${bans[ban]}');
         }
       }
@@ -71,16 +83,32 @@ void main() {
     );
   });
 
-  test('and every sanctioned file still exists and still says why', () {
-    // An allow-list nobody checks is a hole.
+  test('and every sanctioned file still needs its exemption', () {
+    // AN ALLOW-LIST NOBODY CHECKS IS A HOLE, and the first version of this
+    // test only asserted the file was non-empty — so an entry kept after its
+    // FittedBox was removed, or a second unjustified ban added to an already
+    // listed file, both passed.
     for (final entry in sanctioned.entries) {
       final file = File(entry.key);
 
       expect(file.existsSync(), isTrue, reason: '${entry.key} was moved');
+
+      final code = withoutDartComments(file.readAsStringSync());
+      final present = bans.keys.where((ban) => RegExp(ban).hasMatch(code));
+
       expect(
-        file.readAsStringSync().length,
-        greaterThan(0),
-        reason: entry.value,
+        present,
+        isNotEmpty,
+        reason:
+            '${entry.key} no longer uses any banned construct — drop it from '
+            'the allow-list rather than leaving a standing exemption',
+      );
+      expect(
+        present,
+        hasLength(1),
+        reason:
+            '${entry.key} is exempt for ONE reason (${entry.value}) and now '
+            'carries ${present.length}: $present',
       );
     }
   });
