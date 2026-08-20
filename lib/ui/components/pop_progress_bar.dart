@@ -49,30 +49,30 @@ class PopProgressBar extends StatelessWidget {
               width: shape.borderWidthNested,
             ),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(shape.radiusPill),
-            child: SizedBox(
-              height: 14,
-              child: Align(
-                // AlignmentDirectional: the fill grows from the START edge, so
-                // it grows leftward in an RTL layout without a second code
-                // path.
-                alignment: AlignmentDirectional.centerStart,
-                child: FractionallySizedBox(
-                  widthFactor: value.clamp(0.0, 1.0),
-                  child: RepaintBoundary(
-                    child: CustomPaint(
-                      // size: Size.infinite, because a CustomPaint with no
-                      // child and no size measures ZERO and paints nothing —
-                      // the bar rendered as an empty track, which the contact
-                      // sheet caught and no unit test would have.
-                      size: Size.infinite,
-                      painter: _StripePainter(
-                        colour: fill ?? colours.accent,
-                        ink: colours.accentDeep,
-                        pitch: shape.stripePitch,
-                        angle: shape.stripeAngle,
-                      ),
+          // The stripe is clipped INSIDE the painter rather than by a clip
+          // widget around it: one of those costs a save layer on every frame
+          // of a running timer, and lib/ui/ bans them for that reason.
+          child: SizedBox(
+            height: 14,
+            child: Align(
+              // AlignmentDirectional: the fill grows from the START edge, so
+              // it grows leftward in an RTL layout without a second code path.
+              alignment: AlignmentDirectional.centerStart,
+              child: FractionallySizedBox(
+                widthFactor: value.clamp(0.0, 1.0),
+                child: RepaintBoundary(
+                  child: CustomPaint(
+                    // size: Size.infinite, because a CustomPaint with no child
+                    // and no size measures ZERO and paints nothing — the bar
+                    // rendered as an empty track, which the contact sheet
+                    // caught and no unit test would have.
+                    size: Size.infinite,
+                    painter: _StripePainter(
+                      colour: fill ?? colours.accent,
+                      ink: colours.accentDeep,
+                      pitch: shape.stripePitch,
+                      angle: shape.stripeAngle,
+                      radius: shape.radiusPill,
                     ),
                   ),
                 ),
@@ -92,6 +92,7 @@ class _StripePainter extends CustomPainter {
     required this.ink,
     required this.pitch,
     required this.angle,
+    required this.radius,
   }) : _base = Paint()..color = colour,
        _stripe = Paint()
          ..color = ink
@@ -102,13 +103,19 @@ class _StripePainter extends CustomPainter {
   final Color ink;
   final double pitch;
   final double angle;
+  final Radius radius;
 
   final Paint _base;
   final Paint _stripe;
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, _base);
+    canvas
+      ..save()
+      ..clipRRect(
+        RRect.fromRectAndRadius(Offset.zero & size, radius),
+      )
+      ..drawRect(Offset.zero & size, _base);
 
     // The stripes run at a fixed angle in PAGE space, not in reading space:
     // they are texture, and a texture that flipped per locale would be a
@@ -124,6 +131,8 @@ class _StripePainter extends CustomPainter {
         _stripe,
       );
     }
+
+    canvas.restore();
   }
 
   @override
@@ -131,5 +140,6 @@ class _StripePainter extends CustomPainter {
       old.colour != colour ||
       old.ink != ink ||
       old.pitch != pitch ||
-      old.angle != angle;
+      old.angle != angle ||
+      old.radius != radius;
 }

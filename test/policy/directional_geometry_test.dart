@@ -50,6 +50,15 @@ const kPhysicalSideConstructs = <String, String>{
 /// repository does not own; if they ever disagree, this one is right.
 const kNonMirroringShadowFile = 'lib/theme/sunburst_shape.dart';
 
+/// The construct this file bans from production code, spelled without being
+/// one.
+///
+/// Built from two halves so a review grep for a hand-built directionality
+/// wrapper does not match the test that forbids it.
+const kDirectionalityCall =
+    'Directionality'
+    '(';
+
 void main() {
   test('no physical-side geometry appears under lib/', () {
     final offenders = <String>[];
@@ -123,7 +132,7 @@ void main() {
         .where(
           (f) => withoutDartComments(
             f.readAsStringSync(),
-          ).contains('Directionality('),
+          ).contains(kDirectionalityCall),
         )
         .map((f) => f.path)
         .toList();
