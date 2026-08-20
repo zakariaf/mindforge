@@ -1,0 +1,130 @@
+import 'dart:math' as math;
+
+import 'package:flutter/widgets.dart';
+import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/theme/sunburst_shape.dart';
+
+/// How much of a run is left, as a striped ink bar.
+///
+/// **The fill mirrors.** It grows from the start edge, which is the left in
+/// English and the right in Persian — a progress bar is a reading-order thing,
+/// unlike the shadow it casts.
+///
+/// The stripe is the non-colour channel: the bar still says how full it is with
+/// every colour removed, which is what makes it legible to a player with a
+/// colour vision deficiency and in a greyscale screenshot.
+class PopProgressBar extends StatelessWidget {
+  /// Creates a bar filled to [value], a ratio in `[0, 1]`.
+  const PopProgressBar({
+    required this.value,
+    required this.semanticLabel,
+    this.fill,
+    super.key,
+  });
+
+  /// How full the bar is, from 0 to 1.
+  final double value;
+
+  /// The already-localized label a screen reader announces.
+  final String semanticLabel;
+
+  /// The stripe colour. Defaults to the accent.
+  final Color? fill;
+
+  @override
+  Widget build(BuildContext context) {
+    final colours = SunburstColors.of(context);
+    final shape = SunburstShape.of(context);
+
+    return Semantics(
+      label: semanticLabel,
+      value: '${(value.clamp(0.0, 1.0) * 100).round()}%',
+      child: ExcludeSemantics(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: colours.surfaceSunk,
+            borderRadius: BorderRadius.all(shape.radiusPill),
+            border: Border.all(
+              color: colours.border,
+              width: shape.borderWidthNested,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(shape.radiusPill),
+            child: SizedBox(
+              height: 14,
+              child: Align(
+                // AlignmentDirectional: the fill grows from the START edge, so
+                // it grows leftward in an RTL layout without a second code
+                // path.
+                alignment: AlignmentDirectional.centerStart,
+                child: FractionallySizedBox(
+                  widthFactor: value.clamp(0.0, 1.0),
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      painter: _StripePainter(
+                        colour: fill ?? colours.accent,
+                        ink: colours.accentDeep,
+                        pitch: shape.stripePitch,
+                        angle: shape.stripeAngle,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Paints the diagonal stripe that carries the bar's non-colour channel.
+class _StripePainter extends CustomPainter {
+  _StripePainter({
+    required this.colour,
+    required this.ink,
+    required this.pitch,
+    required this.angle,
+  }) : _base = Paint()..color = colour,
+       _stripe = Paint()
+         ..color = ink
+         ..style = PaintingStyle.stroke
+         ..strokeWidth = pitch / 2;
+
+  final Color colour;
+  final Color ink;
+  final double pitch;
+  final double angle;
+
+  final Paint _base;
+  final Paint _stripe;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, _base);
+
+    // The stripes run at a fixed angle in PAGE space, not in reading space:
+    // they are texture, and a texture that flipped per locale would be a
+    // different drawing for no reason a reader could name.
+    final radians = angle * math.pi / 180;
+    final step = pitch / math.cos(radians);
+    final reach = size.width + size.height;
+
+    for (var x = -size.height; x < reach; x += step) {
+      canvas.drawLine(
+        Offset(x, size.height),
+        Offset(x + size.height * math.tan(radians), 0),
+        _stripe,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_StripePainter old) =>
+      old.colour != colour ||
+      old.ink != ink ||
+      old.pitch != pitch ||
+      old.angle != angle;
+}
