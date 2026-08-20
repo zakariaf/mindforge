@@ -46,6 +46,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.gameArtFrame,
     required this.lockedChip,
     required this.cardChipRadius,
+    required this.dotPitch,
+    required this.dotRadius,
+    required this.ringPitch,
+    required this.ringBandWidth,
+    required this.glyphStrokeWidth,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -226,6 +231,40 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// ten and [radiusMd]'s sixteen, so neither is a rounding away.
   final Radius cardChipRadius;
 
+  /// The spacing of a dotted `PlayFill` lattice. `system.html` §03:
+  /// `radial-gradient(var(--ink) 2.6px, var(--play) 2.7px)` at `background-size:10px 10px`.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double dotPitch;
+
+  /// The radius of one dot in a dotted `PlayFill`.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double dotRadius;
+
+  /// The distance between ring centres in a ringed `PlayFill`.
+  /// `system.html` §03: `repeating-radial-gradient(... 0 4px, var(--ink) 4px 7px)`.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double ringPitch;
+
+  /// The painted width of one ink ring — the `4px 7px` band above.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double ringBandWidth;
+
+  /// The ink outline grown around the stimulus glyph.
+  ///
+  /// **DERIVED**, and the reason the stimulus is never a bare `Text`: the
+  /// outline is what makes a yellow word read at ink-on-cream contrast instead
+  /// of yellow-on-white. `system.html` §12 draws it as a stack of text shadows,
+  /// which is a CSS technique for a stroke this paints directly.
+  final double glyphStrokeWidth;
+
   /// The ink edge on a surface drawn **inside** another surface.
   ///
   /// DERIVED: two logical pixels, not three. A segment inside its track and a
@@ -373,6 +412,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     gameArtFrame,
     lockedChip,
     cardChipRadius,
+    dotPitch,
+    dotRadius,
+    ringPitch,
+    ringBandWidth,
+    glyphStrokeWidth,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -434,6 +478,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? gameArtFrame,
     double? lockedChip,
     Radius? cardChipRadius,
+    double? dotPitch,
+    double? dotRadius,
+    double? ringPitch,
+    double? ringBandWidth,
+    double? glyphStrokeWidth,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -475,6 +524,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     gameArtFrame: gameArtFrame ?? this.gameArtFrame,
     lockedChip: lockedChip ?? this.lockedChip,
     cardChipRadius: cardChipRadius ?? this.cardChipRadius,
+    dotPitch: dotPitch ?? this.dotPitch,
+    dotRadius: dotRadius ?? this.dotRadius,
+    ringPitch: ringPitch ?? this.ringPitch,
+    ringBandWidth: ringBandWidth ?? this.ringBandWidth,
+    glyphStrokeWidth: glyphStrokeWidth ?? this.glyphStrokeWidth,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -531,6 +585,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       gameArtFrame: d(gameArtFrame, other.gameArtFrame),
       lockedChip: d(lockedChip, other.lockedChip),
       cardChipRadius: r(cardChipRadius, other.cardChipRadius),
+      dotPitch: d(dotPitch, other.dotPitch),
+      dotRadius: d(dotRadius, other.dotRadius),
+      ringPitch: d(ringPitch, other.ringPitch),
+      ringBandWidth: d(ringBandWidth, other.ringBandWidth),
+      glyphStrokeWidth: d(glyphStrokeWidth, other.glyphStrokeWidth),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -581,6 +640,11 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     gameArtFrame: 64,
     lockedChip: 44,
     cardChipRadius: Radius.circular(14),
+    dotPitch: 10,
+    dotRadius: 2.6,
+    ringPitch: 7,
+    ringBandWidth: 3,
+    glyphStrokeWidth: 6,
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,
