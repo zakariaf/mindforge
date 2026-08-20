@@ -1,6 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/run_config.dart';
+import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
+import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
 import 'package:mindforge/features/home/ui/home_screen.dart';
 import 'package:mindforge/features/shell/ui/nav_shell.dart';
 import 'package:mindforge/features/shell/ui/not_found_screen.dart';
@@ -32,6 +36,24 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
     initialLocation: ref.watch(initialLocationProvider),
     errorBuilder: (context, state) => const NotFoundScreen(),
     routes: <RouteBase>[
+      // OUTSIDE the shell, deliberately: game detail, countdown, play and
+      // results carry no bottom nav. A player mid-run has one way out and it is
+      // the pause sheet, not a tab bar.
+      GoRoute(
+        path: '/game/:${Routes.gameIdParam}',
+        builder: (context, state) => GameDetailScreen(
+          gameId: GameId(state.pathParameters[Routes.gameIdParam]!),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'countdown',
+            builder: (context, state) => _runScreen(
+              state,
+              (config) => CountdownScreen(config: config),
+            ),
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => NavShell(shell: shell),
         branches: <StatefulShellBranch>[
@@ -64,6 +86,24 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+/// Rebuilds a config from the route, or sends the player back.
+///
+/// A hand-edited or stale deep link is a thing people produce; it renders the
+/// not-found screen rather than throwing, which is what `Routes.configFrom`
+/// returning null is for.
+Widget _runScreen(
+  GoRouterState state,
+  Widget Function(RunConfig config) build,
+) {
+  final config = Routes.configFrom(
+    gameId: state.pathParameters[Routes.gameIdParam],
+    difficulty: state.uri.queryParameters[Routes.difficultyParam],
+    seed: state.uri.queryParameters[Routes.seedParam],
+  );
+
+  return config == null ? const NotFoundScreen() : build(config);
+}
 
 /// Stats, until T08.9 replaces it.
 class _StatsPlaceholder extends StatelessWidget {
