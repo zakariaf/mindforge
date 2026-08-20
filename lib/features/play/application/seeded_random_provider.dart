@@ -13,8 +13,8 @@ typedef RunSeedDraw = int Function();
 /// The generator itself never touches a clock — it is a pure function of a seed
 /// — so the reading of "now" happens here, once, through the injected
 /// `clockProvider`. That is what lets a test fix an instant and get a
-/// reproducible round, and what stops eight call sites growing their own
-/// `DateTime.now()`.
+/// reproducible round, and what stops eight call sites each reading the wall
+/// clock directly.
 ///
 /// **`toUtc().toIso8601String()` is ASCII Gregorian by construction and reads
 /// no ambient locale.** That matters more than it looks: it is the line a
