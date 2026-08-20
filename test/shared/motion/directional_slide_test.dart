@@ -269,22 +269,11 @@ void main() {
     testWidgets('a route transition runs at durMove on easeInOut', (
       tester,
     ) async {
-      late DirectionalSlide built;
+      final built =
+          slide(beginStart: const Offset(1, 0), axis: MotionAxis.inline)
+              as DirectionalSlide;
 
-      await tester.pumpPopComponent(
-        Builder(
-          builder: (context) {
-            built =
-                slide(
-                      beginStart: const Offset(1, 0),
-                      axis: MotionAxis.inline,
-                    )
-                    as DirectionalSlide;
-
-            return built;
-          },
-        ),
-      );
+      await tester.pumpPopComponent(built);
 
       final context = tester.element(find.byType(DirectionalSlide));
 
@@ -293,24 +282,14 @@ void main() {
     });
 
     testWidgets('and collapses to zero under reduce motion', (tester) async {
-      late Duration resolved;
+      final built =
+          slide(beginStart: const Offset(1, 0), axis: MotionAxis.inline)
+              as DirectionalSlide;
 
-      await tester.pumpPopComponent(
-        Builder(
-          builder: (context) {
-            final built =
-                slide(beginStart: const Offset(1, 0), axis: MotionAxis.inline)
-                    as DirectionalSlide;
-            resolved = built.durationIn(context);
-
-            return built;
-          },
-        ),
-        disableAnimations: true,
-      );
+      await tester.pumpPopComponent(built, disableAnimations: true);
 
       expect(
-        resolved,
+        built.durationIn(tester.element(find.byType(DirectionalSlide))),
         Duration.zero,
         reason: 'reduce motion collapses to STILLNESS, never to faster',
       );
