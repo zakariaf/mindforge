@@ -23,6 +23,7 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.e4,
     required this.pressScale,
     required this.pressScaleSmall,
+    required this.badgeTiltDegrees,
     required this.focusGap,
     required this.focusWidth,
     required this.stripePitch,
@@ -77,6 +78,18 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// Two scales, both transcribed. The e1 family is small enough that the
   /// larger scale is imperceptible on it, so the smaller surfaces shrink harder.
   final double pressScaleSmall;
+
+  /// The angle a "new best" badge sits at, in degrees.
+  ///
+  /// `system.html` §09: `.badge.new{transform:rotate(-2.5deg)}`. A RESTING
+  /// TRANSFORM, not motion — it survives reduce motion, because a badge that
+  /// sat straight for a player with animation off would be a different badge.
+  ///
+  /// Negative, and it stays negative in every locale. The tilt is a shape
+  /// constant of the badge, the same class of decision as the hard offset
+  /// shadow: mirroring it would tilt the Persian badge the other way for no
+  /// reason a reader could name.
+  final double badgeTiltDegrees;
 
   /// The gap between a surface's edge and its focus ring.
   final double focusGap;
@@ -222,6 +235,7 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     e4,
     pressScale,
     pressScaleSmall,
+    badgeTiltDegrees,
     focusGap,
     focusWidth,
     stripePitch,
@@ -265,6 +279,7 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Offset? e4,
     double? pressScale,
     double? pressScaleSmall,
+    double? badgeTiltDegrees,
     double? focusGap,
     double? focusWidth,
     double? stripePitch,
@@ -288,6 +303,7 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     e4: e4 ?? this.e4,
     pressScale: pressScale ?? this.pressScale,
     pressScaleSmall: pressScaleSmall ?? this.pressScaleSmall,
+    badgeTiltDegrees: badgeTiltDegrees ?? this.badgeTiltDegrees,
     focusGap: focusGap ?? this.focusGap,
     focusWidth: focusWidth ?? this.focusWidth,
     stripePitch: stripePitch ?? this.stripePitch,
@@ -320,6 +336,7 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       e4: o(e4, other.e4),
       pressScale: d(pressScale, other.pressScale),
       pressScaleSmall: d(pressScaleSmall, other.pressScaleSmall),
+      badgeTiltDegrees: d(badgeTiltDegrees, other.badgeTiltDegrees),
       focusGap: d(focusGap, other.focusGap),
       focusWidth: d(focusWidth, other.focusWidth),
       stripePitch: d(stripePitch, other.stripePitch),
@@ -347,6 +364,7 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     e4: Offset(10, 10),
     pressScale: 0.98,
     pressScaleSmall: 0.97,
+    badgeTiltDegrees: -2.5,
     // DERIVED: system.html §12 draws the focus ring as a 4px grape-pop outline
     // offset 3px from the surface. Neither number is a :root custom property.
     focusGap: 3,
