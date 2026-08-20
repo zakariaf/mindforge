@@ -21,6 +21,7 @@ import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 import 'package:mindforge/ui/components/pop_badge.dart';
 import 'package:mindforge/ui/components/pop_button.dart';
+import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 
 /// What a finished run says.
 ///
@@ -55,6 +56,11 @@ class ResultsScreen extends ConsumerWidget {
           fill: colours.success,
           rays: colours.headerRayResults,
           child: Column(
+            // The default centre, deliberately, and named here because every
+            // other header in the app is start-aligned: `app.html`'s
+            // `.res-hdr` centres the kicker and the shout. The results screen
+            // is a moment rather than a place, and a centred banner reads as
+            // one — start-aligned it looked like another list screen.
             children: <Widget>[
               // The game and difficulty, above the shout. app.html:
               // `.res-hdr .kicker` — the run this screen is about, in one
@@ -127,6 +133,11 @@ class ResultsScreen extends ConsumerWidget {
               PopButton(
                 label: l10n.playAgain,
                 size: PopButtonSize.large,
+                // LEAF, not the default sunshine: `app.html` gives the results
+                // screen's primary the success colour, because it is the
+                // affirmative end of a run rather than the app's accent.
+                variant: PopButtonVariant.success,
+                leading: SunburstGlyph.go,
                 expand: true,
                 // A NEW SEED, therefore a new notifier, therefore a fresh run
                 // rather than a resumed one.

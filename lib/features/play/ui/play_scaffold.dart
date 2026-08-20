@@ -12,11 +12,13 @@ import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/game_strings.dart';
+import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/ui/components/pop_button.dart';
 import 'package:mindforge/ui/components/pop_icon_button.dart';
+import 'package:mindforge/ui/components/pop_progress_bar.dart';
 import 'package:mindforge/ui/components/pop_sheet.dart';
 import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 
@@ -42,6 +44,7 @@ class PlayScaffold extends ConsumerWidget {
     final definition = ref.watch(gameDefinitionProvider(config.gameId));
     final run = ref.watch(runNotifierProvider(config));
     final accent = colours.accentFor(definition.accent, GameColourRole.base);
+    final progress = run.snapshot.progress;
 
     // The results screen is the shell's decision, made when the run ends —
     // never the board's. The pause SHEET is the same rule one step earlier:
@@ -88,21 +91,51 @@ class PlayScaffold extends ConsumerWidget {
             ),
             PlayBand(
               accent: definition.accent,
-              child: HudRow(hud: run.hud),
-            ),
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  PopIconButton(
-                    // The pause glyph does NOT mirror: it is two bars, not a
-                    // direction.
-                    glyph: SunburstGlyph.pause,
-                    semanticLabel: l10n.pauseTitle,
-                    onPressed: () =>
-                        ref.read(runNotifierProvider(config).notifier).pause(),
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: HudRow(hud: run.hud)),
+                      const SizedBox(width: 12),
+                      // IN THE BAND, not on a row of its own below it. A
+                      // separate row cost the board twelve points of height
+                      // for one 48pt control; in the chrome it costs nothing,
+                      // because the band is already as tall as its pills.
+                      //
+                      // The design draws NO pause control at all — its play
+                      // band is three pills and a track — and this is a
+                      // deliberate addition. iOS's edge-swipe does pause the
+                      // run, and it is not a thing a player finds mid-Blitz.
+                      // The pause glyph does not mirror: two bars, not a
+                      // direction.
+                      PopIconButton(
+                        glyph: SunburstGlyph.pause,
+                        semanticLabel: l10n.pauseTitle,
+                        onPressed: () => ref
+                            .read(runNotifierProvider(config).notifier)
+                            .pause(),
+                      ),
+                    ],
                   ),
+                  // THE TRACK IS ABSENT, not empty, when a board reports no
+                  // progress. An empty well says "nothing done yet" about a
+                  // game that has no measurable progress at all.
+                  if (progress != null) ...<Widget>[
+                    const SizedBox(height: 10),
+                    PopProgressBar(
+                      value: progress,
+                      fill: colours.accentFor(
+                        definition.accent,
+                        GameColourRole.deep,
+                      ),
+                      semanticLabel: l10n.hudFound,
+                      semanticValue: ref
+                          .watch(localeNumbersProvider)
+                          .percent(progress),
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -62,15 +62,18 @@ class SettingsRow extends StatelessWidget {
     final row = Padding(
       // app.html: `.srow{padding:14px 15px}`.
       padding: const EdgeInsetsDirectional.fromSTEB(15, 14, 15, 14),
-      // spaceBetween with two FLEXIBLE halves, not an Expanded label beside a
-      // natural-width control. An Expanded label takes every spare point and
-      // leaves the control nothing, and the control here is a toggle whose
-      // printed word is translated: Sorani's OFF is "داخراوە", seven
-      // characters, and at text scale 1.3 the track it sits in is wider than
-      // what an Expanded label left behind. Measured — this row is where the
-      // ON/OFF-inside-the-track design first stops fitting.
+      // AN EXPANDED LABEL BESIDE A FLEXIBLE CONTROL. Both halves flex, so
+      // free space splits evenly — and the label's half is TIGHT, which is
+      // what keeps it against the icon chip. Two loose halves centred it,
+      // because a shrink-wrapped label inside a spaceBetween row sits wherever
+      // its share leaves it; caught on the simulator against 08-settings.png.
+      //
+      // The control has to flex at all because its printed word is translated:
+      // Sorani's OFF is "داخراوە", seven characters, and at text scale 1.3 the
+      // track it sits in is wider than a natural-width trailing slot would be
+      // given. This row is where the ON/OFF-inside-the-track design first
+      // stops fitting.
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           ExcludeSemantics(
             child: Container(
@@ -89,7 +92,7 @@ class SettingsRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Flexible(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,

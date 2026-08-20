@@ -87,6 +87,14 @@ extension PumpShell on WidgetTester {
 
     useDevice(this, device);
 
+    // TEAR THE PREVIOUS TREE DOWN FIRST. A second pumpShellApp in the same
+    // test UPDATES the existing element tree rather than replacing it —
+    // the widget types match all the way down — so the outgoing route's
+    // Directionality can still be the first one in the tree when the
+    // assertion below runs, and a Persian pump reports LTR. Three tests hit
+    // this before the harness did something about it.
+    await pumpWidget(const SizedBox.shrink());
+
     await pumpWidget(
       ProviderScope(
         overrides: [
