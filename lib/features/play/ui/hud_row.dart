@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/board_snapshot.dart';
 import 'package:mindforge/core/result_stat.dart';
-import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
 
@@ -81,14 +80,22 @@ class HudRow extends ConsumerWidget {
       // is what makes one helper produce `x7` in English and `۷×` in Persian
       // — which is what the RTL reference screen draws — while still bounding
       // the run so it cannot reorder the pill around it.
-      StatFormat.multiplier => BidiText.isolate(
+      // NOT ISOLATED, and that is the whole point. The logical order is the
+      // sign then the digit in every locale — one ARB message — and the bidi
+      // algorithm is what puts the sign on the reading-START side: `x7` in
+      // English, `۷×` in Persian, which is what the RTL reference draws.
+      //
+      // An FSI here resolves to the direction of the first STRONG character,
+      // and `x7` has none, so it falls back to LTR and pins the sign left in
+      // every locale. The pill holds nothing but this value, so there are no
+      // neighbours for an isolate to protect.
+      StatFormat.multiplier =>
         ref
             .watch(appLocalizationsProvider)
             .streakMultiplier(
               slot.canonicalValue,
               numbers.count(slot.canonicalValue),
             ),
-      ),
       StatFormat.points || StatFormat.count => numbers.count(
         slot.canonicalValue,
       ),

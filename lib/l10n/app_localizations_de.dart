@@ -147,16 +147,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get getReady => 'Bereit machen';
 
   @override
-  String get hudTime => 'Zeit';
+  String get hudTime => 'ZEIT';
 
   @override
-  String get hudScore => 'Punkte';
+  String get hudScore => 'PUNKTE';
 
   @override
-  String get hudStreak => 'Serie';
+  String get hudStreak => 'SERIE';
 
   @override
-  String get hudFound => 'Gefunden';
+  String get hudFound => 'GEFUNDEN';
 
   @override
   String get hudNext => 'Nächste';

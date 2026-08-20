@@ -11,7 +11,6 @@ import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
 import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
-import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
@@ -203,11 +202,11 @@ class _StatCell extends ConsumerWidget {
               : '${numbers.seconds(stat.canonicalValue)}${l10n.unitSeconds}',
         // The same isolate as the HUD pill: `×11` is a mixed run and the
         // results trio prints it in the same cell shape.
-        StatFormat.multiplier => BidiText.isolate(
-          l10n.streakMultiplier(
-            stat.canonicalValue,
-            numbers.count(stat.canonicalValue),
-          ),
+        // NOT ISOLATED — see hud_row.dart. An FSI over a run with no strong
+        // character resolves LTR and pins the sign to the left in Persian too.
+        StatFormat.multiplier => l10n.streakMultiplier(
+          stat.canonicalValue,
+          numbers.count(stat.canonicalValue),
         ),
         StatFormat.points || StatFormat.count => numbers.count(
           stat.canonicalValue,

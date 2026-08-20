@@ -284,25 +284,25 @@ abstract class AppLocalizations {
   /// HUD label above the elapsed or remaining clock.
   ///
   /// In en, this message translates to:
-  /// **'Time'**
+  /// **'TIME'**
   String get hudTime;
 
   /// HUD label above the running score.
   ///
   /// In en, this message translates to:
-  /// **'Score'**
+  /// **'SCORE'**
   String get hudScore;
 
   /// HUD label above the combo multiplier.
   ///
   /// In en, this message translates to:
-  /// **'Streak'**
+  /// **'STREAK'**
   String get hudStreak;
 
   /// HUD label above the found-tile count in Schulte Grid.
   ///
   /// In en, this message translates to:
-  /// **'Found'**
+  /// **'FOUND'**
   String get hudFound;
 
   /// HUD label above the next number to find in Schulte Grid.
