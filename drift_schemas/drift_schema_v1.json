@@ -1,0 +1,462 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": false
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "runs",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 1,
+                  "max": 64
+                }
+              }
+            ]
+          },
+          {
+            "name": "created_at_utc_ms",
+            "getter_name": "createdAtUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at_utc_ms",
+            "getter_name": "updatedAtUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "row_revision",
+            "getter_name": "rowRevision",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('1')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_deleted",
+            "getter_name": "isDeleted",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at_utc_ms",
+            "getter_name": "deletedAtUtcMs",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "game_id",
+            "getter_name": "gameId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "difficulty_id",
+            "getter_name": "difficultyId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "client_run_key",
+            "getter_name": "clientRunKey",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "started_at_utc_ms",
+            "getter_name": "startedAtUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "played_on_day",
+            "getter_name": "playedOnDay",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "duration_ms",
+            "getter_name": "durationMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "metric_kind",
+            "getter_name": "metricKind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "metric_value",
+            "getter_name": "metricValue",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "correct_count",
+            "getter_name": "correctCount",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "wrong_count",
+            "getter_name": "wrongCount",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "longest_combo",
+            "getter_name": "longestCombo",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "total_reaction_ms",
+            "getter_name": "totalReactionMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (length(game_id) BETWEEN 1 AND 64 AND game_id NOT GLOB '*[^a-z0-9_]*')",
+          "CHECK (length(difficulty_id) BETWEEN 1 AND 64 AND difficulty_id NOT GLOB '*[^a-z0-9_]*')",
+          "CHECK (length(client_run_key) BETWEEN 1 AND 128 AND client_run_key NOT GLOB '*[^ -~]*')",
+          "CHECK (metric_kind IN ('points','duration'))",
+          "CHECK (started_at_utc_ms > 0)",
+          "CHECK (duration_ms >= 0)",
+          "CHECK (metric_value >= 0)",
+          "CHECK (correct_count >= 0)",
+          "CHECK (wrong_count >= 0)",
+          "CHECK (longest_combo >= 0)",
+          "CHECK (longest_combo <= correct_count)",
+          "CHECK (total_reaction_ms >= 0)",
+          "CHECK (is_deleted IN (0,1))"
+        ],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "settings",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 1,
+                  "max": 64
+                }
+              }
+            ]
+          },
+          {
+            "name": "created_at_utc_ms",
+            "getter_name": "createdAtUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at_utc_ms",
+            "getter_name": "updatedAtUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "row_revision",
+            "getter_name": "rowRevision",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('1')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_deleted",
+            "getter_name": "isDeleted",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at_utc_ms",
+            "getter_name": "deletedAtUtcMs",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_sound_enabled",
+            "getter_name": "isSoundEnabled",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_haptics_enabled",
+            "getter_name": "isHapticsEnabled",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_reduce_motion_enabled",
+            "getter_name": "isReduceMotionEnabled",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_colour_blind_palette",
+            "getter_name": "isColourBlindPalette",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "locale_tag",
+            "getter_name": "localeTag",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (id = 'app')",
+          "CHECK (is_sound_enabled IN (0,1))",
+          "CHECK (is_haptics_enabled IN (0,1))",
+          "CHECK (is_reduce_motion_enabled IN (0,1))",
+          "CHECK (is_colour_blind_palette IN (0,1))",
+          "CHECK (is_deleted IN (0,1))",
+          "CHECK (locale_tag IS NULL OR (length(locale_tag) BETWEEN 2 AND 35 AND locale_tag NOT GLOB '*[^a-z-]*'))"
+        ],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "references": [
+        0
+      ],
+      "type": "index",
+      "data": {
+        "on": 0,
+        "name": "ux_runs_client_key",
+        "sql": "CREATE UNIQUE INDEX ux_runs_client_key ON runs (client_run_key) WHERE is_deleted = 0;",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 3,
+      "references": [
+        0
+      ],
+      "type": "index",
+      "data": {
+        "on": 0,
+        "name": "idx_runs_game_difficulty_time",
+        "sql": "CREATE INDEX idx_runs_game_difficulty_time ON runs (game_id, difficulty_id, started_at_utc_ms);",
+        "unique": false,
+        "columns": []
+      }
+    },
+    {
+      "id": 4,
+      "references": [
+        0
+      ],
+      "type": "index",
+      "data": {
+        "on": 0,
+        "name": "idx_runs_day",
+        "sql": "CREATE INDEX idx_runs_day ON runs (played_on_day);",
+        "unique": false,
+        "columns": []
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "runs",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"runs\" (\"id\" TEXT NOT NULL, \"created_at_utc_ms\" INTEGER NOT NULL, \"updated_at_utc_ms\" INTEGER NOT NULL, \"row_revision\" INTEGER NOT NULL DEFAULT 1, \"is_deleted\" INTEGER NOT NULL DEFAULT 0, \"deleted_at_utc_ms\" INTEGER NULL, \"game_id\" TEXT NOT NULL, \"difficulty_id\" TEXT NOT NULL, \"client_run_key\" TEXT NOT NULL, \"started_at_utc_ms\" INTEGER NOT NULL, \"played_on_day\" INTEGER NOT NULL, \"duration_ms\" INTEGER NOT NULL, \"metric_kind\" TEXT NOT NULL, \"metric_value\" INTEGER NOT NULL, \"correct_count\" INTEGER NOT NULL, \"wrong_count\" INTEGER NOT NULL, \"longest_combo\" INTEGER NOT NULL, \"total_reaction_ms\" INTEGER NOT NULL, PRIMARY KEY (\"id\"), CHECK (length(game_id) BETWEEN 1 AND 64 AND game_id NOT GLOB '*[^a-z0-9_]*'), CHECK (length(difficulty_id) BETWEEN 1 AND 64 AND difficulty_id NOT GLOB '*[^a-z0-9_]*'), CHECK (length(client_run_key) BETWEEN 1 AND 128 AND client_run_key NOT GLOB '*[^ -~]*'), CHECK (metric_kind IN ('points','duration')), CHECK (started_at_utc_ms > 0), CHECK (duration_ms >= 0), CHECK (metric_value >= 0), CHECK (correct_count >= 0), CHECK (wrong_count >= 0), CHECK (longest_combo >= 0), CHECK (longest_combo <= correct_count), CHECK (total_reaction_ms >= 0), CHECK (is_deleted IN (0,1))) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "settings",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"settings\" (\"id\" TEXT NOT NULL, \"created_at_utc_ms\" INTEGER NOT NULL, \"updated_at_utc_ms\" INTEGER NOT NULL, \"row_revision\" INTEGER NOT NULL DEFAULT 1, \"is_deleted\" INTEGER NOT NULL DEFAULT 0, \"deleted_at_utc_ms\" INTEGER NULL, \"is_sound_enabled\" INTEGER NOT NULL, \"is_haptics_enabled\" INTEGER NOT NULL, \"is_reduce_motion_enabled\" INTEGER NOT NULL, \"is_colour_blind_palette\" INTEGER NOT NULL, \"locale_tag\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK (id = 'app'), CHECK (is_sound_enabled IN (0,1)), CHECK (is_haptics_enabled IN (0,1)), CHECK (is_reduce_motion_enabled IN (0,1)), CHECK (is_colour_blind_palette IN (0,1)), CHECK (is_deleted IN (0,1)), CHECK (locale_tag IS NULL OR (length(locale_tag) BETWEEN 2 AND 35 AND locale_tag NOT GLOB '*[^a-z-]*'))) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "ux_runs_client_key",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX ux_runs_client_key ON runs (client_run_key) WHERE is_deleted = 0"
+        }
+      ]
+    },
+    {
+      "name": "idx_runs_game_difficulty_time",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX idx_runs_game_difficulty_time ON runs (game_id, difficulty_id, started_at_utc_ms)"
+        }
+      ]
+    },
+    {
+      "name": "idx_runs_day",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX idx_runs_day ON runs (played_on_day)"
+        }
+      ]
+    }
+  ]
+}

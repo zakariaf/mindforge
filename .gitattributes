@@ -1,0 +1,12 @@
+# Generated code is COMMITTED in this repository, and CI's freshness gate
+# (`git status --porcelain` over these same suffixes) is what makes that safe.
+#
+# linguist-generated collapses these files in a GitHub diff and excludes them
+# from the language statistics. They are still tracked, still reviewed by the
+# freshness gate, and still analyzed under the excludes in
+# analysis_options.yaml — this only stops a 1800-line regenerated part file
+# from burying the twelve lines a human actually wrote.
+*.drift.dart   linguist-generated=true
+*.g.dart       linguist-generated=true
+*.freezed.dart linguist-generated=true
+lib/l10n/app_localizations*.dart linguist-generated=true

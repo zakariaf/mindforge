@@ -19,10 +19,21 @@ const kAllowedDirectDependencies = <String>{
   'go_router', // the single router, E08
   'clock', // the injected Clock; DateTime.now() in domain code is a defect
   'intl', // LocaleNumbers' one NumberFormat construction site, E04
+  'meta', // @immutable / @useResult on the lib/core value types, E02
+  'path', // joining the application-support directory to the db file, E02
+  // Direct: connection.dart names CommonDatabase to type the pragma setup
+  // callback. It is drift's own runtime dependency, declared here because a
+  // file under lib/ imports it directly.
+  'sqlite3',
+  'uuid', // UuidIdGenerator behind the IdGenerator seam, E02
   // dev
   'very_good_analysis', // the lint floor, T01.5
   'build_runner', // drift codegen, E02
-  'drift_dev', // drift codegen, E02
+  'drift_dev', // drift codegen and the schema tooling, E02
+  // lib/core/ is Flutter-free, so its tests are too. Declared explicitly rather
+  // than resolved by accident through riverpod 3's dependency on package:test —
+  // the same graph kExplainedTransitives documents as removable.
+  'test',
 };
 
 /// Transitive packages whose presence in the lock is explained, measured and
@@ -116,6 +127,30 @@ Set<String> _resolvedPackages(File lock) => RegExp(
   multiLine: true,
 ).allMatches(lock.readAsStringSync()).map((m) => m.group(1)!).toSet();
 
+/// Dependencies whose non-caret constraint is deliberate, identified by a
+/// `# PINNED:` comment immediately above the entry.
+///
+/// The policy bans an **unexplained** exact pin, not a measured
+/// incompatibility. `dependency-hygiene` asks for exactly this: record the
+/// reason rather than pin silently.
+Set<String> _pinnedWithReason(String pubspec) {
+  final pinned = <String>{};
+  var sawMarker = false;
+
+  for (final line in pubspec.split('\n')) {
+    if (line.contains('# PINNED:')) {
+      sawMarker = true;
+      continue;
+    }
+    if (line.trimLeft().startsWith('#') || line.trim().isEmpty) continue;
+
+    final match = RegExp('^  ([a-z_0-9]+):').firstMatch(line);
+    if (match != null && sawMarker) pinned.add(match.group(1)!);
+    sawMarker = false;
+  }
+  return pinned;
+}
+
 void main() {
   final pubspec = File('pubspec.yaml').readAsStringSync();
   final lock = File('pubspec.lock');
@@ -123,19 +158,67 @@ void main() {
   final resolvedPackages = _resolvedPackages(lock);
 
   group('dependency policy', () {
-    test('every versioned direct dependency uses a caret range', () {
-      final offenders = declaredDependencies.entries
-          .where((e) => e.value != null && !e.value!.startsWith('^'))
-          .map((e) => '${e.key}: ${e.value}')
-          .toList();
+    test('every direct dependency uses a caret range, or explains itself', () {
+      // The only entries allowed to carry no inline constraint. Anything else
+      // with a null constraint is a block form — `foo:` followed by an indented
+      // `version:`, `git:`, `path:` or `hosted:` — and a block form is exactly
+      // how an exact pin slips past a check that skips nulls.
+      const sdkEntries = <String>{
+        'flutter',
+        'flutter_test',
+        'flutter_localizations',
+      };
+
+      final offenders = <String>[];
+      for (final entry in declaredDependencies.entries) {
+        if (_pinnedWithReason(pubspec).contains(entry.key)) continue;
+
+        final constraint = entry.value;
+        if (constraint == null) {
+          if (!sdkEntries.contains(entry.key)) {
+            offenders.add('${entry.key}: <no inline constraint — block form?>');
+          }
+          continue;
+        }
+        if (!constraint.startsWith('^')) {
+          offenders.add('${entry.key}: $constraint');
+        }
+      }
 
       expect(
         offenders,
         isEmpty,
         reason:
             'dependency-hygiene rule 1: caret ranges in pubspec.yaml, exact '
-            'pins only in the committed pubspec.lock. Offenders: $offenders',
+            'pins only in the committed pubspec.lock — unless the entry '
+            'carries a `# PINNED:` comment saying what breaks without it. '
+            'Offenders: $offenders',
       );
+    });
+
+    test('every PINNED marker carries a real explanation', () {
+      final reasons = RegExp(
+        '# PINNED:(.*)',
+      ).allMatches(pubspec).map((m) => m.group(1)!.trim()).toList();
+
+      expect(
+        _pinnedWithReason(pubspec),
+        hasLength(reasons.length),
+        reason:
+            'a PINNED marker that is not directly above a dependency entry '
+            'explains nothing',
+      );
+
+      for (final reason in reasons) {
+        expect(
+          reason.length,
+          greaterThan(20),
+          reason:
+              'an empty or one-word PINNED comment is the silent pin this '
+              'gate exists to prevent. Say what breaks without the pin, and '
+              r'what would let it go back to a caret range. Found: "$reason"',
+        );
+      }
     });
 
     test('the direct dependency set is the reviewed allow-set', () {

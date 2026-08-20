@@ -1,0 +1,33 @@
+# Builder configuration.
+#
+# Every builder is fenced with a `generate_for:` glob. Without one, editing any
+# file in the package makes build_runner reconsider the whole tree, and a
+# generator that scans lib/ finds nothing to do far more often than it finds
+# something (codegen-and-toolchain rule 2).
+targets:
+  $default:
+    builders:
+      # drift ships two builders. The default one emits a SHARED part
+      # (`part 'x.g.dart'`, assembled by source_gen's combining_builder);
+      # `not_shared` emits a direct `part 'x.drift.dart'`.
+      #
+      # We take not_shared, so the generated file is named after the generator
+      # that produced it. `.g.dart` is a shared bucket that json_serializable,
+      # freezed and drift would all write into, and a diff in a file called
+      # `app_database.g.dart` does not say which builder moved.
+      drift_dev:
+        enabled: false
+      drift_dev:not_shared:
+        enabled: true
+        # lib/data/ is the only directory allowed to hold a drift symbol
+        # (persistence-drift; check-drift-confinement.sh enforces it).
+        generate_for:
+          - lib/data/**
+      # No `options:` block anywhere here. Two were briefly set with a comment
+      # describing them as an output-layout choice; they are not.
+      # `store_date_time_values_as_text` is a PERMANENT storage-format decision
+      # — flipping it later silently reinterprets every stored timestamp — and
+      # MindForge declares no DateTime column at all, storing UTC epoch
+      # milliseconds as plain integers, so it would govern nothing while
+      # looking like a reviewed choice. Add an option here only with a comment
+      # saying what it actually changes.
