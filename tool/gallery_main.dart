@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/hud_tone.dart';
 import 'package:mindforge/core/supported_locale.dart';
+import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
+import 'package:mindforge/shared/feedback/haptic_gateway.dart';
+import 'package:mindforge/shared/motion/motion_preference_scope.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
@@ -31,10 +35,63 @@ import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 /// sits on its baseline. That is a device question, so this is a device app.
 ///
 ///   flutter run -t tool/gallery_main.dart -d `the canonical simulator`
-void main() => runApp(const ProviderScope(child: _GalleryApp()));
+void main() => runApp(galleryRoot());
+
+/// The gallery's whole widget tree, including its overrides.
+///
+/// Named and returned rather than inlined into `runApp` so a smoke test can
+/// pump the real thing. **The overrides are the point.** Two providers throw
+/// until they are supplied — `hapticGatewayProvider` and
+/// `initialAppSettingsProvider` — deliberately, so a missing override in an
+/// entry point is loud rather than silent. Every press in the catalog reaches
+/// both through `FeedbackService`, so without them this app renders perfectly
+/// and throws on the first tap. It did, on device, and only a smoke test that
+/// pumps this exact tree would have said so: the app has `bootstrap()` and
+/// every widget test has the harness.
+///
+/// [settings] seeds the scope; the gallery's own switches replace it, so a
+/// developer can put the catalog into Reduce motion or Haptics off on a real
+/// device — the configuration the manual pass has to cover and no golden can.
+Widget galleryRoot({AppSettings settings = const AppSettings.defaults()}) =>
+    _GalleryRoot(initialSettings: settings);
+
+/// Holds the settings ABOVE the scope, so flipping one rebuilds the overrides.
+///
+/// A `ProviderScope` reads its overrides once per build, so the state that
+/// drives them cannot live inside it.
+class _GalleryRoot extends StatefulWidget {
+  const _GalleryRoot({required this.initialSettings});
+
+  final AppSettings initialSettings;
+
+  @override
+  State<_GalleryRoot> createState() => _GalleryRootState();
+}
+
+class _GalleryRootState extends State<_GalleryRoot> {
+  late AppSettings _settings = widget.initialSettings;
+
+  @override
+  Widget build(BuildContext context) => ProviderScope(
+    overrides: [
+      hapticGatewayProvider.overrideWithValue(const LiveHapticGateway()),
+      initialAppSettingsProvider.overrideWithValue(_settings),
+      settingsProvider.overrideWith(
+        (ref) => Stream<AppSettings>.value(_settings),
+      ),
+    ],
+    child: _GalleryApp(
+      settings: _settings,
+      onSettings: (settings) => setState(() => _settings = settings),
+    ),
+  );
+}
 
 class _GalleryApp extends StatefulWidget {
-  const _GalleryApp();
+  const _GalleryApp({required this.settings, required this.onSettings});
+
+  final AppSettings settings;
+  final ValueChanged<AppSettings> onSettings;
 
   @override
   State<_GalleryApp> createState() => _GalleryAppState();
@@ -59,18 +116,31 @@ class _GalleryAppState extends State<_GalleryApp> {
     localizationsDelegates: localizationsDelegatesFor(
       AppLocalizations.localizationsDelegates,
     ),
+    // MotionPreferenceScope exactly as lib/app.dart mounts it, or the Reduce
+    // motion switch below would change a setting nothing reads.
+    builder: (context, child) =>
+        MotionPreferenceScope(child: child ?? const SizedBox.shrink()),
     home: _Gallery(
       locale: _locale,
       onLocale: (locale) => setState(() => _locale = locale),
+      settings: widget.settings,
+      onSettings: widget.onSettings,
     ),
   );
 }
 
 class _Gallery extends StatelessWidget {
-  const _Gallery({required this.locale, required this.onLocale});
+  const _Gallery({
+    required this.locale,
+    required this.onLocale,
+    required this.settings,
+    required this.onSettings,
+  });
 
   final SupportedLocale locale;
   final ValueChanged<SupportedLocale> onLocale;
+  final AppSettings settings;
+  final ValueChanged<AppSettings> onSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +163,45 @@ class _Gallery extends StatelessWidget {
                       label: option.tag,
                       fill: option == locale ? colours.accent : null,
                     ),
+                ],
+              ),
+            ),
+            // The three switches the manual pass needs on a real device. No
+            // golden can render "a press with Reduce motion on"; a finger can.
+            Padding(
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  // PopButton, not PopChip: a chip is a label and carries no
+                  // tap of its own, and a developer tool must not be the reason
+                  // a catalog component grows an inlet nothing in the app uses.
+                  PopButton(
+                    label: settings.isReduceMotionEnabled
+                        ? 'motion off'
+                        : 'motion on',
+                    variant: settings.isReduceMotionEnabled
+                        ? PopButtonVariant.secondary
+                        : PopButtonVariant.primary,
+                    onPressed: () => onSettings(
+                      settings.copyWith(
+                        isReduceMotionEnabled: !settings.isReduceMotionEnabled,
+                      ),
+                    ),
+                  ),
+                  PopButton(
+                    label: settings.isHapticsEnabled
+                        ? 'haptics on'
+                        : 'haptics off',
+                    variant: settings.isHapticsEnabled
+                        ? PopButtonVariant.primary
+                        : PopButtonVariant.secondary,
+                    onPressed: () => onSettings(
+                      settings.copyWith(
+                        isHapticsEnabled: !settings.isHapticsEnabled,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
