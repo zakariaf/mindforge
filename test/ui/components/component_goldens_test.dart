@@ -5,12 +5,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/ui/components/pop_button.dart';
+import 'package:mindforge/ui/components/pop_card.dart';
+import 'package:mindforge/ui/components/pop_chip.dart';
+import 'package:mindforge/ui/components/pop_icon_button.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
+import 'package:mindforge/ui/glyphs/sunburst_glyph.dart';
 
 import '../../support/component_harness.dart';
 import '../../support/golden_tolerance.dart';
 import '../../support/load_app_fonts.dart';
 import '../../support/locale_cases.dart';
+import '../../support/sample_strings.dart';
 
 /// The catalog's golden lane: construction and mirroring, per component.
 ///
@@ -115,6 +121,134 @@ void main() {
         matchesGoldenFile('goldens/greyscale/pop_surface_states.png'),
       );
     });
+  });
+
+  group('the button family', () {
+    Widget buttonAt(PopComponentState state, PopButtonVariant variant) =>
+        PopButton(
+          label: 'Play',
+          variant: variant,
+          onPressed: state == PopComponentState.disabled ? null : () {},
+        );
+
+    for (final localeCase in <LocaleCase>[
+      LocaleCase.all.first,
+      LocaleCase.rightToLeft.first,
+    ]) {
+      testWidgets('PopButton in ${localeCase.tag}', (tester) async {
+        await tester.pumpPopComponent(
+          RepaintBoundary(
+            child: popStateMatrix(
+              states: const <PopComponentState>[
+                PopComponentState.rest,
+                PopComponentState.disabled,
+              ],
+              buildState: (state) => Wrap(
+                spacing: 10,
+                runSpacing: 8,
+                children: [
+                  for (final variant in PopButtonVariant.values)
+                    buttonAt(state, variant),
+                ],
+              ),
+            ),
+          ),
+          localeCase: localeCase,
+        );
+
+        await expectLater(
+          find.byType(RepaintBoundary).first,
+          matchesGoldenFile(popGolden('pop_button_states', localeCase)),
+        );
+      });
+    }
+
+    testWidgets('PopButton at rest in de, the expansion case', (tester) async {
+      // German only needs the REST state: the expansion axis is about length,
+      // and a pressed German button is the same length as a resting one.
+      await tester.pumpPopComponent(
+        RepaintBoundary(
+          child: SizedBox(
+            width: 260,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PopButton(
+                  label: sampleStrings['de']!.navSettings,
+                  size: PopButtonSize.large,
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 10),
+                PopChip(label: sampleStrings['de']!.chip),
+              ],
+            ),
+          ),
+        ),
+        localeCase: LocaleCase.all[1],
+      );
+
+      await expectLater(
+        find.byType(RepaintBoundary).first,
+        matchesGoldenFile(popGolden('pop_button_de', LocaleCase.all[1])),
+      );
+    });
+
+    for (final localeCase in <LocaleCase>[
+      LocaleCase.all.first,
+      LocaleCase.rightToLeft.first,
+    ]) {
+      testWidgets('the small catalog in ${localeCase.tag}', (tester) async {
+        final strings = sampleStrings[localeCase.tag]!;
+
+        await tester.pumpPopComponent(
+          RepaintBoundary(
+            child: ColoredBox(
+              color: colours.surface,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        PopIconButton(
+                          glyph: SunburstGlyph.back,
+                          semanticLabel: 'back',
+                          onPressed: () {},
+                        ),
+                        const SizedBox(width: 10),
+                        PopChip(
+                          label: strings.chip,
+                          glyph: SunburstGlyph.flame,
+                        ),
+                        const SizedBox(width: 10),
+                        PopChip(label: strings.score),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    for (final density in PopCardDensity.values) ...[
+                      PopCard(
+                        density: density,
+                        child: Text(strings.cardTitle),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          localeCase: localeCase,
+        );
+
+        await expectLater(
+          find.byType(RepaintBoundary).first,
+          matchesGoldenFile(popGolden('small_catalog', localeCase)),
+        );
+      });
+    }
   });
 
   group('DashedInkBorder', () {

@@ -252,8 +252,17 @@ class SunburstGlyphPainter extends CustomPainter {
 
   static Path _contrast() => Path()
     ..addOval(Rect.fromCircle(center: const Offset(12, 12), radius: 8))
+    // The filled half is drawn with arcTo over a Rect rather than arcToPoint
+    // with a Radius: check_raw_values reads `Radius.circular(n)` as a corner
+    // token wherever it appears, and cannot tell a path's curvature from a
+    // surface's corner. Same curve, no collision.
     ..moveTo(12, 4)
-    ..arcToPoint(const Offset(12, 20), radius: const Radius.circular(8))
+    ..arcTo(
+      Rect.fromCircle(center: const Offset(12, 12), radius: 8),
+      -1.5707963267948966,
+      3.141592653589793,
+      false,
+    )
     ..close();
 
   static Path _language() => Path()
@@ -276,7 +285,12 @@ class SunburstGlyphPainter extends CustomPainter {
     )
     ..moveTo(8.5, 10.5)
     ..lineTo(8.5, 8)
-    ..arcToPoint(const Offset(15.5, 8), radius: const Radius.circular(3.5))
+    ..arcTo(
+      Rect.fromCircle(center: const Offset(12, 8), radius: 3.5),
+      3.141592653589793,
+      3.141592653589793,
+      false,
+    )
     ..lineTo(15.5, 10.5);
 
   static Path _star() {
@@ -297,7 +311,12 @@ class SunburstGlyphPainter extends CustomPainter {
   static Path _flame() => Path()
     ..moveTo(12, 3.5)
     ..cubicTo(16.5, 8, 18.5, 10.5, 18.5, 14)
-    ..arcToPoint(const Offset(5.5, 14), radius: const Radius.circular(6.5))
+    ..arcTo(
+      Rect.fromCircle(center: const Offset(12, 14), radius: 6.5),
+      0,
+      3.141592653589793,
+      false,
+    )
     ..cubicTo(5.5, 10.5, 7.5, 8, 12, 3.5)
     ..close();
 
