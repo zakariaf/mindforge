@@ -161,17 +161,11 @@ void main() {
           localeCase: localeCase,
         );
 
-        return find
-            .descendant(
-              of: find.byType(SunburstGlyphIcon),
-              matching: find.byType(Transform),
-            )
-            .evaluate()
-            .isNotEmpty;
+        return isMirrored(tester, find.byType(SunburstGlyphIcon));
       }
 
-      final en = LocaleCase.all.first;
-      final fa = LocaleCase.rightToLeft.first;
+      const en = LocaleCase.english;
+      const fa = LocaleCase.persian;
 
       expect(await isFlipped(SunburstGlyph.back, en), isFalse);
       expect(await isFlipped(SunburstGlyph.back, fa), isTrue);

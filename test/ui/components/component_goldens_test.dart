@@ -72,10 +72,7 @@ void main() {
       );
 
   group('PopSurface', () {
-    for (final localeCase in <LocaleCase>[
-      LocaleCase.all.first,
-      LocaleCase.rightToLeft.first,
-    ]) {
+    for (final localeCase in LocaleCase.bothDirections) {
       testWidgets('the state matrix in ${localeCase.tag}', (tester) async {
         await tester.pumpPopComponent(
           RepaintBoundary(
@@ -141,10 +138,7 @@ void main() {
           onPressed: state == PopComponentState.disabled ? null : () {},
         );
 
-    for (final localeCase in <LocaleCase>[
-      LocaleCase.all.first,
-      LocaleCase.rightToLeft.first,
-    ]) {
+    for (final localeCase in LocaleCase.bothDirections) {
       testWidgets('PopButton in ${localeCase.tag}', (tester) async {
         await tester.pumpPopComponent(
           RepaintBoundary(
@@ -194,19 +188,16 @@ void main() {
             ),
           ),
         ),
-        localeCase: LocaleCase.all[1],
+        localeCase: LocaleCase.german,
       );
 
       await expectLater(
         find.byType(RepaintBoundary).first,
-        matchesGoldenFile(popGolden('pop_button_de', LocaleCase.all[1])),
+        matchesGoldenFile(popGolden('pop_button_de', LocaleCase.german)),
       );
     });
 
-    for (final localeCase in <LocaleCase>[
-      LocaleCase.all.first,
-      LocaleCase.rightToLeft.first,
-    ]) {
+    for (final localeCase in LocaleCase.bothDirections) {
       testWidgets('the small catalog in ${localeCase.tag}', (tester) async {
         final strings = sampleStrings[localeCase.tag]!;
 

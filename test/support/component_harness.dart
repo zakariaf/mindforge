@@ -187,3 +187,28 @@ class Greyscale extends StatelessWidget {
     child: child,
   );
 }
+
+/// The decoration of the [index]th `DecoratedBox` in the tree.
+///
+/// One helper, because reading a component's construction back is the single
+/// most repeated line in this epic's tests and it was written four different
+/// ways.
+BoxDecoration decorationAt(WidgetTester tester, [int index = 0]) =>
+    tester.widget<DecoratedBox>(find.byType(DecoratedBox).at(index)).decoration
+        as BoxDecoration;
+
+/// Every `BoxDecoration` in the tree, in paint order.
+List<BoxDecoration> decorationsIn(WidgetTester tester) => tester
+    .widgetList<DecoratedBox>(find.byType(DecoratedBox))
+    .map((box) => box.decoration as BoxDecoration)
+    .toList();
+
+/// Whether the subtree under [finder] carries a mirroring transform.
+///
+/// The RTL flip is applied by a widget rather than a painter, so "is this
+/// mirrored" is "is there a Transform" — asserted five separate ways before
+/// this existed.
+bool isMirrored(WidgetTester tester, Finder finder) => find
+    .descendant(of: finder, matching: find.byType(Transform))
+    .evaluate()
+    .isNotEmpty;

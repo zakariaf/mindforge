@@ -26,18 +26,12 @@ import '../../support/sample_strings.dart';
 void main() {
   const colours = SunburstColors.sunburstPop;
   const shape = SunburstShape.sunburstPop;
-  final en = LocaleCase.all.first;
-  final de = LocaleCase.all[1];
-  final fa = LocaleCase.rightToLeft.first;
-  final ckb = LocaleCase.rightToLeft[1];
+  const en = LocaleCase.english;
+  const de = LocaleCase.german;
+  const fa = LocaleCase.persian;
+  const ckb = LocaleCase.sorani;
 
   setUpAll(loadAppFonts);
-
-  BoxDecoration decorationOf(WidgetTester tester, [int index = 0]) =>
-      tester
-              .widget<DecoratedBox>(find.byType(DecoratedBox).at(index))
-              .decoration
-          as BoxDecoration;
 
   group('HudPill', () {
     testWidgets('each tone resolves its fill and both text slots', (
@@ -70,7 +64,7 @@ void main() {
 
         final (fill, label, value) = entry.value;
 
-        expect(decorationOf(tester).color, fill, reason: '${entry.key}');
+        expect(decorationAt(tester).color, fill, reason: '${entry.key}');
         expect(
           tester.widget<Text>(find.text('Time')).style!.color,
           label,
@@ -94,7 +88,7 @@ void main() {
         const HudPill(label: 'Time', value: '0:04', tone: HudTone.alarm),
       );
 
-      final fill = decorationOf(tester).color;
+      final fill = decorationAt(tester).color;
 
       expect(fill, colours.danger);
       for (final gameplay in <Color>[
@@ -182,7 +176,7 @@ void main() {
           PopGridTile(label: '25', state: state, semanticLabel: 'tile 25'),
         );
 
-        seen.add((decorationOf(tester).color!, state.elevation));
+        seen.add((decorationAt(tester).color!, state.elevation));
       }
 
       expect(
@@ -201,7 +195,7 @@ void main() {
         ),
       );
 
-      expect(decorationOf(tester).boxShadow, anyOf(isNull, isEmpty));
+      expect(decorationAt(tester).boxShadow, anyOf(isNull, isEmpty));
       expect(find.byType(Opacity), findsNothing);
     });
 
@@ -263,7 +257,7 @@ void main() {
 
         expect(find.text(value ? 'ON' : 'OFF'), findsOneWidget);
         expect(
-          decorationOf(tester).color,
+          decorationAt(tester).color,
           value ? colours.success : colours.surfaceSunk,
         );
       }
@@ -355,7 +349,7 @@ void main() {
         ),
       );
 
-      expect(decorationOf(tester).color, colours.gameStroop);
+      expect(decorationAt(tester).color, colours.gameStroop);
     });
 
     testWidgets('title and subtitle are both textPrimary', (tester) async {
@@ -395,8 +389,8 @@ void main() {
         ),
       );
 
-      expect(decorationOf(tester).boxShadow, anyOf(isNull, isEmpty));
-      expect(decorationOf(tester).border, isNull, reason: 'the edge is dashed');
+      expect(decorationAt(tester).boxShadow, anyOf(isNull, isEmpty));
+      expect(decorationAt(tester).border, isNull, reason: 'the edge is dashed');
 
       await tester.tap(find.byType(GameCard), warnIfMissed: false);
       await tester.pump();
@@ -446,7 +440,7 @@ void main() {
         ),
       );
 
-      final border = decorationOf(tester).border!;
+      final border = decorationAt(tester).border!;
 
       expect(border.top.width, shape.borderWidth);
       expect(border.bottom, BorderSide.none);

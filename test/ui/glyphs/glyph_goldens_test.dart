@@ -54,10 +54,7 @@ void main() {
     return greyscale ? Greyscale(child: grid) : grid;
   }
 
-  for (final localeCase in <LocaleCase>[
-    LocaleCase.all.first,
-    LocaleCase.rightToLeft.first,
-  ]) {
+  for (final localeCase in LocaleCase.bothDirections) {
     testWidgets('the glyph sheet in ${localeCase.tag}', (tester) async {
       await tester.pumpPopComponent(
         RepaintBoundary(child: sheet(greyscale: false)),

@@ -17,15 +17,11 @@ import '../../support/sample_strings.dart';
 
 void main() {
   const colours = SunburstColors.sunburstPop;
-  final en = LocaleCase.all.first;
-  final de = LocaleCase.all[1];
-  final fa = LocaleCase.rightToLeft.first;
+  const en = LocaleCase.english;
+  const de = LocaleCase.german;
+  const fa = LocaleCase.persian;
 
   setUpAll(loadAppFonts);
-
-  BoxDecoration decorationOf(WidgetTester tester) =>
-      tester.widget<DecoratedBox>(find.byType(DecoratedBox).first).decoration
-          as BoxDecoration;
 
   group('PopButton variants', () {
     testWidgets('each paints its own fill slot', (tester) async {
@@ -47,7 +43,7 @@ void main() {
           PopButton(label: 'Play', variant: entry.key, onPressed: () {}),
         );
 
-        expect(decorationOf(tester).color, entry.value, reason: '${entry.key}');
+        expect(decorationAt(tester).color, entry.value, reason: '${entry.key}');
       }
     });
 
@@ -60,7 +56,7 @@ void main() {
         ),
       );
 
-      final decoration = decorationOf(tester);
+      final decoration = decorationAt(tester);
 
       expect(decoration.border, isNull);
       expect(decoration.boxShadow, anyOf(isNull, isEmpty));
@@ -117,7 +113,7 @@ void main() {
         const PopButton(label: 'Play', onPressed: null),
       );
 
-      expect(decorationOf(tester).color, colours.surfaceSunk);
+      expect(decorationAt(tester).color, colours.surfaceSunk);
       expect(
         tester.widget<Text>(find.text('Play')).style!.color,
         colours.textDisabled,
@@ -240,15 +236,11 @@ void main() {
           localeCase: localeCase,
         );
 
-        final flipped = find
-            .descendant(
-              of: find.byType(SunburstGlyphIcon),
-              matching: find.byType(Transform),
-            )
-            .evaluate()
-            .isNotEmpty;
-
-        expect(flipped, localeCase == fa, reason: localeCase.tag);
+        expect(
+          isMirrored(tester, find.byType(SunburstGlyphIcon)),
+          localeCase == fa,
+          reason: localeCase.tag,
+        );
       }
     });
   });

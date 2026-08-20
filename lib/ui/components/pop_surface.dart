@@ -198,48 +198,77 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
     );
 
     final label = widget.semanticLabel;
+    final painted = _PaintedSurface(
+      t: 0,
+      geometry: geometry,
+      radius: radius,
+      edgeWidth: widget.nested ? shape.borderWidthNested : shape.borderWidth,
+      focused: false,
+      fill: _resolveFill(colours),
+      ink: _resolveInk(colours),
+      shape: shape,
+      borderStyle: widget.borderStyle,
+      padding: widget.padding,
+      elevation: widget.elevation,
+      focusRing: colours.focusRing,
+      gapColour: colours.surface,
+      child: _content(label),
+    );
+
+    // A SURFACE WITH NOTHING TO DO BUILDS NOTHING TO DO IT WITH. Every chip,
+    // badge, HUD pill and untapped card was paying for a FocusableActionDetector,
+    // a GestureDetector and a PressPhysics — whose initState allocates an
+    // AnimationController and a Ticker — to sit still.
+    if (!_isInteractive) {
+      return Semantics(
+        button: widget.onTap != null,
+        enabled: widget.onTap == null ? null : widget.enabled,
+        selected: widget.selected ? true : null,
+        label: label,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: widget.minTarget,
+            minHeight: widget.minTarget,
+          ),
+          child: painted,
+        ),
+      );
+    }
 
     return Semantics(
       // A surface with an onTap is a BUTTON whether or not it is currently
-      // enabled. Gating the role on _isInteractive stripped it from every
+      // enabled. Gating the role on interactivity stripped it from every
       // disabled control — and since the whole catalog disables by passing
-      // `onTap: null`, the previous `onTap == null ? null : enabled` ternary
-      // also dropped hasEnabledState, so a disabled button announced as plain
-      // static text with no hint that it was a control at all.
-      button: widget.onTap != null,
-      enabled: widget.onTap == null ? null : widget.enabled,
+      // `onTap: null`, that ternary also dropped hasEnabledState, so a disabled
+      // button announced as plain static text with no hint that it was a
+      // control at all.
+      button: true,
+      enabled: widget.enabled,
       selected: widget.selected ? true : null,
       label: label,
-      // ExcludeSemantics under the label: without it the child's own Text
-      // merges INTO this node and every component announced its label twice —
-      // "Play, Play, button". A surface that provides no label of its own
-      // leaves the child's semantics alone.
       child: FocusableActionDetector(
-        enabled: _isInteractive,
         // Without these the catalog is focusable and DEAD to a hardware
         // keyboard, to iOS Full Keyboard Access and to Switch Control:
         // FocusableActionDetector inserts no Actions when given an empty map,
         // and Flutter supplies no default ActivateAction.
-        actions: _isInteractive
-            ? <Type, Action<Intent>>{
-                ActivateIntent: CallbackAction<ActivateIntent>(
-                  onInvoke: (_) {
-                    _handleTap();
-                    return null;
-                  },
-                ),
-                ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
-                  onInvoke: (_) {
-                    _handleTap();
-                    return null;
-                  },
-                ),
-              }
-            : const <Type, Action<Intent>>{},
+        actions: <Type, Action<Intent>>{
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) {
+              _handleTap();
+              return null;
+            },
+          ),
+          ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+            onInvoke: (_) {
+              _handleTap();
+              return null;
+            },
+          ),
+        },
         onShowFocusHighlight: (value) => setState(() => _focused = value),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: _isInteractive ? _handleTap : null,
+          onTap: _handleTap,
           child: ConstrainedBox(
             // The floor is on the GESTURE, outside the transform. The painted
             // surface moves; this box does not, so a finger that pressed the
@@ -250,7 +279,6 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
             ),
             child: PressPhysics(
               geometry: geometry,
-              enabled: _isInteractive,
               builder: (context, t, child) => _PaintedSurface(
                 t: t,
                 geometry: geometry,
@@ -261,7 +289,6 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
                 focused: _focused,
                 fill: _resolveFill(colours),
                 ink: _resolveInk(colours),
-
                 shape: shape,
                 borderStyle: widget.borderStyle,
                 padding: widget.padding,
@@ -270,19 +297,23 @@ class _PopSurfaceState extends ConsumerState<PopSurface> {
                 gapColour: colours.surface,
                 child: child!,
               ),
-              child: Center(
-                widthFactor: 1,
-                heightFactor: 1,
-                child: label == null
-                    ? widget.child
-                    : ExcludeSemantics(child: widget.child),
-              ),
+              child: _content(label),
             ),
           ),
         ),
       ),
     );
   }
+
+  /// The child, with its own semantics suppressed when this surface labels it.
+  ///
+  /// Without the exclusion the child's `Text` merges INTO the surface's node
+  /// and every component announces its label twice — "Play, Play, button".
+  Widget _content(String? label) => Center(
+    widthFactor: 1,
+    heightFactor: 1,
+    child: label == null ? widget.child : ExcludeSemantics(child: widget.child),
+  );
 
   /// The disabled fill, resolved **inside the palette**.
   ///

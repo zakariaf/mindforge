@@ -24,8 +24,8 @@ import '../../support/locale_cases.dart';
 /// clock — is a different object rather than a translated one.
 void main() {
   const colours = SunburstColors.sunburstPop;
-  final en = LocaleCase.all.first;
-  final fa = LocaleCase.rightToLeft.first;
+  const en = LocaleCase.english;
+  const fa = LocaleCase.persian;
 
   setUpAll(loadAppFonts);
 
@@ -77,15 +77,11 @@ void main() {
           localeCase: localeCase,
         );
 
-        final flipped = find
-            .descendant(
-              of: find.byType(SunburstGlyphIcon),
-              matching: find.byType(Transform),
-            )
-            .evaluate()
-            .isNotEmpty;
-
-        expect(flipped, localeCase == fa, reason: localeCase.tag);
+        expect(
+          isMirrored(tester, find.byType(SunburstGlyphIcon)),
+          localeCase == fa,
+          reason: localeCase.tag,
+        );
       }
     });
 

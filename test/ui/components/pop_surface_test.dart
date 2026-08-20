@@ -13,8 +13,8 @@ import '../../support/locale_cases.dart';
 void main() {
   const shape = SunburstShape.sunburstPop;
   const colours = SunburstColors.sunburstPop;
-  final en = LocaleCase.all.first;
-  final fa = LocaleCase.rightToLeft.first;
+  const en = LocaleCase.english;
+  const fa = LocaleCase.persian;
 
   group('PopElevation, as arithmetic', () {
     test('restOffset resolves each step, and flat draws nothing', () {
@@ -85,10 +85,7 @@ void main() {
         localeCase: localeCase,
       );
 
-      return tester
-              .widget<DecoratedBox>(find.byType(DecoratedBox).first)
-              .decoration
-          as BoxDecoration;
+      return decorationAt(tester);
     }
 
     testWidgets('every shadow it paints has blur and spread 0', (tester) async {
@@ -229,11 +226,7 @@ void main() {
 
       // Without a frame budget the controller jumped straight to the end, so
       // the shadow is already at the pressed offset.
-      final decoration =
-          tester
-                  .widget<DecoratedBox>(find.byType(DecoratedBox).first)
-                  .decoration
-              as BoxDecoration;
+      final decoration = decorationAt(tester);
 
       expect(decoration.boxShadow, isNotNull);
       await gesture.up();
@@ -317,11 +310,7 @@ void main() {
         ),
       );
 
-      final decoration =
-          tester
-                  .widget<DecoratedBox>(find.byType(DecoratedBox).first)
-                  .decoration
-              as BoxDecoration;
+      final decoration = decorationAt(tester);
 
       expect(decoration.color, colours.surfaceSunk);
       expect(decoration.border!.top.color, colours.borderDisabled);
@@ -343,11 +332,7 @@ void main() {
         ),
       );
 
-      final decoration =
-          tester
-                  .widget<DecoratedBox>(find.byType(DecoratedBox).first)
-                  .decoration
-              as BoxDecoration;
+      final decoration = decorationAt(tester);
 
       expect(decoration.color, colours.playBlue);
     });
@@ -451,6 +436,52 @@ void main() {
         reason:
             'no button flag, no enabled state and no tap action: a surface '
             'with nothing to do is not a control',
+      );
+
+      handle.dispose();
+    });
+  });
+
+  group('a surface with nothing to do', () {
+    testWidgets('builds no press machinery at all', (tester) async {
+      // Every chip, badge, HUD pill and untapped card was paying for a
+      // FocusableActionDetector, a GestureDetector and a PressPhysics — whose
+      // initState allocates an AnimationController and a Ticker — in order to
+      // sit still.
+      await tester.pumpPopComponent(
+        PopSurface(
+          fill: colours.accent,
+          child: const SizedBox(width: 60, height: 40),
+        ),
+      );
+
+      expect(find.byType(PressPhysics), findsNothing);
+      expect(find.byType(FocusableActionDetector), findsNothing);
+      expect(find.byType(GestureDetector), findsNothing);
+    });
+
+    testWidgets('but still paints, sizes and labels itself', (tester) async {
+      final handle = tester.ensureSemantics();
+
+      await tester.pumpPopComponent(
+        PopSurface(
+          fill: colours.accent,
+          semanticLabel: 'Score',
+          child: const SizedBox(width: 12, height: 12),
+        ),
+      );
+
+      final decoration = decorationAt(tester);
+
+      expect(decoration.color, colours.accent);
+      expect(decoration.boxShadow, isNotNull);
+      expect(
+        tester.getSize(find.byType(PopSurface)).height,
+        greaterThanOrEqualTo(kPopMinTarget),
+      );
+      expect(
+        tester.getSemantics(find.byType(PopSurface)),
+        matchesSemantics(label: 'Score'),
       );
 
       handle.dispose();
