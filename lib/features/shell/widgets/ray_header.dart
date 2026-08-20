@@ -58,8 +58,8 @@ class RayHeader extends StatelessWidget {
                   child: CustomPaint(
                     painter: HalftonePainter(
                       HalftoneScene(
-                        ink: colours.border,
-                        ray: rayColour ?? colours.accentDeep,
+                        ink: colours.headerDots,
+                        ray: rayColour ?? colours.headerRay,
                       ),
                     ),
                   ),

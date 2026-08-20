@@ -30,6 +30,8 @@ const Map<String, _Accessor> _accessors = <String, _Accessor>{
   'dotPattern': _dotPattern,
   'accent': _accent,
   'accentDeep': _accentDeep,
+  'headerRay': _headerRay,
+  'headerDots': _headerDots,
   'accentAlt': _accentAlt,
   'success': _success,
   'successDeep': _successDeep,
@@ -66,6 +68,8 @@ Color _divider(SunburstColors c) => c.divider;
 Color _dotPattern(SunburstColors c) => c.dotPattern;
 Color _accent(SunburstColors c) => c.accent;
 Color _accentDeep(SunburstColors c) => c.accentDeep;
+Color _headerRay(SunburstColors c) => c.headerRay;
+Color _headerDots(SunburstColors c) => c.headerDots;
 Color _accentAlt(SunburstColors c) => c.accentAlt;
 Color _success(SunburstColors c) => c.success;
 Color _successDeep(SunburstColors c) => c.successDeep;
@@ -102,6 +106,8 @@ final Map<String, _Setter> _setters = <String, _Setter>{
   'dotPattern': (c, v) => c.copyWith(dotPattern: v),
   'accent': (c, v) => c.copyWith(accent: v),
   'accentDeep': (c, v) => c.copyWith(accentDeep: v),
+  'headerRay': (c, v) => c.copyWith(headerRay: v),
+  'headerDots': (c, v) => c.copyWith(headerDots: v),
   'accentAlt': (c, v) => c.copyWith(accentAlt: v),
   'success': (c, v) => c.copyWith(success: v),
   'successDeep': (c, v) => c.copyWith(successDeep: v),
@@ -142,7 +148,12 @@ void main() {
         final expected = hexes[primitive];
         expect(expected, isNotNull, reason: '_P.$primitive does not exist');
         expect(
-          _accessors[slot]!(palette).toARGB32().toRadixString(16).substring(2),
+          // The full ARGB, alpha included. The comparison used to drop the
+          // alpha byte, so a slot bound to a half-transparent primitive would
+          // have matched its opaque twin.
+          _accessors[slot]!(
+            palette,
+          ).toARGB32().toRadixString(16).padLeft(8, '0'),
           expected!.toLowerCase(),
           reason: '$slot should be _P.$primitive',
         );

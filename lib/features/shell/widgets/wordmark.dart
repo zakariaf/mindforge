@@ -36,11 +36,11 @@ class Wordmark extends StatelessWidget {
           children: <Widget>[
             // 26x26, r9, coral, with an 8x8 cream square centred.
             Container(
-              width: 26,
-              height: 26,
+              width: shape.wordmarkTile,
+              height: shape.wordmarkTile,
               decoration: BoxDecoration(
                 color: colours.gameStroop,
-                borderRadius: BorderRadius.circular(9),
+                borderRadius: BorderRadius.all(shape.wordmarkTileRadius),
                 border: Border.all(
                   color: colours.border,
                   width: shape.borderWidth,
@@ -48,11 +48,11 @@ class Wordmark extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Container(
-                width: 8,
-                height: 8,
+                width: shape.wordmarkDot,
+                height: shape.wordmarkDot,
                 decoration: BoxDecoration(
                   color: colours.surface,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.all(shape.wordmarkDotRadius),
                 ),
               ),
             ),

@@ -28,6 +28,18 @@ abstract final class _P {
   // --- hue families, each with its -deep partner ---
   static const sunshine = Color(0xFFFFC53D);
   static const sunshineDeep = Color(0xFFF2A81E);
+
+  /// [sunshineDeep] at 50%, the ray sweep behind a header.
+  ///
+  /// A primitive rather than an alpha applied at the painter, because every
+  /// slot binds to a named primitive and a composited colour is still a
+  /// colour. `app.html`: `.hdr .rays{...var(--sunshine-deep)...;opacity:.5}`.
+  static const sunshineDeepHalf = Color(0x80F2A81E);
+
+  /// [ink] at 16%, the dot lattice behind a header.
+  ///
+  /// `app.html`: `.hdr .dots{opacity:.16}` over `var(--ink)`.
+  static const inkHalftone = Color(0x292B1B4D);
   static const coral = Color(0xFFFF6B5A);
   static const coralDeep = Color(0xFFE8452F);
   static const turquoise = Color(0xFF22C7B8);

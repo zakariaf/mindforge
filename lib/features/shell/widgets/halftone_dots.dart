@@ -11,23 +11,19 @@ final class HalftoneScene {
   const HalftoneScene({
     required this.ink,
     required this.ray,
-    this.dotOpacity = 0.16,
-    this.rayOpacity = 0.5,
     this.pitch = 15,
     this.dotRadius = 1.6,
   });
 
-  /// The dot colour.
+  /// The dot colour, **alpha already applied**.
+  ///
+  /// `SunburstColors.headerDots` carries it. Applying an opacity here would be
+  /// the raw-value rule the token gates enforce, and a texture's strength is a
+  /// design decision rather than something a painter should be free to tune.
   final Color ink;
 
-  /// The ray colour.
+  /// The ray colour, alpha already applied. `SunburstColors.headerRay`.
   final Color ray;
-
-  /// How strongly the lattice shows. `app.html`: `.hdr .dots{opacity:.16}`.
-  final double dotOpacity;
-
-  /// How strongly the rays show. `app.html`: `.hdr .rays{opacity:.5}`.
-  final double rayOpacity;
 
   /// The lattice spacing. `app.html`: `background-size:15px 15px`.
   final double pitch;
@@ -41,14 +37,11 @@ final class HalftoneScene {
       other is HalftoneScene &&
           other.ink == ink &&
           other.ray == ray &&
-          other.dotOpacity == dotOpacity &&
-          other.rayOpacity == rayOpacity &&
           other.pitch == pitch &&
           other.dotRadius == dotRadius;
 
   @override
-  int get hashCode =>
-      Object.hash(ink, ray, dotOpacity, rayOpacity, pitch, dotRadius);
+  int get hashCode => Object.hash(ink, ray, pitch, dotRadius);
 }
 
 /// Paints the ray sweep and the dot lattice behind a header.
@@ -64,8 +57,8 @@ final class HalftoneScene {
 class HalftonePainter extends CustomPainter {
   /// Creates a painter for [scene].
   HalftonePainter(this.scene)
-    : _dot = Paint()..color = scene.ink.withValues(alpha: scene.dotOpacity),
-      _ray = Paint()..color = scene.ray.withValues(alpha: scene.rayOpacity);
+    : _dot = Paint()..color = scene.ink,
+      _ray = Paint()..color = scene.ray;
 
   /// What to paint.
   final HalftoneScene scene;

@@ -24,6 +24,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.pressScale,
     required this.pressScaleSmall,
     required this.badgeTiltDegrees,
+    required this.wordmarkTile,
+    required this.wordmarkTileRadius,
+    required this.wordmarkDot,
+    required this.wordmarkDotRadius,
     required this.shakeAmplitude,
     required this.celebrationScaleFrom,
     required this.celebrationScalePeak,
@@ -93,6 +97,18 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// shadow: mirroring it would tilt the Persian badge the other way for no
   /// reason a reader could name.
   final double badgeTiltDegrees;
+
+  /// The wordmark tile's side. `app.html`: `.wordmark i{width:26px;height:26px}`.
+  final double wordmarkTile;
+
+  /// Its corner. `app.html`: `border-radius:9px`.
+  final Radius wordmarkTileRadius;
+
+  /// The cream square inside it. `app.html`: `.wordmark i b{width:8px}`.
+  final double wordmarkDot;
+
+  /// That square's corner. `app.html`: `border-radius:2px`.
+  final Radius wordmarkDotRadius;
 
   /// How far the wrong-answer shake travels to each side.
   ///
@@ -272,6 +288,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale,
     pressScaleSmall,
     badgeTiltDegrees,
+    wordmarkTile,
+    wordmarkTileRadius,
+    wordmarkDot,
+    wordmarkDotRadius,
     shakeAmplitude,
     celebrationScaleFrom,
     celebrationScalePeak,
@@ -319,6 +339,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? pressScale,
     double? pressScaleSmall,
     double? badgeTiltDegrees,
+    double? wordmarkTile,
+    Radius? wordmarkTileRadius,
+    double? wordmarkDot,
+    Radius? wordmarkDotRadius,
     double? shakeAmplitude,
     double? celebrationScaleFrom,
     double? celebrationScalePeak,
@@ -346,6 +370,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale: pressScale ?? this.pressScale,
     pressScaleSmall: pressScaleSmall ?? this.pressScaleSmall,
     badgeTiltDegrees: badgeTiltDegrees ?? this.badgeTiltDegrees,
+    wordmarkTile: wordmarkTile ?? this.wordmarkTile,
+    wordmarkTileRadius: wordmarkTileRadius ?? this.wordmarkTileRadius,
+    wordmarkDot: wordmarkDot ?? this.wordmarkDot,
+    wordmarkDotRadius: wordmarkDotRadius ?? this.wordmarkDotRadius,
     shakeAmplitude: shakeAmplitude ?? this.shakeAmplitude,
     celebrationScaleFrom: celebrationScaleFrom ?? this.celebrationScaleFrom,
     celebrationScalePeak: celebrationScalePeak ?? this.celebrationScalePeak,
@@ -382,6 +410,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       pressScale: d(pressScale, other.pressScale),
       pressScaleSmall: d(pressScaleSmall, other.pressScaleSmall),
       badgeTiltDegrees: d(badgeTiltDegrees, other.badgeTiltDegrees),
+      wordmarkTile: d(wordmarkTile, other.wordmarkTile),
+      wordmarkTileRadius: r(wordmarkTileRadius, other.wordmarkTileRadius),
+      wordmarkDot: d(wordmarkDot, other.wordmarkDot),
+      wordmarkDotRadius: r(wordmarkDotRadius, other.wordmarkDotRadius),
       shakeAmplitude: d(shakeAmplitude, other.shakeAmplitude),
       celebrationScaleFrom: d(celebrationScaleFrom, other.celebrationScaleFrom),
       celebrationScalePeak: d(celebrationScalePeak, other.celebrationScalePeak),
@@ -413,6 +445,10 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     pressScale: 0.98,
     pressScaleSmall: 0.97,
     badgeTiltDegrees: -2.5,
+    wordmarkTile: 26,
+    wordmarkTileRadius: Radius.circular(9),
+    wordmarkDot: 8,
+    wordmarkDotRadius: Radius.circular(2),
     shakeAmplitude: 4,
     celebrationScaleFrom: 0.86,
     celebrationScalePeak: 1.06,

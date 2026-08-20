@@ -77,6 +77,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     required this.dotPattern,
     required this.accent,
     required this.accentDeep,
+    required this.headerRay,
+    required this.headerDots,
     required this.accentAlt,
     required this.success,
     required this.successDeep,
@@ -142,6 +144,21 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
 
   /// The darker half of [accent], for a pressed face or a stripe.
   final Color accentDeep;
+
+  /// The ray sweep behind a header, alpha already applied.
+  ///
+  /// `app.html`: `.hdr .rays{background:...var(--sunshine-deep)...;opacity:.5}`.
+  ///
+  /// Pre-composed HERE rather than by the painter, because applying an alpha at
+  /// a call site is the raw-value rule the token gates enforce — and because a
+  /// texture's strength is a design decision, not something a widget should be
+  /// free to tune.
+  final Color headerRay;
+
+  /// The dot lattice behind a header, alpha already applied.
+  ///
+  /// `app.html`: `.hdr .dots{opacity:.16}` over `var(--ink)`.
+  final Color headerDots;
 
   /// The secondary accent, for a surface that must not read as the primary
   /// action.
@@ -290,6 +307,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     dotPattern,
     accent,
     accentDeep,
+    headerRay,
+    headerDots,
     accentAlt,
     success,
     successDeep,
@@ -345,6 +364,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     Color? dotPattern,
     Color? accent,
     Color? accentDeep,
+    Color? headerRay,
+    Color? headerDots,
     Color? accentAlt,
     Color? success,
     Color? successDeep,
@@ -380,6 +401,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     dotPattern: dotPattern ?? this.dotPattern,
     accent: accent ?? this.accent,
     accentDeep: accentDeep ?? this.accentDeep,
+    headerRay: headerRay ?? this.headerRay,
+    headerDots: headerDots ?? this.headerDots,
     accentAlt: accentAlt ?? this.accentAlt,
     success: success ?? this.success,
     successDeep: successDeep ?? this.successDeep,
@@ -428,6 +451,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
       dotPattern: c(dotPattern, other.dotPattern),
       accent: c(accent, other.accent),
       accentDeep: c(accentDeep, other.accentDeep),
+      headerRay: c(headerRay, other.headerRay),
+      headerDots: c(headerDots, other.headerDots),
       accentAlt: c(accentAlt, other.accentAlt),
       success: c(success, other.success),
       successDeep: c(successDeep, other.successDeep),
@@ -479,6 +504,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     dotPattern: _P.dot,
     accent: _P.sunshine,
     accentDeep: _P.sunshineDeep,
+    headerRay: _P.sunshineDeepHalf,
+    headerDots: _P.inkHalftone,
     accentAlt: _P.grape,
     success: _P.leaf,
     successDeep: _P.leafDeep,
