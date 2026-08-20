@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
@@ -32,6 +34,8 @@ extension PopHarness on WidgetTester {
     TextScaler textScaler = TextScaler.noScaling,
     bool boldText = false,
     bool disableAnimations = false,
+    FakeHapticGateway? hapticGateway,
+    AppSettings settings = const AppSettings.defaults(),
   }) async {
     useDevice(this, device);
 
@@ -41,6 +45,8 @@ extension PopHarness on WidgetTester {
       textScaler: textScaler,
       boldText: boldText,
       disableAnimations: disableAnimations,
+      hapticGateway: hapticGateway,
+      settings: settings,
     );
   }
 }

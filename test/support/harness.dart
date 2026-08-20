@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/app_settings.dart';
+import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/l10n/ckb_localizations.dart';
 import 'package:mindforge/l10n/supported_locales.dart';
+import 'package:mindforge/shared/feedback/haptic_gateway.dart';
+import 'package:mindforge/shared/feedback/testing/fake_haptic_gateway.dart';
 import 'package:mindforge/theme/sunburst_theme.dart';
 
 import 'locale_cases.dart';
@@ -88,11 +92,31 @@ extension PumpApp on WidgetTester {
     bool disableAnimations = false,
     TextScaler textScaler = TextScaler.noScaling,
     bool boldText = false,
+    FakeHapticGateway? hapticGateway,
+    AppSettings settings = const AppSettings.defaults(),
   }) async {
     late TextDirection resolved;
 
     await pumpWidget(
       ProviderScope(
+        // The haptic gateway THROWS until it is overridden — deliberately, so a
+        // missing override in bootstrap() is loud. Every pumped tree therefore
+        // needs one, and a recording fake is the right default: it makes the
+        // feedback path observable in any test that wants it and silent in
+        // every test that does not.
+        overrides: [
+          hapticGatewayProvider.overrideWithValue(
+            hapticGateway ?? FakeHapticGateway(),
+          ),
+          // The settings a component tree reads its feedback gates from. Both
+          // the seed and the stream, because the gates read the seed on the
+          // first frame and the stream after — and a component test has no
+          // database to open behind them.
+          initialAppSettingsProvider.overrideWithValue(settings),
+          settingsProvider.overrideWith(
+            (ref) => Stream<AppSettings>.value(settings),
+          ),
+        ],
         // MediaQuery is layered ABOVE MaterialApp, and built with
         // MediaQueryData.fromView rather than a bare MediaQueryData():
         // constructing one from scratch drops padding, view insets and every
