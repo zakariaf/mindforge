@@ -1,0 +1,109 @@
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/l10n/locale_numbers.dart';
+import 'package:mindforge/ui/components/tabular_text.dart';
+
+import '../../support/component_harness.dart';
+import '../../support/locale_cases.dart';
+
+/// A number reads left to right in every language.
+///
+/// This file exists because the device said otherwise. `1,480` rendered as
+/// `۰۸۴٬۱` on the canonical simulator under Sorani — the digits reversed —
+/// while the same string in a plain `Text` was correct in E04's RTL golden.
+/// The golden lane could not see it: it renders `Text`, and this widget is a
+/// `Row` of one box per character.
+void main() {
+  /// The characters, in the physical order they are painted.
+  List<String> paintedOrder(WidgetTester tester) {
+    final row = tester.widget<Row>(
+      find.descendant(of: find.byType(TabularText), matching: find.byType(Row)),
+    );
+
+    // Children in list order are painted start-to-end for LTR and end-to-start
+    // for RTL, so the direction is the whole question.
+    final characters = tester
+        .widgetList<Text>(
+          find.descendant(
+            of: find.byType(TabularText),
+            matching: find.byType(Text),
+          ),
+        )
+        .map((t) => t.data ?? '')
+        .toList();
+
+    return row.textDirection == TextDirection.rtl
+        ? characters.reversed.toList()
+        : characters;
+  }
+
+  group('the digit run is laid out left to right', () {
+    for (final localeCase in LocaleCase.all) {
+      testWidgets('in ${localeCase.tag}', (tester) async {
+        // THE BUG: a Row inheriting the ambient RTL direction puts the leading
+        // digit on the RIGHT, so 1,480 paints as 0,841 reversed. Splitting a
+        // number into one widget per character destroys the bidi rule that a
+        // numeric run is displayed LTR inside an RTL paragraph, because each
+        // character is now its own paragraph and the Row does the ordering.
+        final value = LocaleNumbers(localeCase.locale).count(1480);
+
+        await tester.pumpPopComponent(
+          TabularText(value, style: const TextStyle(fontSize: 20)),
+          localeCase: localeCase,
+        );
+
+        expect(
+          paintedOrder(tester).join(),
+          value,
+          reason:
+              '${localeCase.tag}: painted order must equal logical order. A '
+              'number is not re-ordered by reading direction',
+        );
+      });
+    }
+
+    testWidgets('and the leading digit is physically leftmost under fa', (
+      tester,
+    ) async {
+      // The same claim measured in pixels rather than in child order, because
+      // the child-order version would pass if someone reversed the list AND
+      // the direction.
+      final value = LocaleNumbers(LocaleCase.persian.locale).count(1480);
+
+      await tester.pumpPopComponent(
+        TabularText(value, style: const TextStyle(fontSize: 20)),
+        localeCase: LocaleCase.persian,
+      );
+
+      final glyphs = find.descendant(
+        of: find.byType(TabularText),
+        matching: find.byType(Text),
+      );
+
+      final first = tester.getTopLeft(glyphs.first).dx;
+      final last = tester.getTopLeft(glyphs.last).dx;
+
+      expect(
+        first,
+        lessThan(last),
+        reason: 'the leading digit paints to the left of the trailing one',
+      );
+    });
+  });
+
+  group('what it still owes the reader', () {
+    testWidgets('the whole value is one semantic node', (tester) async {
+      // A fixed layout is worth nothing if it costs the announcement: without
+      // this a screen reader walks the per-character boxes and reads
+      // "one, comma, four, eight, zero".
+      await tester.pumpPopComponent(
+        const TabularText('1,480', style: TextStyle(fontSize: 20)),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(TabularText)).label,
+        '1,480',
+      );
+    });
+  });
+}
