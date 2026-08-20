@@ -395,4 +395,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get schulteTilesLabel => 'TILES';
+
+  @override
+  String get gameSchulteGridKicker => 'FOCUS · SPEED';
 }

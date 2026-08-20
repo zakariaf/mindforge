@@ -11,6 +11,7 @@ import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
 import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/arb_lookup.dart';
 import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
@@ -181,16 +182,11 @@ class _StatCell extends ConsumerWidget {
 
     return ResultStatCell(
       tone: tone,
-      label: switch (stat.labelKey) {
-        'accuracyLabel' => l10n.accuracyLabel,
-        'longestStreakLabel' => l10n.longestStreakLabel,
-        'schulteMissesLabel' => l10n.schulteMissesLabel,
-        'schulteTilesLabel' => l10n.schulteTilesLabel,
-        'avgReactionLabel' => l10n.avgReactionLabel,
-        _ => throw StateError(
-          'no results label is registered for "${stat.labelKey}"',
-        ),
-      },
+      // Through the app's ONE key table. This was the third copy of the same
+      // switch — the HUD had one, game_strings.dart had one keyed by game id —
+      // so adding a game meant editing three files, and missing one was a
+      // StateError on a screen the player had just earned.
+      label: arbString(l10n, stat.labelKey),
       value: switch (stat.format) {
         StatFormat.percent => numbers.percent(stat.canonicalValue / 1000),
         // MILLISECONDS UNDER A SECOND, seconds above it. A reaction time is

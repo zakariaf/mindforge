@@ -724,6 +724,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TILES'**
   String get schulteTilesLabel;
+
+  /// The tags line above the title on Schulte Grid detail hero. Drawn in caps, like every .hero .kicker.
+  ///
+  /// In en, this message translates to:
+  /// **'FOCUS · SPEED'**
+  String get gameSchulteGridKicker;
 }
 
 class _AppLocalizationsDelegate

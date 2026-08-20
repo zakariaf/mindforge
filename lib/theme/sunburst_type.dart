@@ -65,6 +65,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.lockedTitle,
     required this.stimulusCompact,
     required this.buttonCompact,
+    required this.miniTile,
   });
 
   /// The Latin display face.
@@ -312,6 +313,15 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// 56pt pattern panel.
   final TextStyle buttonCompact;
 
+  /// A digit inside a Home-card mini grid.
+  ///
+  /// `app.html`: `.gart .mini i{font-size:10px;font-weight:600}` on the display
+  /// face. The tile PAINTS its digits at a size derived from the cell, so this
+  /// step supplies the family and the weight and the painter supplies the
+  /// size — an Eastern Arabic numeral is taller than a Latin one at the same
+  /// step, and an 18pt cell has no room to argue about it.
+  final TextStyle miniTile;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -394,6 +404,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       lockedTitle: arabic(lockedTitle, isDisplay: true),
       stimulusCompact: arabic(stimulusCompact, isDisplay: true),
       buttonCompact: arabic(buttonCompact, isDisplay: true),
+      miniTile: arabic(miniTile, isDisplay: true),
     );
   }
 
@@ -429,6 +440,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     lockedTitle,
     stimulusCompact,
     buttonCompact,
+    miniTile,
   ];
 
   @override
@@ -481,6 +493,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? lockedTitle,
     TextStyle? stimulusCompact,
     TextStyle? buttonCompact,
+    TextStyle? miniTile,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -513,6 +526,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     lockedTitle: lockedTitle ?? this.lockedTitle,
     stimulusCompact: stimulusCompact ?? this.stimulusCompact,
     buttonCompact: buttonCompact ?? this.buttonCompact,
+    miniTile: miniTile ?? this.miniTile,
   );
 
   @override
@@ -552,6 +566,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       lockedTitle: s(lockedTitle, other.lockedTitle),
       stimulusCompact: s(stimulusCompact, other.stimulusCompact),
       buttonCompact: s(buttonCompact, other.buttonCompact),
+      miniTile: s(miniTile, other.miniTile),
     );
   }
 
@@ -832,6 +847,14 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontWeight: FontWeight.w600,
       fontSize: 15,
       height: 1.22,
+    ),
+    // .gart .mini i — 10/600 on the display face.
+    miniTile: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 10,
+      height: 1,
     ),
     // .locked .ct — 19/600, -.01em.
     lockedTitle: TextStyle(

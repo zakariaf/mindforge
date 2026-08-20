@@ -199,6 +199,7 @@ void main() {
       'gamesPlayed',
       'difficultyTitle',
       'gameStroopRushKicker', // .hero .kicker
+      'gameSchulteGridKicker',
       'stroopPrompt', // .stim .ask
       'finalScore', // .scoreslab s
       'accuracyLabel', // .tri s

@@ -513,5 +513,9 @@
   "schulteTilesLabel": "TILES",
   "@schulteTilesLabel": {
     "description": "Results stat: the board that was cleared, as a fraction. Drawn in caps."
+  },
+  "gameSchulteGridKicker": "FOCUS · SPEED",
+  "@gameSchulteGridKicker": {
+    "description": "The tags line above the title on Schulte Grid detail hero. Drawn in caps, like every .hero .kicker."
   }
 }

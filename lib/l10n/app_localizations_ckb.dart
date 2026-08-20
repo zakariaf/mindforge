@@ -390,4 +390,7 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get schulteTilesLabel => 'خانەکان';
+
+  @override
+  String get gameSchulteGridKicker => 'خولیاکردن · خێرایی';
 }

@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
-import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/arb_lookup.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 
 /// One game's three resolved strings.
@@ -41,21 +40,13 @@ final Provider<GameStrings Function(GameDefinition)> gameStringsProvider =
     Provider<GameStrings Function(GameDefinition)>((ref) {
       final l10n = ref.watch(appLocalizationsProvider);
 
-      return (definition) => _resolve(l10n, definition.id);
+      // BY THE KEYS THE DEFINITION DECLARES, not by the game's id. Switching
+      // on the id made this file know every game by name — a `switch (gameId)`
+      // in all but location, and the one the engine claim forbids. The keys
+      // are already on the definition; resolving them is all this needs to do.
+      return (definition) => GameStrings(
+        title: arbString(l10n, definition.strings.titleKey),
+        tagline: arbString(l10n, definition.strings.taglineKey),
+        kicker: arbString(l10n, definition.strings.kickerKey),
+      );
     });
-
-GameStrings _resolve(AppLocalizations l10n, GameId id) => switch (id.value) {
-  'stroop_rush' => GameStrings(
-    title: l10n.gameStroopRushName,
-    tagline: l10n.gameStroopRushTagline,
-    kicker: l10n.gameStroopRushKicker,
-  ),
-  // Not a silent fallback: a game in the registry with no row here is a
-  // shipping defect that would otherwise render as a blank card, and the
-  // registry-localization test is what catches it before a player does.
-  _ => throw StateError(
-    'no strings are registered for "$id". Add a row to game_strings.dart '
-    'when adding a game to the registry — gen-l10n cannot look a key up at '
-    'runtime, so the two files are extended together.',
-  ),
-};

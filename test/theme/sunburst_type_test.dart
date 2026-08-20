@@ -54,6 +54,7 @@ const kTypeSteps = <String>[
   // word it cannot draw at the full step draws it at the compact one.
   'stimulusCompact', // DERIVED 62 against stimulus's 78
   'buttonCompact', // DERIVED 15 against button's 18
+  'miniTile', // .gart .mini i — 10/600 on the display face
 ];
 
 /// Reads every step off a scale, so a test can assert over all of them.

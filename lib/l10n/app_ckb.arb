@@ -197,5 +197,9 @@
   "schulteTilesLabel": "خانەکان",
   "@schulteTilesLabel": {
     "x-review": "native-speaker-pending"
+  },
+  "gameSchulteGridKicker": "خولیاکردن · خێرایی",
+  "@gameSchulteGridKicker": {
+    "x-review": "native-speaker-pending"
   }
 }

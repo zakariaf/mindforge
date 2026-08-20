@@ -390,4 +390,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get schulteTilesLabel => 'خانه‌ها';
+
+  @override
+  String get gameSchulteGridKicker => 'تمرکز · سرعت';
 }

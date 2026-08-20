@@ -152,5 +152,9 @@
   "schulteTilesLabel": "FELDER",
   "@schulteTilesLabel": {
     "x-review": "native-speaker-pending"
+  },
+  "gameSchulteGridKicker": "FOKUS · TEMPO",
+  "@gameSchulteGridKicker": {
+    "x-review": "native-speaker-pending"
   }
 }

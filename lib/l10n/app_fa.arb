@@ -197,5 +197,9 @@
   "schulteTilesLabel": "خانه‌ها",
   "@schulteTilesLabel": {
     "x-review": "native-speaker-pending"
+  },
+  "gameSchulteGridKicker": "تمرکز · سرعت",
+  "@gameSchulteGridKicker": {
+    "x-review": "native-speaker-pending"
   }
 }
