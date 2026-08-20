@@ -133,6 +133,4 @@ void main() {
       expect(fillRect(tester).width, closeTo(still, 0.01));
     });
   });
-
-  group('what it never does', () {});
 }

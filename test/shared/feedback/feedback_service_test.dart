@@ -141,6 +141,4 @@ void main() {
       expect(gateway.played, <HapticVerb>[HapticVerb.lightImpact]);
     });
   });
-
-  group('the service is locale-blind', () {});
 }

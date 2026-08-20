@@ -42,12 +42,24 @@ final class LiveHapticGateway implements HapticGateway {
 
 /// The app's haptic gateway.
 ///
-/// Throws until overridden, rather than defaulting to the live one: a provider
-/// that silently works in a test is a provider that buzzes a developer's phone
-/// during a suite run, and one that silently does nothing hides a missing
-/// override in `bootstrap()`.
+/// **Defaults to the live one**, which is what every entry point wants. It used
+/// to throw until overridden, on the theory that a silent default would hide a
+/// missing override — and the theory was wrong twice.
+///
+/// It was wrong about tests: `HapticFeedback` goes through a platform channel
+/// with no handler registered under `flutter_test`, so [LiveHapticGateway]
+/// neither buzzes nor throws there. Nothing was being protected.
+///
+/// And it was wrong about the cost. `PopSurface` reads the feedback service
+/// inside its tap handler, so a scope missing the override did not get a silent
+/// app — it got an app whose every button, tile and toggle was INERT, because
+/// the exception came out of the gesture callback. That is a far worse failure
+/// than the one the throw was guarding against, and it shipped in the developer
+/// gallery.
+///
+/// A test that wants to observe haptics overrides this with `FakeHapticGateway`
+/// — which every pumped tree does through the harness — and one that does not
+/// care is now correct by default instead of broken by default.
 final Provider<HapticGateway> hapticGatewayProvider = Provider<HapticGateway>(
-  (ref) => throw UnimplementedError(
-    'override hapticGatewayProvider in bootstrap() or in a test',
-  ),
+  (ref) => const LiveHapticGateway(),
 );

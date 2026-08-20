@@ -114,6 +114,53 @@ void main() {
     });
   });
 
+  group('a second wrong answer mid-sweep', () {
+    testWidgets('restarts the shake rather than doubling it', (tester) async {
+      // THE BUG: two overlapping play() loops on one shared controller. The
+      // second forward(from: 0) CANCELS the first loop's ticker, and a
+      // cancelled TickerFuture completes its primary future normally — so loop
+      // A wakes up, sees it is still mounted, and starts its own pass, which
+      // cancels loop B. They ping-pong, the sweep visibly restarts mid-stroke,
+      // and it runs for up to twice the passes the catalog declares.
+      //
+      // A player answering wrong twice inside 480ms is not a corner case in a
+      // sixty-second Stroop run.
+      final cycles = specFor(Moment.answerWrong).cycles;
+
+      await tester.pumpPopComponent(shake(isWrong: false));
+      await tester.pumpPopComponent(shake(isWrong: true));
+      await tester.pump(motion.durCelebrate ~/ 2);
+
+      // The second wrong answer, mid-sweep.
+      await tester.pumpPopComponent(shake(isWrong: false));
+      await tester.pumpPopComponent(shake(isWrong: true));
+
+      // One pass short of the declared count, measured from the SECOND edge.
+      for (var pass = 0; pass < cycles - 1; pass++) {
+        await tester.pump(motion.durCelebrate);
+        await tester.pump(const Duration(milliseconds: 1));
+      }
+      await tester.pump(motion.durCelebrate ~/ 4);
+
+      expect(
+        dxOf(tester),
+        isNot(0),
+        reason: 'the restarted sweep is still running at $cycles passes',
+      );
+
+      await tester.pump(motion.durCelebrate);
+      await tester.pump(motion.durCelebrate);
+
+      expect(
+        dxOf(tester),
+        0,
+        reason:
+            'and it stops there. A superseded loop still counting its own '
+            'passes would keep going',
+      );
+    });
+  });
+
   group('what stops it', () {
     testWidgets('reduce motion skips the shake entirely', (tester) async {
       // The caller's residue carries it: the depth drop and the ink strike bar

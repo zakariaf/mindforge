@@ -132,12 +132,19 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// The stripe angle, in degrees.
   final double stripeAngle;
 
-  /// The half-step below [e1], for chips and badges.
+  /// The half-step below [e1].
   ///
-  /// DERIVED: `system.html` has no `--sh-chip` custom property. The chips in
-  /// §04 and the badges in §09 are drawn with a 2px hard offset, which is half
-  /// of `--sh-1`'s 3px — small enough that the surface reads as lifted off the
-  /// page rather than standing on it.
+  /// DERIVED only in the sense that `system.html` has no `--sh-chip` custom
+  /// property; the VALUE is transcribed, from
+  /// `.seg-i.on{box-shadow:2px 2px 0 var(--ink)}` in section 07. That selected
+  /// segment is the one surface in the stylesheet drawn at 2px, and it pairs
+  /// the offset with a `translate(-1px,-1px)` lift — the `difficultySelect`
+  /// moment.
+  ///
+  /// The doc here used to say the badges in section 09 were drawn at 2px. They
+  /// are not: `.badge` carries `--sh-1` and `.badge.new` carries `--sh-2`. The
+  /// badges were built against that sentence, so all three variants shipped a
+  /// step too low, and the segment that does want 2px was built at 3px.
   final Offset eChip;
 
   /// The ink edge on a surface drawn **inside** another surface.

@@ -73,12 +73,23 @@ class _PopCelebrationState extends ConsumerState<PopCelebration>
     ],
   ).animate(controller);
 
-  /// Whether this celebration has already happened.
+  /// Whether the MOMENT has been acknowledged.
   ///
-  /// Set **before** every early return. A celebration that declined to animate
-  /// still happened, and setting the latch afterwards would replay it the next
-  /// time the theme, the locale or a parent's state moved.
-  bool _hasPlayed = false;
+  /// Set before every early return. A celebration that declined to animate
+  /// still happened, and setting this afterwards would fire a heavy impact
+  /// again the next time the theme, the locale or a parent's state moved.
+  bool _hasFired = false;
+
+  /// Whether the ANIMATION has run.
+  ///
+  /// A second latch, because the two questions have different answers. One
+  /// latch set above the off-route return meant a badge inserted while a sheet
+  /// was on top never popped — not then, and not after the sheet closed, since
+  /// the latch had already swallowed the retry. `ModalRoute.of` registers a
+  /// dependency on the route's modal scope, so `didChangeDependencies` fires
+  /// again when the route becomes current; that second chance is the whole
+  /// point of not animating the first time.
+  bool _hasAnimated = false;
 
   @override
   void initState() {
@@ -96,18 +107,23 @@ class _PopCelebrationState extends ConsumerState<PopCelebration>
   }
 
   void _playOnce() {
-    if (_hasPlayed) return;
-    _hasPlayed = true;
-
     // FIRST, ABOVE EVERY STOP CONDITION. Reduce motion changes what the moment
     // looks like and an off-route mount changes whether it is worth drawing;
     // neither changes whether it HAPPENED. An early return placed above this
     // line is the bug the ordering exists to prevent.
-    ref.read(feedbackServiceProvider).fire(widget.moment);
+    if (!_hasFired) {
+      _hasFired = true;
+      ref.read(feedbackServiceProvider).fire(widget.moment);
+    }
 
-    // Nobody is looking at a screen under a sheet or behind a pushed route.
+    if (_hasAnimated) return;
+
+    // Nobody is looking at a screen under a sheet or behind a pushed route, so
+    // do not spend frames on it — and do not latch either, because this method
+    // runs again when the route becomes current.
     if (ModalRoute.of(context)?.isCurrent == false) return;
 
+    _hasAnimated = true;
     playUnawaited();
   }
 

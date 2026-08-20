@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/shared/feedback/haptic_verb.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
@@ -7,6 +8,7 @@ import 'package:mindforge/shared/motion/press_physics.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/theme/sunburst_theme.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 
 import '../../support/component_harness.dart';
@@ -187,6 +189,51 @@ void main() {
       await tester.pump();
 
       expect(gateway.played, <HapticVerb>[HapticVerb.selectionClick]);
+    });
+  });
+
+  group('a misconfigured scope', () {
+    testWidgets('still runs the tap, because feedback is not the point', (
+      tester,
+    ) async {
+      // A ProviderScope with NO overrides at all — a flavour main, an
+      // integration harness, a preview entry point. initialAppSettingsProvider
+      // throws until bootstrap() supplies the persisted row, and the feedback
+      // gates read it.
+      //
+      // THE FAILURE THIS PREVENTS: firing the moment BEFORE the callback made
+      // that throw come out of the tap handler, so every button, tile and
+      // toggle in the app was inert rather than merely silent. A missing
+      // override should cost the buzz, never the button.
+      var taps = 0;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: buildSunburstTheme(),
+            home: Scaffold(
+              body: PopSurface(
+                fill: colours.accent,
+                onTap: () => taps++,
+                child: const SizedBox(width: 100, height: 60),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(PopSurface));
+      await tester.pump();
+
+      expect(taps, 1, reason: 'the button worked');
+      expect(
+        tester.takeException(),
+        isNotNull,
+        reason:
+            'and the misconfiguration is still LOUD. The fix is the ordering, '
+            'not swallowing the error: a missing override must be impossible '
+            'to miss and must not cost the tap',
+      );
     });
   });
 

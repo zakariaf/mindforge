@@ -35,25 +35,22 @@ void main() {
   });
 
   group('the provider', () {
-    test('throws until it is overridden', () {
-      // Not a silent default. A provider that quietly returns the live gateway
-      // buzzes a developer's phone during a test run; one that quietly returns
-      // a no-op hides a missing override in bootstrap().
+    test('defaults to the live gateway rather than throwing', () {
+      // IT USED TO THROW, on the theory that a silent default would hide a
+      // missing override in bootstrap(). The theory was wrong twice.
+      //
+      // Wrong about tests: HapticFeedback goes through a platform channel with
+      // no handler under flutter_test, so the live gateway neither buzzes nor
+      // throws there. Nothing was being protected.
+      //
+      // Wrong about the cost: PopSurface reads the feedback service inside its
+      // tap handler, so a scope missing the override did not get a silent app,
+      // it got one whose every button was INERT. That shipped in the developer
+      // gallery and was found on a device, not by a gate.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      // Riverpod 3 wraps a provider's own throw in a ProviderException, so
-      // the assertion is on what it carries rather than on the wrapper.
-      expect(
-        () => container.read(hapticGatewayProvider),
-        throwsA(
-          isA<Object>().having(
-            (error) => error.toString(),
-            'message',
-            contains('override hapticGatewayProvider'),
-          ),
-        ),
-      );
+      expect(container.read(hapticGatewayProvider), isA<LiveHapticGateway>());
     });
 
     test('and serves the override when there is one', () {

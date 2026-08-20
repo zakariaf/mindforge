@@ -124,33 +124,42 @@ void main() {
     });
   });
 
-  group('off-route', () {
-    testWidgets('it schedules no frames but still fires its moment', (
+  group('and when the route becomes current again', () {
+    testWidgets('the celebration it declined to draw finally plays', (
       tester,
     ) async {
-      // A results screen sitting under a pause sheet is not the screen the
-      // player is looking at. Animating there burns frames nobody sees — but
-      // the moment still HAPPENED, so the acknowledgement still fires.
+      // THE BUG: one latch covering two different questions. _hasPlayed was set
+      // above the off-route return, so a badge INSERTED WHILE A SHEET WAS ON
+      // TOP never popped — not then, and not after the sheet closed, because
+      // the latch had already swallowed the retry.
+      //
+      // Setting this up needs the celebration to MOUNT while its route is not
+      // current, which is the part the first version of this test got wrong: it
+      // mounted the badge on a current route and pushed over it half a second
+      // later, by which time the pop had long finished. A results screen that
+      // inserts the badge under an open pause sheet is the real shape.
+      final showBadge = ValueNotifier<bool>(false);
+      addTearDown(showBadge.dispose);
       final gateway = FakeHapticGateway();
 
       await tester.pumpPopComponent(
         Navigator(
           onGenerateRoute: (settings) => MaterialPageRoute<void>(
-            builder: (context) => celebration(),
+            builder: (context) => ValueListenableBuilder<bool>(
+              valueListenable: showBadge,
+              builder: (context, show, _) =>
+                  show ? celebration() : const SizedBox.shrink(),
+            ),
           ),
         ),
         hapticGateway: gateway,
       );
-      // Timed pumps, never pumpAndSettle: it runs to the ten-minute timeout on
-      // anything indefinite, and half a second is well past both the route
-      // transition and the celebration.
       await tester.pump(const Duration(milliseconds: 500));
 
-      // .last: MaterialApp brings its own Navigator, so the one pumped here is
-      // the inner of two.
       final navigator = tester.state<NavigatorState>(
         find.byType(Navigator).last,
       );
+
       unawaited(
         navigator.push(
           MaterialPageRoute<void>(
@@ -160,6 +169,54 @@ void main() {
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
+
+      // The badge arrives with the sheet already on top.
+      showBadge.value = true;
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(
+        gateway.played,
+        <HapticVerb>[HapticVerb.heavyImpact],
+        reason: 'the moment happened whether or not anyone was looking',
+      );
+
+      navigator.pop();
+      await tester.pump();
+
+      // Sampled across the window rather than probed at one instant: the route
+      // does not become current until its pop TRANSITION finishes, so the
+      // celebration starts somewhere inside these frames and is over by the end
+      // of them. A single reading lands on 1.0 either way.
+      final scales = await sampleFrames(
+        tester,
+        scaleOf,
+        frames: 40,
+        step: const Duration(milliseconds: 20),
+      );
+
+      expect(
+        scales.where((scale) => scale != 1.0),
+        isNotEmpty,
+        reason:
+            'the pop runs once the badge is visible again, rather than having '
+            'been swallowed by the same latch that guards the haptic',
+      );
+    });
+
+    testWidgets('and the moment still fires exactly once', (tester) async {
+      // The half of the latch that must NOT relax: a heavy impact per route
+      // change would be worse than no celebration at all.
+      final gateway = FakeHapticGateway();
+
+      await tester.pumpPopComponent(celebration(), hapticGateway: gateway);
+      await tester.pump(motion.durCelebrate);
+      await tester.pumpPopComponent(
+        celebration(),
+        hapticGateway: gateway,
+        localeCase: LocaleCase.persian,
+      );
+      await tester.pump(motion.durCelebrate);
 
       expect(gateway.played, <HapticVerb>[HapticVerb.heavyImpact]);
     });

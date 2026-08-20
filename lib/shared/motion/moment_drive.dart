@@ -67,6 +67,18 @@ mixin MomentDrive<W extends StatefulWidget> on State<W>
     super.dispose();
   }
 
+  /// Which run is current.
+  ///
+  /// Two overlapping calls share one controller, and `forward(from: 0)` cancels
+  /// whatever was running — but a cancelled `TickerFuture` completes its
+  /// primary future NORMALLY, so the older loop wakes up and starts a pass of
+  /// its own. Measured, the two happen to net out to a correct restart at
+  /// today's cycle counts, which is a property of the arithmetic rather than of
+  /// the code. The counter makes it structural: a superseded run stops at its
+  /// next pass boundary, so the number of passes after the last trigger is the
+  /// number the catalog declares and nothing else.
+  int _generation = 0;
+
   /// Plays the moment's declared number of passes, or nothing.
   ///
   /// Returns `false` when reduce motion collapsed the duration to zero, so a
@@ -79,12 +91,16 @@ mixin MomentDrive<W extends StatefulWidget> on State<W>
 
     if (duration == Duration.zero) return false;
 
+    final generation = ++_generation;
     controller.duration = duration;
 
     for (var pass = 0; pass < spec.cycles; pass++) {
-      // The guard, not a courtesy: a run can end and take the board down
-      // between two passes, and resuming on a disposed controller throws.
-      if (!mounted) return true;
+      // Two guards, neither a courtesy. A run can end and take the board down
+      // between two passes, and resuming on a disposed controller throws. And a
+      // newer trigger supersedes this one, which is what keeps the pass count
+      // tied to the catalog row rather than to how many times the player was
+      // wrong in the last half second.
+      if (!mounted || generation != _generation) return true;
       await controller.forward(from: 0);
     }
 

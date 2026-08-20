@@ -19,8 +19,17 @@ import 'package:mindforge/theme/sunburst_motion.dart';
 /// mechanism, and it is why hand-inverting a sign — the thing
 /// `i18n-rtl-l10n` names outright — is never needed.
 ///
-/// Duration and curve are read off `kMomentCatalog`, so a slide cannot pick a
-/// timing the catalog did not declare for its moment.
+/// The curve is read off `kMomentCatalog` and applied here. **The duration is
+/// not, and cannot be:** this widget is handed an `Animation<double>` it does
+/// not own, so whatever drives `t` decides how long the slide takes. That is
+/// the right shape — a route transition's timing belongs to the route — but it
+/// means [durationIn] is a value the caller must ASK FOR and pass to its own
+/// controller, not a guarantee this widget enforces. A route wired at 400ms
+/// would satisfy every assert in this file while contradicting its row.
+///
+/// This doc used to claim the widget made that impossible. It does not; E08's
+/// route builder is where the two are actually joined, and
+/// `motion_policy_test.dart` is where the joining is checked.
 ///
 /// **MindForge has no horizontal swipe affordance today.** Nothing in
 /// `app.html` drags sideways and the pause sheet rises from the bottom. If one
@@ -63,7 +72,11 @@ class DirectionalSlide extends StatelessWidget {
   /// What slides.
   final Widget child;
 
-  /// The duration this slide runs at, already resolved for reduce motion.
+  /// The duration this slide **should** run at, already resolved for reduce
+  /// motion.
+  ///
+  /// Advisory, not enforced: see the class doc. The caller drives `t` and must
+  /// build its controller with this.
   ///
   /// `resolvedDurationFor` rather than the composition written out: it is the
   /// one helper whose job is to never forget the reduce-motion fold, and it had
