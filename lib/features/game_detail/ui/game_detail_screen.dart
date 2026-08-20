@@ -62,7 +62,16 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
     // without Blitz, and a screen that offered all three would start a run the
     // definition refuses.
     final offered = definition.difficulties;
-    final chosen = _chosen ?? offered.first;
+    // CLASSIC IS THE DEFAULT WHERE IT IS OFFERED, not the first entry.
+    // `app.html` shows Classic selected, and it is the right default for a
+    // reason a list index cannot express: Chill is for someone who wants no
+    // pressure and Blitz is for someone chasing a number, while Classic is
+    // what the game IS. A game that does not offer it falls back to its first.
+    final chosen =
+        _chosen ??
+        (offered.contains(Difficulty.classic)
+            ? Difficulty.classic
+            : offered.first);
 
     return SafeArea(
       child: Column(

@@ -308,16 +308,30 @@ class SunburstGlyphPainter extends CustomPainter {
     return _polygon(points);
   }
 
+  /// The streak flame.
+  ///
+  /// **Transcribed from `app.html`'s own path, not drawn from the name.** The
+  /// first version was a teardrop — a point over a semicircle — which is a
+  /// water drop, and it read as one beside "day streak" on the canonical
+  /// simulator. A flame's shape is the INNER LICK: the curl that rises from the
+  /// left shoulder is what separates the two silhouettes, and no amount of
+  /// tuning the outline supplies it.
+  ///
+  /// The source is an 18x20 box and this one is 24 square, so it is scaled by
+  /// 1.2 and centred with a 1.2 x-offset — uniform, because squashing a
+  /// silhouette to fill a square is how a flame becomes a balloon.
   static Path _flame() => Path()
-    ..moveTo(12, 3.5)
-    ..cubicTo(16.5, 8, 18.5, 10.5, 18.5, 14)
+    ..moveTo(12, 1.92)
+    ..relativeCubicTo(4.44, 3.72, 6.6, 7.32, 6.6, 10.68)
     ..arcTo(
-      Rect.fromCircle(center: const Offset(12, 14), radius: 6.5),
+      Rect.fromCircle(center: const Offset(12, 12.6), radius: 6.6),
       0,
       3.141592653589793,
       false,
     )
-    ..cubicTo(5.5, 10.5, 7.5, 8, 12, 3.5)
+    ..relativeCubicTo(0, -2.04, 0.72, -3.84, 2.28, -5.52)
+    ..relativeCubicTo(0.12, 1.56, 0.72, 2.64, 1.68, 3.24)
+    ..cubicTo(8.64, 7.56, 9.48, 4.68, 12, 1.92)
     ..close();
 
   /// The star's vertex angles, stepping every 36 degrees from straight up.

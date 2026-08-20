@@ -43,6 +43,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.countdownRing,
     required this.countdownDot,
     required this.countdownReadyShadow,
+    required this.gameArtFrame,
+    required this.lockedChip,
+    required this.cardChipRadius,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -206,6 +209,23 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// rule as every box shadow in the app.
   final Offset countdownReadyShadow;
 
+  /// The cream frame a game's preview is drawn inside, on a home card.
+  ///
+  /// `app.html`: `.gart{width:64px;height:64px}`. **The frame is the CARD's,
+  /// not the game's** — a definition contributes what goes inside it, and the
+  /// shell decides how it is mounted, which is why the size lives here.
+  final double gameArtFrame;
+
+  /// The padlock chip on a locked slot. `app.html`: `.locked .lk{width:44px}`.
+  final double lockedChip;
+
+  /// The corner on a chip drawn INSIDE a card.
+  ///
+  /// Fourteen. `app.html` uses it twice — `.bestcard .bv{border-radius:14px}`
+  /// and `.locked .lk{border-radius:14px}` — and it sits between [radiusSm]'s
+  /// ten and [radiusMd]'s sixteen, so neither is a rounding away.
+  final Radius cardChipRadius;
+
   /// The ink edge on a surface drawn **inside** another surface.
   ///
   /// DERIVED: two logical pixels, not three. A segment inside its track and a
@@ -350,6 +370,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     countdownRing,
     countdownDot,
     countdownReadyShadow,
+    gameArtFrame,
+    lockedChip,
+    cardChipRadius,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -408,6 +431,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     double? countdownRing,
     double? countdownDot,
     Offset? countdownReadyShadow,
+    double? gameArtFrame,
+    double? lockedChip,
+    Radius? cardChipRadius,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -446,6 +472,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     countdownRing: countdownRing ?? this.countdownRing,
     countdownDot: countdownDot ?? this.countdownDot,
     countdownReadyShadow: countdownReadyShadow ?? this.countdownReadyShadow,
+    gameArtFrame: gameArtFrame ?? this.gameArtFrame,
+    lockedChip: lockedChip ?? this.lockedChip,
+    cardChipRadius: cardChipRadius ?? this.cardChipRadius,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -499,6 +528,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
         countdownReadyShadow,
         other.countdownReadyShadow,
       ),
+      gameArtFrame: d(gameArtFrame, other.gameArtFrame),
+      lockedChip: d(lockedChip, other.lockedChip),
+      cardChipRadius: r(cardChipRadius, other.cardChipRadius),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -546,6 +578,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     countdownRing: 238,
     countdownDot: 14,
     countdownReadyShadow: Offset(4, 4),
+    gameArtFrame: 64,
+    lockedChip: 44,
+    cardChipRadius: Radius.circular(14),
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,

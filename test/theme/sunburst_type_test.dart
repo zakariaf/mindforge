@@ -48,6 +48,7 @@ const kTypeSteps = <String>[
   'sectionCount', // .seclab s     — Nunito 800 at 12
   'chartValueLabel', // .bar u      — 10/600, no tracking, tabular
   'countdownReady', // .count .ready — 30/700, -.01em
+  'lockedTitle', // .locked .ct  — 19/600, -.01em
 ];
 
 /// Reads every step off a scale, so a test can assert over all of them.
@@ -80,6 +81,7 @@ List<TextStyle> allSteps(SunburstType type) => <TextStyle>[
   type.sectionCount,
   type.chartValueLabel,
   type.countdownReady,
+  type.lockedTitle,
 ];
 void main() {
   const latin = SunburstType.sunburstPop;

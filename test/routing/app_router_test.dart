@@ -139,4 +139,26 @@ void main() {
       });
     }
   });
+
+  group('the initial location', () {
+    testWidgets('follows the platform, which defaults to Home', (
+      tester,
+    ) async {
+      // iOS hands over an initial route for a Universal Link, a Handoff
+      // continuation, a shortcut or `flutter run --route=`. An app that
+      // ignores it drops the player at Home and gives no sign it was asked for
+      // anywhere else.
+      final container = ProviderContainer.test();
+
+      expect(
+        container.read(initialLocationProvider),
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName,
+      );
+      expect(
+        container.read(initialLocationProvider),
+        Routes.home,
+        reason: 'the ordinary launch must be unchanged',
+      );
+    });
+  });
 }

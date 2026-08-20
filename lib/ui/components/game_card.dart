@@ -123,11 +123,34 @@ class GameCard extends StatelessWidget {
           // second layout.
           if (art != null) ...[
             const SizedBox(width: SunburstShape.space4),
-            // THE ART IS DECORATION AND THE SHELL SAYS SO, not the game. A
-            // definition contributes a preview widget; whether it is worth
-            // announcing is a card-level decision, and the answer is no — the
+            // THE FRAME IS THE CARD'S AND THE ART INSIDE IT IS THE GAME'S.
+            // app.html: `.gart` is a 64pt cream square with the standard 3px
+            // ink edge and an e1 shadow, and a definition contributes only
+            // what goes in the middle of it. Mounting a bare widget instead —
+            // which is what shipped before the reference comparison — left
+            // every game deciding its own frame, or having none.
+            //
+            // Decoration, and the SHELL says so rather than the game: whether
+            // a preview is worth announcing is a card-level decision, and the
             // title and tagline beside it already name the game.
-            ExcludeSemantics(child: art),
+            ExcludeSemantics(
+              // 64 is the frame's OUTER size and the 8pt padding is inside
+              // it, not around it. Wrapping the other way makes it 80 — which
+              // is what the first pass shipped, and what the reference
+              // comparison caught.
+              child: SizedBox.square(
+                dimension: shape.gameArtFrame,
+                child: PopSurface(
+                  fill: colours.surface,
+                  radius: BorderRadiusDirectional.all(shape.radiusMd),
+                  elevation: PopElevation.e1,
+                  nested: true,
+                  minTarget: 0,
+                  padding: const EdgeInsetsDirectional.all(8),
+                  child: Center(child: art),
+                ),
+              ),
+            ),
           ],
         ],
       ),

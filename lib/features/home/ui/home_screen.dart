@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mindforge/core/result.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
+import 'package:mindforge/features/home/widgets/locked_game_slot.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
@@ -117,7 +118,10 @@ class HomeScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         for (final game in hub.games) ...<Widget>[
-          _RegistryCard(definition: game),
+          if (game.isLocked)
+            _LockedSlot(definition: game)
+          else
+            _RegistryCard(definition: game),
           const SizedBox(height: 12),
         ],
       ],
@@ -161,6 +165,22 @@ class _DailyMix extends ConsumerWidget {
   );
 }
 
+/// A game that has not shipped, as its own dashed slot.
+///
+/// A separate widget from [_RegistryCard] because the design draws it as a
+/// separate thing — see `LockedGameSlot`.
+class _LockedSlot extends ConsumerWidget {
+  const _LockedSlot({required this.definition});
+
+  final GameDefinition definition;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => LockedGameSlot(
+    title: ref.watch(gameStringsProvider)(definition).title,
+    status: AppLocalizations.of(context).comingSoon,
+  );
+}
+
 /// One card, built entirely from a [GameDefinition].
 class _RegistryCard extends ConsumerWidget {
   const _RegistryCard({required this.definition});
@@ -178,17 +198,10 @@ class _RegistryCard extends ConsumerWidget {
       subtitle: strings.tagline,
       accent: colours.accentFor(definition.accent, GameColourRole.base),
       semanticLabel: strings.title,
-      locked: definition.isLocked,
-      // A SEPARATE STRING from the subtitle. A locked card that reused its
-      // tagline as the badge printed the same sentence twice, which E05 fixed
-      // and this must not reintroduce.
-      lockedLabel: definition.isLocked ? l10n.comingSoon : null,
-      bestLabel: definition.isLocked ? null : l10n.bestLabel,
-      bestValue: definition.isLocked ? null : _best(ref, definition),
+      bestLabel: l10n.bestLabel,
+      bestValue: _best(ref, definition),
       artwork: definition.buildArtwork(context),
-      onTap: definition.isLocked
-          ? null
-          : () => context.go(Routes.gameDetail(definition.id)),
+      onTap: () => context.go(Routes.gameDetail(definition.id)),
     );
   }
 

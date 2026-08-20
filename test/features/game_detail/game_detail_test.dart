@@ -161,6 +161,45 @@ void main() {
       );
     });
 
+    testWidgets('Classic is selected by default, not the first entry', (
+      tester,
+    ) async {
+      // app.html shows Classic selected, and it is right for a reason a list
+      // index cannot express: Chill is for someone who wants no pressure and
+      // Blitz is for someone chasing a number, while Classic is what the game
+      // IS.
+      await tester.pumpShellApp(const MindForgeApp(), initialLocation: coral);
+
+      final segmented = tester.widget<DifficultySegmented>(
+        find.byType(DifficultySegmented),
+      );
+
+      expect(
+        segmented.labels[segmented.selectedIndex],
+        AppLocalizations.of(
+          tester.element(find.byType(GameDetailScreen)),
+        ).difficultyClassic,
+      );
+    });
+
+    testWidgets('and a game without Classic falls back to its first', (
+      tester,
+    ) async {
+      final chillOnly = fixtureWithDifficulties(<Difficulty>[Difficulty.chill]);
+
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        games: <GameDefinition>[chillOnly],
+        initialLocation: Routes.gameDetail(chillOnly.id),
+      );
+
+      final segmented = tester.widget<DifficultySegmented>(
+        find.byType(DifficultySegmented),
+      );
+
+      expect(segmented.selectedIndex, 0);
+    });
+
     testWidgets('and Play is the LAST thing on the screen', (tester) async {
       // It is pinned to the bottom by a spacer, under the Daily Mix card. A
       // Play button that floated up under the segmented control would put the

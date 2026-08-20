@@ -62,6 +62,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.sectionCount,
     required this.chartValueLabel,
     required this.countdownReady,
+    required this.lockedTitle,
   });
 
   /// The Latin display face.
@@ -266,6 +267,13 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// to either changes the one line on the screen that is not a numeral.
   final TextStyle countdownReady;
 
+  /// A locked slot's game name.
+  ///
+  /// `app.html`: `.locked .ct` — 19/600, `-.01em`. Two points under [title],
+  /// because a slot is quieter than a card and the design says so rather than
+  /// leaving both at 21.
+  final TextStyle lockedTitle;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -345,6 +353,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       sectionCount: arabic(sectionCount, isDisplay: false),
       chartValueLabel: arabic(chartValueLabel, isDisplay: true),
       countdownReady: arabic(countdownReady, isDisplay: true),
+      lockedTitle: arabic(lockedTitle, isDisplay: true),
     );
   }
 
@@ -377,6 +386,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     sectionCount,
     chartValueLabel,
     countdownReady,
+    lockedTitle,
   ];
 
   @override
@@ -426,6 +436,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? sectionCount,
     TextStyle? chartValueLabel,
     TextStyle? countdownReady,
+    TextStyle? lockedTitle,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -455,6 +466,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
     sectionCount: sectionCount ?? this.sectionCount,
     chartValueLabel: chartValueLabel ?? this.chartValueLabel,
     countdownReady: countdownReady ?? this.countdownReady,
+    lockedTitle: lockedTitle ?? this.lockedTitle,
   );
 
   @override
@@ -491,6 +503,7 @@ class SunburstType extends ThemeExtension<SunburstType> {
       sectionCount: s(sectionCount, other.sectionCount),
       chartValueLabel: s(chartValueLabel, other.chartValueLabel),
       countdownReady: s(countdownReady, other.countdownReady),
+      lockedTitle: s(lockedTitle, other.lockedTitle),
     );
   }
 
@@ -753,6 +766,15 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontSize: 30,
       height: 1.15,
       letterSpacing: -0.3,
+    ),
+    // .locked .ct — 19/600, -.01em.
+    lockedTitle: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 19,
+      height: 1.15,
+      letterSpacing: -0.19,
     ),
   );
 }

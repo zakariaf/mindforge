@@ -132,17 +132,17 @@
       }
     }
   },
-  "yourBest": "Your best",
+  "yourBest": "YOUR BEST",
   "@yourBest": {
-    "description": "Label on the personal-best figure on game detail."
+    "description": "Label on the personal-best figure on game detail. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "gamesPlayed": "Games played",
+  "gamesPlayed": "GAMES PLAYED",
   "@gamesPlayed": {
-    "description": "Label on the run-count figure on game detail and on Stats."
+    "description": "Label on the run-count figure on game detail and on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "difficultyTitle": "Difficulty",
+  "difficultyTitle": "DIFFICULTY",
   "@difficultyTitle": {
-    "description": "Heading above the difficulty selector."
+    "description": "Heading above the difficulty selector. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "difficultyChill": "Chill",
   "@difficultyChill": {
@@ -232,17 +232,17 @@
   "@newPersonalBest": {
     "description": "Badge shown on results when the run beat every previous run in its scope."
   },
-  "finalScore": "Final score",
+  "finalScore": "FINAL SCORE",
   "@finalScore": {
-    "description": "Label above the large results score."
+    "description": "Label above the large results score. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "accuracyLabel": "Accuracy",
+  "accuracyLabel": "ACCURACY",
   "@accuracyLabel": {
-    "description": "Label on the accuracy figure on results."
+    "description": "Label on the accuracy figure on results. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "avgReactionLabel": "Avg reaction",
+  "avgReactionLabel": "AVG REACTION",
   "@avgReactionLabel": {
-    "description": "Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow."
+    "description": "Label on the mean reaction-time figure on results. Abbreviated in en because the tile is narrow; a language that cannot abbreviate should use the full word and let the tile grow. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "unitMilliseconds": "ms",
   "unitSeconds": "s",
@@ -252,9 +252,9 @@
   "@unitMilliseconds": {
     "description": "The millisecond unit, rendered as its OWN run beside the number. A separate key so the value and its unit are never hand-glued, which is what breaks in RTL."
   },
-  "longestStreakLabel": "Longest streak",
+  "longestStreakLabel": "LONGEST STREAK",
   "@longestStreakLabel": {
-    "description": "Label on the best-combo figure on results."
+    "description": "Label on the best-combo figure on results. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "playAgain": "Play again",
   "@playAgain": {
@@ -272,17 +272,17 @@
   "@statsAllTime": {
     "description": "The scope chip on Stats, saying the figures below cover every run ever."
   },
-  "bestScore": "Best score",
+  "bestScore": "BEST SCORE",
   "@bestScore": {
-    "description": "Label on the best-points figure on Stats."
+    "description": "Label on the best-points figure on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "bestTime": "Best time",
+  "bestTime": "BEST TIME",
   "@bestTime": {
-    "description": "Label on the fastest-completion figure on Stats."
+    "description": "Label on the fastest-completion figure on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
-  "timeTrained": "Time trained",
+  "timeTrained": "TIME TRAINED",
   "@timeTrained": {
-    "description": "Label on the total-play-time figure on Stats."
+    "description": "Label on the total-play-time figure on Stats. CASED IN THE ARB, never with toUpperCase() in Dart: casing is a language property. Persian and Sorani have no case at all, so their value stays in its natural form and the type step drops its tracking there — Arabic script is cursive and positive tracking breaks the joins. A Dart toUpperCase() would also be locale-blind about Turkish dotted i and German eszett."
   },
   "durationHoursMinutes": "{hours}h {minutes}m",
   "@durationHoursMinutes": {

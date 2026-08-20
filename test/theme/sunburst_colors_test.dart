@@ -36,6 +36,7 @@ const Map<String, _Accessor> _accessors = <String, _Accessor>{
   'headerRayResults': _headerRayResults,
   'headerRaySettings': _headerRaySettings,
   'countdownRay': _countdownRay,
+  'countdownDotIdle': _countdownDotIdle,
   'bandRayStroop': _bandRayStroop,
   'bandRaySchulte': _bandRaySchulte,
   'accentAlt': _accentAlt,
@@ -82,6 +83,7 @@ Color _heroDots(SunburstColors c) => c.heroDots;
 Color _headerRayResults(SunburstColors c) => c.headerRayResults;
 Color _headerRaySettings(SunburstColors c) => c.headerRaySettings;
 Color _countdownRay(SunburstColors c) => c.countdownRay;
+Color _countdownDotIdle(SunburstColors c) => c.countdownDotIdle;
 Color _bandRayStroop(SunburstColors c) => c.bandRayStroop;
 Color _bandRaySchulte(SunburstColors c) => c.bandRaySchulte;
 Color _accentAlt(SunburstColors c) => c.accentAlt;
@@ -128,6 +130,7 @@ final Map<String, _Setter> _setters = <String, _Setter>{
   'headerRayResults': (c, v) => c.copyWith(headerRayResults: v),
   'headerRaySettings': (c, v) => c.copyWith(headerRaySettings: v),
   'countdownRay': (c, v) => c.copyWith(countdownRay: v),
+  'countdownDotIdle': (c, v) => c.copyWith(countdownDotIdle: v),
   'bandRayStroop': (c, v) => c.copyWith(bandRayStroop: v),
   'bandRaySchulte': (c, v) => c.copyWith(bandRaySchulte: v),
   'accentAlt': (c, v) => c.copyWith(accentAlt: v),

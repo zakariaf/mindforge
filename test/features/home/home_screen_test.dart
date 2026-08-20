@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mindforge/app.dart';
 import 'package:mindforge/core/streak_status.dart';
 import 'package:mindforge/features/home/application/home_notifier.dart';
+import 'package:mindforge/features/home/widgets/locked_game_slot.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
@@ -18,12 +19,16 @@ import '../../support/shell_harness.dart';
 
 void main() {
   group('the hub renders the registry as data', () {
-    testWidgets('one card per definition, locked slot included', (
+    testWidgets('one card per unlocked definition, plus the locked slot', (
       tester,
     ) async {
+      // A locked game is a SLOT, not a card with a flag. app.html draws them
+      // as two different things: no shadow, a padlock leading, a smaller
+      // title, and one status line where a card has a tagline and a badge.
       await tester.pumpShellApp(const MindForgeApp());
 
-      expect(find.byType(GameCard), findsNWidgets(3));
+      expect(find.byType(GameCard), findsNWidgets(2));
+      expect(find.byType(LockedGameSlot), findsOneWidget);
     });
 
     testWidgets('and a FOURTH definition adds a fourth card with no edit here', (
@@ -39,34 +44,40 @@ void main() {
         ],
       );
 
-      expect(find.byType(GameCard), findsNWidgets(4));
+      expect(find.byType(GameCard), findsNWidgets(3));
     });
 
-    testWidgets('and the locked slot carries no tap', (tester) async {
+    testWidgets('and the locked slot is not a control at all', (tester) async {
+      // Not "a control with a null tap": a slot is a promise that the engine
+      // grows, and giving it a button role would put a dead stop in a screen
+      // reader's path.
       await tester.pumpShellApp(const MindForgeApp());
 
-      final locked = tester
-          .widgetList<GameCard>(find.byType(GameCard))
-          .where((card) => card.locked)
-          .toList();
+      final node = tester.getSemantics(find.byType(LockedGameSlot));
 
-      expect(locked, hasLength(1));
-      expect(locked.single.onTap, isNull);
+      expect(node.flagsCollection.isButton, isFalse);
     });
 
-    testWidgets('and a locked card does not print its tagline twice', (
-      tester,
-    ) async {
-      // E05 fixed exactly this and it must not come back: the badge is its own
-      // string, not the subtitle reused.
+    testWidgets('and the locked slot states its status ONCE', (tester) async {
+      // The card version said the same thing twice — "Not yet unlocked" as its
+      // tagline and "Coming soon" as a badge. E05 fixed that defect in one
+      // shape and the locked GameCard reintroduced it in another; the slot has
+      // one status line and no room for a second.
       await tester.pumpShellApp(const MindForgeApp());
 
-      final locked = tester
-          .widgetList<GameCard>(find.byType(GameCard))
-          .firstWhere((card) => card.locked);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(LockedGameSlot)),
+      );
+      final slot = tester.widget<LockedGameSlot>(
+        find.byType(LockedGameSlot),
+      );
 
-      expect(locked.lockedLabel, isNotNull);
-      expect(locked.lockedLabel, isNot(locked.subtitle));
+      expect(slot.status, l10n.comingSoon);
+      expect(
+        find.text(l10n.gamePlaceholderLockedTagline),
+        findsNothing,
+        reason: 'the tagline and the status are the same fact',
+      );
     });
   });
 
@@ -112,14 +123,13 @@ void main() {
         expect(find.text(l10n.gamePlaceholderCoralName), findsOneWidget);
         expect(find.text(l10n.gamePlaceholderLockedName), findsOneWidget);
 
-        // The badge, asserted through the card rather than by finding text: a
-        // locked GAME still has a name, and a status word that happened to
+        // The status, asserted through the slot rather than by finding text:
+        // a locked GAME still has a name, and a status word that happened to
         // match one would make a text finder ambiguous rather than wrong.
-        final locked = tester
-            .widgetList<GameCard>(find.byType(GameCard))
-            .firstWhere((card) => card.locked);
-
-        expect(locked.lockedLabel, l10n.comingSoon);
+        expect(
+          tester.widget<LockedGameSlot>(find.byType(LockedGameSlot)).status,
+          l10n.comingSoon,
+        );
       });
     }
 

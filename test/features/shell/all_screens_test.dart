@@ -12,6 +12,7 @@ import 'package:mindforge/features/results/ui/results_screen.dart';
 import 'package:mindforge/features/settings/ui/settings_screen.dart';
 import 'package:mindforge/features/stats/ui/stats_screen.dart';
 import 'package:mindforge/routing/routes.dart';
+import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/ui/components/pop_bottom_nav.dart';
 
 import '../../support/locale_cases.dart';
@@ -109,6 +110,53 @@ void main() {
               .where((node) => node.properties.header ?? false),
           hasLength(1),
           reason: entry.key,
+        );
+      });
+    }
+  });
+
+  group('every screen is drawn on a surface', () {
+    for (final entry in screens.entries) {
+      testWidgets('${entry.key} has a Material ancestor and the app fill', (
+        tester,
+      ) async {
+        // FOUR SCREENS HAD NEITHER, and 1,842 tests passed anyway. Game
+        // detail, countdown, play and results sit outside the tab shell, so
+        // they never inherited NavShell's Scaffold — and without a Material
+        // ancestor Flutter paints every Text with the debug double-underline,
+        // on whatever the window's own background is. On the simulator that is
+        // black, with yellow underlines under every word.
+        //
+        // No widget test caught it because a test harness supplies its own
+        // MaterialApp chrome. This one asserts the SCREEN's own ancestry
+        // rather than the harness's.
+        await tester.pumpShellApp(
+          const MindForgeApp(),
+          initialLocation: entry.value.$1,
+        );
+
+        expect(
+          find.ancestor(
+            of: find.byType(entry.value.$2),
+            matching: find.byType(Material),
+          ),
+          findsWidgets,
+          reason: '${entry.key} would render with debug-underlined text',
+        );
+
+        final scaffold = tester
+            .widgetList<Scaffold>(
+              find.ancestor(
+                of: find.byType(entry.value.$2),
+                matching: find.byType(Scaffold),
+              ),
+            )
+            .last;
+
+        expect(
+          scaffold.backgroundColor,
+          SunburstColors.sunburstPop.surface,
+          reason: '${entry.key} is not on the app surface',
         );
       });
     }

@@ -83,6 +83,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     required this.headerRayResults,
     required this.headerRaySettings,
     required this.countdownRay,
+    required this.countdownDotIdle,
     required this.bandRayStroop,
     required this.bandRaySchulte,
     required this.accentAlt,
@@ -192,6 +193,14 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   /// `app.html`: `.count .rays` — `var(--grape-pop)` at `.55`, radiating from
   /// the centre of the screen rather than from above its top edge.
   final Color countdownRay;
+
+  /// A countdown beat that has not fired yet.
+  ///
+  /// `app.html`: `.count .dotsrow i{background:var(--grape-pop)}` — the FULL
+  /// pop, not the dimmed ray colour. An idle dot at the ray's opacity all but
+  /// disappears into the burst behind it, which is how a three-beat meter
+  /// becomes a one-beat one.
+  final Color countdownDotIdle;
 
   /// The ray sweep behind Stroop Rush's play band, alpha already applied.
   final Color bandRayStroop;
@@ -366,6 +375,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     headerRayResults,
     headerRaySettings,
     countdownRay,
+    countdownDotIdle,
     bandRayStroop,
     bandRaySchulte,
     accentAlt,
@@ -431,6 +441,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     Color? headerRayResults,
     Color? headerRaySettings,
     Color? countdownRay,
+    Color? countdownDotIdle,
     Color? bandRayStroop,
     Color? bandRaySchulte,
     Color? accentAlt,
@@ -476,6 +487,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     headerRayResults: headerRayResults ?? this.headerRayResults,
     headerRaySettings: headerRaySettings ?? this.headerRaySettings,
     countdownRay: countdownRay ?? this.countdownRay,
+    countdownDotIdle: countdownDotIdle ?? this.countdownDotIdle,
     bandRayStroop: bandRayStroop ?? this.bandRayStroop,
     bandRaySchulte: bandRaySchulte ?? this.bandRaySchulte,
     accentAlt: accentAlt ?? this.accentAlt,
@@ -534,6 +546,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
       headerRayResults: c(headerRayResults, other.headerRayResults),
       headerRaySettings: c(headerRaySettings, other.headerRaySettings),
       countdownRay: c(countdownRay, other.countdownRay),
+      countdownDotIdle: c(countdownDotIdle, other.countdownDotIdle),
       bandRayStroop: c(bandRayStroop, other.bandRayStroop),
       bandRaySchulte: c(bandRaySchulte, other.bandRaySchulte),
       accentAlt: c(accentAlt, other.accentAlt),
@@ -595,6 +608,7 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     headerRayResults: _P.leafDeepStrong,
     headerRaySettings: _P.grapePopSoft,
     countdownRay: _P.grapePopStrong,
+    countdownDotIdle: _P.grapePop,
     bandRayStroop: _P.coralDeepBand,
     bandRaySchulte: _P.turquoiseDeepBand,
     accentAlt: _P.grape,

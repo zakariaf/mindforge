@@ -348,7 +348,7 @@ class _BeatDots extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: index < filled
                       ? colours.accent
-                      : colours.headerRaySettings,
+                      : colours.countdownDotIdle,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: colours.border,
