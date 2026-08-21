@@ -7,6 +7,7 @@ import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/ui/app_icon_mark.dart';
 
 import '../support/component_harness.dart';
+import '../support/golden_tolerance.dart';
 import '../support/harness.dart';
 import '../support/load_app_fonts.dart';
 
@@ -30,6 +31,11 @@ const iconBoundary = Key('app-icon');
 
 void main() {
   setUpAll(loadAppFonts);
+  // The same tolerance every golden lane in this repo installs. It matters
+  // less here — the mark is flat colour with one rounded rect — but a lane
+  // that opts out is a lane that fails on CI and passes locally, which is
+  // exactly what the two game goldens did.
+  setUp(installTolerantGoldenComparator);
 
   testWidgets('is the wordmark tile at 1024, with no transparency', (
     tester,
