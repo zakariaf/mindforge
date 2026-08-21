@@ -384,4 +384,13 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get aboutThirdParty => 'پروانه‌های متن‌باز';
+
+  @override
+  String get schulteMissesLabel => 'خطاها';
+
+  @override
+  String get schulteTilesLabel => 'خانه‌ها';
+
+  @override
+  String get gameSchulteGridKicker => 'تمرکز · سرعت';
 }

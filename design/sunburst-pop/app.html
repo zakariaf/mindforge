@@ -621,7 +621,25 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 .nextpill s{text-decoration:none;font-family:var(--display);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
 .nextpill b{font-family:var(--display);font-weight:700;font-size:22px;line-height:1;letter-spacing:-.02em}
 
-.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+/* A fraction reads numerator-first in every language. Without an isolate the
+   spaces and the slash are neutrals that take the paragraph direction, so
+   `۶ / ۲۵` renders as `۲۵ / ۶` in an RTL line — six found of twenty-five, drawn
+   as twenty-five of six. The multiplier pill deliberately does NOT get this:
+   `x7` is meant to take the paragraph and read `۷×`. See E10 T10.3. */
+.isolate{unicode-bidi:isolate;direction:ltr}
+
+.grid5{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;
+  /* PINNED LTR, and it is a decision rather than an oversight. A Schulte grid
+     is a visual SEARCH FIELD, not a text flow: the scramble is uniform over
+     positions, so mirroring it yields another scramble and nothing else, while
+     making cell 0 stop meaning a screen position in half the app's locales —
+     which forks every geometry assertion, this reference PNG, and the board
+     interior that is meant to be identical everywhere. The numeral does not
+     mirror either: ۲۵ is written most-significant-digit first, exactly like 25.
+     The chrome around the grid still mirrors. See E10 T10.5. */
+  direction:ltr;
+}
 .tile{
   aspect-ratio:1/1;display:grid;place-items:center;cursor:pointer;
   background:var(--cream);border:var(--bw) solid var(--border);border-radius:var(--r-md);
@@ -1123,7 +1141,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
           <div class="dots" aria-hidden="true"></div>
           <div class="hud">
             <span class="hstat"><s data-l10n="hudTime">Time</s><b data-num="0:12.4">0:12.4</b></span>
-            <span class="hstat"><s data-l10n="hudFound">Found</s><b data-l10n="foundOfTotal">6 / 25</b></span>
+            <span class="hstat"><s data-l10n="hudFound">Found</s><b class="isolate" data-l10n="foundOfTotal">6 / 25</b></span>
             <span class="hstat streak"><s data-l10n="hudNext">Next</s><b data-num="7">7</b></span>
           </div>
           <div class="trackwrap">

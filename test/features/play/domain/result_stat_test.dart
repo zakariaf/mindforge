@@ -34,7 +34,10 @@ void main() {
           'lib/core/result_stat.dart',
           'ResultStat',
         ),
-        <String>['labelKey', 'canonicalValue', 'format'],
+        // `total` is E10's, and it is an int: the denominator of a fraction.
+        // The rule this test enforces is about a stat holding rendered TEXT,
+        // and a second number is not that.
+        <String>['labelKey', 'canonicalValue', 'format', 'total'],
       );
     });
 
@@ -63,6 +66,9 @@ void main() {
         // E09. The multiplier a streak has earned: `7` renders as `×7`, and
         // the SIGN is the shell's — a game publishes the number.
         StatFormat.multiplier: 'items',
+        // E10. The numerator of a fraction; `HudSlot.total` carries the
+        // denominator. Two integers cross the seam, never the rendered pair.
+        StatFormat.fraction: 'a numerator',
       };
 
       expect(units.keys.toSet(), StatFormat.values.toSet());

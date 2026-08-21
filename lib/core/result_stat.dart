@@ -20,6 +20,16 @@ enum StatFormat {
   /// making it here would freeze one locale's idea of precision.
   percent,
 
+  /// The canonical value is a numerator; `HudSlot.total` is the denominator.
+  ///
+  /// **Two integers cross the seam, not the rendered pair.** A board that
+  /// formatted `6 / 25` itself would be choosing the digits, the separator and
+  /// whether the run is bidi-isolated — three decisions that belong to the
+  /// locale and none of which a game can make. Schulte Grid is the first game
+  /// to need it; the format is game-agnostic and any board with an `n of m`
+  /// cue gets it for free.
+  fraction,
+
   /// The canonical value is a count of items.
   count,
 
@@ -51,7 +61,12 @@ final class ResultStat {
     required this.labelKey,
     required this.canonicalValue,
     required this.format,
-  });
+    this.total,
+  }) : assert(
+         format != StatFormat.fraction || total != null,
+         'a fraction stat needs its denominator: without it the results screen '
+         'renders "25 / 0" rather than failing',
+       );
 
   /// The ARB key naming this stat.
   final String labelKey;
@@ -62,16 +77,25 @@ final class ResultStat {
   /// How to render [canonicalValue].
   final StatFormat format;
 
+  /// The denominator, for [StatFormat.fraction]. Null for every other format.
+  ///
+  /// It is part of equality, like every other field. Leaving it out made two
+  /// stats differing only in denominator compare equal — and that equality is
+  /// what decides whether a board's snapshot is republished at all, so "3 of 5"
+  /// becoming "3 of 10" would have been swallowed.
+  final int? total;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ResultStat &&
           other.labelKey == labelKey &&
           other.canonicalValue == canonicalValue &&
-          other.format == format;
+          other.format == format &&
+          other.total == total;
 
   @override
-  int get hashCode => Object.hash(labelKey, canonicalValue, format);
+  int get hashCode => Object.hash(labelKey, canonicalValue, format, total);
 
   @override
   String toString() => 'ResultStat($labelKey, $canonicalValue, ${format.name})';

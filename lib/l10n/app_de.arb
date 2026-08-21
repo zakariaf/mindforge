@@ -33,7 +33,7 @@
   "hudScore": "PUNKTE",
   "hudStreak": "SERIE",
   "hudFound": "GEFUNDEN",
-  "hudNext": "Nächste",
+  "hudNext": "NÄCHSTE",
   "streakMultiplier": "{count, plural, other{×{formatted}}}",
   "foundOfTotal": "{found} / {total}",
   "colourRed": "Rot",
@@ -143,6 +143,18 @@
   },
   "aboutThirdParty": "Open-Source-Lizenzen",
   "@aboutThirdParty": {
+    "x-review": "native-speaker-pending"
+  },
+  "schulteMissesLabel": "FEHLER",
+  "@schulteMissesLabel": {
+    "x-review": "native-speaker-pending"
+  },
+  "schulteTilesLabel": "FELDER",
+  "@schulteTilesLabel": {
+    "x-review": "native-speaker-pending"
+  },
+  "gameSchulteGridKicker": "FOKUS · TEMPO",
+  "@gameSchulteGridKicker": {
     "x-review": "native-speaker-pending"
   }
 }

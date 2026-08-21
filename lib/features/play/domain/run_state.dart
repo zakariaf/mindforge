@@ -4,6 +4,7 @@ import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_outcome.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
+import 'package:mindforge/games/game_definition.dart';
 
 /// Everything the shell knows about the run in progress.
 ///
@@ -76,6 +77,19 @@ final class RunState {
   /// A latch, because the boundary condition is true on every frame after it
   /// happens: the clock is still under five seconds a second later.
   final bool hasFiredTimerAlarm;
+
+  /// The score to SHOW, in the game's own canonical unit.
+  ///
+  /// **From the declared source, exactly as the persisted value is.** A board
+  /// scored by the clock cannot compute its own score — the clock is the
+  /// shell's and the fence keeps a game away from it — so the definition says
+  /// where the number comes from. The results screen formatted
+  /// `snapshot.score` instead, which for Schulte Grid is a TILE COUNT handed
+  /// to a duration formatter: every run, however long, read `0.0s`.
+  int displayScore(ScoreSource source) => switch (source) {
+    ScoreSource.board => snapshot.score,
+    ScoreSource.runClock => elapsed.inMilliseconds,
+  };
 
   /// The three HUD values, with the shell's own numbers filled in.
   ///

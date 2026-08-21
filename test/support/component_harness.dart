@@ -27,6 +27,13 @@ extension PopHarness on WidgetTester {
   /// There is deliberately no direction parameter. Direction arrives through
   /// `GlobalWidgetsLocalizations` from the locale, which is what makes an RTL
   /// golden honest rather than a `Directionality` wrapper over English text.
+  /// Set [resetFirst] when re-pumping in a DIFFERENT LOCALE inside one test.
+  ///
+  /// Riverpod reuses the `ProviderScope` element across pumps, and swapping an
+  /// override on a rebuild does not re-subscribe a stream provider — so the
+  /// second pump keeps the first one's container. The chrome changes and the
+  /// NUMBERS do not, which is a state the app can never be in, and it quietly
+  /// passed a Schulte board test that was checking exactly those numerals.
   Future<void> pumpPopComponent(
     Widget child, {
     Device device = Device.reference390,
@@ -36,8 +43,14 @@ extension PopHarness on WidgetTester {
     bool disableAnimations = false,
     FakeHapticGateway? hapticGateway,
     AppSettings settings = const AppSettings.defaults(),
+    bool resetFirst = false,
   }) async {
     useDevice(this, device);
+
+    // OPT-IN, because pumping twice is how half this suite makes a
+    // transition — `isWrong` false then true — and a teardown between them
+    // turns the rebuild into a fresh mount.
+    if (resetFirst) await pumpWidget(const SizedBox.shrink());
 
     await pumpLocalized(
       _ComponentStage(child: child),

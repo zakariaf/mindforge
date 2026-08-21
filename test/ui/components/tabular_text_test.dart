@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/l10n/bidi_text.dart';
 import 'package:mindforge/l10n/locale_numbers.dart';
 import 'package:mindforge/ui/components/tabular_text.dart';
 
@@ -104,6 +105,83 @@ void main() {
         tester.getSemantics(find.byType(TabularText)).label,
         '1,480',
       );
+    });
+  });
+
+  group('a value that arrives bidi-isolated', () {
+    testWidgets('lays out, rather than throwing a negative width', (
+      tester,
+    ) async {
+      // AN ISOLATE MARK IS NOT A CHARACTER TO BOX. This widget splits a value
+      // into one box per character and pins the row LTR — which is exactly
+      // what an isolate is for, so the marks are redundant here and the split
+      // makes them harmful: each box is its own paragraph, and a lone FSI in
+      // one of them fed a negative width into IntrinsicHeight.
+      //
+      // On screen that was a results page with a green header and NOTHING
+      // under it: no score, no stats, no buttons. Reached by finishing a
+      // Schulte run, whose TILES stat is a fraction and therefore isolated.
+      await tester.pumpPopComponent(
+        SizedBox(
+          width: 200,
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: TabularText(
+                    BidiText.isolate('25 / 25'),
+                    style: const TextStyle(fontSize: 22),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('and still announces the whole value', (tester) async {
+      // The marks are stripped from what is DRAWN, not from what is said.
+      // Written as escapes: an invisible bidi control in source changes how
+      // the surrounding code READS to a human while meaning something else to
+      // the compiler, which is a review hazard the analyzer is right to flag.
+      const isolated =
+          '\u2068'
+          '18.6s'
+          '\u2069';
+
+      await tester.pumpPopComponent(
+        const TabularText(isolated, style: TextStyle(fontSize: 22)),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(TabularText)).label,
+        isolated,
+      );
+    });
+
+    testWidgets('and draws no box for a control character', (tester) async {
+      await tester.pumpPopComponent(
+        TabularText(
+          BidiText.isolate('7'),
+          style: const TextStyle(fontSize: 22),
+        ),
+      );
+
+      final drawn = tester
+          .widgetList<Text>(
+            find.descendant(
+              of: find.byType(TabularText),
+              matching: find.byType(Text),
+            ),
+          )
+          .map((text) => text.data)
+          .join();
+
+      expect(drawn, '7', reason: 'the isolate marks were boxed as characters');
     });
   });
 }

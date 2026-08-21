@@ -308,7 +308,7 @@ abstract class AppLocalizations {
   /// HUD label above the next number to find in Schulte Grid.
   ///
   /// In en, this message translates to:
-  /// **'Next'**
+  /// **'NEXT'**
   String get hudNext;
 
   /// The combo multiplier, e.g. '×7'. The MULTIPLICATION SIGN U+00D7, not the letter x: they are different characters and the letter does not exist in Arabic script. NUMERALS: Numbers arrive PRE-FORMATTED as Strings, through LocaleNumbers. gen-l10n interpolates an int placeholder with Dart toString(), which is Latin digits in every locale — measured: this key rendered "4" instead of "۴" in Persian. Adding format: to the placeholder is not the fix either: gen-l10n would emit NumberFormat(localeName), and NumberFormat("ckb") THROWS. Where a plural is involved the int stays so ICU can pick the branch; only the printed value is the String.
@@ -712,6 +712,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open-source licences'**
   String get aboutThirdParty;
+
+  /// Results stat: how many taps landed out of order in a Schulte run. Drawn in caps, like every .tri s label.
+  ///
+  /// In en, this message translates to:
+  /// **'MISSES'**
+  String get schulteMissesLabel;
+
+  /// Results stat: the board that was cleared, as a fraction. Drawn in caps.
+  ///
+  /// In en, this message translates to:
+  /// **'TILES'**
+  String get schulteTilesLabel;
+
+  /// The tags line above the title on Schulte Grid detail hero. Drawn in caps, like every .hero .kicker.
+  ///
+  /// In en, this message translates to:
+  /// **'FOCUS · SPEED'**
+  String get gameSchulteGridKicker;
 }
 
 class _AppLocalizationsDelegate

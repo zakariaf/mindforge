@@ -8,8 +8,6 @@ import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/play/application/seeded_random_provider.dart';
-import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
-import 'package:mindforge/features/shell/widgets/daily_mix_card_slot.dart';
 import 'package:mindforge/features/shell/widgets/equal_row.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
@@ -125,11 +123,20 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
                   onSelected: (index) =>
                       setState(() => _chosen = offered[index]),
                 ),
-                const SizedBox(height: 16),
-                DailyMixCardSlot(
-                  variant: DailyMixVariant.paper,
-                  hideFor: definition.id,
-                ),
+                // NO DAILY MIX CARD HERE. app.html draws one, but its card
+                // offers a DIFFERENT ACTIVITY — "3 games, 4 minutes", a
+                // curated sequence — which is a coherent second call to action
+                // beside a single game. Ours names the ONE game today's seeded
+                // pick chose, and a multi-game mix is a product feature nobody
+                // has built, so printing that line would be a sentence about
+                // software that does not exist.
+                //
+                // That leaves our card saying "here's a different game" on a
+                // screen about this game, which is what Home is for. Hiding it
+                // only on the picked game's own page was worse: the same
+                // screen then had a card sometimes, which reads as a bug
+                // rather than a rule. When the real mix ships, the card comes
+                // back with the design's own summary.
                 const SizedBox(height: 26),
                 PopButton(
                   label: l10n.playButton,

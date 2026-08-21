@@ -110,8 +110,12 @@ RUN_TABLE=(
   # that holds the generator" and to narrow TARGET_DIR rather than
   # blanket-ignore. Pointed at lib/ it reports every Flutter import in the app
   # as a determinism defect, which is noise, not a finding.
-  # E09 adds lib/games/stroop_rush/domain to this argument when it exists.
+  # One row per generator directory, because the script takes a single target.
+  # E09 was meant to add its own and did not; E10 adds both, so every seeded
+  # generator in the app is covered rather than only the one in core.
   "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/core"
+  "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/games/stroop_rush/domain"
+  "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/games/schulte_grid/domain"
 
   # Checks 1 and 2 (no relative imports, no cross-package lib/src) are already
   # enforced over ALL hand-written code by very_good_analysis's

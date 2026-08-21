@@ -384,4 +384,13 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get aboutThirdParty => 'مۆڵەتنامە سەرچاوەکراوەکان';
+
+  @override
+  String get schulteMissesLabel => 'هەڵەکان';
+
+  @override
+  String get schulteTilesLabel => 'خانەکان';
+
+  @override
+  String get gameSchulteGridKicker => 'خولیاکردن · خێرایی';
 }

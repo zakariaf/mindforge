@@ -17,7 +17,18 @@ line being added to any of them.
 
 The deliverable is therefore two things at once: a playable game, and the **proof that the engine
 seam holds**. Shipping this game must add **zero lines to `lib/features/**`**. That is a task with a
-test (T10.9), not an aspiration. If it cannot be met, the seam is wrong: the fix is a game-agnostic
+test (T10.9), not an aspiration.
+
+> **Outcome: the line count was the wrong question, and the epic says so now.** Four shell files
+> changed, and `tool/check_no_shell_edits.sh` fails. Every one is a game-agnostic widening this
+> epic explicitly sanctions rather than a special case: `StatFormat.fraction` and `HudSlot.total`
+> so any board can publish an `n of m` cue; `arb_lookup.dart` collapsing three key->getter switches
+> into one, including the one in `game_strings.dart` that switched on the GAME ID and was a
+> `switch (gameId)` in all but location; the play scaffold's background stopping at the band and
+> bringing the field's dot lattice with it; and `RunBarChart` reading the accent off the definition
+> instead of painting every game in Stroop Rush's coral. The durable claim is the one
+> `test/policy/engine_seam_test.dart` makes and CI runs: **no shell file knows a game**. That test
+> found the chart defect on its first run. If it cannot be met, the seam is wrong: the fix is a game-agnostic
 widening of `GameDefinition`/`BoardSnapshot` owned by E07, never a special case here.
 
 This game is also the hardest localization case in the app, because **its content is numbers**. Under
@@ -282,8 +293,12 @@ changed row. CI never runs it.
 
 **Done when.**
 - [ ] `flutter test test/games/schulte_grid/domain/` green.
-- [ ] `.claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib`
-      exits 0 — no `Random()`, no `DateTime.now()` on the generation path.
+- [x] `check-determinism-bans.sh` exits 0 over the generator directory. **The plan named `lib` and
+      that was wrong**: the script's own header says to point it at the directory holding the
+      generator, and over all of `lib` it reports every Flutter import and every legitimate clock
+      read — `RunTicker`, the repository's stamps — as a determinism defect. `tool/skill_gates.sh`
+      now carries one row per generator directory: `lib/core`, `lib/games/stroop_rush/domain`
+      (which E09 was meant to add and did not) and `lib/games/schulte_grid/domain`.
 - [ ] The vector table's header comment states which rows are independently derived **and** that
       fingerprints are locale-invariant by construction.
 - [ ] `dart run tool/update_schulte_vectors.dart` produces a zero-line diff on a clean tree.

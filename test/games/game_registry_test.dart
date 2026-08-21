@@ -24,15 +24,14 @@ void main() {
   }
 
   group('the registry today', () {
-    test('holds Stroop Rush, and only Stroop Rush', () {
-      // One line per game, and that is the whole of adding one. E10 appends
-      // Schulte Grid here and this becomes a two-element list.
+    test('holds both shipped games, in registry order', () {
+      // One line per game, and that is the whole of adding one.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
       expect(
         container.read(gameRegistryProvider).map((game) => game.id.value),
-        <String>['stroop_rush'],
+        <String>['stroop_rush', 'schulte_grid'],
       );
     });
 
@@ -43,13 +42,27 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final stroop = container.read(gameRegistryProvider).single;
+      final games = container.read(gameRegistryProvider);
+      final stroop = games.first;
+      final schulte = games.last;
 
       expect(stroop.accent, GameAccent.stroop);
       expect(stroop.scoreFormat, ScoreFormat.points);
       expect(stroop.boardBackground, BoardBackground.surfaceSunk);
       expect(stroop.difficulties, Difficulty.values);
       expect(stroop.isLocked, isFalse);
+
+      // THE OPPOSITE GAME ON EVERY AXIS THE SEAM TOUCHES, which is the whole
+      // reason a second game proves anything: a decorative accent instead of a
+      // mechanic one, an accent background instead of a sunken field, a
+      // duration score instead of points, and two difficulties instead of
+      // three. Each is a place a hidden `switch (gameId)` would surface.
+      expect(schulte.accent, GameAccent.schulte);
+      expect(schulte.colourRole, BoardColourRole.decorative);
+      expect(schulte.scoreFormat, ScoreFormat.duration);
+      expect(schulte.boardBackground, BoardBackground.gameAccent);
+      expect(schulte.difficulties, hasLength(2));
+      expect(schulte.isLocked, isFalse);
     });
 
     test('and a MECHANIC board is never drawn on an accent', () {

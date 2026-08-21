@@ -14,7 +14,6 @@ import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/features/play/application/run_ticker.dart';
 import 'package:mindforge/features/play/domain/run_phase.dart';
 import 'package:mindforge/features/play/domain/run_state.dart';
-import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/theme/sunburst_motion.dart';
 
@@ -247,6 +246,14 @@ class RunNotifier extends Notifier<RunState> {
     final definition = ref.read(gameDefinitionProvider(state.config.gameId));
     final elapsedMs = _ticker.elapsed.inMilliseconds;
 
+    // STAMPED INTO THE STATE, so the screen and the row cannot disagree. The
+    // ticker publishes `elapsed` ten times a second while a run is live, which
+    // leaves the last tick up to 100ms behind the moment the board actually
+    // ended — and the results slab reads the state while the row reads this
+    // exact number. A player finishing at 18.63s could see 18.5 on the screen
+    // that celebrates it and 18.6 on the best it beat.
+    state = state.copyWith(elapsed: _ticker.elapsed);
+
     // CANONICAL, NOT RENDERED. playedOnDay is a Gregorian civil date over the
     // injected clock — never a Jalali or Hijri projection — durationMs is whole
     // milliseconds, metricValue is an integer, and clientRunKey is ASCII.
@@ -272,10 +279,7 @@ class RunNotifier extends Notifier<RunState> {
       // fence keeps a board away from it — so the definition says where its
       // score comes from and this reads it rather than switching on the game.
       metricValue: switch (outcome) {
-        RunCompleted() => switch (definition.scoreSource) {
-          ScoreSource.board => state.snapshot.score,
-          ScoreSource.runClock => elapsedMs,
-        },
+        RunCompleted() => state.displayScore(definition.scoreSource),
         // An abandoned run does not go on the leaderboard.
         RunAbandoned() => 0,
       },

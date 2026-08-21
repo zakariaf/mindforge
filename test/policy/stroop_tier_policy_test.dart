@@ -160,21 +160,50 @@ void main() {
       );
     });
 
-    test('and it hardcodes no direction', () {
+    test('and it hardcodes no direction, outside one named island', () {
       // Direction is a consequence of the locale. A board that pinned one
       // would look right in the language it was written in and wrong in the
       // other three — and a test that pinned one would prove nothing at all.
+      //
+      // ONE FILE IS ALLOWED, and it has to argue for itself. Schulte Grid's
+      // grid is a visual SEARCH FIELD rather than a text flow: the scramble is
+      // uniform over positions, so mirroring it produces another scramble and
+      // nothing else, while making `cells[0]` stop meaning a screen position
+      // in half the app's locales. The allowance is a list rather than a
+      // blanket exemption for `lib/games`, so the next board that reaches for
+      // one has to come back here and say why.
+      const islands = <String>{
+        'lib/games/schulte_grid/ui/schulte_board.dart',
+      };
+
       final offenders = <String>[];
 
       for (final file in filesUnder('lib/games')) {
         final code = codeOf(file);
 
-        if (code.contains('Directionality(')) {
-          offenders.add('${file.path}: Directionality(');
-        }
+        if (!code.contains('Directionality(')) continue;
+        if (islands.contains(file.path)) continue;
+
+        offenders.add('${file.path}: Directionality(');
       }
 
       expect(offenders, isEmpty);
+    });
+
+    test('and each island explains itself where the pin is', () {
+      // A sanctioned exception with no reasoning beside it is an exception
+      // nobody can review. The prose is checked, not just the allowance.
+      for (final path in <String>[
+        'lib/games/schulte_grid/ui/schulte_board.dart',
+      ]) {
+        final source = File(path).readAsStringSync();
+
+        expect(
+          source,
+          contains('coordinate space'),
+          reason: '$path pins a direction without saying why',
+        );
+      }
     });
   });
 }

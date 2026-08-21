@@ -180,7 +180,7 @@
   "@hudFound": {
     "description": "HUD label above the found-tile count in Schulte Grid."
   },
-  "hudNext": "Next",
+  "hudNext": "NEXT",
   "@hudNext": {
     "description": "HUD label above the next number to find in Schulte Grid."
   },
@@ -505,5 +505,17 @@
   "aboutThirdParty": "Open-source licences",
   "@aboutThirdParty": {
     "description": "Row that opens the platform third-party licence list."
+  },
+  "schulteMissesLabel": "MISSES",
+  "@schulteMissesLabel": {
+    "description": "Results stat: how many taps landed out of order in a Schulte run. Drawn in caps, like every .tri s label."
+  },
+  "schulteTilesLabel": "TILES",
+  "@schulteTilesLabel": {
+    "description": "Results stat: the board that was cleared, as a fraction. Drawn in caps."
+  },
+  "gameSchulteGridKicker": "FOCUS · SPEED",
+  "@gameSchulteGridKicker": {
+    "description": "The tags line above the title on Schulte Grid detail hero. Drawn in caps, like every .hero .kicker."
   }
 }

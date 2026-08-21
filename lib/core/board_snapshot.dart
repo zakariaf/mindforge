@@ -21,7 +21,12 @@ final class HudSlot {
     required this.format,
     this.tone = HudTone.neutral,
     this.source = HudSource.board,
-  });
+    this.total,
+  }) : assert(
+         format != StatFormat.fraction || total != null,
+         'a fraction slot needs its denominator: without it the HUD renders '
+         '"6 / 0" on a live board rather than failing',
+       );
 
   /// The ARB key naming this slot.
   final String labelKey;
@@ -42,6 +47,9 @@ final class HudSlot {
   /// Who fills [canonicalValue].
   final HudSource source;
 
+  /// The denominator, for [StatFormat.fraction]. Null for every other format.
+  final int? total;
+
   /// A copy of this slot showing [canonicalValue] instead.
   HudSlot withValue(int canonicalValue) => HudSlot(
     labelKey: labelKey,
@@ -49,6 +57,7 @@ final class HudSlot {
     format: format,
     tone: tone,
     source: source,
+    total: total,
   );
 
   @override
@@ -59,11 +68,12 @@ final class HudSlot {
           other.canonicalValue == canonicalValue &&
           other.format == format &&
           other.tone == tone &&
-          other.source == source;
+          other.source == source &&
+          other.total == total;
 
   @override
   int get hashCode =>
-      Object.hash(labelKey, canonicalValue, format, tone, source);
+      Object.hash(labelKey, canonicalValue, format, tone, source, total);
 
   @override
   String toString() => 'HudSlot($labelKey, $canonicalValue, ${tone.name})';
@@ -93,7 +103,7 @@ enum HudSource {
 /// type is what makes a fourth unrepresentable — a list would let a game push
 /// one more and discover the overflow on a 320pt phone in German.
 ///
-/// [trailing] is nullable: Schulte Grid has nothing to put there.
+/// [trailing] is nullable: a two-value game leaves it empty.
 @immutable
 final class GameHud {
   /// Creates a HUD.

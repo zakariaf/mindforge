@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:mindforge/l10n/bidi_text.dart';
 
 /// Renders a changing number without the layout moving under it.
 ///
@@ -33,7 +34,18 @@ class TabularText extends StatelessWidget {
   Widget build(BuildContext context) {
     final scaler = MediaQuery.textScalerOf(context);
     final direction = Directionality.of(context);
-    final pitch = _widestDigit(value, style, scaler, direction);
+    // STRIPPED BEFORE SPLITTING. A bidi isolate mark is a control, not a
+    // character to put in a box: each box below is its own paragraph, so an
+    // isolate cannot do its job here anyway — and this widget already pins the
+    // row LTR, which is exactly what the isolate was for. Boxing one fed a
+    // negative width into an `IntrinsicHeight` three cells wide, and the
+    // results screen after a Schulte run drew its header and then nothing at
+    // all: no score, no stats, no buttons.
+    //
+    // The ANNOUNCEMENT keeps the original: `Semantics(label:)` takes a string,
+    // not a layout, and the marks are harmless there.
+    final drawn = BidiText.strip(value);
+    final pitch = _widestDigit(drawn, style, scaler, direction);
 
     // ONE semantic node carrying the whole value. Without it a screen reader
     // walks the per-character boxes below and reads "one, comma, four, eight,
@@ -74,7 +86,7 @@ class TabularText extends StatelessWidget {
             // screen is still the parent's decision, and the parent mirrors.
             textDirection: TextDirection.ltr,
             children: [
-              for (final character in value.characters)
+              for (final character in drawn.characters)
                 if (_isDigit(character))
                   SizedBox(
                     width: pitch,

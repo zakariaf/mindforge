@@ -11,10 +11,12 @@ import 'package:mindforge/features/shell/widgets/result_stat_cell.dart';
 import 'package:mindforge/features/shell/widgets/score_slab.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/arb_lookup.dart';
 import 'package:mindforge/l10n/difficulty_strings.dart';
 import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/l10n/l10n_providers.dart';
 import 'package:mindforge/l10n/score_formatter_provider.dart';
+import 'package:mindforge/l10n/stat_text.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/shared/feedback/moment.dart';
 import 'package:mindforge/shared/motion/pop_celebration.dart';
@@ -103,9 +105,13 @@ class ResultsScreen extends ConsumerWidget {
             children: <Widget>[
               ScoreSlab(
                 label: l10n.finalScore,
+                // THROUGH THE DECLARED SOURCE, the same way the row is
+                // written. Reading `snapshot.score` here handed a tile count
+                // to a duration formatter and printed `0.0s` for every Schulte
+                // run — a 4-second board and a 60-second board alike.
                 value: formatter.format(
                   definition.scoreFormat,
-                  run.snapshot.score,
+                  run.displayScore(definition.scoreSource),
                 ),
               ),
               const SizedBox(height: 16),
@@ -180,36 +186,20 @@ class _StatCell extends ConsumerWidget {
 
     return ResultStatCell(
       tone: tone,
-      label: switch (stat.labelKey) {
-        'accuracyLabel' => l10n.accuracyLabel,
-        'longestStreakLabel' => l10n.longestStreakLabel,
-        'avgReactionLabel' => l10n.avgReactionLabel,
-        _ => throw StateError(
-          'no results label is registered for "${stat.labelKey}"',
-        ),
-      },
-      value: switch (stat.format) {
-        StatFormat.percent => numbers.percent(stat.canonicalValue / 1000),
-        // MILLISECONDS UNDER A SECOND, seconds above it. A reaction time is
-        // the sub-second case and `0.6s` throws away the digit that matters;
-        // a Schulte run time is the other, and `18600ms` is unreadable. The
-        // unit is an ARB string rendered as its own run, never glued to the
-        // number — a value hand-joined to its unit is what breaks in RTL.
-        StatFormat.duration =>
-          stat.canonicalValue < Duration.millisecondsPerSecond
-              ? '${numbers.count(stat.canonicalValue)}'
-                    '${l10n.unitMilliseconds}'
-              : '${numbers.seconds(stat.canonicalValue)}${l10n.unitSeconds}',
-        // NOT ISOLATED — see hud_row.dart. An FSI over a run with no strong
-        // character resolves LTR and pins the sign to the left in Persian too.
-        StatFormat.multiplier => l10n.streakMultiplier(
-          stat.canonicalValue,
-          numbers.count(stat.canonicalValue),
-        ),
-        StatFormat.points || StatFormat.count => numbers.count(
-          stat.canonicalValue,
-        ),
-      },
+      // Through the app's ONE key table. This was the third copy of the same
+      // switch — the HUD had one, game_strings.dart had one keyed by game id —
+      // so adding a game meant editing three files, and missing one was a
+      // StateError on a screen the player had just earned.
+      label: arbString(l10n, stat.labelKey),
+      value: statText(
+        stat.format,
+        stat.canonicalValue,
+        l10n: l10n,
+        numbers: numbers,
+        // A MEASUREMENT, not a running clock.
+        durationStyle: DurationStyle.measured,
+        total: stat.total,
+      ),
     );
   }
 }

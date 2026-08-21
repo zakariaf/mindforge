@@ -178,6 +178,7 @@ class _Chart extends ConsumerWidget {
           ),
           const SizedBox(height: 14),
           RunBarChart(
+            accent: game.accent,
             semanticLabel: values
                 .map(
                   (value) => formatter.format(game.scoreFormat, value),

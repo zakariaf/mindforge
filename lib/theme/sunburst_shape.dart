@@ -40,6 +40,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.chartBarRadiusBottom,
     required this.settingsChipRadius,
     required this.paletteSwatchRadius,
+    required this.tileNextRingInner,
+    required this.tileNextRingOuter,
+    required this.tileNextScale,
+    required this.tileFoundSink,
+    required this.miniTileGapValue,
+    required this.miniTileRadius,
+    required this.miniTileBorderWidth,
     required this.heroSwatchSize,
     required this.heroSwatchRadius,
     required this.heroSwatchShadow,
@@ -206,6 +213,38 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// A palette swatch. `app.html`: `.cbprev i{border-radius:5px}`.
   final Radius paletteSwatchRadius;
 
+  /// The cream band around a `next` tile.
+  ///
+  /// `app.html`: `.tile.next{box-shadow:...,0 0 0 2px var(--cream),0 0 0 5px
+  /// var(--ink)}` — a double ring, and it is the reason the cue survives a
+  /// greyscale print: two rings around a tile is a shape, not a hue.
+  final double tileNextRingInner;
+
+  /// The ink band outside [tileNextRingInner]. `app.html`: the 5px stop.
+  final double tileNextRingOuter;
+
+  /// How much a `next` tile lifts. `app.html`: `transform:scale(1.02)`.
+  final double tileNextScale;
+
+  /// How far a `found` tile sinks. `app.html`: `transform:translate(2px,2px)`
+  /// with its shadow removed — the tile settles onto the board.
+  final Offset tileFoundSink;
+
+  /// The gap between cells of a Home-card mini grid.
+  ///
+  /// `app.html`: `.gart .mini{gap:3px}`. Exposed as a value AND as the const
+  /// [miniTileGap] because a `Row` needs it in a `const SizedBox`, where a
+  /// theme lookup cannot go.
+  final double miniTileGapValue;
+
+  /// One mini cell's corner. `app.html`: `.gart .mini i{border-radius:3px}`.
+  final Radius miniTileRadius;
+
+  /// A mini cell's edge. `app.html`: `.gart .mini i{border:1.5px}` — thinner
+  /// than every other border in the app, because at 18pt the standard 3pt edge
+  /// leaves almost no fill to see.
+  final double miniTileBorderWidth;
+
   /// One hero swatch chip. `app.html`: `.swatchrow i{width:38px;height:38px}`.
   ///
   /// The four chips under a game's tagline on its detail screen: the game's
@@ -354,6 +393,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// 12.
   static const double space3 = 12;
 
+  /// The mini grid's gap, as a compile-time constant.
+  ///
+  /// `app.html`: `.gart .mini{gap:3px}`. The same number as
+  /// [miniTileGapValue], which is the themed slot; this one exists because a
+  /// `const SizedBox` cannot read a theme.
+  static const double miniTileGap = 3;
+
   /// 16.
   static const double space4 = 16;
 
@@ -448,6 +494,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom,
     settingsChipRadius,
     paletteSwatchRadius,
+    tileNextRingInner,
+    tileNextRingOuter,
+    tileNextScale,
+    tileFoundSink,
+    miniTileGapValue,
+    miniTileRadius,
+    miniTileBorderWidth,
     heroSwatchSize,
     heroSwatchRadius,
     heroSwatchShadow,
@@ -520,6 +573,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Radius? chartBarRadiusBottom,
     Radius? settingsChipRadius,
     Radius? paletteSwatchRadius,
+    double? tileNextRingInner,
+    double? tileNextRingOuter,
+    double? tileNextScale,
+    Offset? tileFoundSink,
+    double? miniTileGapValue,
+    Radius? miniTileRadius,
+    double? miniTileBorderWidth,
     double? heroSwatchSize,
     Radius? heroSwatchRadius,
     Offset? heroSwatchShadow,
@@ -572,6 +632,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
     settingsChipRadius: settingsChipRadius ?? this.settingsChipRadius,
     paletteSwatchRadius: paletteSwatchRadius ?? this.paletteSwatchRadius,
+    tileNextRingInner: tileNextRingInner ?? this.tileNextRingInner,
+    tileNextRingOuter: tileNextRingOuter ?? this.tileNextRingOuter,
+    tileNextScale: tileNextScale ?? this.tileNextScale,
+    tileFoundSink: tileFoundSink ?? this.tileFoundSink,
+    miniTileGapValue: miniTileGapValue ?? this.miniTileGapValue,
+    miniTileRadius: miniTileRadius ?? this.miniTileRadius,
+    miniTileBorderWidth: miniTileBorderWidth ?? this.miniTileBorderWidth,
     heroSwatchSize: heroSwatchSize ?? this.heroSwatchSize,
     heroSwatchRadius: heroSwatchRadius ?? this.heroSwatchRadius,
     heroSwatchShadow: heroSwatchShadow ?? this.heroSwatchShadow,
@@ -636,6 +703,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       ),
       settingsChipRadius: r(settingsChipRadius, other.settingsChipRadius),
       paletteSwatchRadius: r(paletteSwatchRadius, other.paletteSwatchRadius),
+      tileNextRingInner: d(tileNextRingInner, other.tileNextRingInner),
+      tileNextRingOuter: d(tileNextRingOuter, other.tileNextRingOuter),
+      tileNextScale: d(tileNextScale, other.tileNextScale),
+      tileFoundSink: o(tileFoundSink, other.tileFoundSink),
+      miniTileGapValue: d(miniTileGapValue, other.miniTileGapValue),
+      miniTileRadius: r(miniTileRadius, other.miniTileRadius),
+      miniTileBorderWidth: d(miniTileBorderWidth, other.miniTileBorderWidth),
       heroSwatchSize: d(heroSwatchSize, other.heroSwatchSize),
       heroSwatchRadius: r(heroSwatchRadius, other.heroSwatchRadius),
       heroSwatchShadow: o(heroSwatchShadow, other.heroSwatchShadow),
@@ -700,6 +774,13 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: Radius.circular(3),
     settingsChipRadius: Radius.circular(11),
     paletteSwatchRadius: Radius.circular(5),
+    tileNextRingInner: 2,
+    tileNextRingOuter: 5,
+    tileNextScale: 1.02,
+    tileFoundSink: Offset(2, 2),
+    miniTileGapValue: 3,
+    miniTileRadius: Radius.circular(3),
+    miniTileBorderWidth: 1.5,
     heroSwatchSize: 38,
     heroSwatchRadius: Radius.circular(12),
     heroSwatchShadow: Offset(2, 2),

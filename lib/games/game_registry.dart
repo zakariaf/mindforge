@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/game_id.dart';
 import 'package:mindforge/games/game_definition.dart';
+import 'package:mindforge/games/schulte_grid/schulte_grid_definition.dart';
 import 'package:mindforge/games/stroop_rush/stroop_rush_definition.dart';
 
 /// The shipped games, in display order.
@@ -29,7 +30,7 @@ import 'package:mindforge/games/stroop_rush/stroop_rush_definition.dart';
 /// otherwise.
 final Provider<List<GameDefinition>> gameRegistryProvider =
     Provider<List<GameDefinition>>(
-      (ref) => <GameDefinition>[stroopRushDefinition],
+      (ref) => <GameDefinition>[stroopRushDefinition, schulteGridDefinition],
     );
 
 /// The definition registered under [GameId].
