@@ -58,7 +58,7 @@ void main() {
       expect(entries, kSupportedLocaleCodes);
     });
 
-    test('the bundle identifier is com.mindforge.mindforge', () {
+    test('the bundle identifier is io.applander.mindforge', () {
       final ids = RegExp('PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);')
           .allMatches(pbxproj)
           .map((m) => m.group(1)!.trim())
@@ -67,10 +67,14 @@ void main() {
 
       expect(
         ids,
-        {'com.mindforge.mindforge'},
+        {'io.applander.mindforge'},
         reason:
             'a bundle identifier is permanent once the app is first '
-            'uploaded; changing it afterwards creates a different app',
+            'uploaded; changing it afterwards creates a different app. '
+            'This one was renamed from com.mindforge.mindforge on '
+            '2026-08-21, while nothing had been uploaded yet, and is '
+            'registered in the Apple Developer account under team '
+            '3TMBQZX389. It does not move again',
       );
     });
 

@@ -302,6 +302,13 @@ flutter create --project-name mindforge --org com.mindforge \
 alone does not read as what it produces, and a bundle identifier is permanent once the app is published
 (risk 8).
 
+> **Superseded 2026-08-21.** The identifier above is what this command produced, and that record
+> stands. The app now ships as **`io.applander.mindforge`**, renamed by hand in `project.pbxproj`
+> and registered in the Apple Developer account. The rename was only possible because nothing had
+> been uploaded to the store yet — risk 8 was real, it simply had not been triggered. Anyone
+> re-running `flutter create` from this epic must set the identifier afterwards; no `--org` value
+> yields the current one.
+
 Then delete the template's `test/widget_test.dart` (T01.8 writes the real smoke test), delete the
 template `README.md` body and replace it with a short pointer to `CLAUDE.md` plus the platform decision
 above, and leave the template `analysis_options.yaml` in place until T01.5 replaces it wholesale.

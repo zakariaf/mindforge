@@ -160,8 +160,10 @@ than an omission:
   a macOS window is whatever the developer dragged it to.
 - `web/`, `linux/` and `windows/` were never in scope.
 
-The bundle identifier is **`com.mindforge.mindforge`**, and it is permanent once the app is first
-uploaded to the store.
+The bundle identifier is **`io.applander.mindforge`**, registered in the Apple Developer account.
+It was renamed from `com.mindforge.mindforge` on 2026-08-21 — possible only because nothing had
+been uploaded yet. A bundle identifier is permanent from the first upload onward, so this one is
+now fixed.
 
 ## Contributing
 
