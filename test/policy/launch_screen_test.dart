@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/ui/app_icon_mark.dart';
 
 /// The app's first frame, and the icon on the home screen.
 ///
@@ -49,24 +50,35 @@ void main() {
       // so `lessThan(40000)` was GREEN on the exact artifact it was written to
       // reject. Reverting the appiconset would have passed it.
       //
-      // The corner of the icon is the accent the wordmark's tile uses, and
-      // nothing about a blue Flutter logo is.
+      // SAMPLED INSIDE A KEY, not at a corner: the ground is a ray burst, so
+      // a corner pixel is cream or coral depending on where a spoke lands.
+      // The first key is the app's own sunshine, and nothing about a blue
+      // Flutter logo is.
       final master = File('${appicon.path}/Icon-App-1024x1024@1x.png');
 
       expect(master.existsSync(), isTrue);
 
-      final corner = _pixelAt(master.readAsBytesSync(), 8, 0);
-      final accent = SunburstColors.sunburstPop.accentWarm;
+      // The quad is centred and spans `quadShare` of the side; this lands
+      // inside its first cell.
+      const inset = (1024 - 1024 * AppIconMark.quadShare) / 2;
+      const sample = inset + 1024 * 0.155;
+
+      final key = _pixelAt(
+        master.readAsBytesSync(),
+        sample.round(),
+        sample.round(),
+      );
+      final accent = SunburstColors.sunburstPop.accent;
 
       expect(
-        corner,
+        key,
         <int>[
           (accent.r * 255).round(),
           (accent.g * 255).round(),
           (accent.b * 255).round(),
         ],
         reason:
-            'the icon corner is not SunburstColors.accentWarm — is this still '
+            'the first key is not SunburstColors.accent — is this still '
             "Flutter's placeholder, or has the palette moved without the icon "
             'being regenerated?',
       );
@@ -117,6 +129,11 @@ void main() {
 /// one shape it has to handle. It asserts that shape rather than assuming it,
 /// so a re-encode that changed the format fails loudly instead of returning a
 /// plausible wrong colour.
+///
+/// Every scanline is reconstructed, not just the first: each PNG filter is
+/// defined against the row above, so reaching row `y` means walking rows 0..y.
+/// An earlier version decoded row 0 only and could sample the ground but never
+/// the mark.
 List<int> _pixelAt(Uint8List bytes, int x, int y) {
   expect(bytes[24], 8, reason: 'expected an 8-bit PNG');
   expect(bytes[25], 2, reason: 'expected truecolour RGB with no alpha');
@@ -145,33 +162,48 @@ List<int> _pixelAt(Uint8List bytes, int x, int y) {
 
   final raw = ZLibDecoder().convert(data.takeBytes());
   final stride = width * 3;
-  // ROW 0 ONLY, which is all this needs and which makes the filters tractable:
-  // every one of them references the PRIOR row, and for row 0 that row is
-  // zeros — so Up collapses to the identity, and Average and Paeth both
-  // collapse to Sub. ffmpeg writes Sub here, not None, which is what the first
-  // version of this helper wrongly assumed.
-  expect(y, 0, reason: 'this decoder reconstructs the first scanline only');
+  var prior = List<int>.filled(stride, 0);
+  var row = prior;
 
-  final filter = raw[0];
+  for (var line = 0; line <= y; line++) {
+    final start = line * (stride + 1);
+    final filter = raw[start];
 
-  expect(
-    filter,
-    anyOf(0, 1, 2, 3, 4),
-    reason: 'unknown PNG filter type $filter',
-  );
+    expect(filter, lessThanOrEqualTo(4), reason: 'unknown filter $filter');
 
-  final row = List<int>.filled(stride, 0);
+    row = List<int>.filled(stride, 0);
 
-  for (var i = 0; i < stride; i++) {
-    final left = i >= 3 ? row[i - 3] : 0;
-    final value = raw[1 + i];
+    for (var i = 0; i < stride; i++) {
+      final left = i >= 3 ? row[i - 3] : 0;
+      final up = prior[i];
+      final upLeft = i >= 3 ? prior[i - 3] : 0;
+      final value = raw[start + 1 + i];
 
-    row[i] = switch (filter) {
-      0 || 2 => value,
-      1 || 4 => (value + left) & 0xFF,
-      _ => (value + (left ~/ 2)) & 0xFF,
-    };
+      row[i] =
+          switch (filter) {
+            0 => value,
+            1 => value + left,
+            2 => value + up,
+            3 => value + (left + up) ~/ 2,
+            _ => value + _paeth(left, up, upLeft),
+          } &
+          0xFF;
+    }
+
+    prior = row;
   }
 
   return <int>[row[x * 3], row[x * 3 + 1], row[x * 3 + 2]];
+}
+
+/// PNG's Paeth predictor, from the specification.
+int _paeth(int a, int b, int c) {
+  final p = a + b - c;
+  final pa = (p - a).abs();
+  final pb = (p - b).abs();
+  final pc = (p - c).abs();
+
+  if (pa <= pb && pa <= pc) return a;
+
+  return pb <= pc ? b : c;
 }
