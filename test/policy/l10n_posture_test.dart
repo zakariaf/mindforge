@@ -281,4 +281,110 @@ void main() {
       },
     );
   });
+
+  group('no user-facing literal survives outside the ARB', () {
+    /// Where a string that reaches a player could be written.
+    const arguments = <String>[
+      'semanticLabel',
+      'semanticValue',
+      'label',
+      'tooltip',
+      'hint',
+      'title',
+      'copy',
+    ];
+
+    /// Files that may hold a literal, each for a stated reason.
+    const sanctioned = <String, String>{
+      'lib/features/shell/widgets/wordmark.dart':
+          'the product name, which is never translated and is asserted as a '
+          'constant in its own test',
+      'lib/games/schulte_grid/ui/board/schulte_artwork.dart':
+          'the Home tile is a picture: its digits go through LocaleNumbers and '
+          'the widget is excluded from semantics',
+    };
+
+    test('not as a Text, and not as a semantics argument', () {
+      // THE ASSERTION THAT WOULD HAVE CAUGHT A SCREEN HARDCODING A LABEL.
+      // Every earlier epic checked its own strings; nothing checked that a
+      // later screen had not quietly written one in English. Accumulated and
+      // failed once, so the first offender does not hide the rest.
+      final offenders = <String>[];
+      // WHITESPACE-TOLERANT, AND MATCHED OVER THE WHOLE FILE. The first
+      // version ran per line, and `dart format` puts `Text(` on a line of its
+      // own the moment the contents pass 80 columns — which is every real
+      // English sentence. It caught only literals short enough to fit inline,
+      // which is to say the ones least likely to be prose.
+      final literalCall = RegExp(
+        '(?:Text|${arguments.join('|')})'
+        r"""\s*(?::|\()\s*'([^'\n]{2,})'""",
+        multiLine: true,
+      );
+
+      for (final directory in <String>['lib/features', 'lib/ui', 'lib/games']) {
+        for (final file
+            in Directory(directory)
+                .listSync(recursive: true)
+                .whereType<File>()
+                .where((file) => file.path.endsWith('.dart'))) {
+          if (sanctioned.containsKey(file.path)) continue;
+
+          final code = withoutDartComments(file.readAsStringSync());
+
+          {
+            // A literal is a quote that is not immediately a key lookup, an
+            // asset path or an empty string. Keys are ASCII identifiers the
+            // ARB owns; a user-facing string is prose.
+            for (final match in literalCall.allMatches(code)) {
+              final literal = match.group(1)!;
+
+              // An ARB KEY, not a sentence: `labelKey: 'hudTime'` is data the
+              // one lookup table resolves, and `arb_lookup.dart` is where it
+              // becomes a translated string.
+              if (RegExp(r'^[a-z][A-Za-z0-9_]*$').hasMatch(literal)) continue;
+              // A package or asset path.
+              if (literal.contains('/')) continue;
+
+              // A COMPOSITION OF LOCALIZED PARTS, not prose. `'$title. $summary'`
+              // joins two ARB strings with a screen-reader pause; what the rule
+              // bans is English WORDS written in code. Strip the interpolations
+              // and judge what is left — if it is only punctuation and spaces,
+              // there is nothing here for a translator to have missed.
+              //
+              // A composition that joined its parts with a word — `'$a and $b'`
+              // — still fails, and should: "and" is grammar, it inflects, and
+              // splicing it is exactly what produces ungrammatical output in a
+              // language that agrees its conjunctions.
+              final withoutValues = literal
+                  .replaceAll(RegExp(r'\$\{[^}]*\}'), '')
+                  .replaceAll(RegExp(r'\$[A-Za-z_][A-Za-z0-9_]*'), '');
+
+              if (!RegExp('[A-Za-z]').hasMatch(withoutValues)) continue;
+
+              offenders.add('${file.path}: "$literal"');
+            }
+          }
+        }
+      }
+
+      expect(
+        offenders,
+        isEmpty,
+        reason:
+            'E04 ADR: every string a player reads comes from an ARB, so a '
+            'fifth locale is a translation job and not a code search',
+      );
+    });
+
+    test('and each sanctioned file still exists and still earns it', () {
+      // An allow-list nobody checks is a hole.
+      for (final entry in sanctioned.entries) {
+        expect(
+          File(entry.key).existsSync(),
+          isTrue,
+          reason: '${entry.key} was moved or deleted — ${entry.value}',
+        );
+      }
+    });
+  });
 }

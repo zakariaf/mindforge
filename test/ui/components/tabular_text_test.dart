@@ -184,4 +184,87 @@ void main() {
       expect(drawn, '7', reason: 'the isolate marks were boxed as characters');
     });
   });
+
+  group('a value that is not only a number', () {
+    testWidgets('is drawn as ONE text, because Arabic letters join', (
+      tester,
+    ) async {
+      // THE DEFECT THIS EXISTS FOR. Stats' "time trained" is a whole sentence
+      // in Persian — `۰ ساعت و ۰ دقیقه` — and this widget splits a value into
+      // one box per character. Each box is its own paragraph, so every letter
+      // is shaped in ISOLATED form and the joins that make Arabic script
+      // readable are gone; the row is then laid out LTR, which reverses the
+      // words on top of it. On screen it was an unreadable smear that also
+      // overflowed its box.
+      //
+      // Latin never showed it: `0h 0m` split into boxes still reads, because
+      // Latin letters do not join. So this is a defect only the RTL sweep
+      // could find.
+      await tester.pumpPopComponent(
+        const TabularText(
+          '۰ ساعت و ۰ دقیقه',
+          style: TextStyle(fontSize: 20),
+        ),
+      );
+
+      final drawn = tester.widgetList<Text>(
+        find.descendant(
+          of: find.byType(TabularText),
+          matching: find.byType(Text),
+        ),
+      );
+
+      expect(
+        drawn,
+        hasLength(1),
+        reason: 'a joined script must be shaped as one run, not per character',
+      );
+    });
+
+    testWidgets('and German is not shredded either', (tester) async {
+      // THE HALF THE FIRST FIX MISSED. `0 Std. 0 Min.` is prose too, and the
+      // per-character row cannot wrap: at 2.0x it measured 275pt of content in
+      // a 141pt viewport, so a German player saw it cut off mid-word with no
+      // ellipsis and no scroll affordance. The first guard tested for a
+      // JOINING script and rescued only Persian.
+      await tester.pumpPopComponent(
+        const TabularText('0 Std. 0 Min.', style: TextStyle(fontSize: 20)),
+      );
+
+      expect(
+        tester.widgetList<Text>(
+          find.descendant(
+            of: find.byType(TabularText),
+            matching: find.byType(Text),
+          ),
+        ),
+        hasLength(1),
+      );
+    });
+
+    testWidgets('but a value whose digits MOVE keeps its fixed pitch', (
+      tester,
+    ) async {
+      // The line the guard draws. Every value that changes under the player's
+      // eye — the clock, a score, a streak, a percentage — carries no letter
+      // at all, which is why a letter is the right question to ask.
+      for (final value in <String>['1,480', '0:00', '100%', '×7']) {
+        await tester.pumpPopComponent(
+          TabularText(value, style: const TextStyle(fontSize: 20)),
+          resetFirst: true,
+        );
+
+        expect(
+          tester.widgetList<Text>(
+            find.descendant(
+              of: find.byType(TabularText),
+              matching: find.byType(Text),
+            ),
+          ),
+          hasLength(greaterThan(1)),
+          reason: '$value lost its tabular pitch',
+        );
+      }
+    });
+  });
 }

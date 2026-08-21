@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  MindForge's privacy manifest.
+
+  Every array here is empty, and each one is empty for a reason the repository
+  can be checked against rather than for a reason we assert:
+
+  - NSPrivacyTracking / NSPrivacyTrackingDomains — there is no network code in
+    this app at all. dependency_policy_test fails the build if http, dio, a
+    websocket client, an analytics SDK or a crash reporter enters the tree, so
+    there is nothing that could contact a domain, let alone track across apps.
+
+  - NSPrivacyCollectedDataTypes — nothing is collected because nothing leaves
+    the device. Runs and settings live in one SQLite file in the app's own
+    container; the only exit path the product has is a user-initiated export.
+
+  - NSPrivacyAccessedAPITypes — the app calls no required-reason API itself.
+    The one plugin that could, path_provider_foundation, ships its OWN manifest
+    declaring an empty NSPrivacyAccessedAPITypes array, so there is nothing to
+    transcribe from it. This list is copied from the Pods' manifests when there
+    is something to copy — it is never reasoned about, because a wrong reason
+    code is an App Review rejection rather than a compile error.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array/>
+</dict>
+</plist>

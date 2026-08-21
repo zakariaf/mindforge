@@ -637,6 +637,10 @@ silently.
 
 ### T11.5 — Native-speaker review of the Persian and Sorani copy
 
+> **NOT DONE.** Nobody has reviewed the copy. Every `fa` and `ckb` message carries
+> `x-review: native-speaker-pending` in its ARB, which is the honest state, is machine-checkable, and
+> is what a reviewer should be handed. This is a task that needs a person, not a test.
+
 **Goal.** Get every `fa` and `ckb` string read by someone who speaks it, before release. This is a
 BLOCKER-grade sign-off item, not a polish note: shipping machine-quality translation in a UI is a
 defect.
@@ -722,6 +726,13 @@ against both the LTR and RTL references.
 ---
 
 ### T11.6 — On-device pass on real iPhone hardware
+
+> **NOT DONE, by decision.** There is no provisioned handset in this setup, and the maintainer asked
+> on 2026-08-20 to skip every part of this epic that needs one. Ticking these rows would be exactly
+> the aspirational sign-off `CLAUDE.md` forbids in a public repository. Everything a simulator can
+> genuinely establish — VoiceOver semantics, Dynamic Type, contrast, reduce-motion, RTL geometry — is
+> asserted in the suite and swept on the canonical simulator; see
+> `docs/verification/e11-release-signoff.md`.
 
 **Goal.** Prove the things a simulator cannot: real fonts, haptics, VoiceOver traversal in four
 languages, system font + bold + display zoom, and the data-durability behaviours — on real
@@ -892,6 +903,11 @@ which a careless fix can break.
 ---
 
 ### T11.8 — Performance and size budgets on real iPhone hardware
+
+> **PARTLY DONE.** The SIZE budget is measured from a real `flutter build ios --release --no-codesign`
+> and recorded in the sign-off: 20.1 MB, broken down by framework. The FRAME-TIMING half is not done
+> and cannot be — a simulator's timings are its host machine's, so a number from one would be worse
+> than no number. Needs a handset.
 
 **Goal.** Measure cold start, the two frame-time hot paths and the artifact size in profile/release on
 a real iPhone, and record the numbers as v1's baseline.

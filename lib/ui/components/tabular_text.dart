@@ -45,6 +45,28 @@ class TabularText extends StatelessWidget {
     // The ANNOUNCEMENT keeps the original: `Semantics(label:)` takes a string,
     // not a layout, and the marks are harmless there.
     final drawn = BidiText.strip(value);
+
+    // WORDS ARE LAID OUT AS TEXT; only a NUMBER gets the per-character
+    // treatment. Every box below is its own paragraph and the row that holds
+    // them cannot wrap, which breaks a multi-word value two different ways:
+    //
+    //  - in Arabic script, catastrophically — each letter is shaped in
+    //    ISOLATED form, the joins that make the script readable are gone, and
+    //    the LTR row reverses the words on top of it. Stats' Persian "time
+    //    trained" drew as an unreadable smear.
+    //  - in Latin, quietly — `0 Std. 0 Min.` at 2.0x measured 275pt of content
+    //    in a 141pt viewport, so a German player saw it cut off mid-word with
+    //    no wrap, no ellipsis and no scroll affordance. That is the same
+    //    "a truncated value reads as a plausible one" that `a11y_bans_test`
+    //    bans an ellipsis for, just without the visible edge.
+    //
+    // The first version of this guard tested for a JOINING script and rescued
+    // only the first case. A LETTER is the right question: a value with words
+    // in it is prose, and prose wraps.
+    if (_hasLetters(drawn)) {
+      return Text(value, style: style, textAlign: TextAlign.center);
+    }
+
     final pitch = _widestDigit(drawn, style, scaler, direction);
 
     // ONE semantic node carrying the whole value. Without it a screen reader
@@ -104,6 +126,21 @@ class TabularText extends StatelessWidget {
       ),
     );
   }
+
+  /// Whether [value] contains a letter, in any script.
+  ///
+  /// **A unit is not a letter for this purpose, and that is the subtlety.**
+  /// `18.6s`, `640ms` and `0 Std. 0 Min.` all contain letters, and only the
+  /// last is prose — but the first two are STATIC values that never animate,
+  /// so nothing is lost by laying them out as text, while the third is what
+  /// gets clipped. Every value whose digits actually move under the player's
+  /// eye — the clock `0:00`, a score `1,480`, a streak `×1`, a percentage
+  /// `100%` — carries no letter at all and still gets its fixed pitch.
+  ///
+  /// Uses the Unicode letter property rather than a block list: an earlier
+  /// version tested only for Arabic script and left German clipped.
+  static bool _hasLetters(String value) =>
+      RegExp(r'\p{L}', unicode: true).hasMatch(value);
 
   /// Whether [character] is a digit in any script this app renders.
   static bool _isDigit(String character) {
