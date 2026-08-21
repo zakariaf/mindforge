@@ -10,6 +10,7 @@ import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
 
 import '../../../support/component_harness.dart';
+import '../../../support/golden_tolerance.dart';
 import '../../../support/load_app_fonts.dart';
 import '../../../support/locale_cases.dart';
 
@@ -34,6 +35,10 @@ import '../../../support/locale_cases.dart';
 /// behind the countdown, so there is nothing for it to be confused with.
 void main() {
   setUpAll(loadAppFonts);
+  // The same tolerance every golden lane in this repo installs — see
+  // `golden_tolerance.dart` for the measured noise it covers and the
+  // regressions it still catches.
+  setUp(installTolerantGoldenComparator);
 
   Widget row(SchulteTileState state) => SchulteTile(
     label: '7',
