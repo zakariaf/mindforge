@@ -206,6 +206,19 @@ jobs:
         # review.
         run: flutter test --tags golden --reporter expanded
 
+      # A FAILED GOLDEN IS AN IMAGE, and reading it is how you tell a real
+      # regression from a rendering difference between this runner and the
+      # machine that blessed it. Without this the log names the tests and
+      # nothing else, and the only way to see a diff is to guess at it.
+      - name: Upload golden failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures
+          path: '**/failures/**'
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Run the skill gates
         # A block scalar, because `run: "$BASH5" tool/...` is NOT valid YAML —
         # content after a closing quote is a parse error, and GitHub rejects the
