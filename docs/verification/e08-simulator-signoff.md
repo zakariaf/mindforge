@@ -6,7 +6,7 @@ points at DPR 3. Debug build, `flutter build ios --simulator --debug`, installed
 with `simctl install`, and launched once per screen:
 
 ```bash
-xcrun simctl launch <udid> com.mindforge.mindforge \
+xcrun simctl launch <udid> io.applander.mindforge \
   --route=/settings -AppleLanguages "(fa)" -AppleLocale fa_IR
 ```
 

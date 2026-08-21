@@ -6,7 +6,7 @@ points. Debug build, `flutter build ios --simulator --debug`, installed with
 `simctl install` and launched four times:
 
 ```bash
-xcrun simctl launch <udid> com.mindforge.mindforge -AppleLanguages "(<tag>)" -AppleLocale "<tag>"
+xcrun simctl launch <udid> io.applander.mindforge -AppleLanguages "(<tag>)" -AppleLocale "<tag>"
 ```
 
 ## What was on screen

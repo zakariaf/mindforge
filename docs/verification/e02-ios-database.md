@@ -5,11 +5,17 @@ cannot prove that the store opens on a device at all, which is why this check is
 run by hand on the canonical simulator and recorded here.
 
 **Device.** `MindForge iPhone 14`, UDID `C13DDC02-375D-4E1B-8F81-44EB407D09A4`,
-iOS 18.6. **Date.** 2026-08-19. **Bundle.** `com.mindforge.mindforge`.
+iOS 18.6. **Date.** 2026-08-19. **Bundle.** `io.applander.mindforge`.
+
+> This pass actually ran under `com.mindforge.mindforge`; the identifier was
+> renamed on 2026-08-21, before anything had been uploaded to the store. The
+> command below carries the current id so it still runs — but note that the
+> rename gave the app a **new container**, so the paths recorded here belong
+> to the old one and a re-run starts from an empty database.
 
 ```
 xcrun simctl get_app_container C13DDC02-375D-4E1B-8F81-44EB407D09A4 \
-  com.mindforge.mindforge data
+  io.applander.mindforge data
 ```
 
 ## What was found

@@ -6,7 +6,7 @@ Run on the canonical device — `MindForge iPhone 14`,
 ```bash
 flutter build ios --simulator --debug -t tool/gallery_main.dart
 xcrun simctl install <udid> build/ios/iphonesimulator/Runner.app
-xcrun simctl launch <udid> com.mindforge.mindforge -AppleLanguages "(ckb)"
+xcrun simctl launch <udid> io.applander.mindforge -AppleLanguages "(ckb)"
 ```
 
 The gallery starts in the **device's** language, so the launch flag is the whole

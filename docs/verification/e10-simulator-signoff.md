@@ -5,7 +5,7 @@ Run on the canonical device — `MindForge iPhone 14`,
 
 ```bash
 xcrun simctl spawn <udid> defaults write .GlobalPreferences AppleLanguages -array fa
-xcrun simctl launch <udid> com.mindforge.mindforge \
+xcrun simctl launch <udid> io.applander.mindforge \
   --route='/game/schulte_grid/play?difficulty=classic&seed=42'
 ```
 

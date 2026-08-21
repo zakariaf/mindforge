@@ -6,7 +6,7 @@ at DPR 3. Debug build, installed with `simctl install`, launched once per locale
 
 ```bash
 xcrun simctl spawn <udid> defaults write .GlobalPreferences AppleLanguages -array fa
-xcrun simctl launch <udid> com.mindforge.mindforge \
+xcrun simctl launch <udid> io.applander.mindforge \
   --route='/game/stroop_rush/play?difficulty=classic&seed=42'
 ```
 
