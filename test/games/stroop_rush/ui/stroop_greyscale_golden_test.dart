@@ -10,6 +10,7 @@ import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/games/stroop_rush/ui/stroop_board.dart';
 
 import '../../../support/component_harness.dart';
+import '../../../support/golden_tolerance.dart';
 import '../../../support/load_app_fonts.dart';
 import '../../../support/locale_cases.dart';
 
@@ -29,6 +30,14 @@ import '../../../support/locale_cases.dart';
 /// the swap would be the only thing standing between two answers.
 void main() {
   setUpAll(loadAppFonts);
+  // THE SAME TOLERANCE EVERY OTHER GOLDEN LANE IN THIS REPO INSTALLS. A golden
+  // blessed on a developer's Mac and compared on a GitHub runner differs by a
+  // few pixels of anti-aliasing even with identical Flutter, identical fonts
+  // and identical DPR — and this file paints through two `saveLayer`s and a
+  // `BlendMode.srcIn`, which is where that noise is largest. Omitting it made
+  // these four the only golden tests in the suite that failed on CI while
+  // passing locally.
+  setUp(installTolerantGoldenComparator);
 
   final run = RunConfig(
     gameId: GameId('stroop_rush'),
