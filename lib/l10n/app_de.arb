@@ -14,8 +14,8 @@
   "gamesUnlocked": "{count, plural, one{{formatted} freigeschaltet} other{{formatted} freigeschaltet}}",
   "bestLabel": "BEST",
   "comingSoon": "Demnächst",
-  "gameStroopRushName": "Stroop-Rausch",
-  "gameStroopRushTagline": "Tippe die Farbe, nicht das Wort",
+  "gameStroopRushName": "Stroop Rush",
+  "gameStroopRushTagline": "Tippe auf die Farbe, nicht auf das Wort",
   "gameSchulteGridName": "Schulte-Tabelle",
   "gameSchulteGridTagline": "Finde 1 bis 25, schnell",
   "gameNBackName": "N-Back",
@@ -29,10 +29,10 @@
   "difficultyBlitz": "Blitz",
   "playButton": "Los",
   "getReady": "Bereit machen",
-  "hudTime": "Zeit",
-  "hudScore": "Punkte",
-  "hudStreak": "Serie",
-  "hudFound": "Gefunden",
+  "hudTime": "ZEIT",
+  "hudScore": "PUNKTE",
+  "hudStreak": "SERIE",
+  "hudFound": "GEFUNDEN",
   "hudNext": "Nächste",
   "streakMultiplier": "{count, plural, other{×{formatted}}}",
   "foundOfTotal": "{found} / {total}",
@@ -40,6 +40,30 @@
   "colourBlue": "Blau",
   "colourGreen": "Grün",
   "colourYellow": "Gelb",
+  "colourPurple": "Lila",
+  "colourOrange": "Orange",
+  "colourPink": "Rosa",
+  "stroopWordRed": "ROT",
+  "stroopWordBlue": "BLAU",
+  "stroopWordGreen": "GRÜN",
+  "stroopWordYellow": "GELB",
+  "stroopWordPurple": "LILA",
+  "stroopWordOrange": "ORANGE",
+  "stroopWordPink": "ROSA",
+  "stroopPrompt": "TIPPE AUF DIE FARBE, NICHT AUF DAS WORT",
+  "stroopStimulusValue": "{word}, gedruckt in {ink}",
+  "gameStroopRushKicker": "REAKTION · FOKUS",
+  "@stroopStimulusValue": {
+    "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "ink": {
+        "type": "String"
+      }
+    }
+  },
   "resultsTitle": "Starker Lauf!",
   "newPersonalBest": "Neue Bestleistung",
   "finalScore": "ENDPUNKTZAHL",
@@ -78,14 +102,47 @@
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
   "languageNameCkb": "کوردیی ناوەندی",
-  "gamePlaceholderCoralName": "Reaktionslabor",
-  "gamePlaceholderCoralTagline": "Tippe auf das Abweichende",
-  "gamePlaceholderCoralKicker": "REAKTION",
-  "gamePlaceholderTurquoiseName": "Rasterlauf",
-  "gamePlaceholderTurquoiseTagline": "Finde sie der Reihe nach",
-  "gamePlaceholderTurquoiseKicker": "FOKUS",
-  "gamePlaceholderLockedName": "Musterspur",
-  "gamePlaceholderLockedTagline": "Noch nicht freigeschaltet",
-  "gamePlaceholderLockedKicker": "BALD",
-  "notFoundTitle": "Diesen Bildschirm gibt es nicht mehr"
+  "notFoundTitle": "Diesen Bildschirm gibt es nicht mehr",
+  "settingColourBlindHelp": "Tauscht Rot gegen Pink und Grün gegen Orange. Die Füllmuster sind immer an.",
+  "@settingColourBlindHelp": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutVersion": "Version",
+  "@aboutVersion": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOffline": "Funktioniert immer offline",
+  "@aboutOffline": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOfflineBody": "Diese App enthält keinen Netzwerkcode. Es wird nichts geladen und nichts gesendet.",
+  "@aboutOfflineBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivate": "Nichts verlässt dein Gerät",
+  "@aboutPrivate": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivateBody": "Kein Konto, keine Analyse, keine Absturzberichte. Deine Ergebnisse liegen in einer Datei auf diesem Telefon.",
+  "@aboutPrivateBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceTitle": "Lizenz",
+  "@aboutLicenceTitle": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceBody": "MindForge ist quelloffen unter {licence}.",
+  "@aboutLicenceBody": {
+    "x-review": "native-speaker-pending",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "Open-Source-Lizenzen",
+  "@aboutThirdParty": {
+    "x-review": "native-speaker-pending"
+  }
 }

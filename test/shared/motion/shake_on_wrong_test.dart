@@ -281,4 +281,39 @@ void main() {
       }
     });
   });
+
+  group('a remount is an edge too', () {
+    testWidgets('a NEW KEY carrying isWrong plays the sweep', (tester) async {
+      // THE WAY THE ANSWER KEY USES IT. Tapping the same wrong key twice has
+      // to shake twice, so the board gives the shake a `ValueKey(wrongTapId)`
+      // that changes on every wrong tap. A changing key makes `canUpdate`
+      // false: Flutter inflates a FRESH element, `initState` runs, and
+      // `didUpdateWidget` — the only place the old version played from — never
+      // sees a false-to-true edge, because for that element there was no
+      // false. Nothing shook, on the first wrong tap or any later one.
+      Future<void> pumpWith(int tapId, {required bool isWrong}) =>
+          tester.pumpPopComponent(
+            ShakeOnWrong(
+              key: ValueKey<int>(tapId),
+              isWrong: isWrong,
+              child: const SizedBox.square(dimension: 40),
+            ),
+          );
+
+      await pumpWith(0, isWrong: false);
+      await pumpWith(1, isWrong: true);
+
+      final samples = await sample(
+        tester,
+        frames: 14,
+        step: motion.durCelebrate ~/ 6,
+      );
+
+      expect(
+        samples.where((dx) => dx.abs() > 1),
+        isNotEmpty,
+        reason: 'a freshly inflated shake stayed still',
+      );
+    });
+  });
 }

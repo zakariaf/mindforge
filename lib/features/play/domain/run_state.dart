@@ -77,8 +77,13 @@ final class RunState {
   /// happens: the clock is still under five seconds a second later.
   final bool hasFiredTimerAlarm;
 
-  /// The three HUD values.
-  GameHud get hud => snapshot.hud;
+  /// The three HUD values, with the shell's own numbers filled in.
+  ///
+  /// A board declares a TIME slot but cannot fill it — it has no clock, by
+  /// design — so it names the shell as the slot's source and this is where the
+  /// elapsed run time arrives. Passing the snapshot's HUD straight through
+  /// left that pill reading 0:00 for the whole run.
+  GameHud get hud => snapshot.hud.withRunClock(elapsed.inMilliseconds);
 
   /// How far through the board is, or `null` when it cannot say.
   double? get progress => snapshot.progress;

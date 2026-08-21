@@ -9,7 +9,7 @@ import '../support/locale_matrix.dart';
 
 void main() {
   final config = RunConfig(
-    gameId: GameId('placeholder_coral'),
+    gameId: GameId('fixture_alpha'),
     difficulty: Difficulty.classic,
     seed: 42,
   );
@@ -17,22 +17,22 @@ void main() {
   group('a location round-trips', () {
     test('a game detail path carries the id', () {
       expect(
-        Routes.gameDetail(GameId('placeholder_coral')),
-        '/game/placeholder_coral',
+        Routes.gameDetail(GameId('fixture_alpha')),
+        '/game/fixture_alpha',
       );
     });
 
     test('and a run path names its whole config', () {
       expect(
         Routes.play(config),
-        '/game/placeholder_coral/play?difficulty=classic&seed=42',
+        '/game/fixture_alpha/play?difficulty=classic&seed=42',
       );
     });
 
     test('and configFrom rebuilds it', () {
       expect(
         Routes.configFrom(
-          gameId: 'placeholder_coral',
+          gameId: 'fixture_alpha',
           difficulty: 'classic',
           seed: '42',
         ),
@@ -96,7 +96,7 @@ void main() {
       for (final difficulty in Difficulty.values) {
         final location = Routes.play(
           RunConfig(
-            gameId: GameId('placeholder_coral'),
+            gameId: GameId('fixture_alpha'),
             difficulty: difficulty,
             seed: 1,
           ),

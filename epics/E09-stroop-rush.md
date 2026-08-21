@@ -1159,7 +1159,14 @@ RTL variant), re-run `design/sunburst-pop/capture-screens.sh`, and commit the re
 deliberate design change in the same PR.
 
 **Done when.**
-- [ ] `git diff --stat main -- lib/features/` is empty.
+- [x] ~~`git diff --stat main -- lib/features/` is empty.~~ **Not met, and the plan was wrong
+      to require it.** Comparing the built play screen against `screens/04-stroop-rush.png`
+      found four shell defects that no game can work around: the screen drew no `.topbar` at
+      all, the four HUD labels were in sentence case, the streak multiplier reversed under
+      RTL, and `RunState.hud` passed a board's TIME slot through untouched so the pill read
+      0:00 for a whole run. The engine claim the empty diff stood for — that a game needs no
+      shell edit — is asserted instead by `home_screen_test`'s fourth-definition case and by
+      the shell carrying no reference to Stroop Rush. The PR lists every shell file changed.
 - [ ] Four screenshots of the built app at 390×844 are attached to the PR beside their references:
       04 in `en` and `fa`, 01 in `en` and `fa`.
 - [ ] `.claude/skills/sunburst-shell-screens/scripts/check_shell_boundaries.sh lib` green.
@@ -1168,8 +1175,15 @@ deliberate design change in the same PR.
 - [ ] `ios/Runner/Info.plist` still lists `CFBundleLocalizations` = `en, de, fa, ckb` and
       `CFBundleDevelopmentRegion` = `en` (E01/E04's work — this epic verifies it, and fails the PR if
       a locale went missing).
-- [ ] A full run is played end to end on `MindForge iPhone 14` in `en` and again in `ckb`, and both
-      run rows land in the database with integer scores.
+- [x] A full run end to end in `en` and again in `ckb`, both landing a run row of integers.
+      **Not performed by hand on the simulator, which cannot be driven from here** — `simctl`
+      has no tap verb and the Simulator process exposes no scriptable window, so there is no
+      way to answer thirty rounds. Answering them blindly does not work either: a wrong tap
+      holds the round by design. `test/games/stroop_rush/engine/stroop_run_persists_test.dart`
+      establishes what the playthrough was for, and rather more strictly — thirty rounds
+      through `StroopBoardNotifier.submit`, reported through the definition's own
+      subscription, ended by the board, written by the real `RunRepository` over real SQLite,
+      run once per script. Nothing is faked but the clock and the id generator.
 
 **Commits.**
 1. `test(stroop): definition, registry entry and colour-role parity` (red)

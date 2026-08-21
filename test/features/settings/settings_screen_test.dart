@@ -4,6 +4,7 @@ import 'package:mindforge/app.dart';
 import 'package:mindforge/core/app_settings.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/features/settings/ui/language_sheet.dart';
+import 'package:mindforge/features/settings/ui/settings_screen.dart';
 import 'package:mindforge/features/settings/widgets/colour_blind_preview.dart';
 import 'package:mindforge/features/settings/widgets/settings_row.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
@@ -34,13 +35,34 @@ void main() {
   );
 
   group('the rows', () {
-    testWidgets('are four switches, a language row and an about row', (
+    testWidgets('are three switches, a language row and an about row', (
       tester,
     ) async {
       await pumpSettings(tester);
 
-      expect(find.byType(PopToggle), findsNWidgets(4));
-      expect(find.byType(SettingsRow), findsNWidgets(6));
+      expect(find.byType(PopToggle), findsNWidgets(3));
+      expect(find.byType(SettingsRow), findsNWidgets(5));
+    });
+
+    testWidgets('and Sound is NOT among them, because nothing plays one', (
+      tester,
+    ) async {
+      // A SWITCH THAT DOES NOTHING IS A LIE ABOUT THE APP. There is no audio in
+      // MindForge: no player, no assets, no package. `FeedbackService` works
+      // out which cue a moment WOULD play and nobody plays it. The row shipped
+      // anyway and a player toggling it heard the same silence either way.
+      //
+      // The setting itself stays — the column, the model field and the gate all
+      // stay wired — so the epic that adds audio adds the row back and nothing
+      // else. What is removed is the claim.
+      await pumpSettings(tester);
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(SettingsScreen)),
+      );
+
+      expect(find.text(l10n.settingSound), findsNothing);
+      expect(find.text(l10n.settingHaptics), findsOneWidget);
     });
 
     testWidgets('a toggle row does NOT also tap', (tester) async {
@@ -258,9 +280,9 @@ void main() {
       await tester.pump();
 
       expect(writes, hasLength(1));
-      expect(writes.single.isSoundEnabled, isFalse);
+      expect(writes.single.isHapticsEnabled, isFalse);
       expect(
-        writes.single.isHapticsEnabled,
+        writes.single.isSoundEnabled,
         isTrue,
         reason: 'the other fields survived the write',
       );

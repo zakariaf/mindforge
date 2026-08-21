@@ -191,13 +191,13 @@ abstract class AppLocalizations {
   /// **'Coming soon'**
   String get comingSoon;
 
-  /// The name of the first game. IT IS TRANSLATED — this is a description, not a brand, and E07's GameDefinition therefore carries this ARB KEY rather than a display string.
+  /// The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized.
   ///
   /// In en, this message translates to:
   /// **'Stroop Rush'**
   String get gameStroopRushName;
 
-  /// One-line description of Stroop Rush, on its card and its detail screen. It is also the on-board instruction during play.
+  /// One line saying what the player does, on the Home card and under the game's hero.
   ///
   /// In en, this message translates to:
   /// **'Tap the colour, not the word'**
@@ -284,25 +284,25 @@ abstract class AppLocalizations {
   /// HUD label above the elapsed or remaining clock.
   ///
   /// In en, this message translates to:
-  /// **'Time'**
+  /// **'TIME'**
   String get hudTime;
 
   /// HUD label above the running score.
   ///
   /// In en, this message translates to:
-  /// **'Score'**
+  /// **'SCORE'**
   String get hudScore;
 
   /// HUD label above the combo multiplier.
   ///
   /// In en, this message translates to:
-  /// **'Streak'**
+  /// **'STREAK'**
   String get hudStreak;
 
   /// HUD label above the found-tile count in Schulte Grid.
   ///
   /// In en, this message translates to:
-  /// **'Found'**
+  /// **'FOUND'**
   String get hudFound;
 
   /// HUD label above the next number to find in Schulte Grid.
@@ -346,6 +346,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yellow'**
   String get colourYellow;
+
+  /// A Stroop answer colour word, offered on Blitz only. It is BOTH the stimulus word and an answer-key label, so it has to read at 78pt and fit a 92pt key.
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get colourPurple;
+
+  /// A Stroop answer colour word. Offered on Blitz, and it is also the label PlayAnswer.green takes under the colour-blind palette, because that palette paints green as orange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get colourOrange;
+
+  /// A Stroop answer colour word that exists ONLY under the colour-blind palette: it is the label PlayAnswer.red takes there, because that palette paints red as pink. There is no PlayAnswer.pink and there must not be.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get colourPink;
+
+  /// The colour word "Red" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed.
+  ///
+  /// In en, this message translates to:
+  /// **'RED'**
+  String get stroopWordRed;
+
+  /// The colour word "Blue" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'BLUE'**
+  String get stroopWordBlue;
+
+  /// The colour word "Green" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'GREEN'**
+  String get stroopWordGreen;
+
+  /// The colour word "Yellow" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow.
+  ///
+  /// In en, this message translates to:
+  /// **'YELLOW'**
+  String get stroopWordYellow;
+
+  /// The colour word "Purple" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple.
+  ///
+  /// In en, this message translates to:
+  /// **'PURPLE'**
+  String get stroopWordPurple;
+
+  /// The colour word "Orange" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange.
+  ///
+  /// In en, this message translates to:
+  /// **'ORANGE'**
+  String get stroopWordOrange;
+
+  /// The colour word "Pink" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink.
+  ///
+  /// In en, this message translates to:
+  /// **'PINK'**
+  String get stroopWordPink;
+
+  /// The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP THE COLOUR, NOT THE WORD'**
+  String get stroopPrompt;
+
+  /// What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'{word}, printed in {ink}'**
+  String stroopStimulusValue(String word, String ink);
+
+  /// The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case.
+  ///
+  /// In en, this message translates to:
+  /// **'REACTION · FOCUS'**
+  String get gameStroopRushKicker;
 
   /// The heading on the results screen. Warm and short; it is celebratory, not an evaluation of the score.
   ///
@@ -575,65 +653,65 @@ abstract class AppLocalizations {
   /// **'کوردیی ناوەندی'**
   String get languageNameCkb;
 
-  /// A placeholder game name, shipped by E08 so the eight shell screens are renderable and screenshot-comparable before Stroop Rush exists. E09 DELETES these nine keys in its first commit.
-  ///
-  /// In en, this message translates to:
-  /// **'Reaction Lab'**
-  String get gamePlaceholderCoralName;
-
-  /// The one-line description under a placeholder game on the home card.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap the odd one out'**
-  String get gamePlaceholderCoralTagline;
-
-  /// A section kicker. UPPERCASE IS AUTHORED HERE, per locale, and never applied with toUpperCase() in Dart — fa and ckb have no case.
-  ///
-  /// In en, this message translates to:
-  /// **'REACTION'**
-  String get gamePlaceholderCoralKicker;
-
-  /// The second placeholder game name. See gamePlaceholderCoralName.
-  ///
-  /// In en, this message translates to:
-  /// **'Grid Sweep'**
-  String get gamePlaceholderTurquoiseName;
-
-  /// The second placeholder game tagline.
-  ///
-  /// In en, this message translates to:
-  /// **'Find them in order'**
-  String get gamePlaceholderTurquoiseTagline;
-
-  /// The second placeholder game kicker. Uppercase authored per locale.
-  ///
-  /// In en, this message translates to:
-  /// **'FOCUS'**
-  String get gamePlaceholderTurquoiseKicker;
-
-  /// The locked "coming soon" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip.
-  ///
-  /// In en, this message translates to:
-  /// **'Pattern Trace'**
-  String get gamePlaceholderLockedName;
-
-  /// The locked slot tagline. Rendered as the card subtitle, NOT reused as the badge — a locked card that printed this twice was an E05 defect.
-  ///
-  /// In en, this message translates to:
-  /// **'Not yet unlocked'**
-  String get gamePlaceholderLockedTagline;
-
-  /// The locked slot kicker. Uppercase authored per locale.
-  ///
-  /// In en, this message translates to:
-  /// **'SOON'**
-  String get gamePlaceholderLockedKicker;
-
   /// Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace.
   ///
   /// In en, this message translates to:
   /// **'That screen has moved'**
   String get notFoundTitle;
+
+  /// One line under the colour-blind toggle saying exactly what it changes. Without it the setting reads as if it turns the fill patterns on, which are always on.
+  ///
+  /// In en, this message translates to:
+  /// **'Swaps red for pink and green for orange. The fill patterns are always on.'**
+  String get settingColourBlindHelp;
+
+  /// Label of the version row on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersion;
+
+  /// Heading of the offline promise on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Works offline, always'**
+  String get aboutOffline;
+
+  /// The offline promise. It is literally true: the app contains no HTTP client.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no network code in this app. Nothing is downloaded and nothing is sent.'**
+  String get aboutOfflineBody;
+
+  /// Heading of the privacy promise on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing leaves your device'**
+  String get aboutPrivate;
+
+  /// The privacy promise. No accounts, no telemetry, on-device storage only.
+  ///
+  /// In en, this message translates to:
+  /// **'No account, no analytics, no crash reporting. Your scores live in one file on this phone.'**
+  String get aboutPrivateBody;
+
+  /// Heading of the licence block on the About screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Licence'**
+  String get aboutLicenceTitle;
+
+  /// The app own licence. The SPDX identifier is passed in rather than written into the ARB: it is a proper noun that is never translated, and it carries ASCII digits that the fa and ckb numeral gate rightly refuses.
+  ///
+  /// In en, this message translates to:
+  /// **'MindForge is open source under {licence}.'**
+  String aboutLicenceBody(String licence);
+
+  /// Row that opens the platform third-party licence list.
+  ///
+  /// In en, this message translates to:
+  /// **'Open-source licences'**
+  String get aboutThirdParty;
 }
 
 class _AppLocalizationsDelegate

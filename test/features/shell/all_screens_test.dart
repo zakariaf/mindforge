@@ -26,7 +26,7 @@ import '../../support/shell_harness.dart';
 /// right-to-left and the one Flutter ships no Material translations for.
 void main() {
   final run = RunConfig(
-    gameId: GameId('placeholder_coral'),
+    gameId: GameId('fixture_alpha'),
     difficulty: Difficulty.classic,
     seed: 42,
   );

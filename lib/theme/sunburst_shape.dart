@@ -40,12 +40,23 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     required this.chartBarRadiusBottom,
     required this.settingsChipRadius,
     required this.paletteSwatchRadius,
+    required this.heroSwatchSize,
+    required this.heroSwatchRadius,
+    required this.heroSwatchShadow,
     required this.countdownRing,
     required this.countdownDot,
     required this.countdownReadyShadow,
     required this.gameArtFrame,
     required this.lockedChip,
     required this.cardChipRadius,
+    required this.dotPitch,
+    required this.dotRadius,
+    required this.ringPitch,
+    required this.ringBandWidth,
+    required this.glyphStrokeWidth,
+    required this.answerKeyHeight,
+    required this.answerKeyPanelWidth,
+    required this.answerStrikeHeight,
     required this.borderWidthNested,
     required this.dashOn,
     required this.dashOff,
@@ -195,6 +206,21 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// A palette swatch. `app.html`: `.cbprev i{border-radius:5px}`.
   final Radius paletteSwatchRadius;
 
+  /// One hero swatch chip. `app.html`: `.swatchrow i{width:38px;height:38px}`.
+  ///
+  /// The four chips under a game's tagline on its detail screen: the game's
+  /// answer colours, each carrying its ink FILL PATTERN. They are the legend
+  /// for the second channel, met before the first round rather than during it.
+  final double heroSwatchSize;
+
+  /// A hero swatch's corner. `app.html`: `.swatchrow i{border-radius:12px}`.
+  final Radius heroSwatchRadius;
+
+  /// A hero swatch's hard offset. `app.html`: `.swatchrow i{box-shadow:2px 2px
+  /// 0 var(--ink)}` — smaller than [e1], because a 38pt chip carrying the full
+  /// 3px edge takes e1 as a slab rather than a lift.
+  final Offset heroSwatchShadow;
+
   /// The countdown ring's diameter. `app.html`: `.bigring{width:238px}`.
   final double countdownRing;
 
@@ -225,6 +251,61 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
   /// and `.locked .lk{border-radius:14px}` — and it sits between [radiusSm]'s
   /// ten and [radiusMd]'s sixteen, so neither is a rounding away.
   final Radius cardChipRadius;
+
+  /// The spacing of a dotted `PlayFill` lattice. `system.html` §03:
+  /// `radial-gradient(var(--ink) 2.6px, var(--play) 2.7px)` at `background-size:10px 10px`.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double dotPitch;
+
+  /// The radius of one dot in a dotted `PlayFill`.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double dotRadius;
+
+  /// The distance between ring centres in a ringed `PlayFill`.
+  /// `system.html` §03: `repeating-radial-gradient(... 0 4px, var(--ink) 4px 7px)`.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double ringPitch;
+
+  /// The painted width of one ink ring — the `4px 7px` band above.
+  ///
+  /// **DERIVED** from `system.html` §03, which states the pattern in CSS and
+  /// not as tokens.
+  final double ringBandWidth;
+
+  /// The ink outline grown around the stimulus glyph.
+  ///
+  /// **DERIVED**, and the reason the stimulus is never a bare `Text`: the
+  /// outline is what makes a yellow word read at ink-on-cream contrast instead
+  /// of yellow-on-white. `system.html` §12 draws it as a stack of text shadows,
+  /// which is a CSS technique for a stroke this paints directly.
+  final double glyphStrokeWidth;
+
+  /// One answer key's height. `app.html`: `.ans{height:92px}`.
+  ///
+  /// **DERIVED** from `app.html`'s answer-key rules.
+  final double answerKeyHeight;
+
+  /// The ink-bordered pattern panel inside a key.
+  /// `app.html`: `.ans .key{width:56px}` — the second channel, at a size that
+  /// reads at arm's length.
+  ///
+  /// **DERIVED** from `app.html`'s answer-key rules.
+  final double answerKeyPanelWidth;
+
+  /// The ink strike bar a rejected key wears.
+  ///
+  /// The NON-MOTION RESIDUE of a wrong answer: it survives reduce motion, when
+  /// the shake does not, so the wrong key still says so to a player who has
+  /// animation off.
+  ///
+  /// **DERIVED** from `app.html`'s answer-key rules.
+  final double answerStrikeHeight;
 
   /// The ink edge on a surface drawn **inside** another surface.
   ///
@@ -367,12 +448,23 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom,
     settingsChipRadius,
     paletteSwatchRadius,
+    heroSwatchSize,
+    heroSwatchRadius,
+    heroSwatchShadow,
     countdownRing,
     countdownDot,
     countdownReadyShadow,
     gameArtFrame,
     lockedChip,
     cardChipRadius,
+    dotPitch,
+    dotRadius,
+    ringPitch,
+    ringBandWidth,
+    glyphStrokeWidth,
+    answerKeyHeight,
+    answerKeyPanelWidth,
+    answerStrikeHeight,
     borderWidthNested,
     dashOn,
     dashOff,
@@ -428,12 +520,23 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     Radius? chartBarRadiusBottom,
     Radius? settingsChipRadius,
     Radius? paletteSwatchRadius,
+    double? heroSwatchSize,
+    Radius? heroSwatchRadius,
+    Offset? heroSwatchShadow,
     double? countdownRing,
     double? countdownDot,
     Offset? countdownReadyShadow,
     double? gameArtFrame,
     double? lockedChip,
     Radius? cardChipRadius,
+    double? dotPitch,
+    double? dotRadius,
+    double? ringPitch,
+    double? ringBandWidth,
+    double? glyphStrokeWidth,
+    double? answerKeyHeight,
+    double? answerKeyPanelWidth,
+    double? answerStrikeHeight,
     double? borderWidthNested,
     double? dashOn,
     double? dashOff,
@@ -469,12 +572,23 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: chartBarRadiusBottom ?? this.chartBarRadiusBottom,
     settingsChipRadius: settingsChipRadius ?? this.settingsChipRadius,
     paletteSwatchRadius: paletteSwatchRadius ?? this.paletteSwatchRadius,
+    heroSwatchSize: heroSwatchSize ?? this.heroSwatchSize,
+    heroSwatchRadius: heroSwatchRadius ?? this.heroSwatchRadius,
+    heroSwatchShadow: heroSwatchShadow ?? this.heroSwatchShadow,
     countdownRing: countdownRing ?? this.countdownRing,
     countdownDot: countdownDot ?? this.countdownDot,
     countdownReadyShadow: countdownReadyShadow ?? this.countdownReadyShadow,
     gameArtFrame: gameArtFrame ?? this.gameArtFrame,
     lockedChip: lockedChip ?? this.lockedChip,
     cardChipRadius: cardChipRadius ?? this.cardChipRadius,
+    dotPitch: dotPitch ?? this.dotPitch,
+    dotRadius: dotRadius ?? this.dotRadius,
+    ringPitch: ringPitch ?? this.ringPitch,
+    ringBandWidth: ringBandWidth ?? this.ringBandWidth,
+    glyphStrokeWidth: glyphStrokeWidth ?? this.glyphStrokeWidth,
+    answerKeyHeight: answerKeyHeight ?? this.answerKeyHeight,
+    answerKeyPanelWidth: answerKeyPanelWidth ?? this.answerKeyPanelWidth,
+    answerStrikeHeight: answerStrikeHeight ?? this.answerStrikeHeight,
     borderWidthNested: borderWidthNested ?? this.borderWidthNested,
     dashOn: dashOn ?? this.dashOn,
     dashOff: dashOff ?? this.dashOff,
@@ -522,6 +636,9 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       ),
       settingsChipRadius: r(settingsChipRadius, other.settingsChipRadius),
       paletteSwatchRadius: r(paletteSwatchRadius, other.paletteSwatchRadius),
+      heroSwatchSize: d(heroSwatchSize, other.heroSwatchSize),
+      heroSwatchRadius: r(heroSwatchRadius, other.heroSwatchRadius),
+      heroSwatchShadow: o(heroSwatchShadow, other.heroSwatchShadow),
       countdownRing: d(countdownRing, other.countdownRing),
       countdownDot: d(countdownDot, other.countdownDot),
       countdownReadyShadow: o(
@@ -531,6 +648,14 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
       gameArtFrame: d(gameArtFrame, other.gameArtFrame),
       lockedChip: d(lockedChip, other.lockedChip),
       cardChipRadius: r(cardChipRadius, other.cardChipRadius),
+      dotPitch: d(dotPitch, other.dotPitch),
+      dotRadius: d(dotRadius, other.dotRadius),
+      ringPitch: d(ringPitch, other.ringPitch),
+      ringBandWidth: d(ringBandWidth, other.ringBandWidth),
+      glyphStrokeWidth: d(glyphStrokeWidth, other.glyphStrokeWidth),
+      answerKeyHeight: d(answerKeyHeight, other.answerKeyHeight),
+      answerKeyPanelWidth: d(answerKeyPanelWidth, other.answerKeyPanelWidth),
+      answerStrikeHeight: d(answerStrikeHeight, other.answerStrikeHeight),
       borderWidthNested: d(borderWidthNested, other.borderWidthNested),
       dashOn: d(dashOn, other.dashOn),
       dashOff: d(dashOff, other.dashOff),
@@ -575,12 +700,23 @@ class SunburstShape extends ThemeExtension<SunburstShape> {
     chartBarRadiusBottom: Radius.circular(3),
     settingsChipRadius: Radius.circular(11),
     paletteSwatchRadius: Radius.circular(5),
+    heroSwatchSize: 38,
+    heroSwatchRadius: Radius.circular(12),
+    heroSwatchShadow: Offset(2, 2),
     countdownRing: 238,
     countdownDot: 14,
     countdownReadyShadow: Offset(4, 4),
     gameArtFrame: 64,
     lockedChip: 44,
     cardChipRadius: Radius.circular(14),
+    dotPitch: 10,
+    dotRadius: 2.6,
+    ringPitch: 7,
+    ringBandWidth: 3,
+    glyphStrokeWidth: 6,
+    answerKeyHeight: 92,
+    answerKeyPanelWidth: 56,
+    answerStrikeHeight: 6,
     borderWidthNested: 2,
     // DERIVED: system.html §04, stroke-dasharray: 9 7.
     dashOn: 9,

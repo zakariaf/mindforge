@@ -15,7 +15,7 @@
   "bestLabel": "باشترین",
   "comingSoon": "بەم زووانە",
   "gameStroopRushName": "پەلەی ستروپ",
-  "gameStroopRushTagline": "ڕەنگەکە دابگرە، نەک وشەکە",
+  "gameStroopRushTagline": "دەست بنێ بە ڕەنگەکە، نەک وشەکە",
   "gameSchulteGridName": "خشتەی شولتە",
   "gameSchulteGridTagline": "۱ تا ۲۵ بە خێرایی بدۆزەرەوە",
   "gameNBackName": "N-Back",
@@ -40,6 +40,75 @@
   "colourBlue": "شین",
   "colourGreen": "سەوز",
   "colourYellow": "زەرد",
+  "colourPurple": "مۆر",
+  "colourOrange": "نارەنجی",
+  "colourPink": "پەمەیی",
+  "stroopWordRed": "سوور",
+  "@stroopWordRed": {
+    "description": "The colour word \"Red\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordBlue": "شین",
+  "@stroopWordBlue": {
+    "description": "The colour word \"Blue\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordGreen": "سەوز",
+  "@stroopWordGreen": {
+    "description": "The colour word \"Green\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordYellow": "زەرد",
+  "@stroopWordYellow": {
+    "description": "The colour word \"Yellow\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordPurple": "مۆر",
+  "@stroopWordPurple": {
+    "description": "The colour word \"Purple\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordOrange": "نارەنجی",
+  "@stroopWordOrange": {
+    "description": "The colour word \"Orange\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordPink": "پەمەیی",
+  "@stroopWordPink": {
+    "description": "The colour word \"Pink\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopPrompt": "دەست بنێ بە ڕەنگەکە، نەک وشەکە",
+  "@stroopPrompt": {
+    "description": "The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopStimulusValue": "{word}، بە ڕەنگی {ink} چاپکراوە",
+  "@gameStroopRushName": {
+    "description": "The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized.",
+    "x-review": "native-speaker-pending"
+  },
+  "@gameStroopRushTagline": {
+    "description": "One line saying what the player does, on the Home card and under the game's hero.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameStroopRushKicker": "کاردانەوە · سەرنج",
+  "@gameStroopRushKicker": {
+    "description": "The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case.",
+    "x-review": "native-speaker-pending"
+  },
+  "@stroopStimulusValue": {
+    "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "ink": {
+        "type": "String"
+      }
+    },
+    "x-review": "native-speaker-pending"
+  },
   "resultsTitle": "خولێکی باش بوو!",
   "newPersonalBest": "ڕیکۆردی نوێی کەسی",
   "finalScore": "خاڵی کۆتایی",
@@ -78,14 +147,47 @@
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
   "languageNameCkb": "کوردیی ناوەندی",
-  "gamePlaceholderCoralName": "تاقیگەی کاردانەوە",
-  "gamePlaceholderCoralTagline": "جیاوازەکە دابگرە",
-  "gamePlaceholderCoralKicker": "کاردانەوە",
-  "gamePlaceholderTurquoiseName": "گەڕانی خانە",
-  "gamePlaceholderTurquoiseTagline": "بە ڕیزبەندی بیاندۆزەوە",
-  "gamePlaceholderTurquoiseKicker": "سەرنج",
-  "gamePlaceholderLockedName": "شوێنپێی نەخش",
-  "gamePlaceholderLockedTagline": "هێشتا نەکراوەتەوە",
-  "gamePlaceholderLockedKicker": "بەم زووانە",
-  "notFoundTitle": "ئەم پەڕەیە نەماوە"
+  "notFoundTitle": "ئەم پەڕەیە نەماوە",
+  "settingColourBlindHelp": "سوور دەگۆڕێت بە پەمەیی و سەوز بە پرتەقاڵی. شێوەکانی پڕکردنەوە هەمیشە کاران.",
+  "@settingColourBlindHelp": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutVersion": "وەشان",
+  "@aboutVersion": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOffline": "هەمیشە بەبێ ئینتەرنێت کار دەکات",
+  "@aboutOffline": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOfflineBody": "هیچ کۆدێکی تۆڕ لەم ئەپەدا نییە. هیچ شتێک دانالوود ناکرێت و هیچ شتێک نانێردرێت.",
+  "@aboutOfflineBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivate": "هیچ شتێک لە ئامێرەکەت دەرناچێت",
+  "@aboutPrivate": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivateBody": "بێ هەژمار، بێ شیکاری، بێ ڕاپۆرتی تێکچوون. خاڵەکانت لە یەک فایلدا لەسەر ئەم مۆبایلە دەمێننەوە.",
+  "@aboutPrivateBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceTitle": "مۆڵەتنامە",
+  "@aboutLicenceTitle": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceBody": "مایندفۆرج سەرچاوەکراوەیە، لەژێر {licence}.",
+  "@aboutLicenceBody": {
+    "x-review": "native-speaker-pending",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "مۆڵەتنامە سەرچاوەکراوەکان",
+  "@aboutThirdParty": {
+    "x-review": "native-speaker-pending"
+  }
 }

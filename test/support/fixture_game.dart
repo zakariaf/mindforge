@@ -43,6 +43,7 @@ GameDefinition fixtureGame({
   runLimitFor: runLimitFor,
   buildBoard: (context, run) => const SizedBox.shrink(),
   buildArtwork: (context) => const SizedBox.shrink(),
+  buildHeroArt: (context) => const SizedBox.shrink(),
   bindBoard: (ref, run, onChanged) {
     // A REAL SUBSCRIPTION, the way a game wires one. The first fixture returned
     // a constant, which meant it never invalidated anything — and the seam

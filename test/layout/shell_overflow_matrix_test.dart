@@ -24,7 +24,7 @@ import '../support/shell_harness.dart';
 /// from the design without throwing anything.
 void main() {
   final run = RunConfig(
-    gameId: GameId('placeholder_coral'),
+    gameId: GameId('fixture_alpha'),
     difficulty: Difficulty.classic,
     seed: 42,
   );

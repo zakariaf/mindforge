@@ -20,6 +20,7 @@ final class HudSlot {
     required this.canonicalValue,
     required this.format,
     this.tone = HudTone.neutral,
+    this.source = HudSource.board,
   });
 
   /// The ARB key naming this slot.
@@ -38,6 +39,18 @@ final class HudSlot {
   /// run limit the shell owns.
   final HudTone tone;
 
+  /// Who fills [canonicalValue].
+  final HudSource source;
+
+  /// A copy of this slot showing [canonicalValue] instead.
+  HudSlot withValue(int canonicalValue) => HudSlot(
+    labelKey: labelKey,
+    canonicalValue: canonicalValue,
+    format: format,
+    tone: tone,
+    source: source,
+  );
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -45,13 +58,33 @@ final class HudSlot {
           other.labelKey == labelKey &&
           other.canonicalValue == canonicalValue &&
           other.format == format &&
-          other.tone == tone;
+          other.tone == tone &&
+          other.source == source;
 
   @override
-  int get hashCode => Object.hash(labelKey, canonicalValue, format, tone);
+  int get hashCode =>
+      Object.hash(labelKey, canonicalValue, format, tone, source);
 
   @override
   String toString() => 'HudSlot($labelKey, $canonicalValue, ${tone.name})';
+}
+
+/// Who fills a [HudSlot]'s value.
+///
+/// **A game has no clock of its own** — `sunburst-shell-screens` rule 3 — so a
+/// board that wants to show elapsed time cannot supply it. It declares the slot
+/// and names the shell as its source; the run state substitutes the run's own
+/// elapsed before anything renders.
+///
+/// The alternative was for the shell to recognise a magic label key, which is
+/// the `switch (gameId)` argument one level down: the second game would spell
+/// its time key differently and the pill would silently freeze again.
+enum HudSource {
+  /// The board's own number, passed through untouched.
+  board,
+
+  /// The run's elapsed time, in milliseconds, filled in by the shell.
+  runClock,
 }
 
 /// The HUD, which is exactly three slots.
@@ -77,6 +110,18 @@ final class GameHud {
 
   /// The slots that are present, in reading order.
   List<HudSlot> get slots => <HudSlot>[leading, middle, ?trailing];
+
+  /// A copy with every [HudSource.runClock] slot showing [elapsedMs].
+  GameHud withRunClock(int elapsedMs) => GameHud(
+    leading: _filled(leading, elapsedMs),
+    middle: _filled(middle, elapsedMs),
+    trailing: trailing == null ? null : _filled(trailing!, elapsedMs),
+  );
+
+  static HudSlot _filled(HudSlot slot, int elapsedMs) => switch (slot.source) {
+    HudSource.board => slot,
+    HudSource.runClock => slot.withValue(elapsedMs),
+  };
 
   @override
   bool operator ==(Object other) =>

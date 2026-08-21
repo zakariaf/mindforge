@@ -15,7 +15,7 @@
   "bestLabel": "بهترین",
   "comingSoon": "به‌زودی",
   "gameStroopRushName": "شتاب استروپ",
-  "gameStroopRushTagline": "رنگ را بزن، نه واژه را",
+  "gameStroopRushTagline": "روی رنگ بزن، نه روی واژه",
   "gameSchulteGridName": "جدول شولته",
   "gameSchulteGridTagline": "۱ تا ۲۵ را سریع پیدا کن",
   "gameNBackName": "N-Back",
@@ -40,6 +40,75 @@
   "colourBlue": "آبی",
   "colourGreen": "سبز",
   "colourYellow": "زرد",
+  "colourPurple": "بنفش",
+  "colourOrange": "نارنجی",
+  "colourPink": "صورتی",
+  "stroopWordRed": "قرمز",
+  "@stroopWordRed": {
+    "description": "The colour word \"Red\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordBlue": "آبی",
+  "@stroopWordBlue": {
+    "description": "The colour word \"Blue\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordGreen": "سبز",
+  "@stroopWordGreen": {
+    "description": "The colour word \"Green\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordYellow": "زرد",
+  "@stroopWordYellow": {
+    "description": "The colour word \"Yellow\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordPurple": "بنفش",
+  "@stroopWordPurple": {
+    "description": "The colour word \"Purple\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordOrange": "نارنجی",
+  "@stroopWordOrange": {
+    "description": "The colour word \"Orange\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopWordPink": "صورتی",
+  "@stroopWordPink": {
+    "description": "The colour word \"Pink\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopPrompt": "روی رنگ بزن، نه روی واژه",
+  "@stroopPrompt": {
+    "description": "The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on.",
+    "x-review": "native-speaker-pending"
+  },
+  "stroopStimulusValue": "{word}، چاپ‌شده با رنگ {ink}",
+  "@gameStroopRushName": {
+    "description": "The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized.",
+    "x-review": "native-speaker-pending"
+  },
+  "@gameStroopRushTagline": {
+    "description": "One line saying what the player does, on the Home card and under the game's hero.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameStroopRushKicker": "واکنش · تمرکز",
+  "@gameStroopRushKicker": {
+    "description": "The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case.",
+    "x-review": "native-speaker-pending"
+  },
+  "@stroopStimulusValue": {
+    "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "ink": {
+        "type": "String"
+      }
+    },
+    "x-review": "native-speaker-pending"
+  },
   "resultsTitle": "اجرای خوبی بود!",
   "newPersonalBest": "رکورد شخصی تازه",
   "finalScore": "امتیاز نهایی",
@@ -78,14 +147,47 @@
   "languageNameDe": "Deutsch",
   "languageNameFa": "فارسی",
   "languageNameCkb": "کوردیی ناوەندی",
-  "gamePlaceholderCoralName": "آزمایشگاه واکنش",
-  "gamePlaceholderCoralTagline": "متفاوت را بزن",
-  "gamePlaceholderCoralKicker": "واکنش",
-  "gamePlaceholderTurquoiseName": "جاروب شبکه",
-  "gamePlaceholderTurquoiseTagline": "به ترتیب پیدا کن",
-  "gamePlaceholderTurquoiseKicker": "تمرکز",
-  "gamePlaceholderLockedName": "ردیابی الگو",
-  "gamePlaceholderLockedTagline": "هنوز باز نشده",
-  "gamePlaceholderLockedKicker": "به‌زودی",
-  "notFoundTitle": "این صفحه دیگر وجود ندارد"
+  "notFoundTitle": "این صفحه دیگر وجود ندارد",
+  "settingColourBlindHelp": "قرمز را با صورتی و سبز را با نارنجی جابه‌جا می‌کند. الگوهای پرکننده همیشه روشن‌اند.",
+  "@settingColourBlindHelp": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutVersion": "نسخه",
+  "@aboutVersion": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOffline": "همیشه بدون اینترنت کار می‌کند",
+  "@aboutOffline": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutOfflineBody": "در این برنامه هیچ کد شبکه‌ای وجود ندارد. چیزی دانلود و چیزی ارسال نمی‌شود.",
+  "@aboutOfflineBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivate": "هیچ‌چیز از دستگاه شما خارج نمی‌شود",
+  "@aboutPrivate": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutPrivateBody": "بدون حساب کاربری، بدون تحلیل، بدون گزارش خرابی. امتیازهای شما در یک فایل روی همین گوشی می‌مانند.",
+  "@aboutPrivateBody": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceTitle": "پروانه",
+  "@aboutLicenceTitle": {
+    "x-review": "native-speaker-pending"
+  },
+  "aboutLicenceBody": "مایندفورج متن‌باز است، زیر پروانهٔ {licence}.",
+  "@aboutLicenceBody": {
+    "x-review": "native-speaker-pending",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "پروانه‌های متن‌باز",
+  "@aboutThirdParty": {
+    "x-review": "native-speaker-pending"
+  }
 }

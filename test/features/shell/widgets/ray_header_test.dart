@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindforge/features/shell/widgets/halftone_dots.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/ui/halftone_dots.dart';
 
 import '../../../support/component_harness.dart';
 import '../../../support/locale_cases.dart';

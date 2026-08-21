@@ -3,7 +3,12 @@ import 'package:mindforge/shared/feedback/moment.dart';
 import 'package:mindforge/shared/motion/moment_drive.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 
-/// A bounded horizontal shake, played on each false-to-true edge of [isWrong].
+/// A bounded horizontal shake, played whenever [isWrong] becomes true.
+///
+/// **"Becomes true" includes arriving true.** A caller may either keep one
+/// element and flip [isWrong], or give each wrong answer its own key and let a
+/// new element arrive already wrong; both play exactly once. Only the first was
+/// handled at first, and the board uses the second.
 ///
 /// **It moves along the reading axis and still reads no `Directionality`.** The
 /// sweep is symmetric about zero — `0 -> -a -> +a -> 0` — so it travels equally
@@ -78,6 +83,31 @@ class _ShakeOnWrongState extends State<ShakeOnWrong>
 
   /// How far the sweep travels to each side.
   late final double _amplitude = SunburstShape.of(context).shakeAmplitude;
+
+  /// Whether the mount edge has already been considered.
+  bool _mounted = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // A REMOUNT IS AN EDGE. A caller that identifies each wrong answer with a
+    // changing key — which is how the answer key makes two taps on the same
+    // key feel like two — gets a FRESH element every time, and a fresh element
+    // never sees a false-to-true edge in `didUpdateWidget`, because for it
+    // there was no false. Playing on a mount that arrives already wrong is
+    // what makes that idiom work; a mount that arrives right plays nothing.
+    //
+    // HERE RATHER THAN `initState`, because the drive reads the motion tokens
+    // and the reduce-motion setting off the context, and neither is available
+    // until dependencies are resolved. Guarded, because this also runs when
+    // the theme or the locale changes and that is not a new wrong answer.
+    if (_mounted) return;
+
+    _mounted = true;
+
+    if (widget.isWrong) playUnawaited();
+  }
 
   @override
   void didUpdateWidget(ShakeOnWrong oldWidget) {

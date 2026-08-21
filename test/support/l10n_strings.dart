@@ -39,17 +39,6 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
   return <String, String>{
     'appTitle': l10n.appTitle,
     'notFoundTitle': l10n.notFoundTitle,
-    // E08's placeholder game strings. They exist so the eight shell screens
-    // are renderable before Stroop Rush does, and E09 deletes them.
-    'gamePlaceholderCoralName': l10n.gamePlaceholderCoralName,
-    'gamePlaceholderCoralTagline': l10n.gamePlaceholderCoralTagline,
-    'gamePlaceholderCoralKicker': l10n.gamePlaceholderCoralKicker,
-    'gamePlaceholderTurquoiseName': l10n.gamePlaceholderTurquoiseName,
-    'gamePlaceholderTurquoiseTagline': l10n.gamePlaceholderTurquoiseTagline,
-    'gamePlaceholderTurquoiseKicker': l10n.gamePlaceholderTurquoiseKicker,
-    'gamePlaceholderLockedName': l10n.gamePlaceholderLockedName,
-    'gamePlaceholderLockedTagline': l10n.gamePlaceholderLockedTagline,
-    'gamePlaceholderLockedKicker': l10n.gamePlaceholderLockedKicker,
     'navPlay': l10n.navPlay,
     'navStats': l10n.navStats,
     'navSettings': l10n.navSettings,
@@ -92,6 +81,22 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'colourBlue': l10n.colourBlue,
     'colourGreen': l10n.colourGreen,
     'colourYellow': l10n.colourYellow,
+    'colourPurple': l10n.colourPurple,
+    'colourOrange': l10n.colourOrange,
+    'colourPink': l10n.colourPink,
+    'stroopWordRed': l10n.stroopWordRed,
+    'stroopWordBlue': l10n.stroopWordBlue,
+    'stroopWordGreen': l10n.stroopWordGreen,
+    'stroopWordYellow': l10n.stroopWordYellow,
+    'stroopWordPurple': l10n.stroopWordPurple,
+    'stroopWordOrange': l10n.stroopWordOrange,
+    'stroopWordPink': l10n.stroopWordPink,
+    'stroopPrompt': l10n.stroopPrompt,
+    'gameStroopRushKicker': l10n.gameStroopRushKicker,
+    'stroopStimulusValue': l10n.stroopStimulusValue(
+      l10n.colourBlue,
+      l10n.colourRed,
+    ),
     'resultsTitle': l10n.resultsTitle,
     'newPersonalBest': l10n.newPersonalBest,
     'finalScore': l10n.finalScore,
@@ -123,6 +128,15 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'settingsLanguageSystem': l10n.settingsLanguageSystem,
     'aboutTitle': l10n.aboutTitle,
     'aboutTagline': l10n.aboutTagline,
+    'settingColourBlindHelp': l10n.settingColourBlindHelp,
+    'aboutVersion': l10n.aboutVersion,
+    'aboutOffline': l10n.aboutOffline,
+    'aboutOfflineBody': l10n.aboutOfflineBody,
+    'aboutPrivate': l10n.aboutPrivate,
+    'aboutPrivateBody': l10n.aboutPrivateBody,
+    'aboutLicenceTitle': l10n.aboutLicenceTitle,
+    'aboutLicenceBody': l10n.aboutLicenceBody('Apache-2.0'),
+    'aboutThirdParty': l10n.aboutThirdParty,
     'pauseTitle': l10n.pauseTitle,
     'pauseResume': l10n.pauseResume,
     'pauseQuit': l10n.pauseQuit,
@@ -170,19 +184,6 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'gamesUnlocked': (step: 'caption', lines: 1),
   'bestLabel': (step: 'label', lines: 1),
   'comingSoon': (step: 'label', lines: 1),
-  // E08's placeholders. A game name renders at `title` on the home card and a
-  // tagline at `caption` beneath it; a kicker is the `sectionLabel` step above
-  // the detail hero. Same slots the real games take, which is the point — they
-  // exist so the shell is renderable and comparable before Stroop Rush is.
-  'gamePlaceholderCoralName': (step: 'title', lines: 1),
-  'gamePlaceholderCoralTagline': (step: 'caption', lines: 2),
-  'gamePlaceholderCoralKicker': (step: 'sectionLabel', lines: 1),
-  'gamePlaceholderTurquoiseName': (step: 'title', lines: 1),
-  'gamePlaceholderTurquoiseTagline': (step: 'caption', lines: 2),
-  'gamePlaceholderTurquoiseKicker': (step: 'sectionLabel', lines: 1),
-  'gamePlaceholderLockedName': (step: 'title', lines: 1),
-  'gamePlaceholderLockedTagline': (step: 'caption', lines: 2),
-  'gamePlaceholderLockedKicker': (step: 'sectionLabel', lines: 1),
   'gameStroopRushName': (step: 'title', lines: 1),
   'gameStroopRushTagline': (step: 'caption', lines: 2),
   'gameSchulteGridName': (step: 'title', lines: 1),
@@ -209,6 +210,38 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'colourBlue': (step: 'button', lines: 1),
   'colourGreen': (step: 'button', lines: 1),
   'colourYellow': (step: 'button', lines: 1),
+  // The three E09 adds. Purple and orange are Blitz answers; pink exists only
+  // as the label red takes under the colour-blind palette. Same step and the
+  // same one-line budget as the other four, because they sit on the same key.
+  'colourPurple': (step: 'button', lines: 1),
+  'colourOrange': (step: 'button', lines: 1),
+  'colourPink': (step: 'button', lines: 1),
+  // The stimulus form of the same seven, budgeted at the COMPACT step — the
+  // one the board guarantees to fall back to. Declaring the full 78 here would
+  // declare a budget the narrowest shipped device cannot meet: YELLOW is 320
+  // points wide at 78 and even a 390pt screen leaves 318.
+  //
+  // TWO LINES, and only because of text scale 2.0. At 1.0 and 1.3 the compact
+  // step draws every one of them on one line at every shipped width; at 2.0 a
+  // six-letter word is 460 points and no honest step fits it. A wrapped
+  // stimulus is a stimulus the player reads twice, and that is the right cost
+  // to pay for someone who needs the text that large.
+  'stroopWordRed': (step: 'stimulusCompact', lines: 2),
+  'stroopWordBlue': (step: 'stimulusCompact', lines: 2),
+  'stroopWordGreen': (step: 'stimulusCompact', lines: 2),
+  'stroopWordYellow': (step: 'stimulusCompact', lines: 2),
+  'stroopWordPurple': (step: 'stimulusCompact', lines: 2),
+  'stroopWordOrange': (step: 'stimulusCompact', lines: 2),
+  'stroopWordPink': (step: 'stimulusCompact', lines: 2),
+  // The prompt sits above the glyph and is allowed to wrap: German is more
+  // than twice the English length and the card is 350 points wide.
+  'stroopPrompt': (step: 'label', lines: 2),
+  // Announced, never drawn, so its budget is the announcement's.
+  'stroopStimulusValue': (step: 'caption', lines: 2),
+  // E09 adds the KICKER; E04 seeded the name and the tagline above, before
+  // there was a game to attach them to. It takes the `sectionLabel` step above
+  // the detail hero, the same slot the shell gives any game.
+  'gameStroopRushKicker': (step: 'sectionLabel', lines: 1),
   'resultsTitle': (step: 'displayXl', lines: 2),
   'newPersonalBest': (step: 'label', lines: 1),
   'finalScore': (step: 'label', lines: 1),
@@ -240,6 +273,15 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   'settingsLanguageSystem': (step: 'caption', lines: 1),
   'aboutTitle': (step: 'title', lines: 1),
   'aboutTagline': (step: 'caption', lines: 2),
+  'settingColourBlindHelp': (step: 'caption', lines: 3),
+  'aboutVersion': (step: 'body', lines: 1),
+  'aboutOffline': (step: 'title', lines: 2),
+  'aboutOfflineBody': (step: 'body', lines: 4),
+  'aboutPrivate': (step: 'title', lines: 2),
+  'aboutPrivateBody': (step: 'body', lines: 4),
+  'aboutLicenceTitle': (step: 'title', lines: 1),
+  'aboutLicenceBody': (step: 'body', lines: 3),
+  'aboutThirdParty': (step: 'body', lines: 2),
   'pauseTitle': (step: 'displayXl', lines: 2),
   'pauseResume': (step: 'button', lines: 1),
   'pauseQuit': (step: 'button', lines: 1),
@@ -260,6 +302,8 @@ TextStyle styleForStep(SunburstType type, String step) => switch (step) {
   'caption' => type.caption,
   'label' => type.label,
   'stimulus' => type.stimulus,
+  'stimulusCompact' => type.stimulusCompact,
+  'buttonCompact' => type.buttonCompact,
   'buttonLarge' => type.buttonLarge,
   'chip' => type.chip,
   // E08's six.

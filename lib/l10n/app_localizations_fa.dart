@@ -99,7 +99,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get gameStroopRushName => 'شتاب استروپ';
 
   @override
-  String get gameStroopRushTagline => 'رنگ را بزن، نه واژه را';
+  String get gameStroopRushTagline => 'روی رنگ بزن، نه روی واژه';
 
   @override
   String get gameSchulteGridName => 'جدول شولته';
@@ -183,6 +183,47 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get colourYellow => 'زرد';
+
+  @override
+  String get colourPurple => 'بنفش';
+
+  @override
+  String get colourOrange => 'نارنجی';
+
+  @override
+  String get colourPink => 'صورتی';
+
+  @override
+  String get stroopWordRed => 'قرمز';
+
+  @override
+  String get stroopWordBlue => 'آبی';
+
+  @override
+  String get stroopWordGreen => 'سبز';
+
+  @override
+  String get stroopWordYellow => 'زرد';
+
+  @override
+  String get stroopWordPurple => 'بنفش';
+
+  @override
+  String get stroopWordOrange => 'نارنجی';
+
+  @override
+  String get stroopWordPink => 'صورتی';
+
+  @override
+  String get stroopPrompt => 'روی رنگ بزن، نه روی واژه';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word، چاپ‌شده با رنگ $ink';
+  }
+
+  @override
+  String get gameStroopRushKicker => 'واکنش · تمرکز';
 
   @override
   String get resultsTitle => 'اجرای خوبی بود!';
@@ -310,32 +351,37 @@ class AppLocalizationsFa extends AppLocalizations {
   String get languageNameCkb => 'کوردیی ناوەندی';
 
   @override
-  String get gamePlaceholderCoralName => 'آزمایشگاه واکنش';
-
-  @override
-  String get gamePlaceholderCoralTagline => 'متفاوت را بزن';
-
-  @override
-  String get gamePlaceholderCoralKicker => 'واکنش';
-
-  @override
-  String get gamePlaceholderTurquoiseName => 'جاروب شبکه';
-
-  @override
-  String get gamePlaceholderTurquoiseTagline => 'به ترتیب پیدا کن';
-
-  @override
-  String get gamePlaceholderTurquoiseKicker => 'تمرکز';
-
-  @override
-  String get gamePlaceholderLockedName => 'ردیابی الگو';
-
-  @override
-  String get gamePlaceholderLockedTagline => 'هنوز باز نشده';
-
-  @override
-  String get gamePlaceholderLockedKicker => 'به‌زودی';
-
-  @override
   String get notFoundTitle => 'این صفحه دیگر وجود ندارد';
+
+  @override
+  String get settingColourBlindHelp =>
+      'قرمز را با صورتی و سبز را با نارنجی جابه‌جا می‌کند. الگوهای پرکننده همیشه روشن‌اند.';
+
+  @override
+  String get aboutVersion => 'نسخه';
+
+  @override
+  String get aboutOffline => 'همیشه بدون اینترنت کار می‌کند';
+
+  @override
+  String get aboutOfflineBody =>
+      'در این برنامه هیچ کد شبکه‌ای وجود ندارد. چیزی دانلود و چیزی ارسال نمی‌شود.';
+
+  @override
+  String get aboutPrivate => 'هیچ‌چیز از دستگاه شما خارج نمی‌شود';
+
+  @override
+  String get aboutPrivateBody =>
+      'بدون حساب کاربری، بدون تحلیل، بدون گزارش خرابی. امتیازهای شما در یک فایل روی همین گوشی می‌مانند.';
+
+  @override
+  String get aboutLicenceTitle => 'پروانه';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'مایندفورج متن‌باز است، زیر پروانهٔ $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'پروانه‌های متن‌باز';
 }

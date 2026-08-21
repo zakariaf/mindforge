@@ -147,16 +147,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get getReady => 'Get ready';
 
   @override
-  String get hudTime => 'Time';
+  String get hudTime => 'TIME';
 
   @override
-  String get hudScore => 'Score';
+  String get hudScore => 'SCORE';
 
   @override
-  String get hudStreak => 'Streak';
+  String get hudStreak => 'STREAK';
 
   @override
-  String get hudFound => 'Found';
+  String get hudFound => 'FOUND';
 
   @override
   String get hudNext => 'Next';
@@ -187,6 +187,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get colourYellow => 'Yellow';
+
+  @override
+  String get colourPurple => 'Purple';
+
+  @override
+  String get colourOrange => 'Orange';
+
+  @override
+  String get colourPink => 'Pink';
+
+  @override
+  String get stroopWordRed => 'RED';
+
+  @override
+  String get stroopWordBlue => 'BLUE';
+
+  @override
+  String get stroopWordGreen => 'GREEN';
+
+  @override
+  String get stroopWordYellow => 'YELLOW';
+
+  @override
+  String get stroopWordPurple => 'PURPLE';
+
+  @override
+  String get stroopWordOrange => 'ORANGE';
+
+  @override
+  String get stroopWordPink => 'PINK';
+
+  @override
+  String get stroopPrompt => 'TAP THE COLOUR, NOT THE WORD';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word, printed in $ink';
+  }
+
+  @override
+  String get gameStroopRushKicker => 'REACTION · FOCUS';
 
   @override
   String get resultsTitle => 'Nice run!';
@@ -315,32 +356,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageNameCkb => 'کوردیی ناوەندی';
 
   @override
-  String get gamePlaceholderCoralName => 'Reaction Lab';
-
-  @override
-  String get gamePlaceholderCoralTagline => 'Tap the odd one out';
-
-  @override
-  String get gamePlaceholderCoralKicker => 'REACTION';
-
-  @override
-  String get gamePlaceholderTurquoiseName => 'Grid Sweep';
-
-  @override
-  String get gamePlaceholderTurquoiseTagline => 'Find them in order';
-
-  @override
-  String get gamePlaceholderTurquoiseKicker => 'FOCUS';
-
-  @override
-  String get gamePlaceholderLockedName => 'Pattern Trace';
-
-  @override
-  String get gamePlaceholderLockedTagline => 'Not yet unlocked';
-
-  @override
-  String get gamePlaceholderLockedKicker => 'SOON';
-
-  @override
   String get notFoundTitle => 'That screen has moved';
+
+  @override
+  String get settingColourBlindHelp =>
+      'Swaps red for pink and green for orange. The fill patterns are always on.';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutOffline => 'Works offline, always';
+
+  @override
+  String get aboutOfflineBody =>
+      'There is no network code in this app. Nothing is downloaded and nothing is sent.';
+
+  @override
+  String get aboutPrivate => 'Nothing leaves your device';
+
+  @override
+  String get aboutPrivateBody =>
+      'No account, no analytics, no crash reporting. Your scores live in one file on this phone.';
+
+  @override
+  String get aboutLicenceTitle => 'Licence';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'MindForge is open source under $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'Open-source licences';
 }

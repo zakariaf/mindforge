@@ -7,13 +7,13 @@ import 'package:mindforge/core/result.dart';
 import 'package:mindforge/core/run_config.dart';
 import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/data/data_providers.dart';
-import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/play/application/seeded_random_provider.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
-import 'package:mindforge/features/shell/widgets/daily_mix_summary.dart';
+import 'package:mindforge/features/shell/widgets/daily_mix_card_slot.dart';
 import 'package:mindforge/features/shell/widgets/equal_row.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
+import 'package:mindforge/features/shell/widgets/top_bar.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
@@ -85,33 +85,14 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            // app.html: `.topbar{padding:2px 20px 16px}`.
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 2, 20, 16),
-            child: Row(
-              children: <Widget>[
-                PopIconButton(
-                  // The chevron mirrors, because "back" is a
-                  // reading-direction word. The glyph table decides that, not
-                  // this screen.
-                  glyph: SunburstGlyph.back,
-                  semanticLabel: l10n.homeButton,
-                  onPressed: () => context.go(Routes.home),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  // DRAWN, NOT ANNOUNCED. app.html puts the game's name in the
-                  // bar and again in the hero below it; the hero's copy is the
-                  // h1, so a screen reader that met both would hear the same
-                  // three words twice before reaching anything new.
-                  child: ExcludeSemantics(
-                    child: Text(
-                      strings.title,
-                      style: type.titleBar.copyWith(color: colours.textPrimary),
-                    ),
-                  ),
-                ),
-              ],
+          TopBar(
+            title: strings.title,
+            leading: PopIconButton(
+              // The chevron mirrors, because "back" is a reading-direction
+              // word. The glyph table decides that, not this screen.
+              glyph: SunburstGlyph.back,
+              semanticLabel: l10n.homeButton,
+              onPressed: () => context.go(Routes.home),
             ),
           ),
           Expanded(
@@ -123,7 +104,7 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
                   kicker: strings.kicker,
                   title: strings.title,
                   tagline: strings.tagline,
-                  artwork: definition.buildArtwork(context),
+                  artwork: definition.buildHeroArt(context),
                 ),
                 const SizedBox(height: 16),
                 _StatDuo(definition: definition),
@@ -145,7 +126,10 @@ class _GameDetailScreenState extends ConsumerState<GameDetailScreen> {
                       setState(() => _chosen = offered[index]),
                 ),
                 const SizedBox(height: 16),
-                const _DailyMix(),
+                DailyMixCardSlot(
+                  variant: DailyMixVariant.paper,
+                  hideFor: definition.id,
+                ),
                 const SizedBox(height: 26),
                 PopButton(
                   label: l10n.playButton,
@@ -214,27 +198,6 @@ class _StatDuo extends ConsumerWidget {
           value: numbers.count(stats?.gamesPlayed ?? 0),
         ),
       ],
-    );
-  }
-}
-
-/// The Daily Mix card in its paper skin.
-///
-/// The same destination as Home's: a seeded pick over the unlocked registry,
-/// stable for the day. The card is not decoration — an inert chevron is the
-/// dead affordance E11 forbids.
-class _DailyMix extends ConsumerWidget {
-  const _DailyMix();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DailyMixCard(
-      variant: DailyMixVariant.paper,
-      title: AppLocalizations.of(context).dailyMixTitle,
-      summary: dailyMixSummary(context, ref),
-      onTap: () => context.go(
-        Routes.gameDetail(ref.read(homeHubProvider).dailyPick),
-      ),
     );
   }
 }

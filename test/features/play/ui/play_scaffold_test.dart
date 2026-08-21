@@ -10,17 +10,21 @@ import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/play/ui/hud_row.dart';
 import 'package:mindforge/features/play/ui/play_scaffold.dart';
 import 'package:mindforge/features/shell/widgets/play_band.dart';
+import 'package:mindforge/features/shell/widgets/top_bar.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
+import 'package:mindforge/l10n/difficulty_strings.dart';
+import 'package:mindforge/l10n/game_strings.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/ui/components/hud_pill.dart';
 import 'package:mindforge/ui/components/pop_bottom_nav.dart';
+import 'package:mindforge/ui/components/pop_chip.dart';
 import 'package:mindforge/ui/components/pop_progress_bar.dart';
 import 'package:mindforge/ui/components/pop_sheet.dart';
 
 import '../../../support/fake_save_run.dart';
 import '../../../support/fixture_game.dart';
+import '../../../support/fixture_registry.dart';
 import '../../../support/locale_cases.dart';
 import '../../../support/shell_harness.dart';
 
@@ -48,7 +52,7 @@ void main() {
       localeCase: localeCase,
       saveRun: saveRun,
       initialLocation: Routes.countdown(
-        configFor(game ?? placeholderCoralDefinition),
+        configFor(game ?? fixtureAlpha),
       ),
     );
 
@@ -66,8 +70,8 @@ void main() {
       final rects = <String, (Rect, Rect)>{};
 
       for (final definition in <GameDefinition>[
-        placeholderCoralDefinition,
-        placeholderTurquoiseDefinition,
+        fixtureAlpha,
+        fixtureBeta,
       ]) {
         await pumpPlay(tester, game: definition);
 
@@ -78,8 +82,8 @@ void main() {
       }
 
       expect(
-        rects['placeholder_turquoise'],
-        rects['placeholder_coral'],
+        rects['fixture_beta'],
+        rects['fixture_alpha'],
         reason: 'the chrome moved between two games',
       );
     });
@@ -200,7 +204,7 @@ void main() {
       // The coral placeholder's id, so gameStringsProvider resolves — the
       // registry's string table is keyed by id and refuses an unknown one
       // outright, which is the check that stops a blank card shipping.
-      final game = fixtureGame(id: 'placeholder_coral');
+      final game = fixtureGame(id: 'fixture_alpha');
       final config = RunConfig(
         gameId: game.id,
         difficulty: Difficulty.classic,
@@ -267,6 +271,62 @@ void main() {
 
       expect(leading['en'], isTrue);
       expect(leading['fa'], isTrue, reason: 'the track filled from the end');
+    });
+  });
+
+  group('the bar above the band', () {
+    testWidgets('names the game and states the difficulty', (tester) async {
+      // app.html draws `.topbar` on the play screen: the pause control, the
+      // game's name, and the difficulty chip. The first build had no bar at
+      // all and the difficulty — which the player CHOSE one screen ago and
+      // cannot see anywhere else during a run — was nowhere on the screen.
+      await pumpPlay(tester);
+
+      final context = tester.element(find.byType(TopBar));
+      final strings = ProviderScope.containerOf(
+        context,
+      ).read(gameStringsProvider)(fixtureAlpha);
+
+      expect(find.byType(TopBar), findsOneWidget);
+      expect(find.text(strings.title), findsOneWidget);
+      expect(
+        tester.widget<PopChip>(find.byType(PopChip)).label,
+        difficultyLabel(AppLocalizations.of(context), Difficulty.classic),
+      );
+    });
+
+    testWidgets('and the pause moves OUT of the band, where the design has it', (
+      tester,
+    ) async {
+      // The band is three pills and a track. The pause sat in it because a row
+      // of its own cost the board twelve points — but the design already had a
+      // bar for exactly this, and putting it there costs the board nothing.
+      await pumpPlay(tester);
+
+      final l10n = AppLocalizations.of(tester.element(find.byType(TopBar)));
+
+      expect(
+        find.descendant(
+          of: find.byType(PlayBand),
+          matching: find.bySemanticsLabel(l10n.pauseTitle),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(TopBar),
+          matching: find.bySemanticsLabel(l10n.pauseTitle),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('and it fits in every locale', (tester) async {
+      for (final localeCase in LocaleCase.all) {
+        await pumpPlay(tester, localeCase: localeCase);
+
+        expect(tester.takeException(), isNull, reason: localeCase.tag);
+      }
     });
   });
 }

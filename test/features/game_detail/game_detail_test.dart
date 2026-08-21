@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mindforge/app.dart';
@@ -11,23 +12,24 @@ import 'package:mindforge/core/run_scope.dart';
 import 'package:mindforge/data/data_failure.dart';
 import 'package:mindforge/features/countdown/ui/countdown_screen.dart';
 import 'package:mindforge/features/game_detail/ui/game_detail_screen.dart';
+import 'package:mindforge/features/home/application/home_notifier.dart';
 import 'package:mindforge/features/shell/widgets/daily_mix_card.dart';
 import 'package:mindforge/features/shell/widgets/game_hero_panel.dart';
 import 'package:mindforge/features/shell/widgets/ray_header.dart';
 import 'package:mindforge/features/shell/widgets/stat_box.dart';
 import 'package:mindforge/games/game_definition.dart';
-import 'package:mindforge/games/placeholder/placeholder_definitions.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 import 'package:mindforge/routing/routes.dart';
 import 'package:mindforge/ui/components/difficulty_segmented.dart';
 import 'package:mindforge/ui/components/pop_bottom_nav.dart';
 
+import '../../support/fixture_registry.dart';
 import '../../support/locale_cases.dart';
 import '../../support/shell_harness.dart';
 
 void main() {
-  final coral = Routes.gameDetail(GameId('placeholder_coral'));
-  const coralScope = RunScope('placeholder_coral');
+  final coral = Routes.gameDetail(GameId('fixture_alpha'));
+  const coralScope = RunScope('fixture_alpha');
 
   group('the detail screen', () {
     testWidgets('reads its game from the path, on a cold start', (
@@ -41,7 +43,7 @@ void main() {
       expect(find.byType(GameDetailScreen), findsOneWidget);
       expect(
         tester.widget<GameDetailScreen>(find.byType(GameDetailScreen)).gameId,
-        GameId('placeholder_coral'),
+        GameId('fixture_alpha'),
       );
     });
 
@@ -113,7 +115,7 @@ void main() {
         const MindForgeApp(),
         initialLocation: coral,
         bests: <String, Result<RunMetric?, DataFailure>>{
-          'placeholder_coral': const Ok<RunMetric?, DataFailure>(
+          'fixture_alpha': const Ok<RunMetric?, DataFailure>(
             RunMetric.points(1480),
           ),
         },
@@ -192,17 +194,18 @@ void main() {
       // control renders with nothing selected.
       final threeWay = fixtureWithDifficulties(Difficulty.values);
       final chillOnly = GameDefinition(
-        id: GameId('placeholder_turquoise'),
-        accent: placeholderTurquoiseDefinition.accent,
-        colourRole: placeholderTurquoiseDefinition.colourRole,
-        scoreFormat: placeholderTurquoiseDefinition.scoreFormat,
-        scoreSource: placeholderTurquoiseDefinition.scoreSource,
-        strings: placeholderTurquoiseDefinition.strings,
+        id: GameId('fixture_beta'),
+        accent: fixtureBeta.accent,
+        colourRole: fixtureBeta.colourRole,
+        scoreFormat: fixtureBeta.scoreFormat,
+        scoreSource: fixtureBeta.scoreSource,
+        strings: fixtureBeta.strings,
         difficulties: const <Difficulty>[Difficulty.chill],
-        boardBackground: placeholderTurquoiseDefinition.boardBackground,
-        buildBoard: placeholderTurquoiseDefinition.buildBoard,
-        buildArtwork: placeholderTurquoiseDefinition.buildArtwork,
-        bindBoard: placeholderTurquoiseDefinition.bindBoard,
+        boardBackground: fixtureBeta.boardBackground,
+        buildBoard: fixtureBeta.buildBoard,
+        buildArtwork: fixtureBeta.buildArtwork,
+        buildHeroArt: (context) => const SizedBox.shrink(),
+        bindBoard: fixtureBeta.bindBoard,
       );
 
       await tester.pumpShellApp(
@@ -302,11 +305,18 @@ void main() {
         final l10n = AppLocalizations.of(
           tester.element(find.byType(GameDetailScreen)),
         );
+        final strings = fixtureGameStrings(fixtureAlpha);
 
-        // Twice: once in the title bar and once as the hero's h1, exactly as
-        // app.html draws it. Only one of the two announces itself.
-        expect(find.text(l10n.gamePlaceholderCoralName), findsNWidgets(2));
-        expect(find.text(l10n.gamePlaceholderCoralKicker), findsOneWidget);
+        // THE GAME'S strings come through the resolver and the CHROME's come
+        // through the ARB. Both halves are asserted, because the screen's job
+        // is to keep them apart: it must not invent a game name, and it must
+        // not leave a button untranslated.
+        //
+        // The name appears twice — once in the title bar and once as the
+        // hero's h1, exactly as app.html draws it. Only one of the two
+        // announces itself.
+        expect(find.text(strings.title), findsNWidgets(2));
+        expect(find.text(strings.kicker), findsOneWidget);
         expect(find.text(l10n.playButton), findsOneWidget);
       });
     }
@@ -335,12 +345,43 @@ void main() {
       // A stale deep link with a difficulty that no longer exists.
       await tester.pumpShellApp(
         const MindForgeApp(),
-        initialLocation:
-            '/game/placeholder_coral/countdown?difficulty=nope&seed=1',
+        initialLocation: '/game/fixture_alpha/countdown?difficulty=nope&seed=1',
       );
 
       expect(find.byType(CountdownScreen), findsNothing);
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('the Daily Mix card on a game detail screen', () {
+    testWidgets('is ABSENT on the page it would send you to', (tester) async {
+      // A CARD THAT NAVIGATES TO ITSELF. On the detail screen of whichever
+      // game today's pick chose, the card read "Today's pick: Stroop Rush" and
+      // led to the screen already on display. app.html draws a Daily Mix card
+      // here, but its card summarises a multi-game mix; ours names one game,
+      // and on that game's own page it is the dead affordance E11 forbids.
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        initialLocation: Routes.gameDetail(fixtureBeta.id),
+      );
+
+      final pick = ProviderScope.containerOf(
+        tester.element(find.byType(GameDetailScreen)),
+      ).read(homeHubProvider).dailyPick;
+
+      expect(pick, fixtureBeta.id, reason: 'the fixture pick is this game');
+      expect(find.byType(DailyMixCard), findsNothing);
+    });
+
+    testWidgets('and PRESENT on a game it does not point at', (tester) async {
+      // The other half, so the row is hidden for the right reason rather than
+      // hidden always.
+      await tester.pumpShellApp(
+        const MindForgeApp(),
+        initialLocation: Routes.gameDetail(fixtureAlpha.id),
+      );
+
+      expect(find.byType(DailyMixCard), findsOneWidget);
     });
   });
 }
@@ -348,15 +389,16 @@ void main() {
 /// A definition offering only [difficulties].
 GameDefinition fixtureWithDifficulties(List<Difficulty> difficulties) =>
     GameDefinition(
-      id: placeholderCoralDefinition.id,
-      accent: placeholderCoralDefinition.accent,
-      colourRole: placeholderCoralDefinition.colourRole,
-      scoreFormat: placeholderCoralDefinition.scoreFormat,
-      scoreSource: placeholderCoralDefinition.scoreSource,
-      strings: placeholderCoralDefinition.strings,
+      id: fixtureAlpha.id,
+      accent: fixtureAlpha.accent,
+      colourRole: fixtureAlpha.colourRole,
+      scoreFormat: fixtureAlpha.scoreFormat,
+      scoreSource: fixtureAlpha.scoreSource,
+      strings: fixtureAlpha.strings,
       difficulties: difficulties,
-      boardBackground: placeholderCoralDefinition.boardBackground,
-      buildBoard: placeholderCoralDefinition.buildBoard,
-      buildArtwork: placeholderCoralDefinition.buildArtwork,
-      bindBoard: placeholderCoralDefinition.bindBoard,
+      boardBackground: fixtureAlpha.boardBackground,
+      buildBoard: fixtureAlpha.buildBoard,
+      buildArtwork: fixtureAlpha.buildArtwork,
+      buildHeroArt: (context) => const SizedBox.shrink(),
+      bindBoard: fixtureAlpha.bindBoard,
     );

@@ -74,6 +74,22 @@ class HudRow extends ConsumerWidget {
     return switch (slot.format) {
       StatFormat.duration => numbers.clock(slot.canonicalValue),
       StatFormat.percent => numbers.percent(slot.canonicalValue / 1000),
+      // NOT ISOLATED, and that is the whole point. The logical order is the
+      // sign then the digit in every locale — one ARB message — and the bidi
+      // algorithm is what puts the sign on the reading-START side: `x7` in
+      // English, `۷×` in Persian, which is what the RTL reference draws.
+      //
+      // An FSI here resolves to the direction of the first STRONG character,
+      // and `x7` has none, so it falls back to LTR and pins the sign left in
+      // every locale. The pill holds nothing but this value, so there are no
+      // neighbours for an isolate to protect.
+      StatFormat.multiplier =>
+        ref
+            .watch(appLocalizationsProvider)
+            .streakMultiplier(
+              slot.canonicalValue,
+              numbers.count(slot.canonicalValue),
+            ),
       StatFormat.points || StatFormat.count => numbers.count(
         slot.canonicalValue,
       ),

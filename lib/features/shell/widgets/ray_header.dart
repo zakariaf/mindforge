@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mindforge/features/shell/widgets/halftone_dots.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
+import 'package:mindforge/ui/halftone_dots.dart';
 
 /// The coloured region behind a screen's title.
 ///

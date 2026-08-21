@@ -22,6 +22,9 @@ abstract final class Routes {
   /// The settings branch.
   static const String settings = '/settings';
 
+  /// What the app is and what it promises.
+  static const String about = '/about';
+
   /// The path segment carrying a game id.
   static const String gameIdParam = 'gameId';
 

@@ -89,14 +89,30 @@ class PopSheet extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: SunburstShape.space5),
-              // Indexed, not `action != actions.last`: that compares by
-              // identity, so reusing one const action instance twice in a list
-              // silently drops the gap before the repeat.
-              for (var i = 0; i < actions.length; i++) ...[
-                actions[i],
-                if (i < actions.length - 1)
-                  const SizedBox(height: SunburstShape.space3),
-              ],
+              // THE ACTIONS SCROLL, the sheet does not grow. A modal bottom
+              // sheet is given a bounded height, and the language chooser's
+              // five options plus a title exceed it — in `fa` the last row was
+              // cut off under an overflow stripe, which is the one language a
+              // Sorani reader is looking for. `Flexible` keeps a two-action
+              // sheet exactly as tall as its content, so the pause sheet is
+              // unchanged; only a sheet that would not fit starts scrolling.
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      // Indexed, not `action != actions.last`: that compares by
+                      // identity, so reusing one const action instance twice in
+                      // a list silently drops the gap before the repeat.
+                      for (var i = 0; i < actions.length; i++) ...<Widget>[
+                        actions[i],
+                        if (i < actions.length - 1)
+                          const SizedBox(height: SunburstShape.space3),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

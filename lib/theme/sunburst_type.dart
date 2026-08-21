@@ -63,6 +63,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     required this.chartValueLabel,
     required this.countdownReady,
     required this.lockedTitle,
+    required this.stimulusCompact,
+    required this.buttonCompact,
   });
 
   /// The Latin display face.
@@ -274,6 +276,42 @@ class SunburstType extends ThemeExtension<SunburstType> {
   /// leaving both at 21.
   final TextStyle lockedTitle;
 
+  /// The stimulus at the size a long word needs.
+  ///
+  /// **A SMALLER BASE STYLE, never a shrink.** `accessibility-as-code` rule 5
+  /// bans scaling text down to fit; a board that meets a word it cannot draw
+  /// at [stimulus] draws it at this step instead, which is a typographic
+  /// decision made once here rather than one a box makes per frame by scaling
+  /// the glyphs down to whatever is left.
+  ///
+  /// DERIVED: **56** against [stimulus]'s 78, and measured rather than
+  /// guessed. With the bundled Fredoka, at the 72pt content inset the
+  /// reference screens use:
+  ///
+  /// | size | YELLOW | ORANGE | نارەنجی |
+  /// |---|---|---|---|
+  /// | 78 | 320 | 317 | 232 |
+  /// | 62 | 256 | 253 | 185 |
+  /// | 56 | **231** | **229** | 167 |
+  ///
+  /// A 320pt device leaves 248. 62 was the first guess and misses by eight
+  /// points on the longest English word — which is exactly the kind of number
+  /// that looks fine on the 390pt reference and clips on the phone somebody
+  /// actually owns.
+  ///
+  /// It also says something about [stimulus]: at 78, YELLOW is 320 points wide
+  /// and even a 390pt screen leaves only 318. The full step fits BLUE, RED and
+  /// GREEN — which is what the reference screen draws — and not the two longest
+  /// words, which is why the compact step is not an edge case.
+  final TextStyle stimulusCompact;
+
+  /// A button or key label at the size a long word needs.
+  ///
+  /// The same rule as [stimulusCompact], one step down: DERIVED 15 against
+  /// [button]'s 18, for the answer key that has to hold `پرتەقاڵی` beside a
+  /// 56pt pattern panel.
+  final TextStyle buttonCompact;
+
   /// The type scale attached to [context]'s theme, resolved for the ambient
   /// locale's script.
   ///
@@ -354,6 +392,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
       chartValueLabel: arabic(chartValueLabel, isDisplay: true),
       countdownReady: arabic(countdownReady, isDisplay: true),
       lockedTitle: arabic(lockedTitle, isDisplay: true),
+      stimulusCompact: arabic(stimulusCompact, isDisplay: true),
+      buttonCompact: arabic(buttonCompact, isDisplay: true),
     );
   }
 
@@ -387,6 +427,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     chartValueLabel,
     countdownReady,
     lockedTitle,
+    stimulusCompact,
+    buttonCompact,
   ];
 
   @override
@@ -437,6 +479,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     TextStyle? chartValueLabel,
     TextStyle? countdownReady,
     TextStyle? lockedTitle,
+    TextStyle? stimulusCompact,
+    TextStyle? buttonCompact,
   }) => SunburstType(
     scoreHero: scoreHero ?? this.scoreHero,
     displayXl: displayXl ?? this.displayXl,
@@ -467,6 +511,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
     chartValueLabel: chartValueLabel ?? this.chartValueLabel,
     countdownReady: countdownReady ?? this.countdownReady,
     lockedTitle: lockedTitle ?? this.lockedTitle,
+    stimulusCompact: stimulusCompact ?? this.stimulusCompact,
+    buttonCompact: buttonCompact ?? this.buttonCompact,
   );
 
   @override
@@ -504,6 +550,8 @@ class SunburstType extends ThemeExtension<SunburstType> {
       chartValueLabel: s(chartValueLabel, other.chartValueLabel),
       countdownReady: s(countdownReady, other.countdownReady),
       lockedTitle: s(lockedTitle, other.lockedTitle),
+      stimulusCompact: s(stimulusCompact, other.stimulusCompact),
+      buttonCompact: s(buttonCompact, other.buttonCompact),
     );
   }
 
@@ -766,6 +814,24 @@ class SunburstType extends ThemeExtension<SunburstType> {
       fontSize: 30,
       height: 1.15,
       letterSpacing: -0.3,
+    ),
+    // DERIVED: the stimulus at the size a long word needs. 56 against 78,
+    // measured against the longest word in the longest locale at 320pt.
+    stimulusCompact: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w700,
+      fontSize: 56,
+      height: 1,
+      letterSpacing: 0.56,
+    ),
+    // DERIVED: a key label at the size a long word needs. 15 against 18.
+    buttonCompact: TextStyle(
+      fontFamily: display,
+      fontFamilyFallback: displayFallback,
+      fontWeight: FontWeight.w600,
+      fontSize: 15,
+      height: 1.22,
     ),
     // .locked .ct — 19/600, -.01em.
     lockedTitle: TextStyle(

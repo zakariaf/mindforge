@@ -22,6 +22,19 @@ enum StatFormat {
 
   /// The canonical value is a count of items.
   count,
+
+  /// The canonical value is a streak MULTIPLIER, rendered as `×7`.
+  ///
+  /// Its own format rather than [count] with the sign glued on at the call
+  /// site, for two reasons a game cannot solve on its own. The sign moves: the
+  /// design draws `x7` in English and `۷×` in Persian, which is the bidi
+  /// algorithm reordering a mixed run, so the shell has to isolate it. And the
+  /// word is an ICU message with a plural, which only the shell can resolve.
+  ///
+  /// Added by E09, and the seam is what made it safe: `HudRow`'s switch is
+  /// exhaustive with no `default:`, so a game declaring this format did not
+  /// compile until the shell learnt to render it.
+  multiplier,
 }
 
 /// One cell of the results trio: an ARB key and a canonical integer.

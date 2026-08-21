@@ -129,6 +129,7 @@ final class GameDefinition {
     required this.scoreSource,
     required this.buildBoard,
     required this.buildArtwork,
+    required this.buildHeroArt,
     required this.bindBoard,
     this.isTimed = true,
     this.isLocked = false,
@@ -209,7 +210,20 @@ final class GameDefinition {
   final GameBoardBuilder buildBoard;
 
   /// Builds the home-card artwork.
+  ///
+  /// The 64pt tile inside `.gart`'s cream frame. A DIFFERENT drawing from
+  /// [buildHeroArt], which is why there are two hooks: `app.html` draws a 2x2
+  /// of plain quads on the card and a row of patterned chips on the hero, and
+  /// one widget used in both places grew to fill the hero and lost its
+  /// patterns on the way.
   final GameArtworkBuilder buildArtwork;
+
+  /// Builds the row of chips under the tagline on the detail hero.
+  ///
+  /// `app.html`: `.swatchrow`. It is the LEGEND for the second channel — a
+  /// player meets the fill patterns here, on a screen with no clock running,
+  /// rather than working them out mid-round.
+  final GameArtworkBuilder buildHeroArt;
 
   /// Subscribes the run to this game's board, and returns its current value.
   ///

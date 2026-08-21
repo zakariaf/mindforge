@@ -100,10 +100,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get comingSoon => 'Demnächst';
 
   @override
-  String get gameStroopRushName => 'Stroop-Rausch';
+  String get gameStroopRushName => 'Stroop Rush';
 
   @override
-  String get gameStroopRushTagline => 'Tippe die Farbe, nicht das Wort';
+  String get gameStroopRushTagline => 'Tippe auf die Farbe, nicht auf das Wort';
 
   @override
   String get gameSchulteGridName => 'Schulte-Tabelle';
@@ -147,16 +147,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get getReady => 'Bereit machen';
 
   @override
-  String get hudTime => 'Zeit';
+  String get hudTime => 'ZEIT';
 
   @override
-  String get hudScore => 'Punkte';
+  String get hudScore => 'PUNKTE';
 
   @override
-  String get hudStreak => 'Serie';
+  String get hudStreak => 'SERIE';
 
   @override
-  String get hudFound => 'Gefunden';
+  String get hudFound => 'GEFUNDEN';
 
   @override
   String get hudNext => 'Nächste';
@@ -187,6 +187,47 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get colourYellow => 'Gelb';
+
+  @override
+  String get colourPurple => 'Lila';
+
+  @override
+  String get colourOrange => 'Orange';
+
+  @override
+  String get colourPink => 'Rosa';
+
+  @override
+  String get stroopWordRed => 'ROT';
+
+  @override
+  String get stroopWordBlue => 'BLAU';
+
+  @override
+  String get stroopWordGreen => 'GRÜN';
+
+  @override
+  String get stroopWordYellow => 'GELB';
+
+  @override
+  String get stroopWordPurple => 'LILA';
+
+  @override
+  String get stroopWordOrange => 'ORANGE';
+
+  @override
+  String get stroopWordPink => 'ROSA';
+
+  @override
+  String get stroopPrompt => 'TIPPE AUF DIE FARBE, NICHT AUF DAS WORT';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word, gedruckt in $ink';
+  }
+
+  @override
+  String get gameStroopRushKicker => 'REAKTION · FOKUS';
 
   @override
   String get resultsTitle => 'Starker Lauf!';
@@ -315,32 +356,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get languageNameCkb => 'کوردیی ناوەندی';
 
   @override
-  String get gamePlaceholderCoralName => 'Reaktionslabor';
-
-  @override
-  String get gamePlaceholderCoralTagline => 'Tippe auf das Abweichende';
-
-  @override
-  String get gamePlaceholderCoralKicker => 'REAKTION';
-
-  @override
-  String get gamePlaceholderTurquoiseName => 'Rasterlauf';
-
-  @override
-  String get gamePlaceholderTurquoiseTagline => 'Finde sie der Reihe nach';
-
-  @override
-  String get gamePlaceholderTurquoiseKicker => 'FOKUS';
-
-  @override
-  String get gamePlaceholderLockedName => 'Musterspur';
-
-  @override
-  String get gamePlaceholderLockedTagline => 'Noch nicht freigeschaltet';
-
-  @override
-  String get gamePlaceholderLockedKicker => 'BALD';
-
-  @override
   String get notFoundTitle => 'Diesen Bildschirm gibt es nicht mehr';
+
+  @override
+  String get settingColourBlindHelp =>
+      'Tauscht Rot gegen Pink und Grün gegen Orange. Die Füllmuster sind immer an.';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutOffline => 'Funktioniert immer offline';
+
+  @override
+  String get aboutOfflineBody =>
+      'Diese App enthält keinen Netzwerkcode. Es wird nichts geladen und nichts gesendet.';
+
+  @override
+  String get aboutPrivate => 'Nichts verlässt dein Gerät';
+
+  @override
+  String get aboutPrivateBody =>
+      'Kein Konto, keine Analyse, keine Absturzberichte. Deine Ergebnisse liegen in einer Datei auf diesem Telefon.';
+
+  @override
+  String get aboutLicenceTitle => 'Lizenz';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'MindForge ist quelloffen unter $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'Open-Source-Lizenzen';
 }

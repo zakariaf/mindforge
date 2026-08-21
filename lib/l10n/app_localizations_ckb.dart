@@ -99,7 +99,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get gameStroopRushName => 'پەلەی ستروپ';
 
   @override
-  String get gameStroopRushTagline => 'ڕەنگەکە دابگرە، نەک وشەکە';
+  String get gameStroopRushTagline => 'دەست بنێ بە ڕەنگەکە، نەک وشەکە';
 
   @override
   String get gameSchulteGridName => 'خشتەی شولتە';
@@ -183,6 +183,47 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get colourYellow => 'زەرد';
+
+  @override
+  String get colourPurple => 'مۆر';
+
+  @override
+  String get colourOrange => 'نارەنجی';
+
+  @override
+  String get colourPink => 'پەمەیی';
+
+  @override
+  String get stroopWordRed => 'سوور';
+
+  @override
+  String get stroopWordBlue => 'شین';
+
+  @override
+  String get stroopWordGreen => 'سەوز';
+
+  @override
+  String get stroopWordYellow => 'زەرد';
+
+  @override
+  String get stroopWordPurple => 'مۆر';
+
+  @override
+  String get stroopWordOrange => 'نارەنجی';
+
+  @override
+  String get stroopWordPink => 'پەمەیی';
+
+  @override
+  String get stroopPrompt => 'دەست بنێ بە ڕەنگەکە، نەک وشەکە';
+
+  @override
+  String stroopStimulusValue(String word, String ink) {
+    return '$word، بە ڕەنگی $ink چاپکراوە';
+  }
+
+  @override
+  String get gameStroopRushKicker => 'کاردانەوە · سەرنج';
 
   @override
   String get resultsTitle => 'خولێکی باش بوو!';
@@ -310,32 +351,37 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get languageNameCkb => 'کوردیی ناوەندی';
 
   @override
-  String get gamePlaceholderCoralName => 'تاقیگەی کاردانەوە';
-
-  @override
-  String get gamePlaceholderCoralTagline => 'جیاوازەکە دابگرە';
-
-  @override
-  String get gamePlaceholderCoralKicker => 'کاردانەوە';
-
-  @override
-  String get gamePlaceholderTurquoiseName => 'گەڕانی خانە';
-
-  @override
-  String get gamePlaceholderTurquoiseTagline => 'بە ڕیزبەندی بیاندۆزەوە';
-
-  @override
-  String get gamePlaceholderTurquoiseKicker => 'سەرنج';
-
-  @override
-  String get gamePlaceholderLockedName => 'شوێنپێی نەخش';
-
-  @override
-  String get gamePlaceholderLockedTagline => 'هێشتا نەکراوەتەوە';
-
-  @override
-  String get gamePlaceholderLockedKicker => 'بەم زووانە';
-
-  @override
   String get notFoundTitle => 'ئەم پەڕەیە نەماوە';
+
+  @override
+  String get settingColourBlindHelp =>
+      'سوور دەگۆڕێت بە پەمەیی و سەوز بە پرتەقاڵی. شێوەکانی پڕکردنەوە هەمیشە کاران.';
+
+  @override
+  String get aboutVersion => 'وەشان';
+
+  @override
+  String get aboutOffline => 'هەمیشە بەبێ ئینتەرنێت کار دەکات';
+
+  @override
+  String get aboutOfflineBody =>
+      'هیچ کۆدێکی تۆڕ لەم ئەپەدا نییە. هیچ شتێک دانالوود ناکرێت و هیچ شتێک نانێردرێت.';
+
+  @override
+  String get aboutPrivate => 'هیچ شتێک لە ئامێرەکەت دەرناچێت';
+
+  @override
+  String get aboutPrivateBody =>
+      'بێ هەژمار، بێ شیکاری، بێ ڕاپۆرتی تێکچوون. خاڵەکانت لە یەک فایلدا لەسەر ئەم مۆبایلە دەمێننەوە.';
+
+  @override
+  String get aboutLicenceTitle => 'مۆڵەتنامە';
+
+  @override
+  String aboutLicenceBody(String licence) {
+    return 'مایندفۆرج سەرچاوەکراوەیە، لەژێر $licence.';
+  }
+
+  @override
+  String get aboutThirdParty => 'مۆڵەتنامە سەرچاوەکراوەکان';
 }

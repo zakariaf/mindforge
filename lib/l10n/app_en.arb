@@ -98,11 +98,11 @@
   },
   "gameStroopRushName": "Stroop Rush",
   "@gameStroopRushName": {
-    "description": "The name of the first game. IT IS TRANSLATED — this is a description, not a brand, and E07's GameDefinition therefore carries this ARB KEY rather than a display string."
+    "description": "The first game's name. A coined product name rather than a translation of one: 'Stroop' is the psychologist the task is named after and stays, while the second word is localized."
   },
   "gameStroopRushTagline": "Tap the colour, not the word",
   "@gameStroopRushTagline": {
-    "description": "One-line description of Stroop Rush, on its card and its detail screen. It is also the on-board instruction during play."
+    "description": "One line saying what the player does, on the Home card and under the game's hero."
   },
   "gameSchulteGridName": "Schulte Grid",
   "@gameSchulteGridName": {
@@ -164,19 +164,19 @@
   "@getReady": {
     "description": "The line under the countdown numeral. The numeral itself is a formatted number, never part of this string."
   },
-  "hudTime": "Time",
+  "hudTime": "TIME",
   "@hudTime": {
     "description": "HUD label above the elapsed or remaining clock."
   },
-  "hudScore": "Score",
+  "hudScore": "SCORE",
   "@hudScore": {
     "description": "HUD label above the running score."
   },
-  "hudStreak": "Streak",
+  "hudStreak": "STREAK",
   "@hudStreak": {
     "description": "HUD label above the combo multiplier."
   },
-  "hudFound": "Found",
+  "hudFound": "FOUND",
   "@hudFound": {
     "description": "HUD label above the found-tile count in Schulte Grid."
   },
@@ -221,6 +221,66 @@
     "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
   },
   "colourYellow": "Yellow",
+  "colourPurple": "Purple",
+  "@colourPurple": {
+    "description": "A Stroop answer colour word, offered on Blitz only. It is BOTH the stimulus word and an answer-key label, so it has to read at 78pt and fit a 92pt key."
+  },
+  "colourOrange": "Orange",
+  "@colourOrange": {
+    "description": "A Stroop answer colour word. Offered on Blitz, and it is also the label PlayAnswer.green takes under the colour-blind palette, because that palette paints green as orange."
+  },
+  "colourPink": "Pink",
+  "@colourPink": {
+    "description": "A Stroop answer colour word that exists ONLY under the colour-blind palette: it is the label PlayAnswer.red takes there, because that palette paints red as pink. There is no PlayAnswer.pink and there must not be."
+  },
+  "stroopWordRed": "RED",
+  "@stroopWordRed": {
+    "description": "The colour word \"Red\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourRed."
+  },
+  "stroopWordBlue": "BLUE",
+  "@stroopWordBlue": {
+    "description": "The colour word \"Blue\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourBlue."
+  },
+  "stroopWordGreen": "GREEN",
+  "@stroopWordGreen": {
+    "description": "The colour word \"Green\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourGreen."
+  },
+  "stroopWordYellow": "YELLOW",
+  "@stroopWordYellow": {
+    "description": "The colour word \"Yellow\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourYellow."
+  },
+  "stroopWordPurple": "PURPLE",
+  "@stroopWordPurple": {
+    "description": "The colour word \"Purple\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPurple."
+  },
+  "stroopWordOrange": "ORANGE",
+  "@stroopWordOrange": {
+    "description": "The colour word \"Orange\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourOrange."
+  },
+  "stroopWordPink": "PINK",
+  "@stroopWordPink": {
+    "description": "The colour word \"Pink\" in its STIMULUS display form — the 78pt three-pass glyph at the centre of the board. Upper case in Latin locales and the natural form in Arabic script, which has no case; a second form rather than toUpperCase(), which is a no-op there and wrong in German. The key label form is colourPink."
+  },
+  "stroopPrompt": "TAP THE COLOUR, NOT THE WORD",
+  "@stroopPrompt": {
+    "description": "The line above the Stroop stimulus. Cased in the ARB, upper in Latin locales and natural in Arabic script — the design tracks the Latin form at .15em, which SunburstType applies per script because letterSpacing severs the cursive joins Arabic depends on."
+  },
+  "stroopStimulusValue": "{word}, printed in {ink}",
+  "@stroopStimulusValue": {
+    "description": "What a screen reader announces instead of the painted glyph: the word, and the colour it is printed in. Both are Strings rather than ints — a decimalPattern int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits — and the word order differs per language, which is the whole point of a placeholder.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "ink": {
+        "type": "String"
+      }
+    }
+  },
+  "gameStroopRushKicker": "REACTION · FOCUS",
+  "@gameStroopRushKicker": {
+    "description": "The tags line above the game's hero panel. Upper case in Latin locales and the natural form in Arabic script, which has no case."
+  },
   "@colourYellow": {
     "description": "A colour name. ONE key, TWO uses: it renders the Stroop stimulus word AND its answer-key label. The colour-word mismatch that IS the game is generated from semantic tokens and is locale-independent; only the rendering is localized."
   },
@@ -400,44 +460,50 @@
   "@languageNameCkb": {
     "description": "A language name, as an ENDONYM. NOT TRANSLATED — this exact string appears in all four ARBs. A user who has accidentally set the app to a language they cannot read must still be able to find their own, and that is the entire purpose of this row."
   },
-  "gamePlaceholderCoralName": "Reaction Lab",
-  "@gamePlaceholderCoralName": {
-    "description": "A placeholder game name, shipped by E08 so the eight shell screens are renderable and screenshot-comparable before Stroop Rush exists. E09 DELETES these nine keys in its first commit."
-  },
-  "gamePlaceholderCoralTagline": "Tap the odd one out",
-  "@gamePlaceholderCoralTagline": {
-    "description": "The one-line description under a placeholder game on the home card."
-  },
-  "gamePlaceholderCoralKicker": "REACTION",
-  "@gamePlaceholderCoralKicker": {
-    "description": "A section kicker. UPPERCASE IS AUTHORED HERE, per locale, and never applied with toUpperCase() in Dart — fa and ckb have no case."
-  },
-  "gamePlaceholderTurquoiseName": "Grid Sweep",
-  "@gamePlaceholderTurquoiseName": {
-    "description": "The second placeholder game name. See gamePlaceholderCoralName."
-  },
-  "gamePlaceholderTurquoiseTagline": "Find them in order",
-  "@gamePlaceholderTurquoiseTagline": {
-    "description": "The second placeholder game tagline."
-  },
-  "gamePlaceholderTurquoiseKicker": "FOCUS",
-  "@gamePlaceholderTurquoiseKicker": {
-    "description": "The second placeholder game kicker. Uppercase authored per locale."
-  },
-  "gamePlaceholderLockedName": "Pattern Trace",
-  "@gamePlaceholderLockedName": {
-    "description": "The locked \"coming soon\" slot on the home hub. A locked game still has a name, an accent and artwork; unlocking it is a flag flip."
-  },
-  "gamePlaceholderLockedTagline": "Not yet unlocked",
-  "@gamePlaceholderLockedTagline": {
-    "description": "The locked slot tagline. Rendered as the card subtitle, NOT reused as the badge — a locked card that printed this twice was an E05 defect."
-  },
-  "gamePlaceholderLockedKicker": "SOON",
-  "@gamePlaceholderLockedKicker": {
-    "description": "The locked slot kicker. Uppercase authored per locale."
-  },
   "notFoundTitle": "That screen has moved",
   "@notFoundTitle": {
     "description": "Shown when a location cannot be matched — a stale deep link or a mistyped URL. A screen rather than go_router default red error page, which is an English stack trace."
+  },
+  "settingColourBlindHelp": "Swaps red for pink and green for orange. The fill patterns are always on.",
+  "@settingColourBlindHelp": {
+    "description": "One line under the colour-blind toggle saying exactly what it changes. Without it the setting reads as if it turns the fill patterns on, which are always on."
+  },
+  "aboutVersion": "Version",
+  "@aboutVersion": {
+    "description": "Label of the version row on the About screen."
+  },
+  "aboutOffline": "Works offline, always",
+  "@aboutOffline": {
+    "description": "Heading of the offline promise on the About screen."
+  },
+  "aboutOfflineBody": "There is no network code in this app. Nothing is downloaded and nothing is sent.",
+  "@aboutOfflineBody": {
+    "description": "The offline promise. It is literally true: the app contains no HTTP client."
+  },
+  "aboutPrivate": "Nothing leaves your device",
+  "@aboutPrivate": {
+    "description": "Heading of the privacy promise on the About screen."
+  },
+  "aboutPrivateBody": "No account, no analytics, no crash reporting. Your scores live in one file on this phone.",
+  "@aboutPrivateBody": {
+    "description": "The privacy promise. No accounts, no telemetry, on-device storage only."
+  },
+  "aboutLicenceTitle": "Licence",
+  "@aboutLicenceTitle": {
+    "description": "Heading of the licence block on the About screen."
+  },
+  "aboutLicenceBody": "MindForge is open source under {licence}.",
+  "@aboutLicenceBody": {
+    "description": "The app own licence. The SPDX identifier is passed in rather than written into the ARB: it is a proper noun that is never translated, and it carries ASCII digits that the fa and ckb numeral gate rightly refuses.",
+    "placeholders": {
+      "licence": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "aboutThirdParty": "Open-source licences",
+  "@aboutThirdParty": {
+    "description": "Row that opens the platform third-party licence list."
   }
 }

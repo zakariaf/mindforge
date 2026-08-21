@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/difficulty.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/core/score_format.dart';
 import 'package:mindforge/data/data_providers.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/game_registry.dart';
+import 'package:mindforge/theme/game_accent.dart';
 
 import '../policy/support/source_text.dart';
 import '../support/fixture_game.dart';
@@ -21,53 +24,60 @@ void main() {
   }
 
   group('the registry today', () {
-    test('holds E08 three placeholders, in declaration order', () {
-      // Asserted HERE, against the real provider, rather than inside a test
-      // whose name is about something else. E07 asserted `isEmpty`; E09
-      // replaces these ids with stroop_rush and nothing else in the file
-      // changes.
+    test('holds Stroop Rush, and only Stroop Rush', () {
+      // One line per game, and that is the whole of adding one. E10 appends
+      // Schulte Grid here and this becomes a two-element list.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
       expect(
         container.read(gameRegistryProvider).map((game) => game.id.value),
-        <String>[
-          'placeholder_coral',
-          'placeholder_turquoise',
-          'placeholder_locked',
-        ],
+        <String>['stroop_rush'],
       );
     });
 
-    test('and exactly one of them is locked', () {
-      // The home hub draws a locked game as a "coming soon" card rather than
-      // hiding it, so the registry returning it unfiltered is the behaviour
-      // E08 T08.5 renders against.
+    test('and it declares what the shell reads off it', () {
+      // Every one of these is data the shell renders WITHOUT knowing which
+      // game it came from: the card's colour, the score's format, the
+      // difficulty list, the lock state.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(
-        container
-            .read(gameRegistryProvider)
-            .where((game) => game.isLocked)
-            .map((game) => game.id.value),
-        <String>['placeholder_locked'],
-      );
+      final stroop = container.read(gameRegistryProvider).single;
+
+      expect(stroop.accent, GameAccent.stroop);
+      expect(stroop.scoreFormat, ScoreFormat.points);
+      expect(stroop.boardBackground, BoardBackground.surfaceSunk);
+      expect(stroop.difficulties, Difficulty.values);
+      expect(stroop.isLocked, isFalse);
     });
 
-    test('and they cover both score sources', () {
-      // The turquoise one takes the pairing Schulte Grid will — untimed,
-      // duration-scored, clocked by the shell — so the screens are exercised
-      // against both sources before a real game uses either.
+    test('and a MECHANIC board is never drawn on an accent', () {
+      // The one pairing no switch can catch: hue IS the answer on a mechanic
+      // board, so an accent background would put a chrome colour behind the
+      // answer keys. Asserted over the whole registry, so E10 inherits it.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
+      for (final game in container.read(gameRegistryProvider)) {
+        if (game.colourRole != BoardColourRole.mechanic) continue;
+
+        expect(
+          game.boardBackground,
+          BoardBackground.surfaceSunk,
+          reason: '${game.id} is a mechanic board on an accent',
+        );
+      }
+    });
+
+    test('and the shell renders whatever it holds, including nothing', () {
+      // Zero games is a legitimate state and not only a mid-epic one: it is
+      // what a build with every game feature-flagged off would look like. The
+      // hub's own empty-state behaviour is asserted in home_screen_test; what
+      // this states is that the REGISTRY does not pretend otherwise.
       expect(
-        container.read(gameRegistryProvider).map((game) => game.scoreSource),
-        containsAll(<ScoreSource>[
-          ScoreSource.board,
-          ScoreSource.runClock,
-        ]),
+        containerWith(const <GameDefinition>[]).read(gameRegistryProvider),
+        isEmpty,
       );
     });
   });
