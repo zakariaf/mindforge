@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/10-schulte-grid` |
 | **Depends on** | E07, E08, E09 |
-| **Unblocks** | E11 |
+| **Unblocks** | E11, E12 |
 | **Status** | Not started |
 
 ## The epic

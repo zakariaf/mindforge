@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/03-design-tokens-and-theme` |
 | **Depends on** | E01 |
-| **Unblocks** | E04, E05, E06, E07 |
+| **Unblocks** | E04, E05, E06, E07, E12 |
 | **Status** | Not started |
 
 ## The epic
