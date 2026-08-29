@@ -5,7 +5,7 @@
 | **Branch** | `epic/12-two-original-games` |
 | **Depends on** | E03, E04, E07, E08, E09, E10, E11 |
 | **Unblocks** | the 1.0.1 resubmission |
-| **Status** | Not started |
+| **Status** | Built. Awaiting review and the 1.0.1 resubmission. |
 
 ## The epic
 
@@ -58,6 +58,51 @@ Two decisions are recorded here because they will be questioned:
 
 iOS is the only shipping target. Everything below is built and verified on the iOS Simulator; Android
 is deferred and nothing here claims parity with it.
+
+## Outcome
+
+**Both games ship, and `tool/check_no_shell_edits.sh` prints `OK`** — two games,
+four screens' worth of surfaces, zero lines in `lib/features/**`. The seam held
+without a single widening, which is a stronger result than E10's and the first
+real evidence that the engine claim survives an author who read only the
+registry contract.
+
+What the epic did not predict, recorded because the next reader should not have
+to rediscover it:
+
+1. **Four of its own specifications were unbuildable, and the map found them
+   before any code was written.** See *What measurement changed* below. Two were
+   the epic's headline claims.
+
+2. **A "pixel-identical `en`/`fa` golden" was the wrong claim, and only running
+   the test without `--update-goldens` showed it.** The tile grid mirrors, like
+   every grid in the app: tile 0 sits at x=20 in English and x=291.5 in Persian.
+   The true claim is narrower and still carries the argument — there is nothing
+   on that board for a locale to translate — and it is asserted as no `Text`
+   descendant plus an identical tile-depth sequence.
+
+3. **The canonical simulator found three layout defects the suite could not**,
+   and one of them was a shipping bug: a four-digit Persian target laid out at
+   326pt inside a 326pt card and lost its last digit, while Latin fitted at
+   256pt. `docs/verification/e12-simulator-signoff.md` has all three.
+
+4. **The test written to catch that bug passed against the build that had it.**
+   `tester.getSize` on a `Text` returns the size its parent CONSTRAINED it to,
+   so an overflowing run reports the box width back and the assertion is true by
+   construction. It now measures an unconstrained `TextPainter`. This is the
+   single most transferable thing E12 learned: *a fit assertion that reads a laid-out
+   element is not a fit assertion.*
+
+5. **Widening the gates was most of T12.15's work**, and every widening was a
+   place the new games would otherwise have been invisible — `SweepSurface`,
+   `kTestGameIds`, `kSweepBests`, `engine_seam_test`'s name list,
+   `engine_locale_purity_test`'s walk. A game that ships without them is a game
+   no sweep covers.
+
+6. **The numerals sweep gained the app's one exemption**, argued at the widget
+   rather than at a value: `BridgeNumeral`. `test/a11y/numerals_test.dart` had
+   invited exactly that — "a third one has to come here and argue for itself" —
+   and this is the third one.
 
 ## What measurement changed before a line was written
 

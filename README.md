@@ -38,12 +38,21 @@ select, countdown, the play scaffold, pause, results, stats, settings — is wri
 Adding a game means supplying its rules, one board widget and one accent colour; it inherits every
 screen for free.
 
-The two launch games:
+The four games:
 
 | Game | The task |
 |---|---|
 | **Stroop Rush** | The word "BLUE" is printed in red. Tap the **colour**, not the word. |
 | **Schulte Grid** | Find 1 to 25 in order, as fast as you can. |
+| **Digit Bridge** | The same number in two writing systems. Find the one that matches. |
+| **False Light** | One light falls on the whole board. Sweep the tiles it does not reach. |
+
+The last two are the app's own. They exist because the first two are
+public-domain psychology instruments that the App Store already carries in
+quantity — and each is built on something this app had to solve anyway: Digit
+Bridge on the numeral pipeline that four locales across two scripts required,
+False Light on the single light source the whole shape language is built from.
+`docs/review/app-review-4-3-a.md` records that in full.
 
 ## Screens
 
@@ -108,8 +117,8 @@ style guides. Each carries worked examples and a **gate script** that fails the 
 a raw hex outside the theme directory, a blurred shadow, a game that tries to navigate, a haptic fired
 outside the feedback service, a contrast ratio below its floor.
 
-**2. The work is planned as epics before it is written.** [`epics/`](epics/README.md) holds eleven
-epic files covering 123 tasks, in dependency order. Each task states its **tests before its
+**2. The work is planned as epics before it is written.** [`epics/`](epics/README.md) holds twelve
+epic files, in dependency order. Each task states its **tests before its
 implementation**, the files it touches, the skills to load, and the reference screenshot it is
 compared against.
 
@@ -121,7 +130,7 @@ design/             the design exploration; sunburst-pop/ is the chosen directio
     system.html     authoritative for token values: hexes, radii, shadows, durations, type
     app.html        authoritative for layout and spacing across the eight screens
     screens/        the reference screenshots every implementation is compared against
-epics/              the build plan, E01 to E11
+epics/              the build plan, E01 to E12
 ```
 
 ### Building it

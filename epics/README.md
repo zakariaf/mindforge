@@ -53,7 +53,7 @@ Two ordering decisions are worth naming, because both reverse an earlier plan an
 | [E09](E09-stroop-rush.md) | Stroop Rush | `epic/09-stroop-rush` | E07, E08 | Merged |
 | [E10](E10-schulte-grid.md) | Schulte Grid | `epic/10-schulte-grid` | E07, E08, E09 | Merged |
 | [E11](E11-accessibility-qa-and-release.md) | Accessibility, QA and release | `epic/11-accessibility-qa-and-release` | E08, E09, E10 | Merged |
-| [E12](E12-two-original-games.md) | Digit Bridge and False Light | `epic/12-two-original-games` | E03, E04, E07, E08, E09, E10, E11 | Not started |
+| [E12](E12-two-original-games.md) | Digit Bridge and False Light | `epic/12-two-original-games` | E03, E04, E07, E08, E09, E10, E11 | In review |
 
 Each epic's header table carries the same edges from both ends, and **both columns name direct edges
 only** — if A appears in B's **Depends on**, B appears in A's **Unblocks**, and neither column lists a
