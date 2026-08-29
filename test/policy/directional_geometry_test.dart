@@ -68,6 +68,13 @@ const kDirectionalityIslandFiles = <String>{
   // scramble and nothing else, while making `cells[0]` stop meaning a screen
   // position in half the app's locales. The chrome around it still mirrors.
   'lib/games/schulte_grid/ui/schulte_board.dart',
+  // E12. A Digit Bridge numeral is a coordinate space rather than a text flow:
+  // the most significant digit is on the left in BOTH systems the game bridges,
+  // which is why Unicode gives Eastern Arabic digits a strong left-to-right
+  // bidi class. Every numeral on the board goes through this ONE widget, so
+  // there is one island and one reason rather than three of each. The chip
+  // grid, the insets and the traversal order around it all still mirror.
+  'lib/games/digit_bridge/ui/board/bridge_numeral.dart',
 };
 
 /// The construct this file bans from production code, spelled without being

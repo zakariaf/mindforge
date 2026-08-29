@@ -24,14 +24,14 @@ void main() {
   }
 
   group('the registry today', () {
-    test('holds both shipped games, in registry order', () {
+    test('holds every shipped game, in registry order', () {
       // One line per game, and that is the whole of adding one.
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
       expect(
         container.read(gameRegistryProvider).map((game) => game.id.value),
-        <String>['stroop_rush', 'schulte_grid'],
+        <String>['stroop_rush', 'schulte_grid', 'digit_bridge'],
       );
     });
 
@@ -43,8 +43,12 @@ void main() {
       addTearDown(container.dispose);
 
       final games = container.read(gameRegistryProvider);
-      final stroop = games.first;
-      final schulte = games.last;
+      // BY ID, never by position. `games.last` bound Schulte until a third
+      // game was appended, and then ran every Schulte assertion below against
+      // the new game with a failure message that still named Schulte.
+      final stroop = games.firstWhere((g) => g.id.value == 'stroop_rush');
+      final schulte = games.firstWhere((g) => g.id.value == 'schulte_grid');
+      final bridge = games.firstWhere((g) => g.id.value == 'digit_bridge');
 
       expect(stroop.accent, GameAccent.stroop);
       expect(stroop.scoreFormat, ScoreFormat.points);
@@ -63,6 +67,25 @@ void main() {
       expect(schulte.boardBackground, BoardBackground.gameAccent);
       expect(schulte.difficulties, hasLength(2));
       expect(schulte.isLocked, isFalse);
+
+      // THE THIRD GAME, written against this contract alone. It is decorative
+      // like Schulte and points-scored like Stroop, which is the combination
+      // neither shipped game had -- a board reporting its own points onto its
+      // own accent.
+      expect(bridge.accent, GameAccent.digitBridge);
+      expect(bridge.colourRole, BoardColourRole.decorative);
+      expect(bridge.scoreFormat, ScoreFormat.points);
+      expect(bridge.scoreSource, ScoreSource.board);
+      expect(bridge.boardBackground, BoardBackground.gameAccent);
+      expect(bridge.difficulties, Difficulty.values);
+      expect(bridge.isLocked, isFalse);
+      expect(
+        bridge.runLimitMsFor(Difficulty.classic),
+        isNull,
+        reason:
+            'a run limit would route the run through _expiredOutcome(), which '
+            'is hardcoded to a trio of zeros',
+      );
     });
 
     test('and a MECHANIC board is never drawn on an accent', () {

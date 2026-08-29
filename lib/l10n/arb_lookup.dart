@@ -28,6 +28,9 @@ String arbString(AppLocalizations l10n, String key) => switch (key) {
   'gameSchulteGridName' => l10n.gameSchulteGridName,
   'gameSchulteGridTagline' => l10n.gameSchulteGridTagline,
   'gameSchulteGridKicker' => l10n.gameSchulteGridKicker,
+  'gameDigitBridgeName' => l10n.gameDigitBridgeName,
+  'gameDigitBridgeTagline' => l10n.gameDigitBridgeTagline,
+  'gameDigitBridgeKicker' => l10n.gameDigitBridgeKicker,
 
   // HUD slot labels. The two aliases are E07's older spelling, kept so a
   // stored snapshot from an earlier build still resolves.

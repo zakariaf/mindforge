@@ -730,6 +730,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'FOCUS · SPEED'**
   String get gameSchulteGridKicker;
+
+  /// The third game's name. A coined product name: the two numeral systems are two banks and the match is the crossing. Not a psychologist's name -- this task is the app's own, which is the point of it.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit Bridge'**
+  String get gameDigitBridgeName;
+
+  /// The third game's one-line description on the home card. It says SCRIPT rather than language, because the two sides are two numbering systems and not two languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Match the numeral across two scripts'**
+  String get gameDigitBridgeTagline;
+
+  /// The short line above the board on the detail screen. Authored in capitals in en/de; the Arabic script has no case, so fa and ckb carry the same words unchanged -- that is correct, not a missing translation.
+  ///
+  /// In en, this message translates to:
+  /// **'READING · MEMORY'**
+  String get gameDigitBridgeKicker;
+
+  /// What a screen reader calls the 0123456789 numbering system. Announced because the glyph shapes tell a sighted player which system they are reading and a screen-reader user is otherwise told only the value.
+  ///
+  /// In en, this message translates to:
+  /// **'Latin digits'**
+  String get bridgeScriptLatin;
+
+  /// What a screen reader calls the U+06F0-U+06F9 numbering system. 'Persian' rather than 'Eastern Arabic' because that is what readers call them; the code says easternArabic because that is what the Unicode block is called, and the two names are for two audiences.
+  ///
+  /// In en, this message translates to:
+  /// **'Persian digits'**
+  String get bridgeScriptEasternArabic;
+
+  /// What a screen reader announces for the target numeral. A String placeholder rather than an int: the numeral is already rendered in the round's chosen script, and an int placeholder would re-format it in the locale's script and destroy the question.
+  ///
+  /// In en, this message translates to:
+  /// **'Find {numeral}'**
+  String bridgeTargetValue(String numeral);
+
+  /// What a screen reader announces for one candidate chip: the numeral and which numbering system it is written in. Both are Strings -- an int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits, and would also re-format a numeral the round deliberately pinned to the other script.
+  ///
+  /// In en, this message translates to:
+  /// **'{numeral}, {script}'**
+  String bridgeChipValue(String numeral, String script);
 }
 
 class _AppLocalizationsDelegate

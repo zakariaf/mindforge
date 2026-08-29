@@ -201,5 +201,40 @@
   "gameSchulteGridKicker": "تمرکز · سرعت",
   "@gameSchulteGridKicker": {
     "x-review": "native-speaker-pending"
+  },
+  "gameDigitBridgeName": "پل ارقام",
+  "@gameDigitBridgeName": {
+    "description": "The third game's name. A coined product name: the two numeral systems are two banks and the match is the crossing. Not a psychologist's name -- this task is the app's own, which is the point of it.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameDigitBridgeTagline": "عدد را در خط دیگر پیدا کن",
+  "@gameDigitBridgeTagline": {
+    "description": "The third game's one-line description on the home card. It says SCRIPT rather than language, because the two sides are two numbering systems and not two languages.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameDigitBridgeKicker": "خواندن · حافظه",
+  "@gameDigitBridgeKicker": {
+    "description": "The short line above the board on the detail screen. Authored in capitals in en/de; the Arabic script has no case, so fa and ckb carry the same words unchanged -- that is correct, not a missing translation.",
+    "x-review": "native-speaker-pending"
+  },
+  "bridgeScriptLatin": "ارقام لاتین",
+  "@bridgeScriptLatin": {
+    "description": "What a screen reader calls the 0123456789 numbering system. Announced because the glyph shapes tell a sighted player which system they are reading and a screen-reader user is otherwise told only the value.",
+    "x-review": "native-speaker-pending"
+  },
+  "bridgeScriptEasternArabic": "ارقام فارسی",
+  "@bridgeScriptEasternArabic": {
+    "description": "What a screen reader calls the U+06F0-U+06F9 numbering system. 'Persian' rather than 'Eastern Arabic' because that is what readers call them; the code says easternArabic because that is what the Unicode block is called, and the two names are for two audiences.",
+    "x-review": "native-speaker-pending"
+  },
+  "bridgeTargetValue": "{numeral} را پیدا کن",
+  "@bridgeTargetValue": {
+    "description": "What a screen reader announces for the target numeral. A String placeholder rather than an int: the numeral is already rendered in the round's chosen script, and an int placeholder would re-format it in the locale's script and destroy the question.",
+    "x-review": "native-speaker-pending"
+  },
+  "bridgeChipValue": "{numeral}، {script}",
+  "@bridgeChipValue": {
+    "description": "What a screen reader announces for one candidate chip: the numeral and which numbering system it is written in. Both are Strings -- an int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits, and would also re-format a numeral the round deliberately pinned to the other script.",
+    "x-review": "native-speaker-pending"
   }
 }

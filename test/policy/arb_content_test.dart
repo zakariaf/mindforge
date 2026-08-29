@@ -134,6 +134,10 @@ void main() {
         'gameAndDifficulty', // '{game} · {difficulty}'
         'streakMultiplier', // '×{formatted}'
         'foundOfTotal', // '{found} / {total}'
+        // '{numeral}, {script}' — two placeholders and a separator, with no
+        // word of its own to translate. fa and ckb DO differ: they carry the
+        // Arabic comma U+060C rather than the Latin one.
+        'bridgeChipValue',
         // Each language is named in its own language, everywhere.
         'languageNameEn',
         'languageNameDe',

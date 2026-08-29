@@ -174,6 +174,7 @@ void main() {
       // one has to come back here and say why.
       const islands = <String>{
         'lib/games/schulte_grid/ui/schulte_board.dart',
+        'lib/games/digit_bridge/ui/board/bridge_numeral.dart',
       };
 
       final offenders = <String>[];
@@ -195,6 +196,7 @@ void main() {
       // nobody can review. The prose is checked, not just the allowance.
       for (final path in <String>[
         'lib/games/schulte_grid/ui/schulte_board.dart',
+        'lib/games/digit_bridge/ui/board/bridge_numeral.dart',
       ]) {
         final source = File(path).readAsStringSync();
 

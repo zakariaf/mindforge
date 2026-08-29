@@ -398,4 +398,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get gameSchulteGridKicker => 'FOKUS · TEMPO';
+
+  @override
+  String get gameDigitBridgeName => 'Zahlenbruecke';
+
+  @override
+  String get gameDigitBridgeTagline => 'Finde die Zahl in der anderen Schrift';
+
+  @override
+  String get gameDigitBridgeKicker => 'LESEN · GEDAECHTNIS';
+
+  @override
+  String get bridgeScriptLatin => 'lateinische Ziffern';
+
+  @override
+  String get bridgeScriptEasternArabic => 'persische Ziffern';
+
+  @override
+  String bridgeTargetValue(String numeral) {
+    return 'Finde $numeral';
+  }
+
+  @override
+  String bridgeChipValue(String numeral, String script) {
+    return '$numeral, $script';
+  }
 }
