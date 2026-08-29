@@ -48,6 +48,15 @@ class MindForgeApp extends ConsumerWidget {
       locale: Locale(ref.watch(localeProvider).tag),
       title: 'MindForge',
       theme: buildSunburstTheme(),
+      // OFF, and it is a workflow decision rather than a cosmetic one. The
+      // banner is debug-only, so a release build never shows it and this
+      // changes nothing about what ships. What it changes is every screenshot
+      // this repo takes: working agreement 9 compares a built screen against
+      // `design/sunburst-pop/screens/*.png` on the simulator, and the simulator
+      // runs a DEBUG build — so the banner sat across the top-right corner of
+      // every comparison, and across the App Store screenshots captured the
+      // same way.
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: appLocalizationsDelegates,
       // NOT AppLocalizations.supportedLocales: gen-l10n emits that list
       // alphabetically, so its first entry is ckb and Flutter's fallback for an
