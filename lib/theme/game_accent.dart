@@ -11,6 +11,12 @@ enum GameAccent {
 
   /// Schulte Grid.
   schulte,
+
+  /// Digit Bridge.
+  digitBridge,
+
+  /// False Light.
+  falseLight,
 }
 
 /// Which half of an accent a surface wants.
@@ -45,6 +51,10 @@ extension GameAccentTokens on SunburstColors {
     (GameAccent.stroop, GameColourRole.deep) => gameStroopDeep,
     (GameAccent.schulte, GameColourRole.base) => gameSchulte,
     (GameAccent.schulte, GameColourRole.deep) => gameSchulteDeep,
+    (GameAccent.digitBridge, GameColourRole.base) => gameDigitBridge,
+    (GameAccent.digitBridge, GameColourRole.deep) => gameDigitBridgeDeep,
+    (GameAccent.falseLight, GameColourRole.base) => gameFalseLight,
+    (GameAccent.falseLight, GameColourRole.deep) => gameFalseLightDeep,
   };
 
   /// The ray sweep behind [accent]'s play band, alpha already applied.
@@ -56,6 +66,8 @@ extension GameAccentTokens on SunburstColors {
   Color bandRayFor(GameAccent accent) => switch (accent) {
     GameAccent.stroop => bandRayStroop,
     GameAccent.schulte => bandRaySchulte,
+    GameAccent.digitBridge => bandRayDigitBridge,
+    GameAccent.falseLight => bandRayFalseLight,
   };
 
   /// The label colour to draw on [accent] in [role], or **`null` when that
@@ -69,6 +81,17 @@ extension GameAccentTokens on SunburstColors {
   /// | `gameStroopDeep` (coralDeep) | 3.90:1 | 3.94:1 |
   /// | `gameSchulte` (turquoise) | **7.27:1** | 2.34:1 |
   /// | `gameSchulteDeep` (turquoiseDeep) | **5.14:1** | 3.29:1 |
+  /// | `gameDigitBridge` (lilac) | **6.82:1** | 2.24:1 |
+  /// | `gameDigitBridgeDeep` (lilacDeep) | **5.15:1** | 2.98:1 |
+  /// | `gameFalseLight` (leaf) | **7.15:1** | 2.15:1 |
+  /// | `gameFalseLightDeep` (leafDeep) | **4.89:1** | 3.14:1 |
+  ///
+  /// E12's two accents were CHOSEN against this table rather than measured
+  /// after the fact. `grapePop`, the obvious unused primitive, measures 3.54:1
+  /// against ink and 4.35:1 against paper — it fails with both, and the base
+  /// face is the play band, which is a text surface. There is no purple in
+  /// `system.html` that can be a game accent, which is why `lilac` is a
+  /// deliberate addition to the design source rather than a token pick.
   ///
   /// `gameStroopDeep` clears 4.5:1 with **neither**. It is a pressed face, a
   /// shadow edge and the dark half of a stripe — never a text surface — so this
@@ -90,5 +113,9 @@ extension GameAccentTokens on SunburstColors {
     (GameAccent.stroop, GameColourRole.deep) => null,
     (GameAccent.schulte, GameColourRole.base) => textPrimary,
     (GameAccent.schulte, GameColourRole.deep) => textPrimary,
+    (GameAccent.digitBridge, GameColourRole.base) => textPrimary,
+    (GameAccent.digitBridge, GameColourRole.deep) => textPrimary,
+    (GameAccent.falseLight, GameColourRole.base) => textPrimary,
+    (GameAccent.falseLight, GameColourRole.deep) => textPrimary,
   };
 }

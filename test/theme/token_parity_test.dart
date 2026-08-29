@@ -25,6 +25,8 @@ const kPrimitiveToCssVar = <String, String>{
   'grapePop': '--grape-pop',
   'leaf': '--leaf',
   'leafDeep': '--leaf-deep',
+  'lilac': '--lilac',
+  'lilacDeep': '--lilac-deep',
   'tangerine': '--tangerine',
   'dot': '--dot',
   'playRed': '--play-red',
@@ -65,13 +67,22 @@ void main() {
     'coralDeepBand': ('coralDeep', 0x73),
     // .playband--schulte .rays{opacity:.45} over var(--turquoise-deep) -> 115.
     'turquoiseDeepBand': ('turquoiseDeep', 0x73),
+    // .playband--bridge .rays{opacity:.45} over var(--lilac-deep) -> 115.
+    'lilacDeepBand': ('lilacDeep', 0x73),
+    // .playband--light .rays{opacity:.45} over var(--leaf-deep) -> 115.
+    //
+    // A SECOND composite over leafDeep, beside leafDeepStrong at 0x8C. They are
+    // different surfaces at different opacities -- a results header and a play
+    // band -- and collapsing them would make one of the two design values
+    // unrepresentable.
+    'leafDeepBand': ('leafDeep', 0x73),
   };
 
   group('token parity with system.html', () {
     test('the parser found the design source', () {
       // A guard on the parser: if system.html is reformatted into something
       // this cannot read, every assertion below would pass vacuously.
-      expect(cssHexes, hasLength(30));
+      expect(cssHexes, hasLength(32));
       expect(
         dartHexes,
         hasLength(kPrimitiveToCssVar.length + kCompositedPrimitives.length),

@@ -87,6 +87,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     required this.countdownDotIdle,
     required this.bandRayStroop,
     required this.bandRaySchulte,
+    required this.bandRayDigitBridge,
+    required this.bandRayFalseLight,
     required this.accentAlt,
     required this.accentWarm,
     required this.accentCool,
@@ -99,6 +101,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     required this.gameStroopDeep,
     required this.gameSchulte,
     required this.gameSchulteDeep,
+    required this.gameDigitBridge,
+    required this.gameDigitBridgeDeep,
+    required this.gameFalseLight,
+    required this.gameFalseLightDeep,
     required this.playRed,
     required this.playBlue,
     required this.playGreen,
@@ -217,6 +223,12 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   /// The ray sweep behind Schulte Grid's play band, alpha already applied.
   final Color bandRaySchulte;
 
+  /// The ray sweep behind Digit Bridge's play band, alpha already applied.
+  final Color bandRayDigitBridge;
+
+  /// The ray sweep behind False Light's play band, alpha already applied.
+  final Color bandRayFalseLight;
+
   /// The secondary accent, for a surface that must not read as the primary
   /// action.
   final Color accentAlt;
@@ -265,6 +277,27 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
 
   /// The darker half of [gameSchulte].
   final Color gameSchulteDeep;
+
+  /// Digit Bridge's identity colour.
+  final Color gameDigitBridge;
+
+  /// The darker half of [gameDigitBridge].
+  final Color gameDigitBridgeDeep;
+
+  /// False Light's identity colour.
+  ///
+  /// **It shares a primitive with [success] and is deliberately a separate
+  /// slot**, the same separation [accentWarm] makes against [gameStroop]. A
+  /// Play button and a game band are different tiers; re-skinning the game must
+  /// not move the button, and nobody would have decided that either.
+  final Color gameFalseLight;
+
+  /// The darker half of [gameFalseLight].
+  ///
+  /// The pressed-tile fill. False Light's whole mechanic is the difference
+  /// between a raised tile and a pressed one, so this is the only game accent
+  /// whose deep half is load-bearing for the *answer* rather than for chrome.
+  final Color gameFalseLightDeep;
 
   /// The red answer key. Gameplay tier — legal only inside a board or answer
   /// widget, and it never paints chrome.
@@ -346,6 +379,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
   // @contrast textPrimary gameStroop    4.5  ink label on the Stroop band
   // @contrast textPrimary gameSchulte   4.5  ink label on the Schulte band
   // @contrast textPrimary gameSchulteDeep 4.5 ink glyph on a found tile
+  // @contrast textPrimary gameDigitBridge 4.5  ink label on the Digit Bridge band
+  // @contrast textPrimary gameDigitBridgeDeep 4.5 ink numeral on a matched chip
+  // @contrast textPrimary gameFalseLight 4.5  ink label on the False Light band
+  // @contrast textPrimary gameFalseLightDeep 4.5 ink glyph on a pressed tile
   // @contrast textPrimary accentDeep    4.5  ink on the dark half of a stripe
   // @contrast textInvert accentAlt      4.5  cream label on grape
   // @contrast surfaceRaised danger      4.5  paper label on a destructive button
@@ -388,6 +425,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     countdownDotIdle,
     bandRayStroop,
     bandRaySchulte,
+    bandRayDigitBridge,
+    bandRayFalseLight,
     accentAlt,
     accentWarm,
     accentCool,
@@ -400,6 +439,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     gameStroopDeep,
     gameSchulte,
     gameSchulteDeep,
+    gameDigitBridge,
+    gameDigitBridgeDeep,
+    gameFalseLight,
+    gameFalseLightDeep,
     playRed,
     playBlue,
     playGreen,
@@ -455,6 +498,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     Color? countdownDotIdle,
     Color? bandRayStroop,
     Color? bandRaySchulte,
+    Color? bandRayDigitBridge,
+    Color? bandRayFalseLight,
     Color? accentAlt,
     Color? accentWarm,
     Color? accentCool,
@@ -467,6 +512,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     Color? gameStroopDeep,
     Color? gameSchulte,
     Color? gameSchulteDeep,
+    Color? gameDigitBridge,
+    Color? gameDigitBridgeDeep,
+    Color? gameFalseLight,
+    Color? gameFalseLightDeep,
     Color? playRed,
     Color? playBlue,
     Color? playGreen,
@@ -502,6 +551,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     countdownDotIdle: countdownDotIdle ?? this.countdownDotIdle,
     bandRayStroop: bandRayStroop ?? this.bandRayStroop,
     bandRaySchulte: bandRaySchulte ?? this.bandRaySchulte,
+    bandRayDigitBridge: bandRayDigitBridge ?? this.bandRayDigitBridge,
+    bandRayFalseLight: bandRayFalseLight ?? this.bandRayFalseLight,
     accentAlt: accentAlt ?? this.accentAlt,
     accentWarm: accentWarm ?? this.accentWarm,
     accentCool: accentCool ?? this.accentCool,
@@ -514,6 +565,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     gameStroopDeep: gameStroopDeep ?? this.gameStroopDeep,
     gameSchulte: gameSchulte ?? this.gameSchulte,
     gameSchulteDeep: gameSchulteDeep ?? this.gameSchulteDeep,
+    gameDigitBridge: gameDigitBridge ?? this.gameDigitBridge,
+    gameDigitBridgeDeep: gameDigitBridgeDeep ?? this.gameDigitBridgeDeep,
+    gameFalseLight: gameFalseLight ?? this.gameFalseLight,
+    gameFalseLightDeep: gameFalseLightDeep ?? this.gameFalseLightDeep,
     playRed: playRed ?? this.playRed,
     playBlue: playBlue ?? this.playBlue,
     playGreen: playGreen ?? this.playGreen,
@@ -562,6 +617,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
       countdownDotIdle: c(countdownDotIdle, other.countdownDotIdle),
       bandRayStroop: c(bandRayStroop, other.bandRayStroop),
       bandRaySchulte: c(bandRaySchulte, other.bandRaySchulte),
+      bandRayDigitBridge: c(bandRayDigitBridge, other.bandRayDigitBridge),
+      bandRayFalseLight: c(bandRayFalseLight, other.bandRayFalseLight),
       accentAlt: c(accentAlt, other.accentAlt),
       accentWarm: c(accentWarm, other.accentWarm),
       accentCool: c(accentCool, other.accentCool),
@@ -574,6 +631,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
       gameStroopDeep: c(gameStroopDeep, other.gameStroopDeep),
       gameSchulte: c(gameSchulte, other.gameSchulte),
       gameSchulteDeep: c(gameSchulteDeep, other.gameSchulteDeep),
+      gameDigitBridge: c(gameDigitBridge, other.gameDigitBridge),
+      gameDigitBridgeDeep: c(gameDigitBridgeDeep, other.gameDigitBridgeDeep),
+      gameFalseLight: c(gameFalseLight, other.gameFalseLight),
+      gameFalseLightDeep: c(gameFalseLightDeep, other.gameFalseLightDeep),
       playRed: c(playRed, other.playRed),
       playBlue: c(playBlue, other.playBlue),
       playGreen: c(playGreen, other.playGreen),
@@ -625,6 +686,8 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     countdownDotIdle: _P.grapePop,
     bandRayStroop: _P.coralDeepBand,
     bandRaySchulte: _P.turquoiseDeepBand,
+    bandRayDigitBridge: _P.lilacDeepBand,
+    bandRayFalseLight: _P.leafDeepBand,
     accentAlt: _P.grape,
     accentWarm: _P.coral,
     accentCool: _P.turquoise,
@@ -637,6 +700,10 @@ class SunburstColors extends ThemeExtension<SunburstColors> {
     gameStroopDeep: _P.coralDeep,
     gameSchulte: _P.turquoise,
     gameSchulteDeep: _P.turquoiseDeep,
+    gameDigitBridge: _P.lilac,
+    gameDigitBridgeDeep: _P.lilacDeep,
+    gameFalseLight: _P.leaf,
+    gameFalseLightDeep: _P.leafDeep,
     playRed: _P.playRed,
     playBlue: _P.playBlue,
     playGreen: _P.playGreen,

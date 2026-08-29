@@ -74,6 +74,10 @@ final Map<String, Color> _slots = <String, Color>{
   'gameStroopDeep': _palette.gameStroopDeep,
   'gameSchulte': _palette.gameSchulte,
   'gameSchulteDeep': _palette.gameSchulteDeep,
+  'gameDigitBridge': _palette.gameDigitBridge,
+  'gameDigitBridgeDeep': _palette.gameDigitBridgeDeep,
+  'gameFalseLight': _palette.gameFalseLight,
+  'gameFalseLightDeep': _palette.gameFalseLightDeep,
   'playRed': _palette.playRed,
   'playBlue': _palette.playBlue,
   'playGreen': _palette.playGreen,
@@ -93,7 +97,7 @@ void main() {
     test('the declarations were found', () {
       // A guard on the parser: if the block is reformatted into something this
       // cannot read, every assertion below would pass over an empty list.
-      expect(pairs, hasLength(26));
+      expect(pairs, hasLength(30));
     });
 
     test('every declared name resolves to a slot', () {

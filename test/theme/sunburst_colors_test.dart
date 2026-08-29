@@ -40,6 +40,8 @@ const Map<String, _Accessor> _accessors = <String, _Accessor>{
   'countdownDotIdle': _countdownDotIdle,
   'bandRayStroop': _bandRayStroop,
   'bandRaySchulte': _bandRaySchulte,
+  'bandRayDigitBridge': _bandRayDigitBridge,
+  'bandRayFalseLight': _bandRayFalseLight,
   'accentAlt': _accentAlt,
   'accentWarm': _accentWarm,
   'accentCool': _accentCool,
@@ -52,6 +54,10 @@ const Map<String, _Accessor> _accessors = <String, _Accessor>{
   'gameStroopDeep': _gameStroopDeep,
   'gameSchulte': _gameSchulte,
   'gameSchulteDeep': _gameSchulteDeep,
+  'gameDigitBridge': _gameDigitBridge,
+  'gameDigitBridgeDeep': _gameDigitBridgeDeep,
+  'gameFalseLight': _gameFalseLight,
+  'gameFalseLightDeep': _gameFalseLightDeep,
   'playRed': _playRed,
   'playBlue': _playBlue,
   'playGreen': _playGreen,
@@ -88,6 +94,8 @@ Color _countdownRay(SunburstColors c) => c.countdownRay;
 Color _countdownDotIdle(SunburstColors c) => c.countdownDotIdle;
 Color _bandRayStroop(SunburstColors c) => c.bandRayStroop;
 Color _bandRaySchulte(SunburstColors c) => c.bandRaySchulte;
+Color _bandRayDigitBridge(SunburstColors c) => c.bandRayDigitBridge;
+Color _bandRayFalseLight(SunburstColors c) => c.bandRayFalseLight;
 Color _accentAlt(SunburstColors c) => c.accentAlt;
 Color _accentWarm(SunburstColors c) => c.accentWarm;
 Color _accentCool(SunburstColors c) => c.accentCool;
@@ -100,6 +108,10 @@ Color _gameStroop(SunburstColors c) => c.gameStroop;
 Color _gameStroopDeep(SunburstColors c) => c.gameStroopDeep;
 Color _gameSchulte(SunburstColors c) => c.gameSchulte;
 Color _gameSchulteDeep(SunburstColors c) => c.gameSchulteDeep;
+Color _gameDigitBridge(SunburstColors c) => c.gameDigitBridge;
+Color _gameDigitBridgeDeep(SunburstColors c) => c.gameDigitBridgeDeep;
+Color _gameFalseLight(SunburstColors c) => c.gameFalseLight;
+Color _gameFalseLightDeep(SunburstColors c) => c.gameFalseLightDeep;
 Color _playRed(SunburstColors c) => c.playRed;
 Color _playBlue(SunburstColors c) => c.playBlue;
 Color _playGreen(SunburstColors c) => c.playGreen;
@@ -136,6 +148,8 @@ final Map<String, _Setter> _setters = <String, _Setter>{
   'countdownDotIdle': (c, v) => c.copyWith(countdownDotIdle: v),
   'bandRayStroop': (c, v) => c.copyWith(bandRayStroop: v),
   'bandRaySchulte': (c, v) => c.copyWith(bandRaySchulte: v),
+  'bandRayDigitBridge': (c, v) => c.copyWith(bandRayDigitBridge: v),
+  'bandRayFalseLight': (c, v) => c.copyWith(bandRayFalseLight: v),
   'accentAlt': (c, v) => c.copyWith(accentAlt: v),
   'accentWarm': (c, v) => c.copyWith(accentWarm: v),
   'accentCool': (c, v) => c.copyWith(accentCool: v),
@@ -148,6 +162,10 @@ final Map<String, _Setter> _setters = <String, _Setter>{
   'gameStroopDeep': (c, v) => c.copyWith(gameStroopDeep: v),
   'gameSchulte': (c, v) => c.copyWith(gameSchulte: v),
   'gameSchulteDeep': (c, v) => c.copyWith(gameSchulteDeep: v),
+  'gameDigitBridge': (c, v) => c.copyWith(gameDigitBridge: v),
+  'gameDigitBridgeDeep': (c, v) => c.copyWith(gameDigitBridgeDeep: v),
+  'gameFalseLight': (c, v) => c.copyWith(gameFalseLight: v),
+  'gameFalseLightDeep': (c, v) => c.copyWith(gameFalseLightDeep: v),
   'playRed': (c, v) => c.copyWith(playRed: v),
   'playBlue': (c, v) => c.copyWith(playBlue: v),
   'playGreen': (c, v) => c.copyWith(playGreen: v),
@@ -433,6 +451,10 @@ void main() {
         'gameStroopDeep',
         'gameSchulte',
         'gameSchulteDeep',
+        'gameDigitBridge',
+        'gameDigitBridgeDeep',
+        'gameFalseLight',
+        'gameFalseLightDeep',
       };
 
       for (final slot in chromeSlots) {
