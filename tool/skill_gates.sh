@@ -116,6 +116,8 @@ RUN_TABLE=(
   "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/core"
   "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/games/stroop_rush/domain"
   "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/games/schulte_grid/domain"
+  "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/games/digit_bridge/domain"
+  "seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh|lib/games/false_light/domain"
 
   # Checks 1 and 2 (no relative imports, no cross-package lib/src) are already
   # enforced over ALL hand-written code by very_good_analysis's

@@ -40,6 +40,8 @@ enum SweepSurface {
   countdown,
   stroopRush,
   schulteGrid,
+  digitBridge,
+  falseLight,
   pauseSheet,
   results,
   stats,
@@ -70,11 +72,22 @@ final Map<String, Result<RunMetric?, DataFailure>> kSweepBests =
       'schulte_grid': const Ok<RunMetric?, DataFailure>(
         RunMetric.duration(18600),
       ),
+      'digit_bridge': const Ok<RunMetric?, DataFailure>(
+        RunMetric.points(2050),
+      ),
+      'false_light': const Ok<RunMetric?, DataFailure>(
+        RunMetric.points(1725),
+      ),
     };
 
-/// Aggregates with four-digit values in them, for both shipped games.
+/// Aggregates with four-digit values in them, for every shipped game.
 final Map<RunScope, GameStats> kSweepStats = <RunScope, GameStats>{
-  for (final id in <String>['stroop_rush', 'schulte_grid'])
+  for (final id in <String>[
+    'stroop_rush',
+    'schulte_grid',
+    'digit_bridge',
+    'false_light',
+  ])
     for (final difficulty in Difficulty.values)
       RunScope.of(GameId(id), difficulty): const GameStats(
         gamesPlayed: 128,
@@ -97,6 +110,20 @@ final RunConfig kSweepStroop = RunConfig(
 /// The Schulte run every sweep drives.
 final RunConfig kSweepSchulte = RunConfig(
   gameId: GameId('schulte_grid'),
+  difficulty: Difficulty.classic,
+  seed: 42,
+);
+
+/// The Digit Bridge run every sweep drives.
+final RunConfig kSweepBridge = RunConfig(
+  gameId: GameId('digit_bridge'),
+  difficulty: Difficulty.classic,
+  seed: 42,
+);
+
+/// The False Light run every sweep drives.
+final RunConfig kSweepLight = RunConfig(
+  gameId: GameId('false_light'),
   difficulty: Difficulty.classic,
   seed: 42,
 );
@@ -157,6 +184,12 @@ extension SweepPump on WidgetTester {
         await beginPlaying();
       case SweepSurface.schulteGrid:
         await open(Routes.countdown(kSweepSchulte));
+        await beginPlaying();
+      case SweepSurface.digitBridge:
+        await open(Routes.countdown(kSweepBridge));
+        await beginPlaying();
+      case SweepSurface.falseLight:
+        await open(Routes.countdown(kSweepLight));
         await beginPlaying();
       case SweepSurface.pauseSheet:
         await open(Routes.countdown(kSweepStroop));

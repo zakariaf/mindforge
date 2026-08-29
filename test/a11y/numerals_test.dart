@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_version.dart';
+import 'package:mindforge/games/digit_bridge/ui/board/bridge_numeral.dart';
 import 'package:mindforge/l10n/bidi_text.dart';
 
 import '../support/load_app_fonts.dart';
@@ -26,9 +27,43 @@ import '../support/sweep_surfaces.dart';
 void main() {
   setUpAll(loadAppFonts);
 
-  /// Every string the surface actually draws.
-  List<String> renderedText(WidgetTester tester) => tester
-      .widgetList<Text>(find.byType(Text))
+  /// Whether [element] sits inside the app's one cross-script numeral run.
+  ///
+  /// **`BridgeNumeral` is the single exemption on this sweep, and it has to
+  /// argue for itself.** Digit Bridge shows the same value in two numbering
+  /// systems at once and asks which candidate matches. If both sides took the
+  /// locale's answer they would render identically and the board would have no
+  /// question on it — so under `fa` and `ckb` one side of that board is
+  /// deliberately Latin, and under `en` and `de` one side is deliberately
+  /// Eastern Arabic.
+  ///
+  /// The exemption is scoped to the WIDGET that owns the cross-script
+  /// rendering, never to a value and never to a locale. Everything else on
+  /// that surface — the HUD, the score, the streak pill — stays under the
+  /// assertion below, which is what keeps the exception a mechanic rather than
+  /// a habit. `locale_numbers.dart` records the same fence at the formatter and
+  /// `bridge_numeral.dart` at the widget; this is the third side of it.
+  bool isCrossScriptNumeral(Element element) {
+    var found = false;
+
+    element.visitAncestorElements((ancestor) {
+      if (ancestor.widget is! BridgeNumeral) return true;
+
+      found = true;
+
+      return false;
+    });
+
+    return found;
+  }
+
+  /// Every string the surface actually draws, minus that one run.
+  List<String> renderedText(WidgetTester tester) => find
+      .byType(Text)
+      .evaluate()
+      .where((element) => !isCrossScriptNumeral(element))
+      .map((element) => element.widget)
+      .whereType<Text>()
       .map((text) => text.data)
       .whereType<String>()
       .where((value) => value.isNotEmpty)

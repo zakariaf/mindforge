@@ -22,7 +22,23 @@ void main() {
       .toList();
 
   /// The names a shell file may not execute on.
-  const gameNames = <String>['schulte', 'stroop', 'nback', 'n_back'];
+  //
+  // **Full ids and their squashed forms, never a bare word.** Adding `'light'`
+  // here turns a green suite red for no reason: it matches
+  // `SystemUiOverlayStyle.light` in the countdown screen, preceded by a `.` and
+  // followed by a `,`, which the word-boundary regex reads as a name. `bridge`
+  // and `digit` have no hits under lib/features at all; `light` has one code
+  // hit and four in comments.
+  const gameNames = <String>[
+    'schulte',
+    'stroop',
+    'nback',
+    'n_back',
+    'digit_bridge',
+    'digitbridge',
+    'false_light',
+    'falselight',
+  ];
 
   group('the shell knows no game by name', () {
     test('no file under lib/features NAMES one, outside a comment', () {
