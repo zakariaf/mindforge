@@ -70,8 +70,12 @@ class _Chip extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: colours.surfaceRaised,
-        borderRadius: BorderRadius.all(shape.radiusSm),
+        borderRadius: BorderRadius.all(shape.heroSwatchRadius),
         border: Border.all(color: colours.border, width: shape.borderWidth),
+        // The hero swatch's own offset, which is smaller than e1 on purpose:
+        // a 38pt chip carrying the full 3px edge takes e1 as a slab rather
+        // than a lift. Every other hero row in the app draws it.
+        boxShadow: shape.shadow(shape.heroSwatchShadow, colours.border),
       ),
       child: BridgeNumeral(
         label: label,

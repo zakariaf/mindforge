@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mindforge/theme/game_accent.dart';
-import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/games/false_light/ui/board/light_swatch.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 
 /// The four chips under the tagline on False Light's detail screen.
@@ -23,48 +22,25 @@ class LightHeroArt extends StatelessWidget {
   static const List<bool> chips = <bool>[false, false, true, false];
 
   @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: Row(
-      // MIN, so the row is four chips wide and not the hero wide.
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        for (var i = 0; i < chips.length; i++) ...<Widget>[
-          if (i > 0) const SizedBox(width: SunburstShape.space2),
-          _Chip(isPressed: chips[i]),
-        ],
-      ],
-    ),
-  );
-}
-
-/// One chip: a tile at rest, or a tile pressed.
-class _Chip extends StatelessWidget {
-  const _Chip({required this.isPressed});
-
-  final bool isPressed;
-
-  @override
   Widget build(BuildContext context) {
-    final colours = SunburstColors.of(context);
     final shape = SunburstShape.of(context);
 
-    return Transform.translate(
-      offset: isPressed ? SunburstShape.pressedShadow : Offset.zero,
-      child: Container(
-        width: shape.heroSwatchSize,
-        height: shape.heroSwatchSize,
-        decoration: BoxDecoration(
-          color: isPressed
-              ? colours.accentFor(GameAccent.falseLight, GameColourRole.deep)
-              : colours.surfaceRaised,
-          borderRadius: BorderRadius.all(shape.radiusSm),
-          border: Border.all(color: colours.border, width: shape.borderWidth),
-          // THROUGH THE THEME'S ONE FACTORY. `shadow()` hardcodes zero blur
-          // and zero spread, and `sunburst_shape_test` asserts it is the only
-          // BoxShadow constructor in lib/ — which is how the blur stays out by
-          // construction rather than by review.
-          boxShadow: isPressed ? null : shape.shadow(shape.e1, colours.border),
-        ),
+    return ExcludeSemantics(
+      child: Row(
+        // MIN, so the row is four chips wide and not the hero wide.
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          for (var i = 0; i < chips.length; i++) ...<Widget>[
+            if (i > 0) const SizedBox(width: SunburstShape.space2),
+            LightSwatch(
+              isPressed: chips[i],
+              radius: shape.heroSwatchRadius,
+              borderWidth: shape.borderWidth,
+              shadow: shape.heroSwatchShadow,
+              size: shape.heroSwatchSize,
+            ),
+          ],
+        ],
       ),
     );
   }

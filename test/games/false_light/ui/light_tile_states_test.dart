@@ -1,8 +1,6 @@
 @Tags(<String>['golden'])
 library;
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/core/app_settings.dart';
@@ -16,6 +14,7 @@ import '../../../support/component_harness.dart';
 import '../../../support/golden_tolerance.dart';
 import '../../../support/load_app_fonts.dart';
 import '../../../support/locale_cases.dart';
+import '../../../support/wcag.dart';
 
 /// The tile states, with every hue removed.
 ///
@@ -149,8 +148,8 @@ void main() {
         reason: 'channel 2 of 3: a pressed tile sits where its shadow was',
       );
       expect(
-        _luminance(raised.fill),
-        isNot(closeTo(_luminance(pressed.fill), 0.2)),
+        relativeLuminance(raised.fill),
+        isNot(closeTo(relativeLuminance(pressed.fill), 0.2)),
         reason:
             'channel 3 of 3: the fills differ in VALUE, not only in hue -- '
             'which is what survives greyscale',
@@ -194,15 +193,4 @@ void main() {
       expect(fills[true], fills[false]);
     });
   });
-}
-
-/// WCAG relative luminance, computed rather than eyeballed.
-double _luminance(Color colour) {
-  double channel(double component) => component <= 0.03928
-      ? component / 12.92
-      : math.pow((component + 0.055) / 1.055, 2.4).toDouble();
-
-  return 0.2126 * channel(colour.r) +
-      0.7152 * channel(colour.g) +
-      0.0722 * channel(colour.b);
 }

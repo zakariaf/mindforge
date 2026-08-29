@@ -66,7 +66,6 @@ void main() {
             reason: 'two winning chips is two right answers',
           );
           expect(round.candidates[round.correctIndex], round.target);
-          expect(round.correct, round.target);
         }
       }
     });

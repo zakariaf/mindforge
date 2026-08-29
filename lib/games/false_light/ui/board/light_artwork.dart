@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mindforge/theme/game_accent.dart';
-import 'package:mindforge/theme/sunburst_colors.dart';
+import 'package:mindforge/games/false_light/ui/board/light_swatch.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 
 /// The 64pt tile on False Light's Home card.
@@ -50,45 +49,13 @@ class LightArtwork extends StatelessWidget {
           mainAxisSpacing: shape.miniTileGapValue,
           children: <Widget>[
             for (var i = 0; i < columns * columns; i++)
-              _Cell(isPressed: pressed.contains(i)),
+              LightSwatch(
+                isPressed: pressed.contains(i),
+                radius: shape.miniTileRadius,
+                borderWidth: shape.miniTileBorderWidth,
+                shadow: shape.heroSwatchShadow,
+              ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// One cell of the picture: raised, or pressed.
-class _Cell extends StatelessWidget {
-  const _Cell({required this.isPressed});
-
-  final bool isPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final colours = SunburstColors.of(context);
-    final shape = SunburstShape.of(context);
-
-    // THE SAME THREE CHANNELS THE BOARD USES, at a ninth of the size: fill,
-    // shadow, position. A card that showed only the fill would be advertising a
-    // colour game.
-    return Transform.translate(
-      offset: isPressed ? SunburstShape.pressedShadow : Offset.zero,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: isPressed
-              ? colours.accentFor(GameAccent.falseLight, GameColourRole.deep)
-              : colours.surfaceRaised,
-          borderRadius: BorderRadius.all(shape.miniTileRadius),
-          border: Border.all(
-            color: colours.border,
-            width: shape.miniTileBorderWidth,
-          ),
-          // THROUGH THE THEME'S ONE FACTORY. `shadow()` hardcodes zero blur
-          // and zero spread, and `sunburst_shape_test` asserts it is the only
-          // BoxShadow constructor in lib/ — which is how the blur stays out by
-          // construction rather than by review.
-          boxShadow: isPressed ? null : shape.shadow(shape.e1, colours.border),
         ),
       ),
     );

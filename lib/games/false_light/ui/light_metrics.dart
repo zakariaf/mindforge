@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
-import 'package:mindforge/ui/components/pop_surface.dart';
+import 'package:mindforge/ui/pop_grid_metrics.dart';
 
 /// How a False Light board divides the field it is given.
 ///
@@ -24,10 +24,10 @@ final class LightMetrics {
     required int columns,
     required int rows,
   }) {
-    final gap = _gapFor(size, columns: columns, rows: rows);
-    final byWidth = (size.width - gap * (columns - 1)) / columns;
+    final gap = _gapFor(size.width, columns);
+    final byWidth = popGridCell(size.width, columns, gap);
     final byHeight = size.height.isFinite
-        ? (size.height - gap * (rows - 1)) / rows
+        ? popGridCell(size.height, rows, gap)
         : byWidth;
 
     return LightMetrics(
@@ -48,13 +48,13 @@ final class LightMetrics {
   /// continuously with the width would put a different number on every device
   /// and make a screenshot comparison meaningless.
   ///
-  /// **It binds, on the device that matters.** Blitz is six columns wide and a
-  /// 320pt phone leaves the board 280pt after the shell's gutter, so the roomy
-  /// gap gives `(280 - 60) / 6 = 36.7pt` — under the floor — and the tight one
-  /// gives `(280 - 40) / 6 = 40pt`, which is still under it. That is why the
-  /// blitz grid is 5 x 6 and not 6 x 5: five columns at the tight gap is
-  /// `(280 - 32) / 5 = 49.6pt`, and the sixth row is free because a board is
-  /// taller than it is wide.
+  /// **It binds, on the device that matters, and that is what sets the column
+  /// cap.** A 320pt phone leaves the board 280pt after the shell's gutter.
+  /// Blitz at five columns is `(280 - 4*12) / 5 = 46.4pt` at the roomy gap —
+  /// under the 48pt floor — and `(280 - 4*8) / 5 = 49.6pt` at the tight one,
+  /// which clears it. Six columns clears neither: 36.7pt roomy and 40pt tight.
+  /// That is why the blitz grid is 5 x 6 rather than 6 x 5, and the sixth ROW
+  /// is free because a board is taller than it is wide.
   static const double tightGap = SunburstShape.space2;
 
   /// How wide and tall one tile draws.
@@ -63,12 +63,15 @@ final class LightMetrics {
   /// The gap between tiles, on both axes.
   final double gap;
 
-  /// The gap a [columns] x [rows] grid can afford in [size].
-  static double _gapFor(Size size, {required int columns, required int rows}) {
-    final roomy = (size.width - roomyGap * (columns - 1)) / columns;
-
-    return roomy >= kPopMinTarget ? roomyGap : tightGap;
-  }
+  /// The gap a [columns]-wide grid can afford in [width].
+  ///
+  /// `popGridGap` is the shared derivation; the column count is this board's.
+  ///
+  /// **From the WIDTH only**, which is safe because the tile is square and
+  /// sized by the tighter axis: a board is always taller than it is wide, so
+  /// the width is the binding axis on every shipped field.
+  static double _gapFor(double width, int columns) =>
+      popGridGap(width, columns);
 
   /// How wide the whole grid draws.
   double widthFor(int columns) => tileSize * columns + gap * (columns - 1);

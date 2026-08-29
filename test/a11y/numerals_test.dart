@@ -57,16 +57,37 @@ void main() {
     return found;
   }
 
-  /// Every string the surface actually draws, minus that one run.
-  List<String> renderedText(WidgetTester tester) => find
+  /// Every string the surface draws, tagged with whether it is that one run.
+  ///
+  /// **Tagged rather than filtered, so the exemption is exactly as wide as its
+  /// argument.** Three rules run below and only two of them can have an
+  /// exception. Dropping the cross-script run from the list entirely also
+  /// dropped it from rule 3 — "the Arabic block U+0660-U+0669 is ALWAYS wrong"
+  /// — which has no exception anywhere in the app and no reason to gain one
+  /// here. No live defect (`locale_numbers_test` proves `digitsInScript` never
+  /// emits that block), but a guard that quietly stopped covering a surface is
+  /// how the next one gets through.
+  List<({String text, bool isCrossScript})> renderedText(
+    WidgetTester tester,
+  ) => find
       .byType(Text)
       .evaluate()
-      .where((element) => !isCrossScriptNumeral(element))
-      .map((element) => element.widget)
-      .whereType<Text>()
-      .map((text) => text.data)
-      .whereType<String>()
-      .where((value) => value.isNotEmpty)
+      .map(
+        (element) => (
+          widget: element.widget,
+          isCrossScript: isCrossScriptNumeral(element),
+        ),
+      )
+      .where((entry) => entry.widget is Text)
+      .map(
+        (entry) => (
+          text: (entry.widget as Text).data,
+          isCrossScript: entry.isCrossScript,
+        ),
+      )
+      .where((entry) => entry.text != null)
+      .map((entry) => (text: entry.text!, isCrossScript: entry.isCrossScript))
+      .where((entry) => entry.text.isNotEmpty)
       .toList();
 
   /// [text] with the bidi controls removed, which are invisible either way.
@@ -81,8 +102,8 @@ void main() {
 
         final offenders = <String>[];
 
-        for (final raw in renderedText(tester)) {
-          final value = visible(raw);
+        for (final entry in renderedText(tester)) {
+          final value = visible(entry.text);
 
           // TWO NAMED IDENTIFIERS keep their ASCII, and neither is a number a
           // reader counts with. A version is read back to a maintainer in a
@@ -108,6 +129,12 @@ void main() {
               offenders.add('U+0660 block in "$value"');
               continue;
             }
+
+            // RULE 3 ABOVE APPLIES TO EVERYTHING. Rules 1 and 2 — which
+            // script a locale renders — are the ones the cross-script run is
+            // exempt from, because it deliberately draws the other side of the
+            // bridge. See `renderedText`.
+            if (entry.isCrossScript) continue;
 
             if (localeCase.usesEasternArabicNumerals) {
               if (isLatin) offenders.add('Latin digit in "$value"');
@@ -146,7 +173,9 @@ void main() {
         localeCase: LocaleCase.german,
       );
 
-      final german = renderedText(tester).map(visible).join();
+      final german = renderedText(
+        tester,
+      ).map((entry) => visible(entry.text)).join();
 
       expect(
         german,
@@ -173,7 +202,9 @@ void main() {
         localeCase: LocaleCase.persian,
       );
 
-      final drawn = renderedText(tester).map(visible).join(' ');
+      final drawn = renderedText(
+        tester,
+      ).map((entry) => visible(entry.text)).join(' ');
 
       expect(drawn, contains(kAppVersion));
       expect(drawn, contains(kAppLicence));

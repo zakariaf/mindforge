@@ -74,9 +74,10 @@ class _DigitBridgeBoardState extends ConsumerState<DigitBridgeBoard> {
     final numbers = LocaleNumbers(locale);
     final l10n = AppLocalizations.of(context);
 
-    // FORMATTED ONCE PER (ROUND, LOCALE), above the chips. `widget-composition`
-    // rule 5: a formatter constructed inside `build()` is constructed six times
-    // a frame, and this board rebuilds on every tap.
+    // FORMATTED ABOVE THE CHIPS, not inside each one. `widget-composition`
+    // rule 5. It is per BUILD rather than per round — the shell rebuilds this
+    // board at 10Hz off the run ticker — which is why `LocaleNumbers` memoises
+    // the formatter itself rather than this file trying to cache the strings.
     final targetLabel = numbers.digitsInScript(round.target, targetScript);
     final chipLabels = <String>[
       for (final value in round.candidates)

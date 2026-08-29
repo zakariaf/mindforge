@@ -38,10 +38,14 @@ final class BridgeRound {
 
   /// How each chip differs from the target, `null` for the target itself.
   ///
-  /// Parallel to [candidates] by index. Carried on the round rather than
-  /// recomputed at render because it is generated evidence: a test asserts the
-  /// mix, and recomputing it would be a second implementation of the taxonomy
-  /// that could disagree with the first.
+  /// Parallel to [candidates] by index.
+  ///
+  /// **Generated evidence, and nothing renders it.** It exists so
+  /// `bridge_round_generator_test` can assert the MIX — that a chip labelled a
+  /// transposition really is one adjacent swap of the target — which is the
+  /// only way to check the taxonomy is doing the work its doc claims. Deriving
+  /// it at test time instead would be a second implementation of the taxonomy
+  /// grading the first.
   final List<BridgeDistractor?> kinds;
 
   /// Whether the TARGET renders in the reader's own numbering system.
@@ -55,9 +59,6 @@ final class BridgeRound {
   /// in half the rounds and an English player one with no unfamiliar side. The
   /// game is always "translate from or to what you know", in every locale.
   final bool targetOnReaderScript;
-
-  /// The winning chip's value. Always equal to [target].
-  int get correct => candidates[correctIndex];
 
   /// This round as a stable string, for a golden vector.
   ///

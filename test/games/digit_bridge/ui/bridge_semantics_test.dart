@@ -9,7 +9,6 @@ import 'package:mindforge/games/digit_bridge/ui/digit_bridge_board.dart';
 import 'package:mindforge/l10n/app_localizations.dart';
 
 import '../../../support/component_harness.dart';
-import '../../../support/harness.dart';
 import '../../../support/load_app_fonts.dart';
 import '../../../support/locale_cases.dart';
 

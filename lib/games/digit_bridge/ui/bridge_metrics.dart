@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/ui/components/pop_surface.dart';
+import 'package:mindforge/ui/pop_grid_metrics.dart';
 
 /// How a Digit Bridge board divides the field it is given.
 ///
@@ -10,11 +11,7 @@ import 'package:mindforge/ui/components/pop_surface.dart';
 @immutable
 final class BridgeMetrics {
   /// Creates metrics.
-  const BridgeMetrics({
-    required this.chipWidth,
-    required this.chipHeight,
-    required this.gap,
-  });
+  const BridgeMetrics({required this.chipHeight, required this.gap});
 
   /// The metrics for a field of [size].
   ///
@@ -32,17 +29,13 @@ final class BridgeMetrics {
   /// floor, and whitespace is what gives way to defend it.
   factory BridgeMetrics.forField(Size size) {
     final gap = _gapFor(size.width);
-    final chipWidth = (size.width - gap * (columns - 1)) / columns;
+    final chipWidth = popGridCell(size.width, columns, gap);
     final chipHeight = (chipWidth / chipAspect).clamp(
       kPopMinTarget,
       double.infinity,
     );
 
-    return BridgeMetrics(
-      chipWidth: chipWidth,
-      chipHeight: chipHeight,
-      gap: gap,
-    );
+    return BridgeMetrics(chipHeight: chipHeight, gap: gap);
   }
 
   /// The chip grid is three across and two down, at every difficulty.
@@ -53,6 +46,10 @@ final class BridgeMetrics {
   static const int columns = 3;
 
   /// How many rows of chips.
+  ///
+  /// Read by the board's `GridView` through `itemCount`, and by the aspect
+  /// arithmetic above; the class exposes no height of its own because the
+  /// column sizes itself to its content.
   static const int rows = 2;
 
   /// The gap the design uses between chips when there is room for it.
@@ -89,22 +86,14 @@ final class BridgeMetrics {
   /// its stimulus card and its answer grid.
   static const double targetToGridGap = 16;
 
-  /// How wide one chip draws.
-  final double chipWidth;
-
   /// How tall one chip draws.
   final double chipHeight;
 
   /// The gap between chips, on both axes.
   final double gap;
 
-  /// How tall the whole chip grid draws.
-  double get gridHeight => chipHeight * rows + gap * (rows - 1);
-
   /// The gap a field of [width] can afford.
-  static double _gapFor(double width) {
-    final roomy = (width - roomyGap * (columns - 1)) / columns;
-
-    return roomy >= kPopMinTarget ? roomyGap : tightGap;
-  }
+  ///
+  /// `popGridGap` is the shared derivation; the column count is this board's.
+  static double _gapFor(double width) => popGridGap(width, columns);
 }

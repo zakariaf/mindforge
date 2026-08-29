@@ -60,6 +60,12 @@ class LightTile extends StatelessWidget {
   /// is unplayable rather than merely harder.
   final String semanticLabel;
 
+  /// The key every tile that is not currently rejected carries.
+  ///
+  /// Any constant would do; -1 is chosen because `wrongTapId` counts up from
+  /// zero and can never reach it.
+  static const int _restingIdentity = -1;
+
   @override
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
@@ -115,10 +121,22 @@ class LightTile extends StatelessWidget {
     );
 
     return ShakeOnWrong(
-      // KEYED ON THE TAP, not on the state: ShakeOnWrong plays the
-      // false-to-true EDGE, so a second tap on the same raised tile would look
-      // to it like a rebuild of the first and play nothing.
-      key: ValueKey<int>(wrongTapId),
+      // KEYED ON THE REJECTED TILE, not on every tile. `wrongTapId` is a
+      // board-wide counter, so keying every tile on it changes every key on one
+      // wrong tap: `Widget.canUpdate` fails across the grid and the whole
+      // subtree is discarded. Measured on a blitz board — 30 of 30 tiles
+      // remounted for one shake, which is ~60 AnimationController and Ticker
+      // create-and-dispose pairs on the exact frame that starts an animation
+      // and fires a haptic. A correct tap remounted none, which is what proved
+      // it was the key.
+      //
+      // Only one tile is ever `rejected` — the notifier resets the rest — so a
+      // constant for every other state gives the newly-rejected tile a fresh
+      // identity and leaves the other 29 alone. Tapping the same tile twice
+      // still shakes twice, which is the behaviour the identity exists for.
+      key: ValueKey<int>(
+        state == LightTileState.rejected ? wrongTapId : _restingIdentity,
+      ),
       isWrong: state == LightTileState.rejected,
       child: tile,
     );

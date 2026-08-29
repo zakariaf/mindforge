@@ -23,7 +23,10 @@ enum LightTileState {
   /// Tapped while raised. It wears an ink strike bar and shakes.
   rejected,
 
-  /// Resolved: the field is done and this tile no longer answers anything.
+  /// Resolved: the RUN is over and this tile no longer answers anything.
+  ///
+  /// Not the field. A swept field deals the next one and every tile goes back
+  /// to [idle]; `locked` is only ever set when the last field is cleared.
   locked,
 }
 

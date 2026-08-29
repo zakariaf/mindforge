@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/games/game_registry.dart';
 
+import '../support/sweep_surfaces.dart';
 import 'support/source_text.dart';
 
 /// The engine claim, as tests that fail loudly.
@@ -39,6 +40,45 @@ void main() {
     'false_light',
     'falselight',
   ];
+
+  test('and the sweep covers every shipped game', () {
+    // FOUR HAND EDITS PER GAME live in test/support/sweep_surfaces.dart: a
+    // SweepSurface case, a RunConfig, a kSweepBests row and a kSweepStats row.
+    // They are cheap; the danger is that one is forgotten, and a game missing
+    // from the sweep is a game no locale, contrast or numeral check ever looks
+    // at. This is the assertion that turns four silent edits into four the
+    // suite demands — the shape every other hand-maintained list in this repo
+    // already has.
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final surfaces = SweepSurface.values.map((s) => s.name).toSet();
+
+    for (final game in container.read(gameRegistryProvider)) {
+      final camel = game.id.value
+          .split('_')
+          .indexed
+          .map(
+            (e) => e.$1 == 0 ? e.$2 : e.$2[0].toUpperCase() + e.$2.substring(1),
+          )
+          .join();
+
+      expect(
+        surfaces,
+        contains(camel),
+        reason:
+            '${game.id} has no SweepSurface case, so no sweep ever renders its '
+            'board',
+      );
+      expect(
+        kSweepBests.keys,
+        contains(game.id.value),
+        reason:
+            '${game.id} has no seeded BEST, so every swept surface shows it as '
+            'a dash and the digit assertions see nothing',
+      );
+    }
+  });
 
   group('the shell knows no game by name', () {
     test('no file under lib/features NAMES one, outside a comment', () {

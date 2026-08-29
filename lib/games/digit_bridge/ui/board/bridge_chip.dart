@@ -62,6 +62,12 @@ class BridgeChip extends StatelessWidget {
   /// as well as what it says.
   final String semanticLabel;
 
+  /// The key every tile that is not currently rejected carries.
+  ///
+  /// Any constant would do; -1 is chosen because `wrongTapId` counts up from
+  /// zero and can never reach it.
+  static const int _restingIdentity = -1;
+
   @override
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
@@ -134,11 +140,22 @@ class BridgeChip extends StatelessWidget {
     );
 
     return ShakeOnWrong(
-      // KEYED ON THE TAP, not on the state. ShakeOnWrong plays the false-to-
-      // true EDGE, so tapping the same wrong chip twice would look to it like
-      // a rebuild of the first tap and play nothing. A new key is a new
-      // element and therefore a new edge.
-      key: ValueKey<int>(wrongTapId),
+      // KEYED ON THE REJECTED TILE, not on every chip. `wrongTapId` is a
+      // board-wide counter, so keying every chip on it changes every key on one
+      // wrong tap: `Widget.canUpdate` fails across the grid and the whole
+      // subtree is discarded. Measured on a board — 6 of 6 chips
+      // remounted for one shake, which is ~60 AnimationController and Ticker
+      // create-and-dispose pairs on the exact frame that starts an animation
+      // and fires a haptic. A correct tap remounted none, which is what proved
+      // it was the key.
+      //
+      // Only one chip is ever `rejected` — the notifier resets the rest — so a
+      // constant for every other state gives the newly-rejected chip a fresh
+      // identity and leaves the other five alone. Tapping the same chip twice
+      // still shakes twice, which is the behaviour the identity exists for.
+      key: ValueKey<int>(
+        state == BridgeChipState.rejected ? wrongTapId : _restingIdentity,
+      ),
       isWrong: state == BridgeChipState.rejected,
       child: chip,
     );
