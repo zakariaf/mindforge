@@ -81,25 +81,31 @@ to rediscover it:
    on that board for a locale to translate — and it is asserted as no `Text`
    descendant plus an identical tile-depth sequence.
 
-3. **The canonical simulator found three layout defects the suite could not**,
+3. **T12.9's prediction was wrong, and recorded as wrong.** It said the chrome
+   shadow would be too subtle for a board mechanic and the board would need a
+   larger offset of its own. It does not: the fill's 0.716 luminance gap does
+   most of the work, which the prediction's shadow-and-position reasoning left
+   out. `docs/verification/e12-depth-delta.md` has the measurements.
+
+4. **The canonical simulator found three layout defects the suite could not**,
    and one of them was a shipping bug: a four-digit Persian target laid out at
    326pt inside a 326pt card and lost its last digit, while Latin fitted at
    256pt. `docs/verification/e12-simulator-signoff.md` has all three.
 
-4. **The test written to catch that bug passed against the build that had it.**
+5. **The test written to catch that bug passed against the build that had it.**
    `tester.getSize` on a `Text` returns the size its parent CONSTRAINED it to,
    so an overflowing run reports the box width back and the assertion is true by
    construction. It now measures an unconstrained `TextPainter`. This is the
    single most transferable thing E12 learned: *a fit assertion that reads a laid-out
    element is not a fit assertion.*
 
-5. **Widening the gates was most of T12.15's work**, and every widening was a
+6. **Widening the gates was most of T12.15's work**, and every widening was a
    place the new games would otherwise have been invisible — `SweepSurface`,
    `kTestGameIds`, `kSweepBests`, `engine_seam_test`'s name list,
    `engine_locale_purity_test`'s walk. A game that ships without them is a game
    no sweep covers.
 
-6. **The numerals sweep gained the app's one exemption**, argued at the widget
+7. **The numerals sweep gained the app's one exemption**, argued at the widget
    rather than at a value: `BridgeNumeral`. `test/a11y/numerals_test.dart` had
    invited exactly that — "a third one has to come here and argue for itself" —
    and this is the third one.
