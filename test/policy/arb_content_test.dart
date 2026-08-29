@@ -205,6 +205,7 @@ void main() {
       'gameStroopRushKicker', // .hero .kicker
       'gameSchulteGridKicker',
       'stroopPrompt', // .stim .ask
+      'bridgePrompt', // .target .ask
       'finalScore', // .scoreslab s
       'accuracyLabel', // .tri s
       'avgReactionLabel',

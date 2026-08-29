@@ -227,11 +227,6 @@
     "description": "What a screen reader calls the U+06F0-U+06F9 numbering system. 'Persian' rather than 'Eastern Arabic' because that is what readers call them; the code says easternArabic because that is what the Unicode block is called, and the two names are for two audiences.",
     "x-review": "native-speaker-pending"
   },
-  "bridgeTargetValue": "{numeral} بدۆزەرەوە",
-  "@bridgeTargetValue": {
-    "description": "What a screen reader announces for the target numeral. A String placeholder rather than an int: the numeral is already rendered in the round's chosen script, and an int placeholder would re-format it in the locale's script and destroy the question.",
-    "x-review": "native-speaker-pending"
-  },
   "bridgeChipValue": "{numeral}، {script}",
   "@bridgeChipValue": {
     "description": "What a screen reader announces for one candidate chip: the numeral and which numbering system it is written in. Both are Strings -- an int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits, and would also re-format a numeral the round deliberately pinned to the other script.",
@@ -270,6 +265,11 @@
   "lightFieldTimeLabel": "مامناوەندی مەیدان",
   "@lightFieldTimeLabel": {
     "description": "The middle cell of False Light's results trio. A sweep is not a reflex, so an average per TAP would measure nothing a player recognises; the number they feel is how long a whole field took to clear.",
+    "x-review": "native-speaker-pending"
+  },
+  "bridgePrompt": "ئەم ژمارەیە بدۆزەرەوە",
+  "@bridgePrompt": {
+    "description": "The line above the Digit Bridge target. It has to be there: the two halves of this board are deliberately drawn in DIFFERENT numbering systems, and without a prompt a reader who knows only one of them reads the mismatch as a rendering fault rather than as the question. Cased like stroopPrompt -- upper in Latin locales, natural in Arabic script, because letterSpacing severs the cursive joins Arabic depends on.",
     "x-review": "native-speaker-pending"
   }
 }

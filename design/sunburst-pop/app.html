@@ -689,6 +689,14 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-xl);
   box-shadow:var(--sh-3);padding:20px 16px;display:grid;place-items:center;position:relative;
 }
+/* The prompt is not decoration here. The two halves of this board are
+   deliberately different numbering systems, and without a line saying what to
+   do with them a reader who knows only one sees a rendering fault rather than a
+   question. Same rule Stroop's .stim .ask carries, same reason. */
+.target .ask{
+  position:relative;font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-2);margin:0 0 18px;text-align:center;
+}
 .target b{
   /* 76px, which is the scoreHero step. The reference and the app have to be
      expressible in the same tokens, and 56 was not one of them. */
@@ -1573,7 +1581,10 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
         <div class="pane">
           <div class="playfill playfill--bridge">
             <div class="wdots" aria-hidden="true"></div>
-            <div class="target"><b data-latin>4 7 2</b></div>
+            <div class="target">
+              <p class="ask" data-l10n="bridgePrompt">FIND THIS NUMBER</p>
+              <b data-latin>472</b>
+            </div>
             <div class="grid3">
               <span class="chipnum" tabindex="0" data-latin>&#x06F8;&#x06F1;&#x06F7;</span><span class="chipnum" tabindex="0" data-latin>&#x06F4;&#x06F2;&#x06F7;</span><span class="chipnum" tabindex="0" data-latin>&#x06F4;&#x06F7;&#x06F2;</span>
               <span class="chipnum" tabindex="0" data-latin>&#x06F1;&#x06F0;&#x06F8;</span><span class="chipnum" tabindex="0" data-latin>&#x06F4;&#x06F7;&#x06F2;&#x06F3;</span><span class="chipnum" tabindex="0" data-latin>&#x06F1;&#x06F7;&#x06F9;</span>

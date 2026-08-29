@@ -96,6 +96,7 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'stroopWordOrange': l10n.stroopWordOrange,
     'stroopWordPink': l10n.stroopWordPink,
     'stroopPrompt': l10n.stroopPrompt,
+    'bridgePrompt': l10n.bridgePrompt,
     'gameStroopRushKicker': l10n.gameStroopRushKicker,
     'stroopStimulusValue': l10n.stroopStimulusValue(
       l10n.colourBlue,
@@ -136,7 +137,6 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'gameDigitBridgeKicker': l10n.gameDigitBridgeKicker,
     'bridgeScriptLatin': l10n.bridgeScriptLatin,
     'bridgeScriptEasternArabic': l10n.bridgeScriptEasternArabic,
-    'bridgeTargetValue': l10n.bridgeTargetValue(n(472)),
     'bridgeChipValue': l10n.bridgeChipValue(n(472), l10n.bridgeScriptLatin),
     'gameFalseLightKicker': l10n.gameFalseLightKicker,
     'lightTileRaised': l10n.lightTileRaised,
@@ -257,6 +257,7 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   // The prompt sits above the glyph and is allowed to wrap: German is more
   // than twice the English length and the card is 350 points wide.
   'stroopPrompt': (step: 'label', lines: 2),
+  'bridgePrompt': (step: 'label', lines: 2),
   // Announced, never drawn, so its budget is the announcement's.
   'stroopStimulusValue': (step: 'caption', lines: 2),
   // E09 adds the KICKER; E04 seeded the name and the tagline above, before
@@ -300,7 +301,6 @@ const Map<String, TypeSlot> kTypeSlots = <String, TypeSlot>{
   // blow, so the step is the smallest one and the budget is generous.
   'bridgeScriptLatin': (step: 'caption', lines: 1),
   'bridgeScriptEasternArabic': (step: 'caption', lines: 1),
-  'bridgeTargetValue': (step: 'caption', lines: 2),
   'bridgeChipValue': (step: 'caption', lines: 2),
   'gameFalseLightKicker': (step: 'label', lines: 2),
   // Announced, never drawn -- depth is the only visual channel on that board,

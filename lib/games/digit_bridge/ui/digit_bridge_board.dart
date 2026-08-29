@@ -102,7 +102,15 @@ class _DigitBridgeBoardState extends ConsumerState<DigitBridgeBoard> {
             children: <Widget>[
               BridgeTarget(
                 label: targetLabel,
-                semanticLabel: l10n.bridgeTargetValue(targetLabel),
+                // THE SAME SHAPE A CHIP TAKES, and no verb of its own. The
+                // prompt above it is drawn and therefore announced, so a label
+                // of "Find 3577" made the merged node say "FIND THIS NUMBER,
+                // Find 3577". What a reader needs here is what they need on a
+                // chip: the value, and which of the two systems it is in.
+                semanticLabel: l10n.bridgeChipValue(
+                  targetLabel,
+                  _scriptName(targetScript, l10n),
+                ),
               ),
               const SizedBox(height: BridgeMetrics.targetToGridGap),
               _ChipGrid(

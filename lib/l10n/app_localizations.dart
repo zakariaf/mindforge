@@ -761,12 +761,6 @@ abstract class AppLocalizations {
   /// **'Persian digits'**
   String get bridgeScriptEasternArabic;
 
-  /// What a screen reader announces for the target numeral. A String placeholder rather than an int: the numeral is already rendered in the round's chosen script, and an int placeholder would re-format it in the locale's script and destroy the question.
-  ///
-  /// In en, this message translates to:
-  /// **'Find {numeral}'**
-  String bridgeTargetValue(String numeral);
-
   /// What a screen reader announces for one candidate chip: the numeral and which numbering system it is written in. Both are Strings -- an int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits, and would also re-format a numeral the round deliberately pinned to the other script.
   ///
   /// In en, this message translates to:
@@ -814,6 +808,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Avg field'**
   String get lightFieldTimeLabel;
+
+  /// The line above the Digit Bridge target. It has to be there: the two halves of this board are deliberately drawn in DIFFERENT numbering systems, and without a prompt a reader who knows only one of them reads the mismatch as a rendering fault rather than as the question. Cased like stroopPrompt -- upper in Latin locales, natural in Arabic script, because letterSpacing severs the cursive joins Arabic depends on.
+  ///
+  /// In en, this message translates to:
+  /// **'FIND THIS NUMBER'**
+  String get bridgePrompt;
 }
 
 class _AppLocalizationsDelegate

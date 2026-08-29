@@ -410,11 +410,6 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get bridgeScriptEasternArabic => 'ژمارە فارسییەکان';
 
   @override
-  String bridgeTargetValue(String numeral) {
-    return '$numeral بدۆزەرەوە';
-  }
-
-  @override
   String bridgeChipValue(String numeral, String script) {
     return '$numeral، $script';
   }
@@ -439,4 +434,7 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get lightFieldTimeLabel => 'مامناوەندی مەیدان';
+
+  @override
+  String get bridgePrompt => 'ئەم ژمارەیە بدۆزەرەوە';
 }

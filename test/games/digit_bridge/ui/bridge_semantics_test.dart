@@ -115,31 +115,48 @@ void main() {
       handle.dispose();
     });
 
-    testWidgets(
-      '${localeCase.tag} announces the target, and it is not a chip',
-      (
-        tester,
-      ) async {
-        final handle = tester.ensureSemantics();
+    testWidgets('${localeCase.tag} announces the target with its own script', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
 
-        await tester.pumpPopComponent(
-          SizedBox(width: 350, height: 460, child: DigitBridgeBoard(run: run)),
-          localeCase: localeCase,
-          resetFirst: true,
-        );
-        await tester.pump();
+      await tester.pumpPopComponent(
+        SizedBox(width: 350, height: 460, child: DigitBridgeBoard(run: run)),
+        localeCase: localeCase,
+        resetFirst: true,
+      );
+      await tester.pump();
 
-        final target = tester.widget<BridgeTarget>(find.byType(BridgeTarget));
+      final target = tester.widget<BridgeTarget>(find.byType(BridgeTarget));
+      final chip = tester.widget<BridgeChip>(find.byType(BridgeChip).first);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DigitBridgeBoard)),
+      );
 
-        // The target is the QUESTION. Exposing it as a button would offer a
-        // seventh thing to tap and a reader would go looking for its effect.
-        expect(
-          tester.getSemantics(find.bySemanticsLabel(target.semanticLabel)),
-          matchesSemantics(label: target.semanticLabel),
-        );
+      // THE TARGET IS THE QUESTION, and it is NOT a button: exposing it as one
+      // would offer a seventh thing to tap and a reader would go looking for
+      // its effect. The card's node merges the drawn prompt with the value,
+      // which is what a reader should hear -- the instruction, then the number.
+      expect(
+        tester.getSemantics(find.byType(BridgeTarget)),
+        matchesSemantics(
+          label: '${l10n.bridgePrompt}\n${target.semanticLabel}',
+        ),
+      );
 
-        handle.dispose();
-      },
-    );
+      // AND IT NAMES THE OTHER SCRIPT FROM THE CHIPS. If both sides announced
+      // the same system a screen-reader user would be told the two runs are
+      // identical, which is the board having no question on it.
+      String scriptIn(String label) => label.contains(l10n.bridgeScriptLatin)
+          ? l10n.bridgeScriptLatin
+          : l10n.bridgeScriptEasternArabic;
+
+      expect(
+        scriptIn(target.semanticLabel),
+        isNot(scriptIn(chip.semanticLabel)),
+      );
+
+      handle.dispose();
+    });
   }
 }

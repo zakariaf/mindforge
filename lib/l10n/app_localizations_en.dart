@@ -415,11 +415,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bridgeScriptEasternArabic => 'Persian digits';
 
   @override
-  String bridgeTargetValue(String numeral) {
-    return 'Find $numeral';
-  }
-
-  @override
   String bridgeChipValue(String numeral, String script) {
     return '$numeral, $script';
   }
@@ -444,4 +439,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lightFieldTimeLabel => 'Avg field';
+
+  @override
+  String get bridgePrompt => 'FIND THIS NUMBER';
 }
