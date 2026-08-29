@@ -53,11 +53,68 @@ Two decisions are recorded here because they will be questioned:
 
 - **Digit Bridge's stimulus is script-pinned, not locale-rendered.** This is a scoped, documented
   exception to `CLAUDE.md` working agreement 12. See T12.4.
-- **False Light's score can go negative**, which no existing game's can. This is a seam stress, not a
-  special case. See T12.11.
+- **False Light deals fields rather than running a clock**, and its score never goes negative. Both
+  were measured decisions, not simplifications; see *What measurement changed* above and T12.11.
 
 iOS is the only shipping target. Everything below is built and verified on the iOS Simulator; Android
 is deferred and nothing here claims parity with it.
+
+## What measurement changed before a line was written
+
+This epic was planned against the seam contracts and then **checked against the tree**. Four things it
+specified turned out to be unbuildable or to cost far more than they were worth. They are recorded
+here rather than quietly dropped, because two of them were the epic's own headline claims.
+
+1. **False Light's timed flip schedule is removed. Fields are dealt, not flipped.**
+   The board was to flip tiles on an interval. There is no legal source of elapsed time inside
+   `lib/games/**`: `RunConfig` carries only `gameId`, `difficulty` and `seed`; `GameBoardBuilder` is
+   `Widget Function(BuildContext, RunConfig)` and passes no clock; and `Stopwatch`, `Ticker`,
+   `createTicker`, `Timer.periodic` and `AnimationController` are each banned under `lib/games/**` by
+   two gate scripts and two policy tests. The only channel is a new `buildBoard` parameter, which is an
+   edit to `lib/features/play/ui/play_scaffold.dart`.
+   **Decision:** the game deals one field at a time and advances when the field is swept — the same
+   round loop Stroop Rush already proves. The mechanic is unchanged (find the pressed tiles among the
+   raised), the clock is not part of it, and the zero-lines claim survives.
+
+2. **Neither game is clock-limited. Both end when their rounds are exhausted.**
+   No shipped game declares a `runLimitFor`, so `RunNotifier._expiredOutcome()` has never executed
+   outside a fixture — and it is hardcoded to `0%` / `0` / `0ms`. Two clock-limited games would have
+   been the first to ship a results trio of zeros. Fixing that means widening `BoardSnapshot` with a
+   "stats if the clock expires" channel and editing `run_notifier.dart`.
+   **Decision:** both games publish a `RunOutcome` when their last round completes, exactly as Stroop
+   Rush does. `isTimed: true` with no run limit, so the HUD still counts up and speed still matters
+   through the streak multiplier.
+
+3. **False Light's negative score is removed. A wrong tap costs the streak, not points.**
+   This was the epic's deliberate seam stress, and the seam answered clearly. Rendering and ranking
+   handle a negative points value correctly — `TabularText` pins the digit row LTR so the minus stays
+   leading under RTL, and `RunMetric` ranks points higher-is-better. **Persistence does not.**
+   `lib/data/db/tables/runs.dart:85` carries `CHECK (metric_value >= 0)`; the insert fails, the
+   repository returns `ConstraintViolated`, no UI reads `saveFailure`, and the player sees a normal
+   results screen for a run that left no row. Relaxing it is a schema-version bump, the app's first
+   `onUpgrade`, a table rebuild (SQLite cannot `ALTER` a `CHECK`), a v2 dump and a regenerated
+   `test/drift/generated/`.
+   **Decision:** that is a persistence epic, and it is not what a 4.3(a) rejection is asking for. A
+   wrong tap resets the streak multiplier and marks the tile rejected, which is a real cost inside a
+   non-negative score. Note the sibling `CHECK (longest_combo <= correct_count)` at `runs.dart:88`,
+   which both new games must also respect.
+
+4. **Digit Bridge's script pin is relative to the locale, not absolute.**
+   Pinning "target is always Latin" would have shown a Persian player two Latin sides in no locale and
+   an unfamiliar script on both sides in some. **Decision:** one side always renders the *reader's own*
+   numerals and the other renders the other script; a seeded bit decides which side is which, so the
+   vector stays locale-independent while the game is always "translate from or to what you know".
+
+The seam stresses that remain are real and still untested anywhere: a board whose stimulus script is
+chosen by the round rather than the locale, a board with **no text and no colour at all** whose golden
+is byte-identical across four locales, and the first two additions to `GameAccent` since the theme was
+written.
+
+Three corrections to names this epic used, found the same way — the shipped API is
+`const LocaleNumbers(SupportedLocale)` (there is no `forLocale`), `BidiText.isolate` (there is no
+`Bidi` class and no `isolateLtr`), `Moment.streakMilestone` (there is no `comboUp`), ARB keys are
+`game<Pascal>Name` / `Tagline` / `Kicker` (not `<game>Title`), and `flutter_test` has
+`matchesSemantics`/`containsSemantics` but no `isSemantics`. Task bodies below use the shipped names.
 
 ## Why we need it
 
@@ -77,17 +134,17 @@ axis nothing has yet touched:
 | `boardBackground` | `surfaceSunk` | `gameAccent` | `gameAccent` (lilac) | `gameAccent` (leaf) |
 | `scoreFormat` | `points` | `duration` | `points` | `points` |
 | `scoreSource` | `board` | `runClock` | `board` | `board` |
-| Score domain | `>= 0` | `> 0` ms | `>= 0` | **may be negative** |
-| Run end | clock runs out | board reports `outcome` | clock runs out | clock runs out |
+| Score domain | `>= 0` | `> 0` ms | `>= 0` | `>= 0` |
+| Run end | rounds exhausted | board reports `outcome` | rounds exhausted | fields exhausted |
 | Localised content | words | numbers, locale-rendered | numbers, **script-pinned** | **none at all** |
 | Colour in the answer | yes | no | no | **no colour anywhere** |
 | New accent needed | no | no | yes | yes |
 
-Four of those cells have never been exercised. The negative score is the one most likely to surface a
-hidden assumption, because `ScoreFormat.points` has only ever rendered a count that goes up and the
-BEST pill has only ever ranked one. The "no colour anywhere" cell is the one that matters to E11's
+Three of those cells have never been exercised — the script-pinned stimulus, the total absence of
+colour, and the new accent. The "no colour anywhere" cell is the one that matters to E11's
 accessibility floor: False Light is the first board that is fully playable with every hue removed
-*without* the colour-blind palette being involved at all.
+*without* the colour-blind palette being involved at all, and the first whose golden is byte-identical
+in `en` and `fa` because it contains nothing a locale can change.
 
 The localisation cells matter for the App Review answer specifically. Digit Bridge is the only game
 in the app that a reviewer cannot understand as a reskin of something else, because its content is
@@ -257,8 +314,11 @@ text, and do it as a design change rather than a hex chosen in Dart.
    | `lilacDeep` | `#A87DFF` | **5.15** |
 
    Both faces carry ink comfortably, so `accentLabelFor` returns `textPrimary` for both — the Schulte
-   shape, not the Stroop shape. Add the pair and its `lilacDeepBand` `#73A87DFF` to `system.html` §10
-   with the rest of the game accents, then transcribe.
+   shape, not the Stroop shape. Add the pair to `system.html` **§02 Colour**, where the game accents actually live — there is no
+   §10 game-accent section; §10 is Components. The band ray carries alpha and therefore has no
+   `:root` custom property: `DesignSource.cssRootHexes()` requires exactly six hex digits, so
+   `lilacDeepBand` belongs in `token_parity_test.dart`'s `kCompositedPrimitives` table beside
+   `coralDeepBand`, not in `kPrimitiveToCssVar`.
 
    **Why a new hex and not `grapePop`.** `grapePop #7C5CFF` measures **3.54** against ink and
    **4.35** against paper. It fails with both, and the base face is the play band, which is a text
@@ -268,7 +328,7 @@ text, and do it as a design change rather than a hex chosen in Dart.
 2. **False Light takes `leaf` / `leafDeep`, which `system.html` already carries.** Ink measures
    **7.15** and **4.89**; both clear the floor, so no new hex is needed and none is invented. Add
    only the band ray, `leafDeepBand` `#732FA64F`, following the same deep-at-0x73 construction as
-   `coralDeepBand` and `turquoiseDeepBand`.
+   `coralDeepBand` and `turquoiseDeepBand` — and, like them, into `kCompositedPrimitives`.
 
 3. Add four slots to `SunburstColors` — `gameDigitBridge`, `gameDigitBridgeDeep`, `gameFalseLight`,
    `gameFalseLightDeep` — plus `bandRayDigitBridge` and `bandRayFalseLight`. Working agreement 2:
@@ -285,7 +345,20 @@ text, and do it as a design change rather than a hex chosen in Dart.
    // @contrast textPrimary gameFalseLightDeep   4.5  ink glyph on a pressed tile
    ```
 
-5. Add `digitBridge` and `falseLight` to `enum GameAccent`. All three extension methods are
+5. **Bump the three hardcoded parser guards in the same commit, never delete them.**
+   `test/theme/token_parity_test.dart` counts the `:root` hexes (30 -> 32);
+   `test/theme/contrast_test.dart` counts the `// @contrast` pairs (26 -> 30) and resolves each
+   declared name through a hand-written `_slots` map that needs four new rows, or every new
+   declaration fails as unresolvable. Each fails with a message naming the parser rather than the
+   colour, which is why they are listed here rather than discovered.
+
+6. **Check the candidate hexes against the five existing loops over `GameAccent.values` before
+   committing them**, not after: `test/a11y/shell_contrast_test.dart` (hero-panel composite against
+   ink, and the header lattice measured strictly worse), `test/features/shell/widgets/play_band_test.dart`,
+   `test/features/shell/widgets/best_card_test.dart` and `test/theme/sunburst_theme_test.dart` all
+   iterate the enum, so a new case enrolls itself in assertions nobody edits.
+
+7. Add `digitBridge` and `falseLight` to `enum GameAccent`. All three extension methods are
    exhaustive with no `default:`, so this step **will not compile** until each is handled — which is
    the design working, and the reason no game can ship a silently grey band.
 
@@ -423,6 +496,13 @@ This is narrower than it sounds, and the fence is what makes it safe:
   `lib/`. This is the test that fails if `forScript` is implemented by constructing a second one.
 - `test/policy/canonical_storage_test.dart` — extended: no Eastern Arabic code point reaches a
   `runs` row or a golden vector for this game.
+- `test/a11y/numerals_test.dart` — **the test that actually enforces working agreement 12 at render**,
+  and the one this exception has to be argued into. It sweeps every `SweepSurface` in all four locales
+  and treats any Latin digit drawn under `fa`/`ckb` as an offender, with a hand-named exemption list
+  whose comment says a third entry "has to come here and argue for itself". Digit Bridge's board is
+  that third entry: the argument is that a cross-script matching game in which both sides rendered the
+  reader's own numerals would have no question in it. The exemption is scoped to the board subtree, so
+  the HUD, the score and every other surface stay under the original assertion.
 
 **Implementation.**
 1. Add `LocaleNumbers.forScript` beside `forLocale`, both delegating to the same private pinning
@@ -517,7 +597,7 @@ This is narrower than it sounds, and the fence is what makes it safe:
   display order is stable.
 - `.claude/skills/i18n-rtl-l10n/scripts/check_arb_parity.sh lib/l10n` passes.
 
-**Implementation.** Three ARB keys — `digitBridgeTitle`, `digitBridgeTagline`, `digitBridgeKicker` —
+**Implementation.** Three ARB keys — `gameDigitBridgeName`, `gameDigitBridgeTagline`, `gameDigitBridgeKicker` —
 added to all four ARBs **in the same commit**, plus HUD label keys. `buildArtwork` draws the 64pt
 home-card tile (two numerals in two scripts, bridged); `buildHeroArt` draws the `.swatchrow` legend
 that introduces the two scripts on a screen with no clock running. They are different drawings, which
@@ -541,8 +621,9 @@ is why there are two hooks. One appended line in `game_registry.dart`; one row e
 - Reduce motion: with the flag set, every duration collapses to `Duration.zero` and the non-motion
   residue survives — the wrong chip still carries its ink strike, the correct chip still presses to
   `flat`.
-- `test/games/digit_bridge/ui/bridge_semantics_test.dart` — `isSemantics(label: <the localized
-  numeral>, isButton: true, hasTapAction: true)` on every chip, in all four locales. The label speaks
+- `test/games/digit_bridge/ui/bridge_semantics_test.dart` — `matchesSemantics(...)` over `tester.getSemantics(...)` inside an `ensureSemantics()` handle — the
+  `pop_surface_test.dart` idiom — on every chip, in all four locales. `matchesSemantics` is exact, so
+  every flag the widget declares must be listed. The label speaks
   the numeral as rendered, so a screen-reader user hears the script they are being asked to read.
 
 **Files.** the two test files, plus the moment wiring in `bridge_chip.dart`.
@@ -589,73 +670,77 @@ sensitivity — which is a large fraction of the over-50 audience a brain traine
 
 ---
 
-### T12.10 — False Light: seeded field generation and the flip schedule
+### T12.10 — False Light: seeded field generation and the field ladder
 
 **Tests first (TDD).**
 - `test/games/false_light/domain/light_field_test.dart`
-  - `lightField(seed: s, difficulty: d)` is reproducible across 1000 calls and differs for `s + 1`.
-  - The pressed fraction stays within the declared band for the difficulty across a 500-seed sweep —
-    a field that is 90% pressed is not a harder game, it is a different one.
-  - At least one pressed and one raised tile always exist. A field with no target is unplayable and a
-    field with no distractor is not a game.
-  - The flip schedule is a **pure function of `(seed, elapsedMs)`**, not of a timer. The game owns no
-    clock; the shell's run clock is the only time source, and the board reads elapsed from the
-    `RunConfig` it is bound with.
+  - `lightFields(seed: s, difficulty: d)` is reproducible across 1000 calls and differs for `s + 1`.
+  - The pressed fraction stays within the declared band for the difficulty across a 500-seed sweep — a
+    field that is 90% pressed is not a harder game, it is a different one.
+  - At least one pressed and one raised tile always exist in every field. A field with no target is
+    unplayable; a field with no distractor is not a game.
+  - **The whole ladder is dealt up front**, as a `List<LightField>`, exactly as Stroop deals its rounds.
+    The board owns no clock and needs none: a field advances when it is swept, never on an interval.
 - `test/games/false_light/domain/light_vectors_test.dart` — a committed vector table of
-  `(seed, difficulty, elapsedMs) -> field`, regenerated only by `tool/update_light_vectors.dart`.
+  `(seed, difficulty) -> fields`, regenerated only by `tool/update_light_vectors.dart`, byte-identical
+  under all four locales.
 - `test/policy/engine_locale_purity_test.dart` — extended: `lib/games/false_light/**` contains **no
-  string literal that reaches the screen at all**. This game has no text, and asserting that is what
-  makes step 9 of "What we will achieve" a fact.
+  user-facing string at all**. This game has no text on its board, and asserting it is what makes the
+  byte-identical `en`/`fa` golden in T12.12 meaningful.
 
 **Implementation.**
 1. `LightField` is an immutable value over a `List<TileDepth>` plus its grid shape.
-   `enum TileDepth { raised, pressed }`.
+   `enum TileDepth { raised, pressed }`. `LightBoardState` holds the dealt ladder, the field index and
+   the swept set — the Stroop shape, with fields where Stroop has rounds.
 2. Rules table:
 
-   | difficulty | grid | pressed fraction | flip interval | run limit |
-   |---|---|---|---|---|
-   | `chill` | 4×4 | 0.30–0.40 | 2500ms | 90s |
-   | `classic` | 4×5 | 0.25–0.35 | 1800ms | 60s |
-   | `blitz` | 5×6 | 0.20–0.30 | 1200ms | 45s |
+   | difficulty | grid | pressed fraction | fields |
+   |---|---|---|---|
+   | `chill` | 4×4 | 0.30–0.40 | 8 |
+   | `classic` | 4×5 | 0.25–0.35 | 12 |
+   | `blitz` | 5×6 | 0.20–0.30 | 16 |
 
-   Grid grows and interval shrinks with difficulty; the pressed fraction *falls*, which makes targets
-   scarcer rather than the tiles smaller. The `blitz` cell at 320 logical width is the case T12.9's
-   floor test is written against.
-3. One entropy source, salted `false_light`, generator version frozen at 1.
+   The grid grows and the pressed fraction *falls* with difficulty, so targets get scarcer rather than
+   tiles getting smaller. The `blitz` cell at 320 logical width is the case T12.9's 48px floor test is
+   written against.
+3. One entropy source, `seedFrom('false_light:$seed', featureSalt: kFalseLightFeatureSalt,
+   modeSalt: difficulty.index)`, generator version frozen at 1.
 
 **Files.** `lib/games/false_light/domain/light_field.dart`, `tile_depth.dart`, `light_rules.dart`,
-`tool/update_light_vectors.dart`, the three test files.
+`light_board_state.dart`, `tool/update_light_vectors.dart`, the three test files.
 
 ---
 
-### T12.11 — False Light: the notifier, and the first score that can go negative
+### T12.11 — False Light: the notifier, and what the seam said about a negative score
 
-**Goal.** Score the sweep, and find out whether the shell can render a negative points total without
-learning anything about this game.
+**Goal.** Score the sweep, and record what asking the negative-score question actually returned.
+
+**The question was asked and answered before the notifier was written.** The epic originally specified
+a score that could go negative, as a deliberate stress on `ScoreFormat.points`. Measured against the
+tree: the rendering and ranking tiers handle it correctly, and the persistence tier cannot. See
+*What measurement changed* above for the four files that carry the constraint. **The finding is the
+deliverable; the migration is not this epic's.**
 
 **Tests first (TDD).**
 - `test/games/false_light/application/light_board_notifier_test.dart`
-  - Tapping a pressed tile scores `+1`, increments `correctCount`, and marks it swept.
-  - Tapping a raised tile scores `-1` and increments `wrongCount`.
+  - Tapping a pressed tile marks it swept, increments `correctCount`, and raises the streak.
+  - Tapping a raised tile marks it `rejected`, bumps `wrongTapId` (the shake identity latch), resets
+    the streak multiplier to 1, and increments `wrongCount`. The score does not fall.
   - Tapping an already-swept tile is a no-op — neither count moves.
-  - `score` may be negative, and the state does **not** clamp it at zero. A clamp would hide the seam
-    question this task exists to ask.
-- `test/features/results/negative_score_test.dart` — **a shell test, not a game test.** The results
-  screen, the BEST pill and the stats chart render a score of `-7` in all four locales without
-  throwing, with the minus sign on the correct side under RTL, and without any file under
-  `lib/features/**` naming this game.
-- `test/features/stats/negative_best_test.dart` — ranking a negative points score treats higher as
-  better, so `-2` beats `-7`, and a first run of `-7` still becomes the BEST.
+  - Sweeping the last pressed tile in a field advances to the next field; sweeping the last field
+    publishes a `RunOutcome` and ends the run.
+  - `longestCombo <= correctCount` holds after every transition. This is not a style rule: it is
+    `CHECK (longest_combo <= correct_count)` in the `runs` table, and violating it makes a run
+    unsavable in exactly the silent way the negative score would have been.
+- `test/data/repositories/false_light_run_test.dart` — a repository-tier save of a False Light run
+  succeeds and is readable back. This is the test that would have failed on the negative score, so it
+  is the one that proves the decision rather than assuming it.
 
-**Implementation.** If the shell cannot express a negative points score today, **the fix is a
-game-agnostic widening owned by E07/E08, applied for every game at once** — not a branch in a shell
-file and not a clamp in this game. Record what had to widen in the epic and in the PR body, exactly
-as E10 recorded its four. If nothing has to widen, record that too: it is the strongest evidence the
-seam is right.
+**Implementation.** A family `Notifier` keyed by `RunConfig`, `void` intent methods, one immutable
+state, the streak multiplier derived and never stored — `stroop_scoring.dart` is the shape to copy.
 
 **Files.** `lib/games/false_light/application/light_board_notifier.dart`, `light_snapshot.dart`,
-`lib/games/false_light/domain/light_board_state.dart`, the three test files, plus whatever T12.11
-proves must widen.
+`lib/games/false_light/domain/light_scoring.dart`, the two test files.
 
 ---
 
@@ -713,8 +798,8 @@ and none for its board, because its board has no text. One appended registry lin
   board's rendered output is byte-identical with `isColourBlindPalette` true and false. Nothing on
   this board is re-pointed, because nothing on it is an answer colour. That is the assertion the
   4.3(a) response rests on, so it is a golden comparison, not a prose claim.
-- `test/games/false_light/ui/light_semantics_test.dart` — every tile exposes `isSemantics(label:
-  <"raised" | "pressed", localized>, isButton: true, hasTapAction: true)`. Depth is the only visual
+- `test/games/false_light/ui/light_semantics_test.dart` — every tile exposes a `matchesSemantics` label of
+  `"raised"` or `"pressed"`, localized. Depth is the only visual
   channel, so the semantic label must say it **in words** — a screen-reader user cannot see a shadow.
   This is why the game has HUD and state ARB keys despite having no board text.
 - `test/games/false_light/ui/light_feedback_test.dart` — one `Moment.tileFound` per correct sweep,
@@ -731,8 +816,14 @@ and none for its board, because its board has no text. One appended registry lin
 ### T12.15 — The engine seam, proved for the second time
 
 **Tests first (TDD).**
-- `test/policy/engine_seam_test.dart` — unchanged in shape, extended in coverage: no file under
-  `lib/features/**` imports, names or switches on any of the four game ids.
+- `test/policy/engine_seam_test.dart` — extended in coverage: no file under `lib/features/**` imports,
+  names or switches on any of the four game ids. Its `const gameNames` list at the top is what makes
+  that real, and **the tokens added there must be the full ids, not bare words**: `'light'` matches
+  `SystemUiOverlayStyle.light` in `lib/features/countdown/ui/countdown_screen.dart` and turns a green
+  suite red for no reason. Add `'digit_bridge'`, `'false_light'`, `'digitbridge'`, `'falselight'`.
+- `test/policy/registry_localization_test.dart` — its `declaredKeys()` walks `fixtureGame().strings`,
+  not the shipped registry, so today it would pass with every new key missing. Widen it to the real
+  registry; that widening is what makes the four-ARB assertion mean anything for these games.
 - `test/policy/banned_imports_test.dart` — no `go_router`, `Navigator`, `Scaffold`, `AppBar`,
   `HudPill`, `Color(0x`, `Stopwatch` or `DateTime.now()` under either new game directory.
 - `test/policy/play_domain_purity_test.dart` — extended over both new `domain/` directories.
@@ -848,9 +939,10 @@ bash tool/skill_gates.sh
 
 # Architecture, determinism, test hygiene
 .claude/skills/flutter-architecture/scripts/check_architecture.sh                      lib
-.claude/skills/project-structure-and-packages/scripts/check_import_boundaries.sh       lib
+.claude/skills/project-structure-and-packages/scripts/check_import_boundaries.sh       lib/core
 .claude/skills/state-management-riverpod/scripts/ban-legacy-providers.sh
-.claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib
+.claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/digit_bridge/domain
+.claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/false_light/domain
 .claude/skills/dart3-idioms-and-coding-standards/scripts/check-dart3-idioms.sh         lib
 .claude/skills/custom-canvas-and-gestures/scripts/check_painter_hygiene.sh             lib
 .claude/skills/testing-strategy/scripts/check_test_hygiene.sh                          lib test
