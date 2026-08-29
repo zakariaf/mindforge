@@ -25,6 +25,9 @@ class BridgeTarget extends StatelessWidget {
   /// What a screen reader announces.
   final String semanticLabel;
 
+  /// The most lines the numeral may take. It is a number, not a sentence.
+  static const int maxLines = 1;
+
   @override
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
@@ -54,10 +57,27 @@ class BridgeTarget extends StatelessWidget {
           Semantics(
             label: semanticLabel,
             child: ExcludeSemantics(
-              child: BridgeNumeral(
-                label: label,
-                style: type.countdownNumeral.copyWith(
-                  color: colours.textPrimary,
+              // A SMALLER BASE STYLE, chosen once by measurement, never a
+              // shrink. `accessibility-as-code` bans every way of squeezing a
+              // value into a box it does not fit — a clamped text scaler, a
+              // box that scales its child down, an ellipsis; the sanctioned
+              // answer is to pick the step that does fit. (The banned names are
+              // described rather than written, because the gate that enforces
+              // this greps for them and cannot tell a ban from a use.)
+              //
+              // It is not a hypothetical. Measured on the canonical simulator:
+              // a four-digit Persian target at `countdownNumeral` lays out at
+              // 326pt inside a 326pt card and lost its last digit, and blitz
+              // deals five. Latin fitted, which is exactly how this reaches a
+              // release — the developer's own locale is the one that works.
+              child: LayoutBuilder(
+                builder: (context, constraints) => BridgeNumeral(
+                  label: label,
+                  style:
+                      (_fits(context, type.scoreHero, constraints.maxWidth)
+                              ? type.scoreHero
+                              : type.displayXl)
+                          .copyWith(color: colours.textPrimary),
                 ),
               ),
             ),
@@ -65,5 +85,30 @@ class BridgeTarget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Whether [label] draws on one line at [style] inside [width].
+  ///
+  /// Measured with a `TextPainter` rather than estimated: the answer differs
+  /// per script, per face and per text scale — Eastern Arabic digits are
+  /// noticeably wider than Latin ones at the same point size — and laying it
+  /// out is the only honest way to ask.
+  bool _fits(BuildContext context, TextStyle style, double width) {
+    final painter = TextPainter(
+      text: TextSpan(text: label, style: style),
+      // LTR, because the run is. See `BridgeNumeral`.
+      textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: maxLines,
+      // UNCONSTRAINED, because the question is "does it fit". A layout capped
+      // at the available width reports a width that is never wider than it, so
+      // the comparison would be true by construction —
+      // `check_painter_hygiene.sh` warns on exactly this shape.
+    )..layout();
+    final fits = painter.width <= width;
+
+    painter.dispose();
+
+    return fits;
   }
 }

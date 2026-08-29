@@ -87,25 +87,32 @@ class _DigitBridgeBoardState extends ConsumerState<DigitBridgeBoard> {
       builder: (context, constraints) {
         final metrics = BridgeMetrics.forField(constraints.biggest);
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Flexible(
-              child: BridgeTarget(
+        // CENTRED, and the column is only as tall as its content.
+        // `app.html`: `.playfill--bridge{justify-content:center}`. Two earlier
+        // shapes were wrong on the simulator and right in every test: dividing
+        // the field between the two children drew portrait chips, and then
+        // handing the target the leftover height drew a card with the numeral
+        // floating in a sea of paper. The card sizes to its glyph, the grid
+        // sizes to its chips, and the slack is whitespace above and below.
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              BridgeTarget(
                 label: targetLabel,
                 semanticLabel: l10n.bridgeTargetValue(targetLabel),
               ),
-            ),
-            const SizedBox(height: BridgeMetrics.targetToGridGap),
-            _ChipGrid(
-              run: run,
-              state: state,
-              labels: chipLabels,
-              metrics: metrics,
-              scriptName: _scriptName(chipScript, l10n),
-            ),
-          ],
+              const SizedBox(height: BridgeMetrics.targetToGridGap),
+              _ChipGrid(
+                run: run,
+                state: state,
+                labels: chipLabels,
+                metrics: metrics,
+                scriptName: _scriptName(chipScript, l10n),
+              ),
+            ],
+          ),
         );
       },
     );

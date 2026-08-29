@@ -690,7 +690,9 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   box-shadow:var(--sh-3);padding:20px 16px;display:grid;place-items:center;position:relative;
 }
 .target b{
-  font-family:var(--display);font-weight:700;font-size:56px;line-height:1;letter-spacing:-.02em;
+  /* 76px, which is the scoreHero step. The reference and the app have to be
+     expressible in the same tokens, and 56 was not one of them. */
+  font-family:var(--display);font-weight:700;font-size:76px;line-height:.95;letter-spacing:-3.04px;
   font-variant-numeric:tabular-nums;
   /* PINNED LTR, like .grid5 and for a narrower reason: a numeral's most
      significant digit is on the left in BOTH systems this game bridges, which

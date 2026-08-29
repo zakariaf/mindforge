@@ -14,37 +14,34 @@ final class BridgeMetrics {
     required this.chipWidth,
     required this.chipHeight,
     required this.gap,
-    required this.targetHeight,
   });
 
   /// The metrics for a field of [size].
   ///
+  /// **The chip's height comes from its WIDTH, not from the field.** An earlier
+  /// version divided the leftover height between two rows, which on a 460pt
+  /// field drew chips half as wide as they were tall — measured on the
+  /// canonical simulator against `screens/09-digit-bridge.png`, where they are
+  /// wider than tall. A numeral is a horizontal run, so a portrait chip wastes
+  /// its own space above and below the glyphs and makes the six of them read as
+  /// a column of cards rather than as a set of choices.
+  ///
   /// The gap steps from [roomyGap] to [tightGap] exactly when the roomy gap
   /// would push a chip under [kPopMinTarget] — the same derivation Schulte
   /// Grid's cell sizing makes, and for the same reason: a 48pt tap target is a
-  /// floor, and whitespace is the thing that gives way to defend it.
+  /// floor, and whitespace is what gives way to defend it.
   factory BridgeMetrics.forField(Size size) {
     final gap = _gapFor(size.width);
     final chipWidth = (size.width - gap * (columns - 1)) / columns;
-
-    final forTarget = size.height.isFinite
-        ? (size.height - targetToGridGap) * targetShareWhenCramped
-        : 0.0;
-    final forGrid = size.height.isFinite
-        ? size.height - targetToGridGap - forTarget
-        : 0.0;
-    final chipHeight = size.height.isFinite
-        ? ((forGrid - gap * (rows - 1)) / rows).clamp(
-            kPopMinTarget,
-            double.infinity,
-          )
-        : kPopMinTarget;
+    final chipHeight = (chipWidth / chipAspect).clamp(
+      kPopMinTarget,
+      double.infinity,
+    );
 
     return BridgeMetrics(
       chipWidth: chipWidth,
       chipHeight: chipHeight,
       gap: gap,
-      targetHeight: forTarget,
     );
   }
 
@@ -79,14 +76,12 @@ final class BridgeMetrics {
   /// because a floor nobody can reach is still the reason the floor holds.
   static const double tightGap = SunburstShape.space2;
 
-  /// The share of a field the target numeral keeps, at most.
+  /// How much wider than tall a chip draws.
   ///
-  /// DERIVED. `app.html` renders one size, where the stimulus and the grid both
-  /// sit at their token heights and the question does not arise. It arises at
-  /// x2.0 on a 320pt phone, and the answer is that the CHIPS keep the majority:
-  /// the target is one glyph run the player reads once, and the chips are six
-  /// they scan repeatedly — and the chips also carry the tap floor.
-  static const double targetShareWhenCramped = 0.32;
+  /// `app.html`: `.chipnum{aspect-ratio:1.6/1}`. A numeral is a horizontal run,
+  /// so the chip is too — and at three across on a 350pt board that is a 108x68
+  /// chip, comfortably over the 48pt floor on both axes.
+  static const double chipAspect = 1.6;
 
   /// The gap between the target numeral and the chip grid.
   ///
@@ -103,8 +98,8 @@ final class BridgeMetrics {
   /// The gap between chips, on both axes.
   final double gap;
 
-  /// How tall the target numeral's box draws.
-  final double targetHeight;
+  /// How tall the whole chip grid draws.
+  double get gridHeight => chipHeight * rows + gap * (rows - 1);
 
   /// The gap a field of [width] can afford.
   static double _gapFor(double width) {
@@ -112,7 +107,4 @@ final class BridgeMetrics {
 
     return roomy >= kPopMinTarget ? roomyGap : tightGap;
   }
-
-  /// How tall the whole chip grid draws.
-  double get gridHeight => chipHeight * rows + gap * (rows - 1);
 }
