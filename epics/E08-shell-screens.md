@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/08-shell-screens` |
 | **Depends on** | E05, E06, E07 |
-| **Unblocks** | E09, E10, E11 |
+| **Unblocks** | E09, E10, E11, E12 |
 | **Status** | Not started |
 
 ## The epic

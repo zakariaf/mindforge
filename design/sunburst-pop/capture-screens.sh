@@ -70,6 +70,8 @@ SCREENS=(
   "s6:06-results"
   "s7:07-stats"
   "s8:08-settings"
+  "s9:09-digit-bridge"
+  "s10:10-false-light"
 )
 
 for entry in "${SCREENS[@]}"; do

@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mindforge/core/game_id.dart';
+import 'package:mindforge/games/digit_bridge/digit_bridge_definition.dart';
+import 'package:mindforge/games/false_light/false_light_definition.dart';
 import 'package:mindforge/games/game_definition.dart';
 import 'package:mindforge/games/schulte_grid/schulte_grid_definition.dart';
 import 'package:mindforge/games/stroop_rush/stroop_rush_definition.dart';
@@ -30,7 +32,12 @@ import 'package:mindforge/games/stroop_rush/stroop_rush_definition.dart';
 /// otherwise.
 final Provider<List<GameDefinition>> gameRegistryProvider =
     Provider<List<GameDefinition>>(
-      (ref) => <GameDefinition>[stroopRushDefinition, schulteGridDefinition],
+      (ref) => <GameDefinition>[
+        stroopRushDefinition,
+        schulteGridDefinition,
+        digitBridgeDefinition,
+        falseLightDefinition,
+      ],
     );
 
 /// The definition registered under [GameId].

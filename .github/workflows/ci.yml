@@ -264,6 +264,8 @@ jobs:
           .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/core
           .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/stroop_rush/domain
           .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/schulte_grid/domain
+          .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/digit_bridge/domain
+          .claude/skills/seeded-determinism-and-golden-vectors/scripts/check-determinism-bans.sh lib/games/false_light/domain
           flutter test test/policy/engine_seam_test.dart --reporter expanded
 
       - name: Check the motion and haptic contracts

@@ -1,35 +1,12 @@
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
+import '../support/wcag.dart';
 
 /// One `// @contrast <fg> <bg> <min>` declaration.
 typedef ContrastPair = ({String foreground, String background, double minimum});
-
-/// The WCAG relative luminance of [colour].
-///
-/// Computed over the colour **value**, deliberately, rather than through
-/// `textContrastGuideline`: that matcher renders a widget and samples pixels,
-/// which has a known false negative on text drawn over a patterned or partly
-/// transparent background, and it cannot check a pair no screen renders yet.
-double _relativeLuminance(Color colour) {
-  double channel(double component) => component <= 0.03928
-      ? component / 12.92
-      : math.pow((component + 0.055) / 1.055, 2.4).toDouble();
-
-  return 0.2126 * channel(colour.r) +
-      0.7152 * channel(colour.g) +
-      0.0722 * channel(colour.b);
-}
-
-/// The WCAG contrast ratio between [a] and [b], from 1.0 to 21.0.
-double contrastRatio(Color a, Color b) {
-  final lighter = math.max(_relativeLuminance(a), _relativeLuminance(b));
-  final darker = math.min(_relativeLuminance(a), _relativeLuminance(b));
-  return (lighter + 0.05) / (darker + 0.05);
-}
 
 /// Every `// @contrast` declaration in the colours file.
 List<ContrastPair> declaredPairs() =>
@@ -74,6 +51,10 @@ final Map<String, Color> _slots = <String, Color>{
   'gameStroopDeep': _palette.gameStroopDeep,
   'gameSchulte': _palette.gameSchulte,
   'gameSchulteDeep': _palette.gameSchulteDeep,
+  'gameDigitBridge': _palette.gameDigitBridge,
+  'gameDigitBridgeDeep': _palette.gameDigitBridgeDeep,
+  'gameFalseLight': _palette.gameFalseLight,
+  'gameFalseLightDeep': _palette.gameFalseLightDeep,
   'playRed': _palette.playRed,
   'playBlue': _palette.playBlue,
   'playGreen': _palette.playGreen,
@@ -93,7 +74,7 @@ void main() {
     test('the declarations were found', () {
       // A guard on the parser: if the block is reformatted into something this
       // cannot read, every assertion below would pass over an empty list.
-      expect(pairs, hasLength(26));
+      expect(pairs, hasLength(30));
     });
 
     test('every declared name resolves to a slot', () {

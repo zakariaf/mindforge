@@ -10,7 +10,12 @@ import 'fake_log_sink.dart';
 import 'test_database.dart';
 
 /// The registered game ids most tests use.
-const kTestGameIds = <String>{'stroop_rush', 'schulte_grid'};
+const kTestGameIds = <String>{
+  'stroop_rush',
+  'schulte_grid',
+  'digit_bridge',
+  'false_light',
+};
 
 /// A [RunRepository] over [db] with the standard fakes.
 ///

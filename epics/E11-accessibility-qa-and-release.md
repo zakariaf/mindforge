@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/11-accessibility-qa-and-release` |
 | **Depends on** | E08, E09, E10 |
-| **Unblocks** | nothing — this is the last epic in the v1 sequence |
+| **Unblocks** | E12 — not as a layer, but because the 4.3(a) rejection is a property of what this epic released |
 | **Status** | Not started |
 
 ## The epic

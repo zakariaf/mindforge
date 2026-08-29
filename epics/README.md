@@ -1,6 +1,8 @@
 # MindForge epics
 
-MindForge is built as eleven sequential epics, E01 through E11, each one branch and one pull request.
+MindForge is built as sequential epics, each one branch and one pull request. E01 through E11 are
+merged and shipped as `v1.0.0+1`; **E12 is the response to an App Store 4.3(a) rejection** and is the
+first epic driven by something outside the plan.
 The order is not arbitrary: it is the order in which one layer becomes buildable on top of the last.
 E01 turns a repository of skills and design HTML into a Flutter package with a pipeline and an iOS
 target; E02 opens the database, because the locale override and the four feedback toggles all have to
@@ -12,8 +14,10 @@ component catalog on those tokens, in four locales and both directions from its 
 gives it timing and haptics; E07 builds the engine seam over the database; E08 builds all eight screens
 against that seam while the games are still placeholders; E09 plugs in the first game and E10 proves
 the engine by shipping the second one **without editing `lib/features/**`**; E11 runs the
-accessibility and QA sweep and produces the first shippable build. Every epic is test-first, every epic
-ends green, and every epic merges before the next one starts.
+accessibility and QA sweep and produces the first shippable build. **E12 adds two more games — Digit
+Bridge and False Light — because App Review rejected 1.0.0 under Guideline 4.3(a) as too similar in
+concept to apps from other developers**, and it proves the engine seam a third time while doing it.
+Every epic is test-first, every epic ends green, and every epic merges before the next one starts.
 
 **MindForge ships four locales, two of them right-to-left, on iOS only.** Both facts reach every epic
 below; the two sections at the end of this file state what they mean in practice, and neither is
@@ -38,21 +42,22 @@ Two ordering decisions are worth naming, because both reverse an earlier plan an
 
 | Epic | Title | Branch | Depends on | Status |
 |---|---|---|---|---|
-| [E01](E01-foundation-ci-and-ios.md) | Foundation, CI and iOS target | `epic/01-foundation-ci-and-ios` | nothing | Not started |
-| [E02](E02-persistence-layer.md) | Persistence layer | `epic/02-persistence-layer` | E01 | Not started |
-| [E03](E03-design-tokens-and-theme.md) | Design tokens and theme | `epic/03-design-tokens-and-theme` | E01 | Not started |
-| [E04](E04-localization-and-rtl.md) | Localization and RTL foundation | `epic/04-localization-and-rtl` | E02, E03 | Not started |
-| [E05](E05-component-library.md) | Component library | `epic/05-component-library` | E03, E04 | Not started |
-| [E06](E06-motion-and-feedback.md) | Motion and feedback | `epic/06-motion-and-feedback` | E03, E05 | Not started |
-| [E07](E07-engine-core.md) | Engine core | `epic/07-engine-core` | E02, E03, E04 | Not started |
-| [E08](E08-shell-screens.md) | Shell screens | `epic/08-shell-screens` | E05, E06, E07 | Not started |
-| [E09](E09-stroop-rush.md) | Stroop Rush | `epic/09-stroop-rush` | E07, E08 | Not started |
-| [E10](E10-schulte-grid.md) | Schulte Grid | `epic/10-schulte-grid` | E07, E08, E09 | Not started |
-| [E11](E11-accessibility-qa-and-release.md) | Accessibility, QA and release | `epic/11-accessibility-qa-and-release` | E08, E09, E10 | Not started |
+| [E01](E01-foundation-ci-and-ios.md) | Foundation, CI and iOS target | `epic/01-foundation-ci-and-ios` | nothing | Merged |
+| [E02](E02-persistence-layer.md) | Persistence layer | `epic/02-persistence-layer` | E01 | Merged |
+| [E03](E03-design-tokens-and-theme.md) | Design tokens and theme | `epic/03-design-tokens-and-theme` | E01 | Merged |
+| [E04](E04-localization-and-rtl.md) | Localization and RTL foundation | `epic/04-localization-and-rtl` | E02, E03 | Merged |
+| [E05](E05-component-library.md) | Component library | `epic/05-component-library` | E03, E04 | Merged |
+| [E06](E06-motion-and-feedback.md) | Motion and feedback | `epic/06-motion-and-feedback` | E03, E05 | Merged |
+| [E07](E07-engine-core.md) | Engine core | `epic/07-engine-core` | E02, E03, E04 | Merged |
+| [E08](E08-shell-screens.md) | Shell screens | `epic/08-shell-screens` | E05, E06, E07 | Merged |
+| [E09](E09-stroop-rush.md) | Stroop Rush | `epic/09-stroop-rush` | E07, E08 | Merged |
+| [E10](E10-schulte-grid.md) | Schulte Grid | `epic/10-schulte-grid` | E07, E08, E09 | Merged |
+| [E11](E11-accessibility-qa-and-release.md) | Accessibility, QA and release | `epic/11-accessibility-qa-and-release` | E08, E09, E10 | Merged |
+| [E12](E12-two-original-games.md) | Digit Bridge and False Light | `epic/12-two-original-games` | E03, E04, E07, E08, E09, E10, E11 | In review |
 
 Each epic's header table carries the same edges from both ends, and **both columns name direct edges
 only** — if A appears in B's **Depends on**, B appears in A's **Unblocks**, and neither column lists a
-transitive ancestor. The graph below is that relation drawn out. It has no cycles, and E01 → E11 in
+transitive ancestor. The graph below is that relation drawn out. It has no cycles, and E01 → E12 in
 numeric order is a valid execution order.
 
 `epics/superseded/` holds the ten files of the previous sequence, each with a header naming the epic
@@ -73,6 +78,7 @@ graph TD
   E09[E09 · Stroop Rush]
   E10[E10 · Schulte Grid]
   E11[E11 · Accessibility, QA and release]
+  E12[E12 · Digit Bridge and False Light]
 
   E01 --> E02
   E01 --> E03
@@ -96,7 +102,21 @@ graph TD
   E09 --> E10
   E09 --> E11
   E10 --> E11
+  E03 --> E12
+  E04 --> E12
+  E07 --> E12
+  E08 --> E12
+  E09 --> E12
+  E10 --> E12
+  E11 --> E12
 ```
+
+**E12 is the only epic with an external cause.** E01 through E11 were planned against each other;
+E12 exists because App Review rejected the shipped build. It depends on E11 not for a layer but for
+a fact — the rejection is a property of what E11 released — and it depends on E03 and E04 more
+heavily than a game epic normally would, because both of its games make a foundation into a mechanic
+rather than consuming one: Digit Bridge is built on the numeral pipeline and False Light on the shape
+language's single light source.
 
 Each epic's *Current state* section lists the inherited symbols by name, so an agent picking up the
 work knows what to `ls` for before writing a line. Four edges are worth calling out because they are

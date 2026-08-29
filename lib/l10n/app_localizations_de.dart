@@ -398,4 +398,48 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get gameSchulteGridKicker => 'FOKUS · TEMPO';
+
+  @override
+  String get gameDigitBridgeName => 'Zahlenbruecke';
+
+  @override
+  String get gameDigitBridgeTagline => 'Finde die Zahl in der anderen Schrift';
+
+  @override
+  String get gameDigitBridgeKicker => 'LESEN · GEDAECHTNIS';
+
+  @override
+  String get bridgeScriptLatin => 'lateinische Ziffern';
+
+  @override
+  String get bridgeScriptEasternArabic => 'persische Ziffern';
+
+  @override
+  String bridgeChipValue(String numeral, String script) {
+    return '$numeral, $script';
+  }
+
+  @override
+  String get gameFalseLightName => 'Falsches Licht';
+
+  @override
+  String get gameFalseLightTagline => 'Finde die eingedrueckten Kacheln';
+
+  @override
+  String get gameFalseLightKicker => 'AUFMERKSAMKEIT · TEMPO';
+
+  @override
+  String get lightTileRaised => 'Erhabene Kachel';
+
+  @override
+  String get lightTilePressed => 'Eingedrueckte Kachel';
+
+  @override
+  String get lightTileSwept => 'Geraeumte Kachel';
+
+  @override
+  String get lightFieldTimeLabel => 'Feld im Schnitt';
+
+  @override
+  String get bridgePrompt => 'FINDE DIESE ZAHL';
 }

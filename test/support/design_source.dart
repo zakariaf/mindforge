@@ -185,6 +185,8 @@ const kScreenBasenames = <String>[
   '06-results',
   '07-stats',
   '08-settings',
+  '09-digit-bridge',
+  '10-false-light',
 ];
 
 /// The pixel geometry every reference PNG is captured at: 390x844 at 2x, which

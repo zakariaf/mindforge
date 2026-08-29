@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/09-stroop-rush` |
 | **Depends on** | E07, E08 |
-| **Unblocks** | E10, E11 |
+| **Unblocks** | E10, E11, E12 |
 | **Status** | Not started |
 
 ## The epic

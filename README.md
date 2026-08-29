@@ -10,7 +10,7 @@
   <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.44.6-02569B">
   <img alt="Platform" src="https://img.shields.io/badge/platform-iOS%20%C2%B7%20Android-lightgrey">
   <img alt="Locales" src="https://img.shields.io/badge/locales-en%20%C2%B7%20de%20%C2%B7%20fa%20%C2%B7%20ckb-orange">
-  <img alt="Status" src="https://img.shields.io/badge/status-in%20development-yellow">
+  <img alt="Status" src="https://img.shields.io/badge/version-1.0.0-brightgreen">
 </p>
 
 <p align="center">
@@ -19,9 +19,12 @@
 
 ---
 
-> **Status: in development.** The design system, the engineering conventions and the full build plan
-> are done and in this repository. The Flutter app itself is not scaffolded yet — the screenshots below
-> are the *design targets* every screen is built and signed off against, not shipped software.
+> **Status: 1.0.0 built, not yet on the App Store.** Twelve epics are merged: the theme, the four
+> locales, the component library, the engine and four games are implemented and tested. 1.0.0 was
+> submitted and rejected under App Store Guideline 4.3(a); `docs/review/app-review-4-3-a.md` records
+> what that means and what changed. The screenshots below are the *reference targets* under
+> `design/sunburst-pop/screens/` that every screen was built and signed off against — they render the
+> design source, not the simulator, so a shipped screen is compared to one rather than replaced by it.
 > Progress is tracked in [`epics/README.md`](epics/README.md).
 
 ## What it is
@@ -38,12 +41,21 @@ select, countdown, the play scaffold, pause, results, stats, settings — is wri
 Adding a game means supplying its rules, one board widget and one accent colour; it inherits every
 screen for free.
 
-The two launch games:
+The four games:
 
 | Game | The task |
 |---|---|
 | **Stroop Rush** | The word "BLUE" is printed in red. Tap the **colour**, not the word. |
 | **Schulte Grid** | Find 1 to 25 in order, as fast as you can. |
+| **Digit Bridge** | The same number in two writing systems. Find the one that matches. |
+| **False Light** | One light falls on the whole board. Sweep the tiles it does not reach. |
+
+The last two are the app's own. They exist because the first two are
+public-domain psychology instruments that the App Store already carries in
+quantity — and each is built on something this app had to solve anyway: Digit
+Bridge on the numeral pipeline that four locales across two scripts required,
+False Light on the single light source the whole shape language is built from.
+`docs/review/app-review-4-3-a.md` records that in full.
 
 ## Screens
 
@@ -58,18 +70,23 @@ solid ink border and one hard offset shadow at zero blur, and it presses down wh
 </p>
 <p align="center">
   <img src="design/sunburst-pop/screens/05-schulte-grid.png" width="185" alt="Schulte Grid: a five by five grid of scrambled numbers">
+  <img src="design/sunburst-pop/screens/09-digit-bridge.png" width="185" alt="Digit Bridge: the number 472 in Latin digits above six chips carrying Eastern Arabic numerals">
+  <img src="design/sunburst-pop/screens/10-false-light.png" width="185" alt="False Light: a grid of raised tiles with several pressed flat into the board">
   <img src="design/sunburst-pop/screens/06-results.png" width="185" alt="Results: score, new personal best badge, accuracy and reaction time">
+</p>
+<p align="center">
   <img src="design/sunburst-pop/screens/07-stats.png" width="185" alt="Stats: personal bests and a bar chart of recent runs">
   <img src="design/sunburst-pop/screens/08-settings.png" width="185" alt="Settings: sound, haptics, reduce motion, colour-blind palette and language">
 </p>
 
 <p align="center"><em>
   Home · Game detail · Countdown · Stroop Rush<br>
-  Schulte Grid · Results · Stats · Settings
+  Schulte Grid · Digit Bridge · False Light · Results<br>
+  Stats · Settings
 </em></p>
 
 Browse the full design system at [`design/sunburst-pop/system.html`](design/sunburst-pop/system.html),
-all eight screens at [`design/sunburst-pop/app.html`](design/sunburst-pop/app.html), or the two
+all ten screens at [`design/sunburst-pop/app.html`](design/sunburst-pop/app.html), or the two
 rejected alternatives from [`design/index.html`](design/index.html).
 
 ### Accessible by construction
@@ -108,8 +125,8 @@ style guides. Each carries worked examples and a **gate script** that fails the 
 a raw hex outside the theme directory, a blurred shadow, a game that tries to navigate, a haptic fired
 outside the feedback service, a contrast ratio below its floor.
 
-**2. The work is planned as epics before it is written.** [`epics/`](epics/README.md) holds eleven
-epic files covering 123 tasks, in dependency order. Each task states its **tests before its
+**2. The work is planned as epics before it is written.** [`epics/`](epics/README.md) holds twelve
+epic files, in dependency order. Each task states its **tests before its
 implementation**, the files it touches, the skills to load, and the reference screenshot it is
 compared against.
 
@@ -119,14 +136,14 @@ CLAUDE.md           the house rules — read this first
 design/             the design exploration; sunburst-pop/ is the chosen direction
   sunburst-pop/
     system.html     authoritative for token values: hexes, radii, shadows, durations, type
-    app.html        authoritative for layout and spacing across the eight screens
+    app.html        authoritative for layout and spacing across the ten screens
     screens/        the reference screenshots every implementation is compared against
-epics/              the build plan, E01 to E11
+epics/              the build plan, E01 to E12
 ```
 
 ### Building it
 
-The app is not scaffolded yet — these commands become real with E01.
+Requires Flutter 3.44.6, Xcode 26.6 and CocoaPods. iOS is the only target that ships today.
 
 ```bash
 flutter pub get
@@ -140,8 +157,6 @@ That UDID is an iPhone 14 simulator named `MindForge iPhone 14`. It is the canon
 is **exactly 390×844 logical points**, matching the reference screenshots. No iPhone 16-class simulator
 does — the 16 is 393×852 and the 16 Pro is 402×874 — so comparing a build against the references on
 anything else is not an honest comparison.
-
-Requires Flutter 3.44.6, Xcode 26.6 and CocoaPods.
 
 MindForge targets **iOS and Android**. iOS is being built first, so the current epics and the
 canonical device above are iOS; Android follows once the app runs end to end. Nothing in the

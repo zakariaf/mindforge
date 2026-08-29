@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mindforge/core/numeral_script.dart';
 import 'package:mindforge/core/supported_locale.dart';
 import 'package:mindforge/l10n/locale_numbers.dart';
 
@@ -237,6 +238,79 @@ void main() {
         () => const LocaleNumbers(SupportedLocale.en).parse('۱٬۴۸۰'),
         throwsFormatException,
       );
+    });
+  });
+
+  group('digits — an ungrouped run, for a board that matches numerals', () {
+    test('never groups, in any locale', () {
+      // count() groups: 4723 is `4,723` in en and `۴٬۷۲۳` in fa. A separator
+      // inside a numeral a player is asked to MATCH is a second thing to read
+      // that carries no information, so this is the run Digit Bridge draws.
+      expect(const LocaleNumbers(SupportedLocale.en).digits(4723), '4723');
+      expect(const LocaleNumbers(SupportedLocale.de).digits(4723), '4723');
+      expect(
+        const LocaleNumbers(SupportedLocale.fa).digits(4723),
+        '\u06F4\u06F7\u06F2\u06F3',
+      );
+      expect(
+        const LocaleNumbers(SupportedLocale.ckb).digits(4723),
+        '\u06F4\u06F7\u06F2\u06F3',
+      );
+    });
+
+    test('and count() still groups, so the two are not the same method', () {
+      expect(const LocaleNumbers(SupportedLocale.en).count(4723), '4,723');
+    });
+
+    test('round-trips to ASCII for every locale', () {
+      for (final locale in SupportedLocale.values) {
+        final rendered = LocaleNumbers(locale).digits(90210);
+        expect(AsciiNumerals.normalize(rendered), '90210');
+      }
+    });
+  });
+
+  group('digitsInScript — the round names the script, not the locale', () {
+    test('renders the named script whatever the locale is', () {
+      for (final locale in SupportedLocale.values) {
+        final numbers = LocaleNumbers(locale);
+
+        expect(numbers.digitsInScript(472, NumeralScript.latin), '472');
+        expect(
+          numbers.digitsInScript(472, NumeralScript.easternArabic),
+          '\u06F4\u06F7\u06F2',
+        );
+      }
+    });
+
+    test('and agrees with digits() when the script is the locale own', () {
+      // The exception is scoped to the CHOICE of script, never to how one is
+      // constructed. Asserting the two agree is what keeps it that narrow.
+      for (final locale in SupportedLocale.values) {
+        final numbers = LocaleNumbers(locale);
+
+        expect(
+          numbers.digitsInScript(1907, NumeralScript.of(locale)),
+          numbers.digits(1907),
+        );
+      }
+    });
+
+    test('emits U+06Fx and never the Arabic-Indic block U+066x', () {
+      final rendered = const LocaleNumbers(
+        SupportedLocale.en,
+      ).digitsInScript(4560, NumeralScript.easternArabic);
+
+      for (final rune in rendered.runes) {
+        expect(
+          rune >= 0x06F0 && rune <= 0x06F9,
+          isTrue,
+          reason:
+              'U+${rune.toRadixString(16)} is outside U+06F0-U+06F9. The '
+              'Arabic-Indic 4, 5 and 6 are different glyphs from the Persian '
+              'ones, so this is a defect and not a near miss',
+        );
+      }
     });
   });
 }

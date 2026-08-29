@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/04-localization-and-rtl` |
 | **Depends on** | E02, E03 |
-| **Unblocks** | E05, E07 |
+| **Unblocks** | E05, E07, E12 |
 | **Status** | Not started |
 
 ## The epic

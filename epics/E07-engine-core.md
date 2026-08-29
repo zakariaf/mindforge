@@ -4,7 +4,7 @@
 |---|---|
 | **Branch** | `epic/07-engine-core` |
 | **Depends on** | E02, E03, E04 |
-| **Unblocks** | E08, E09, E10 |
+| **Unblocks** | E08, E09, E10, E12 |
 | **Status** | Not started |
 
 ## The epic

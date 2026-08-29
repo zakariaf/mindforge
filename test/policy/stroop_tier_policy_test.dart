@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/directionality_islands.dart';
 import 'support/source_text.dart';
 
 /// The rules a game module obeys, asserted over its source.
@@ -172,9 +173,10 @@ void main() {
       // in half the app's locales. The allowance is a list rather than a
       // blanket exemption for `lib/games`, so the next board that reaches for
       // one has to come back here and say why.
-      const islands = <String>{
-        'lib/games/schulte_grid/ui/schulte_board.dart',
-      };
+      // THE SAME LIST directional_geometry_test polices, imported rather than
+      // restated. Running the check twice is deliberate; keeping the data twice
+      // was how E12 ended up adding one path to three places.
+      final islands = kDirectionalityIslandFiles;
 
       final offenders = <String>[];
 
@@ -193,14 +195,14 @@ void main() {
     test('and each island explains itself where the pin is', () {
       // A sanctioned exception with no reasoning beside it is an exception
       // nobody can review. The prose is checked, not just the allowance.
-      for (final path in <String>[
-        'lib/games/schulte_grid/ui/schulte_board.dart',
-      ]) {
+      for (final path in kDirectionalityIslands.keys.where(
+        (path) => path.startsWith('lib/games/'),
+      )) {
         final source = File(path).readAsStringSync();
 
         expect(
           source,
-          contains('coordinate space'),
+          contains(kDirectionalityIslands[path]),
           reason: '$path pins a direction without saying why',
         );
       }

@@ -31,6 +31,8 @@
   --grape:#6A45E8;
   --grape-pop:#7C5CFF;
   --leaf:#4CC86A;
+  --lilac:#BE9BFF;
+  --lilac-deep:#A87DFF;
   --leaf-deep:#2FA64F;
   --tangerine:#FF9330;
   --dot:#F2DFC0;
@@ -392,6 +394,8 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   box-shadow:var(--sh-2);padding:15px 16px;
 }
 .gcard--turq{background:var(--turquoise)}
+.gcard--lilac{background:var(--lilac)}
+.gcard--leaf{background:var(--leaf)}
 .gcard .gt{flex:1;min-width:0}
 .gcard .ct{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.015em;line-height:1.1;margin-top:0;color:var(--ink)}
 .gcard p{font-size:13px;font-weight:700;margin-top:2px;color:var(--ink)}
@@ -406,6 +410,22 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   background:var(--cream);box-shadow:var(--sh-1);display:grid;place-items:center;padding:8px;
 }
 .gart .quad{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;height:100%}
+/* Digit Bridge's tile: the same value in both systems, with the crossing
+   behind them. Both scripts are drawn whatever the reader's is -- they are
+   half the subject, and this is the one card in the app that does that. */
+.gart .bridge{display:grid;grid-template-rows:1fr 1fr;gap:6px;width:100%;height:100%;position:relative}
+.gart .bridge::before{content:"";position:absolute;left:33%;right:33%;top:38%;bottom:38%;background:var(--lilac);z-index:0}
+.gart .bridge i{
+  position:relative;z-index:1;border-radius:5px;border:2px solid var(--border);background:var(--cream-2);
+  display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:15px;
+  font-style:normal;direction:ltr;font-variant-numeric:tabular-nums;
+}
+/* False Light's tile: three of nine pressed, drawn with the same three
+   channels the board uses -- fill value, shadow, position. A card showing only
+   the fill would be advertising a colour game. */
+.gart .field{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:100%;height:100%}
+.gart .field i{border-radius:5px;border:2px solid var(--border);background:var(--paper);box-shadow:2px 2px 0 var(--ink);display:block}
+.gart .field i.down{background:var(--leaf-deep);box-shadow:none;transform:translate(2px,2px)}
 .gart .quad i{border-radius:5px;border:2px solid var(--border);display:block}
 .gart .quad i:nth-child(1){background:var(--play-red)}
 .gart .quad i:nth-child(2){background:var(--play-blue)}
@@ -507,6 +527,8 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 .playband{position:relative;flex:none;overflow:hidden;border-bottom:var(--bw) solid var(--border);padding-top:2px}
 .playband--stroop{background:var(--coral)}
 .playband--schulte{background:var(--turquoise)}
+.playband--bridge{background:var(--lilac)}
+.playband--light{background:var(--leaf)}
 .playband > *{position:relative}
 .playband .rays{
   position:absolute;left:50%;top:-330px;width:720px;height:720px;transform:translateX(-50%);
@@ -514,6 +536,8 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 }
 .playband--stroop .rays{background:repeating-conic-gradient(from 0deg at 50% 50%, var(--coral-deep) 0deg 5deg, transparent 5deg 12deg)}
 .playband--schulte .rays{background:repeating-conic-gradient(from 0deg at 50% 50%, var(--turquoise-deep) 0deg 5deg, transparent 5deg 12deg)}
+.playband--bridge .rays{background:repeating-conic-gradient(from 0deg at 50% 50%, var(--lilac-deep) 0deg 5deg, transparent 5deg 12deg)}
+.playband--light .rays{background:repeating-conic-gradient(from 0deg at 50% 50%, var(--leaf-deep) 0deg 5deg, transparent 5deg 12deg)}
 .playband .dots{
   position:absolute;inset:0;opacity:.16;pointer-events:none;
   background-image:radial-gradient(var(--ink) 1.6px, transparent 1.7px);background-size:15px 15px;
@@ -538,6 +562,8 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   background-image:repeating-linear-gradient(45deg,var(--turquoise) 0 9px,var(--turquoise-deep) 9px 18px);
 }
 .track i.coral{background-image:repeating-linear-gradient(45deg,var(--coral) 0 9px,var(--coral-deep) 9px 18px)}
+.track i.lilac{background-image:repeating-linear-gradient(45deg,var(--lilac) 0 9px,var(--lilac-deep) 9px 18px)}
+.track i.leaf{background-image:repeating-linear-gradient(45deg,var(--leaf) 0 9px,var(--leaf-deep) 9px 18px)}
 
 .stim{
   position:relative;overflow:hidden;
@@ -609,6 +635,8 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
 }
 .playfill--stroop{background:var(--surface-sunk);padding-top:20px}
 .playfill--schulte{background:var(--turquoise);padding-top:20px}
+.playfill--bridge{background:var(--lilac);padding-top:20px;gap:16px;justify-content:center}
+.playfill--light{background:var(--leaf);padding-top:20px;justify-content:center}
 
 /* ============================================================
    5. SCHULTE GAMEPLAY
@@ -653,6 +681,57 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
   background:var(--sunshine);box-shadow:var(--sh-2),0 0 0 2px var(--cream),0 0 0 5px var(--ink);
   transform:scale(1.02);
 }
+
+/* ============================================================
+   9. DIGIT BRIDGE GAMEPLAY
+   ============================================================ */
+.target{
+  background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);padding:20px 16px;display:grid;place-items:center;position:relative;
+}
+/* The prompt is not decoration here. The two halves of this board are
+   deliberately different numbering systems, and without a line saying what to
+   do with them a reader who knows only one sees a rendering fault rather than a
+   question. Same rule Stroop's .stim .ask carries, same reason. */
+.target .ask{
+  position:relative;font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-2);margin:0 0 18px;text-align:center;
+}
+.target b{
+  /* 76px, which is the scoreHero step. The reference and the app have to be
+     expressible in the same tokens, and 56 was not one of them. */
+  font-family:var(--display);font-weight:700;font-size:76px;line-height:.95;letter-spacing:-3.04px;
+  font-variant-numeric:tabular-nums;
+  /* PINNED LTR, like .grid5 and for a narrower reason: a numeral's most
+     significant digit is on the left in BOTH systems this game bridges, which
+     is why Unicode gives Eastern Arabic digits a strong left-to-right class of
+     their own. The chip grid around it still mirrors. See E12 T12.4. */
+  direction:ltr;
+}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.chipnum{
+  aspect-ratio:1.6/1;display:grid;place-items:center;cursor:pointer;
+  background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);
+  font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;direction:ltr;
+}
+.chipnum.taken{background:var(--lilac-deep);box-shadow:none;transform:translate(2px,2px)}
+
+/* ============================================================
+   10. FALSE LIGHT GAMEPLAY
+   ============================================================ */
+.grid45{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%}
+.lt{
+  aspect-ratio:1/1;cursor:pointer;
+  background:var(--paper);border:var(--bw) solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-2);
+}
+/* The whole game, in one rule. A pressed tile loses its shadow and moves into
+   where the shadow was, and its fill drops in VALUE rather than in hue — three
+   channels, none of them colour, which is what makes the board playable with
+   every hue removed. */
+.lt.down{background:var(--leaf-deep);box-shadow:none;transform:translate(2px,2px)}
 
 /* ============================================================
    6. RESULTS
@@ -863,7 +942,7 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               </span>
             </div>
 
-            <div class="seclab"><b data-l10n="yourGamesTitle">Your games</b><s data-l10n="gamesUnlocked">2 unlocked</s></div>
+            <div class="seclab"><b data-l10n="yourGamesTitle">Your games</b><s data-l10n="gamesUnlocked">4 unlocked</s></div>
 
             <div class="gcard" tabindex="0">
               <div class="gt">
@@ -882,6 +961,28 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
               </div>
               <span class="gart" aria-hidden="true"><span class="mini">
                 <i data-num="7">7</i><i class="on" data-num="1">1</i><i data-num="4">4</i><i data-num="9">9</i><i data-num="2">2</i><i class="on" data-num="6">6</i><i data-num="3">3</i><i data-num="8">8</i><i data-num="5">5</i>
+              </span></span>
+            </div>
+
+            <div class="gcard gcard--lilac" tabindex="0">
+              <div class="gt">
+                <p class="ct" data-l10n="gameDigitBridgeName">Digit Bridge</p>
+                <p data-l10n="gameDigitBridgeTagline">Match the numeral across two scripts</p>
+                <span class="bestpill"><s data-l10n="bestLabel">BEST</s><span data-num="2,050">2,050</span></span>
+              </div>
+              <span class="gart" aria-hidden="true"><span class="bridge">
+                <i data-latin>47</i><i data-latin>&#x06F4;&#x06F7;</i>
+              </span></span>
+            </div>
+
+            <div class="gcard gcard--leaf" tabindex="0">
+              <div class="gt">
+                <p class="ct" data-l10n="gameFalseLightName">False Light</p>
+                <p data-l10n="gameFalseLightTagline">Sweep the tiles that are pressed</p>
+                <span class="bestpill"><s data-l10n="bestLabel">BEST</s><span data-num="1,725">1,725</span></span>
+              </div>
+              <span class="gart" aria-hidden="true"><span class="field">
+                <i></i><i class="down"></i><i></i><i></i><i></i><i class="down"></i><i></i><i></i><i></i>
               </span></span>
             </div>
 
@@ -1433,6 +1534,128 @@ figcaption p{margin-top:7px;font-size:.875rem;line-height:1.5;color:var(--ink-2)
     </div></div></div>
     <figcaption><span class="cnum">08</span><h2>Settings</h2>
       <p>Toggles are chunky arcade switches that print ON / OFF inside the track, so state survives greyscale, colour-blindness and a squint test. The colour-blind row previews exactly what it swaps in — blue, yellow, orange, pink, each keeping its ink fill pattern.</p></figcaption>
+  </figure>
+
+
+  <!-- ============================================================
+       09 — DIGIT BRIDGE GAMEPLAY
+       ============================================================ -->
+  <figure class="fig" id="s9">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t" data-latin>9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="topbar" style="padding-bottom:10px">
+          <span class="iconbtn" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tt" style="flex:1" data-l10n="gameDigitBridgeName">Digit Bridge</span>
+          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0" data-l10n="difficultyClassic">Classic</span>
+        </div>
+
+        <div class="playband playband--bridge">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="hud">
+            <span class="hstat"><s data-l10n="hudTime">Time</s><b data-num="0:31.2">0:31.2</b></span>
+            <span class="hstat"><s data-l10n="hudScore">Score</s><b data-num="1450">1,450</b></span>
+            <span class="hstat streak"><s data-l10n="hudStreak">Streak</s><b class="isolate" data-l10n="streakMultiplier" data-l10n-variant="3">×3</b></span>
+          </div>
+          <div class="trackwrap">
+            <span class="track"><i class="lilac" style="width:39%"></i></span>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="playfill playfill--bridge">
+            <div class="wdots" aria-hidden="true"></div>
+            <div class="target">
+              <p class="ask" data-l10n="bridgePrompt">FIND THIS NUMBER</p>
+              <b data-latin>472</b>
+            </div>
+            <div class="grid3">
+              <span class="chipnum" tabindex="0" data-latin>&#x06F8;&#x06F1;&#x06F7;</span><span class="chipnum" tabindex="0" data-latin>&#x06F4;&#x06F2;&#x06F7;</span><span class="chipnum" tabindex="0" data-latin>&#x06F4;&#x06F7;&#x06F2;</span>
+              <span class="chipnum" tabindex="0" data-latin>&#x06F1;&#x06F0;&#x06F8;</span><span class="chipnum" tabindex="0" data-latin>&#x06F4;&#x06F7;&#x06F2;&#x06F3;</span><span class="chipnum" tabindex="0" data-latin>&#x06F1;&#x06F7;&#x06F9;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">09</span><h2>Digit Bridge gameplay</h2>
+      <p>The same number in two writing systems, and only one chip is it. The target is Latin here and Eastern Arabic under a Persian reader — the round decides which side is yours, so both scripts have to be read. The near-misses are a transposition, a substitution and a length change, never a random number.</p></figcaption>
+  </figure>
+
+  <!-- ============================================================
+       10 — FALSE LIGHT GAMEPLAY
+       ============================================================ -->
+  <figure class="fig" id="s10">
+    <div class="slot"><div class="phone"><div class="screen">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app">
+        <div class="sb">
+          <span class="t" data-latin>9:41</span>
+          <span class="r">
+            <span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="wifi" width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M1 4.2C3 2.3 5.4 1.3 8 1.3s5 1 7 2.9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M3.6 7c1.3-1.2 2.8-1.8 4.4-1.8S11.1 5.8 12.4 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="8" cy="9.9" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="batt" aria-hidden="true"><i></i></span>
+          </span>
+        </div>
+
+        <div class="topbar" style="padding-bottom:10px">
+          <span class="iconbtn" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3.5v11M12 3.5v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tt" style="flex:1" data-l10n="gameFalseLightName">False Light</span>
+          <span class="chip" style="padding:5px 12px;font-size:12.5px" tabindex="0" data-l10n="difficultyClassic">Classic</span>
+        </div>
+
+        <div class="playband playband--light">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="hud">
+            <span class="hstat"><s data-l10n="hudTime">Time</s><b data-num="0:24.8">0:24.8</b></span>
+            <span class="hstat"><s data-l10n="hudScore">Score</s><b data-num="975">975</b></span>
+            <span class="hstat streak"><s data-l10n="hudStreak">Streak</s><b class="isolate" data-l10n="streakMultiplier" data-l10n-variant="2">×2</b></span>
+          </div>
+          <div class="trackwrap">
+            <span class="track"><i class="leaf" style="width:42%"></i></span>
+          </div>
+        </div>
+
+        <div class="pane">
+          <div class="playfill playfill--light">
+            <div class="wdots" aria-hidden="true"></div>
+            <div class="grid45">
+              <span class="lt" tabindex="0"></span><span class="lt down"></span><span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span>
+              <span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span><span class="lt down"></span>
+              <span class="lt down"></span><span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span>
+              <span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span><span class="lt down"></span><span class="lt" tabindex="0"></span>
+              <span class="lt" tabindex="0"></span><span class="lt down"></span><span class="lt" tabindex="0"></span><span class="lt" tabindex="0"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi" aria-hidden="true"></div>
+    </div></div></div>
+    <figcaption><span class="cnum">10</span><h2>False Light gameplay</h2>
+      <p>One imaginary light falls on the whole board. A pressed tile loses its shadow, moves into where the shadow was, and drops in value — three channels, none of them hue, so the board plays identically with every colour removed. Nothing on it is text, in any language.</p></figcaption>
   </figure>
 
   </div><!-- /gallery -->

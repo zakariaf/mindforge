@@ -393,4 +393,48 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get gameSchulteGridKicker => 'تمرکز · سرعت';
+
+  @override
+  String get gameDigitBridgeName => 'پل ارقام';
+
+  @override
+  String get gameDigitBridgeTagline => 'عدد را در خط دیگر پیدا کن';
+
+  @override
+  String get gameDigitBridgeKicker => 'خواندن · حافظه';
+
+  @override
+  String get bridgeScriptLatin => 'ارقام لاتین';
+
+  @override
+  String get bridgeScriptEasternArabic => 'ارقام فارسی';
+
+  @override
+  String bridgeChipValue(String numeral, String script) {
+    return '$numeral، $script';
+  }
+
+  @override
+  String get gameFalseLightName => 'نور دروغین';
+
+  @override
+  String get gameFalseLightTagline => 'کاشی‌های فرورفته را پاک کن';
+
+  @override
+  String get gameFalseLightKicker => 'توجه · سرعت';
+
+  @override
+  String get lightTileRaised => 'کاشی برجسته';
+
+  @override
+  String get lightTilePressed => 'کاشی فرورفته';
+
+  @override
+  String get lightTileSwept => 'کاشی پاک‌شده';
+
+  @override
+  String get lightFieldTimeLabel => 'میانگین میدان';
+
+  @override
+  String get bridgePrompt => 'این عدد را پیدا کن';
 }

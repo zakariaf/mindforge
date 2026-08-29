@@ -393,4 +393,48 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get gameSchulteGridKicker => 'خولیاکردن · خێرایی';
+
+  @override
+  String get gameDigitBridgeName => 'پردی ژمارە';
+
+  @override
+  String get gameDigitBridgeTagline => 'ژمارەکە لە ڕەسمە‌خەتی تر بدۆزەرەوە';
+
+  @override
+  String get gameDigitBridgeKicker => 'خوێندنەوە · بیرگە';
+
+  @override
+  String get bridgeScriptLatin => 'ژمارە لاتینییەکان';
+
+  @override
+  String get bridgeScriptEasternArabic => 'ژمارە فارسییەکان';
+
+  @override
+  String bridgeChipValue(String numeral, String script) {
+    return '$numeral، $script';
+  }
+
+  @override
+  String get gameFalseLightName => 'ڕووناکی درۆ';
+
+  @override
+  String get gameFalseLightTagline => 'خشتە چەقیوەکان پاک بکەرەوە';
+
+  @override
+  String get gameFalseLightKicker => 'سەرنج · خێرایی';
+
+  @override
+  String get lightTileRaised => 'خشتی بەرزکراوە';
+
+  @override
+  String get lightTilePressed => 'خشتی چەقیوە';
+
+  @override
+  String get lightTileSwept => 'خشتی پاککراوە';
+
+  @override
+  String get lightFieldTimeLabel => 'مامناوەندی مەیدان';
+
+  @override
+  String get bridgePrompt => 'ئەم ژمارەیە بدۆزەرەوە';
 }

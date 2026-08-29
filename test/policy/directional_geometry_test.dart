@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/directionality_islands.dart';
 import 'support/source_text.dart';
 
 /// Physical-side constructs that compile, pass every test, render correctly on
@@ -49,26 +50,6 @@ const kPhysicalSideConstructs = <String, String>{
 /// deliberately, because the shell one is vendored library code this
 /// repository does not own; if they ever disagree, this one is right.
 const kNonMirroringShadowFile = 'lib/theme/sunburst_shape.dart';
-
-/// The ONE production file allowed to write a `Directionality`.
-///
-/// A language picker, and `i18n-rtl-l10n` sanctions it by name. Each option is
-/// a language's name written in that language: "فارسی" inside an English list
-/// is still Persian, and letting the page's direction reorder it makes the
-/// chooser unreadable by exactly the person who needs it — someone who cannot
-/// read the current language.
-///
-/// It is an island around ONE WORD, not a root. The ban this list carves an
-/// exception out of is about pinning a TREE, which is what hides a
-/// physical-side bug by never exercising the other direction.
-const kDirectionalityIslandFiles = <String>{
-  'lib/features/settings/ui/language_sheet.dart',
-  // E10. Schulte Grid's grid is a coordinate space rather than a text flow:
-  // the scramble is uniform over positions, so mirroring it yields another
-  // scramble and nothing else, while making `cells[0]` stop meaning a screen
-  // position in half the app's locales. The chrome around it still mirrors.
-  'lib/games/schulte_grid/ui/schulte_board.dart',
-};
 
 /// The construct this file bans from production code, spelled without being
 /// one.
@@ -154,8 +135,10 @@ void main() {
       expect(file.existsSync(), isTrue, reason: '$path was moved or deleted');
       expect(
         file.readAsStringSync(),
-        contains('own direction'),
-        reason: '$path must say at the line why it pins one',
+        contains(kDirectionalityIslands[path]),
+        reason:
+            '$path must say at the line why it pins one, using the phrase '
+            'its row on the list requires',
       );
       expect(
         withoutDartComments(file.readAsStringSync()),

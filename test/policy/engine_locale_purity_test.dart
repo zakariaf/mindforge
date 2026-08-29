@@ -18,6 +18,14 @@ void main() {
     // The whole contract layer, through the shared walk — which skips
     // generated files, unlike the copy this replaced.
     ...dartFilesUnder('lib/core'),
+    // E12. Every game's DOMAIN is on the generation path too: it is where the
+    // seed becomes a round, and a formatter reaching it would deal a different
+    // game per language. Four directories rather than a `lib/games` walk,
+    // because `application/` and `ui/` legitimately localize.
+    ...dartFilesUnder('lib/games/stroop_rush/domain'),
+    ...dartFilesUnder('lib/games/schulte_grid/domain'),
+    ...dartFilesUnder('lib/games/digit_bridge/domain'),
+    ...dartFilesUnder('lib/games/false_light/domain'),
   ];
 
   test('the path has files on it', () {
@@ -48,6 +56,62 @@ void main() {
           'one, produces a different game per language and no English-only test '
           'would show it',
     );
+  });
+
+  test('and False Light DRAWS nothing a locale could translate', () {
+    // The differentiation claim, as a gate rather than a habit, and stated
+    // exactly. False Light's board has no numeral, no word and no glyph: depth
+    // is its only visual channel.
+    //
+    // **It still localizes — and that is the accessibility half of the same
+    // fact.** `lightTileRaised`, `lightTilePressed` and `lightTileSwept` are
+    // announced and never drawn, because a screen-reader user cannot see a
+    // shadow and would otherwise be handed a board with no channel at all. So
+    // the banned token is not `AppLocalizations`, which would forbid the thing
+    // that makes the game playable; it is `Text(`, the widget that would put a
+    // string on the screen.
+    //
+    // Scoped to False Light alone. The other three games DO draw localized
+    // content, which is correct for them.
+    const banned = <String>['Text('];
+
+    final files = <File>[
+      ...dartFilesUnder('lib/games/false_light/domain'),
+      ...dartFilesUnder('lib/games/false_light/ui'),
+    ];
+
+    expect(files, hasLength(greaterThan(3)));
+    expect(
+      bannedTokenHits(files, banned),
+      isEmpty,
+      reason:
+          'a drawn string on the False Light board would be the one thing that '
+          'makes its en and fa renders differ in content, which is the claim '
+          'the game exists to make',
+    );
+  });
+
+  test('and False Light still SAYS which depth a tile is', () {
+    // The counterpart, and it has to be asserted or the test above could be
+    // satisfied by a board that told a screen-reader user nothing either. The
+    // three tile-state keys are the game's only non-visual channel.
+    final board = File(
+      'lib/games/false_light/ui/false_light_board.dart',
+    ).readAsStringSync();
+
+    for (final key in <String>[
+      'lightTileRaised',
+      'lightTilePressed',
+      'lightTileSwept',
+    ]) {
+      expect(
+        board,
+        contains(key),
+        reason:
+            'depth is the only channel on this board, so a reader who cannot '
+            'see a shadow needs it in words or the game is unplayable',
+      );
+    }
   });
 
   test('and check_arb_parity.sh is in the run table, not the skip table', () {

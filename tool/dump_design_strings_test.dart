@@ -51,6 +51,11 @@ void main() {
       // asserted key-for-key against the template ARB, and a variant is not an
       // ARB message.
       'streakMultiplier/11': fa.streakMultiplier(11, fmt.count(11)),
+      // E12's two boards carry their own multipliers, so the reference set
+      // shows the pill as a live value rather than as one frozen number
+      // repeated on every play screen.
+      'streakMultiplier/3': fa.streakMultiplier(3, fmt.count(3)),
+      'streakMultiplier/2': fa.streakMultiplier(2, fmt.count(2)),
     };
 
     // The literal values on the reference screens, each formatted through
@@ -80,6 +85,11 @@ void main() {
         1180,
         1310,
         1480,
+        // E12's two boards and their two home cards.
+        975,
+        1450,
+        1725,
+        2050,
       ])
         '$value': fmt.count(value),
       // The four whose design text is not just the integer.
@@ -88,6 +98,11 @@ void main() {
       '18.6s': '${fmt.seconds(18600)}${fa.unitSeconds}',
       '0:23': fmt.clock(23000),
       '0:12.4': '${fmt.clock(12000)}${fmt.seconds(400).substring(1)}',
+      '0:31.2': '${fmt.clock(31000)}${fmt.seconds(200).substring(1)}',
+      '0:24.8': '${fmt.clock(24000)}${fmt.seconds(800).substring(1)}',
+      '1,450': fmt.count(1450),
+      '1,725': fmt.count(1725),
+      '2,050': fmt.count(2050),
       '92%': fmt.percent(0.92),
     };
 

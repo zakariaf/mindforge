@@ -53,6 +53,12 @@ class SchulteTile extends StatelessWidget {
   /// What a completed tap does. Null once the tile is resolved.
   final VoidCallback? onTap;
 
+  /// The key every tile that is not currently wrong carries.
+  ///
+  /// Any constant would do; -1 is chosen because `wrongTapId` counts up from
+  /// zero and can never reach it.
+  static const int _restingIdentity = -1;
+
   @override
   Widget build(BuildContext context) {
     final colours = SunburstColors.of(context);
@@ -123,7 +129,17 @@ class SchulteTile extends StatelessWidget {
     return ShakeOnWrong(
       // A NEW IDENTITY per wrong tap, so the same tile mistaken twice shakes
       // twice. E06's widget treats an arriving-wrong mount as an edge.
-      key: ValueKey<int>(wrongTapId),
+      //
+      // **Only the WRONG tile takes it.** `wrongTapId` is a board-wide counter,
+      // so keying every tile on it changed every key on one wrong tap and
+      // remounted the whole grid: measured at 25 of 25 tiles for a single
+      // shake, roughly fifty AnimationController and Ticker create-and-dispose
+      // pairs on the frame that starts an animation and fires a haptic. Found
+      // in E12, which had copied this line into two new boards — one of them a
+      // thirty-tile grid whose designed failure mode is tapping the wrong tile.
+      key: ValueKey<int>(
+        state == SchulteTileState.wrong ? wrongTapId : _restingIdentity,
+      ),
       isWrong: state == SchulteTileState.wrong,
       child: state == SchulteTileState.next
           ? Transform.scale(

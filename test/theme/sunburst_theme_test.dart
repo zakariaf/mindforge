@@ -10,7 +10,7 @@ import 'package:mindforge/theme/sunburst_theme.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
 
 import '../support/harness.dart';
-import 'contrast_test.dart' show contrastRatio;
+import '../support/wcag.dart';
 
 void main() {
   final theme = buildSunburstTheme();
@@ -156,6 +156,20 @@ void main() {
       // An omission from a declaration list is invisible. An omission here is
       // impossible: the loop is over the enums.
       for (final accent in GameAccent.values) {
+        // EVERY BASE FACE CARRIES A LABEL. The base is the play band and the
+        // game card, which are text surfaces; a base that failed the floor
+        // would return null and pass the loop below by being skipped. That is
+        // how a fifth accent gets chosen badly and nothing says so — and it is
+        // exactly the trap E12 had to measure its way out of by hand, because
+        // `grapePop` fails against both ink and paper.
+        expect(
+          colours.accentLabelFor(accent, GameColourRole.base),
+          isNotNull,
+          reason:
+              '$accent has no legible label on its BASE face, so its band and '
+              'its card cannot carry text',
+        );
+
         for (final role in GameColourRole.values) {
           final label = colours.accentLabelFor(accent, role);
           if (label == null) continue;

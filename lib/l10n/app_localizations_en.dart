@@ -398,4 +398,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameSchulteGridKicker => 'FOCUS · SPEED';
+
+  @override
+  String get gameDigitBridgeName => 'Digit Bridge';
+
+  @override
+  String get gameDigitBridgeTagline => 'Match the numeral across two scripts';
+
+  @override
+  String get gameDigitBridgeKicker => 'READING · MEMORY';
+
+  @override
+  String get bridgeScriptLatin => 'Latin digits';
+
+  @override
+  String get bridgeScriptEasternArabic => 'Persian digits';
+
+  @override
+  String bridgeChipValue(String numeral, String script) {
+    return '$numeral, $script';
+  }
+
+  @override
+  String get gameFalseLightName => 'False Light';
+
+  @override
+  String get gameFalseLightTagline => 'Sweep the tiles that are pressed';
+
+  @override
+  String get gameFalseLightKicker => 'ATTENTION · SPEED';
+
+  @override
+  String get lightTileRaised => 'Raised tile';
+
+  @override
+  String get lightTilePressed => 'Pressed tile';
+
+  @override
+  String get lightTileSwept => 'Cleared tile';
+
+  @override
+  String get lightFieldTimeLabel => 'Avg field';
+
+  @override
+  String get bridgePrompt => 'FIND THIS NUMBER';
 }

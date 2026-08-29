@@ -87,6 +87,33 @@ abstract final class _P {
   ///
   /// `app.html`: `.res-hdr .rays{opacity:.55}`.
   static const leafDeepStrong = Color(0x8C2FA64F);
+
+  /// [leafDeep] at 45%, the ray sweep behind False Light's play band.
+  ///
+  /// `app.html`: `.playband--light .rays` at `opacity:.45`.
+  ///
+  /// A second composite over [leafDeep], beside [leafDeepStrong]. They are
+  /// different surfaces at different opacities — a results header and a play
+  /// band — and one primitive serving both would make one of the two design
+  /// values unrepresentable.
+  static const leafDeepBand = Color(0x732FA64F);
+
+  /// Digit Bridge's identity colour.
+  ///
+  /// **Added by E12 rather than transcribed with the rest**, because no hue in
+  /// `system.html` could be a third game accent: the base face is a play band,
+  /// which is a text surface, and the obvious candidate `grapePop` measures
+  /// 3.54:1 against ink and 4.35:1 against paper — it fails with both. This
+  /// clears ink at 6.82:1.
+  static const lilac = Color(0xFFBE9BFF);
+
+  /// The darker half of [lilac]. Ink clears it at 5.15:1.
+  static const lilacDeep = Color(0xFFA87DFF);
+
+  /// [lilacDeep] at 45%, the ray sweep behind Digit Bridge's play band.
+  ///
+  /// `app.html`: `.playband--bridge .rays` at `opacity:.45`.
+  static const lilacDeepBand = Color(0x73A87DFF);
   static const tangerine = Color(0xFFFF9330);
 
   static const dot = Color(0xFFF2DFC0);
