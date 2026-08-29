@@ -92,7 +92,18 @@ final class LightBoardNotifier extends Notifier<LightBoardState> {
         // A NEW IDENTITY on every wrong tap, so tapping the same raised tile
         // twice shakes twice.
         wrongTapId: state.wrongTapId + 1,
-        tileStates: _tileStatesWith(tileIndex, LightTileState.rejected),
+        // KEEP THE SWEPT TILES. A wrong tap is a mistake inside a field, not a
+        // restart of it: without this the whole field went back to `idle`, the
+        // player could sweep the same pressed tile again for full points, and
+        // `correctCount` climbed past the number of tiles that were ever
+        // pressed — into the row the repository persists. Measured: sweep,
+        // tap a raised tile, sweep the same tile again, and correct went 1 -> 2
+        // off one tile.
+        tileStates: _tileStatesWith(
+          tileIndex,
+          LightTileState.rejected,
+          keep: true,
+        ),
       );
 
       return;
@@ -163,9 +174,14 @@ final class LightBoardNotifier extends Notifier<LightBoardState> {
 
   /// The tile states with [index] set to [value].
   ///
-  /// [keep] preserves the tiles already swept, which a wrong tap does not need
-  /// and a correct one must: the field's end condition is every pressed tile
-  /// swept, and resetting them would make it unreachable.
+  /// [keep] preserves the tiles already swept.
+  ///
+  /// **Every caller passes it.** It survives as a parameter rather than as
+  /// unconditional behaviour because the reset it guards against is genuinely
+  /// what the other tile states want — a rejected tile clears when the next tap
+  /// lands — and naming the exception is what makes the field's end condition
+  /// legible: every pressed tile swept, which resetting them would make
+  /// unreachable.
   List<LightTileState> _tileStatesWith(
     int index,
     LightTileState value, {
@@ -184,7 +200,19 @@ final class LightBoardNotifier extends Notifier<LightBoardState> {
     return states;
   }
 
+  /// Time banked across every cleared field, in milliseconds.
+  ///
+  /// **A SUM, because that is what the column holds.** `RunRecord` documents
+  /// `totalReactionMs` as "the sum of every reaction time, not the average",
+  /// and both `RunRecord.averageReactionMs` and `GameStats.averageReactionMs`
+  /// divide it by the answered count. Publishing an average here stored one and
+  /// then divided it again, so a run averaging eight seconds a field reported a
+  /// ~114ms reaction and skewed every cross-run aggregate with it.
+  int get totalFieldMs => _reactionMs;
+
   /// Average time to clear one field, in milliseconds.
+  ///
+  /// The results cell's number, derived here and never stored.
   int get averageFieldMs =>
       _fieldsCleared == 0 ? 0 : _reactionMs ~/ _fieldsCleared;
 
@@ -246,7 +274,7 @@ final lightBoardSnapshotProvider = Provider.autoDispose
         correctCount: state.score.correct,
         wrongCount: state.score.wrong,
         longestCombo: state.score.bestStreak,
-        totalReactionMs: notifier.averageFieldMs,
+        totalReactionMs: notifier.totalFieldMs,
         outcome: state.isFinished
             ? _outcomeOf(state.score, notifier.averageFieldMs)
             : null,

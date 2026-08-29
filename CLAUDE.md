@@ -25,7 +25,7 @@ These are the easiest thing to break by adding one package. Check them before `d
 | On-device storage only | drift/SQLite under `lib/data/`. The only exit path is a user-initiated export/share. |
 | Bundled fonts | Fredoka + Nunito (Latin) **and Vazirmatn + one Arabic-script display face** ship as assets, each with its SIL OFL text registered through `registerSunburstFontLicences()`. Runtime font fetching is a network call. |
 | Four locales, two RTL | `en` (template, and the fallback), `de`, `fa`, `ckb`. System locale if supported, else `en`; the user's override persists in `settings.locale_tag`. `lib/core/supported_locale.dart` is the only list of shipped locales in the repo. |
-| iOS first, Android later | Both platforms ship. **iOS is the only target in E01-E11**: do not add an `android/` target, `values-*` resources or Android-specific code until an Android epic exists — the architecture stays platform-neutral (no platform channel, no native UI) so that epic is additive. Build and run on the canonical simulator `MindForge iPhone 14`, UDID `C13DDC02-375D-4E1B-8F81-44EB407D09A4`, iOS 18.6, which is **exactly 390x844** and therefore the only device a reference screenshot can honestly be compared on (iPhone 16 is 393x852, 16 Pro is 402x874). An AVD `MindForge_Android_390x844` (1170x2532 @ 480dpi = the same 390x844 dp) already exists on this machine for when that epic lands. |
+| iOS first, Android later | Both platforms ship. **iOS is the only target in E01-E12**: do not add an `android/` target, `values-*` resources or Android-specific code until an Android epic exists — the architecture stays platform-neutral (no platform channel, no native UI) so that epic is additive. Build and run on the canonical simulator `MindForge iPhone 14`, UDID `C13DDC02-375D-4E1B-8F81-44EB407D09A4`, iOS 18.6, which is **exactly 390x844** and therefore the only device a reference screenshot can honestly be compared on (iPhone 16 is 393x852, 16 Pro is 402x874). An AVD `MindForge_Android_390x844` (1170x2532 @ 480dpi = the same 390x844 dp) already exists on this machine for when that epic lands. |
 
 If a feature appears to require the network, it is the wrong feature.
 
@@ -33,8 +33,9 @@ If a feature appears to require the network, it is the wrong feature.
 
 **All eleven epics are merged and the tree is tagged `v1.0.0+1`.** The app is built: the theme, the
 four locales with their `ckb` delegates, the component library, the motion and feedback layer, the
-engine core, the eight shell screens and both games — Stroop Rush and Schulte Grid — are implemented,
-tested and signed off against the reference screens on the canonical simulator.
+engine core, the eight shell screens and four games — Stroop Rush, Schulte Grid, Digit Bridge and
+False Light — are implemented, tested and signed off against the reference screens on the canonical
+simulator.
 
 ```
 lib/                              the app; core/ theme/ l10n/ ui/ features/ games/ data/ shared/ routing/
@@ -42,7 +43,7 @@ test/                             mirrors lib/, plus test/policy/ for the gate-b
 ios/                              the only platform target; bundle io.applander.mindforge
 tool/skill_gates.sh               the sanctioned gate set — never glob the skill scripts
 docs/decisions/                   the ADRs; docs/verification/ holds the per-epic sign-offs
-epics/                            E01–E11, all merged; superseded/ holds the old ten-epic plan
+epics/                            E01–E12; superseded/ holds the old ten-epic plan
 design/sunburst-pop/              CHOSEN — system.html, app.html, screens/*.png, screens/rtl/*.png
 design/cotton-cloud/              rejected alternative, kept for reference
 design/paper-crayon/              rejected alternative, kept for reference
@@ -54,7 +55,9 @@ grounds that the app shares a concept with apps from other developers. That is a
 about the two games, not a claim about the code: Stroop and Schulte are public-domain tasks that the
 store already carries in quantity. The response is E12 — two games that are original rather than
 classical, chosen so the app's own differentiators (four locales across two scripts, and the shape
-language's single light source) are the mechanic rather than the packaging.
+language's single light source) are the mechanic rather than the packaging. **It is built**: Digit
+Bridge and False Light ship, and `tool/check_no_shell_edits.sh` proves both were added without a line
+in `lib/features/**`.
 
 The repository is public at `github.com/zakariaf/mindforge` under Apache-2.0. Anything added here is
 published, so it must be true — no aspirational feature lists, no screenshots of software that does
@@ -71,9 +74,11 @@ not exist described as if it ships.
 | `intl` | `0.20.2` — an **exact** pin inside `flutter_localizations`, not a range |
 | `ckb` in `GlobalMaterialLocalizations` | **absent** (82 codes; `en` `de` `fa` `ar` present). A custom delegate trio is required or a switch to Sorani throws — and silently renders LTR. |
 
-**Next step:** E12 — the two games that answer the 4.3(a) rejection. Read `epics/E12-*.md` before
-touching `lib/games/`, and note that it is the first epic to add a `GameAccent`, which means new
-`SunburstColors` slots and therefore a deliberate edit to `design/sunburst-pop/system.html`.
+**Next step:** the 1.0.1 resubmission, which is an account-holder action.
+`docs/review/app-review-4-3-a.md` is the evidence for the Resolution Center reply, and
+`docs/verification/e12-simulator-signoff.md` records what the simulator pass found — including a
+Persian target numeral that was losing its last digit, which no test caught until one was written
+that measures an unconstrained `TextPainter` rather than a clipped element.
 
 ## Architecture we are building toward
 
@@ -133,9 +138,9 @@ four things were always the direction. Say so rather than pretending a font swap
 | Source | Authoritative over |
 |---|---|
 | `design/sunburst-pop/system.html` | **Token values.** Every hex, radius, shadow offset, duration, curve and type step. |
-| `design/sunburst-pop/app.html` | Layout, spacing rhythm and component usage across the 8 screens. |
-| `design/sunburst-pop/screens/*.png` | Implementation targets — eight English LTR screens, rendered at 390×844 @2x. |
-| `design/sunburst-pop/screens/rtl/*.png` | Their Persian RTL counterparts, same eight basenames, same size. **Produced by E04**; they do not exist until it merges. |
+| `design/sunburst-pop/app.html` | Layout, spacing rhythm and component usage across the 10 screens. |
+| `design/sunburst-pop/screens/*.png` | Implementation targets — ten English LTR screens, rendered at 390×844 @2x. |
+| `design/sunburst-pop/screens/rtl/*.png` | Their Persian RTL counterparts, same ten basenames, same size. Produced by E04, extended by E12. |
 | `design/sunburst-pop/README.md` | Rationale, palette table, and the known risks. |
 
 Read `system.html` before changing a value. Do not use a colour from memory and do not "improve" one.

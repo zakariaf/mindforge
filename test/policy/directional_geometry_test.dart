@@ -137,7 +137,7 @@ void main() {
         file.readAsStringSync(),
         contains(kDirectionalityIslands[path]),
         reason:
-            r'$path must say at the line why it pins one, using the phrase '
+            '$path must say at the line why it pins one, using the phrase '
             'its row on the list requires',
       );
       expect(

@@ -180,6 +180,36 @@ void main() {
 
       expect(stateOf(c).index, 0);
     });
+
+    test('and does NOT un-sweep the tiles already cleared', () {
+      // A wrong tap is a mistake inside a field, not a restart of it. This
+      // shipped broken: the wrong branch reset every tile to idle, so the
+      // player could sweep the same pressed tile again for full points and
+      // `correctCount` climbed past the number of tiles that were ever
+      // pressed -- into the row the repository persists.
+      final c = containerWith();
+      final swept = firstOfDepth(c, TileDepth.pressed);
+
+      notifierOf(c).submit(swept);
+      expect(stateOf(c).score.correct, 1);
+
+      notifierOf(c).submit(firstOfDepth(c, TileDepth.raised));
+
+      expect(
+        stateOf(c).tileStates[swept],
+        LightTileState.swept,
+        reason: 'the swept tile went back to idle',
+      );
+
+      notifierOf(c).submit(swept);
+
+      expect(
+        stateOf(c).score.correct,
+        1,
+        reason: 'one pressed tile scored twice',
+      );
+      expect(stateOf(c).score.points, kFalseLightBasePoints);
+    });
   });
 
   group('the field ladder', () {
@@ -273,7 +303,35 @@ void main() {
 
       expect(notifierOf(c).fieldsCleared, 1);
       expect(notifierOf(c).averageFieldMs, 4000);
+      expect(notifierOf(c).totalFieldMs, 4000);
     });
+
+    test(
+      'and the snapshot publishes the SUM, which is what the column holds',
+      () {
+        // `RunRecord` documents totalReactionMs as "the sum of every reaction
+        // time, not the average", and both RunRecord.averageReactionMs and
+        // GameStats.averageReactionMs divide it by the answered count.
+        // Publishing an average here stored one and then divided it again.
+        var now = DateTime.utc(2026);
+        final c = containerWith(clock: Clock(() => now));
+
+        notifierOf(c).markShown();
+
+        for (var field = 0; field < 3; field++) {
+          now = now.add(const Duration(seconds: 4));
+          clearField(c);
+        }
+
+        expect(notifierOf(c).fieldsCleared, 3);
+        expect(notifierOf(c).averageFieldMs, 4000);
+        expect(
+          snapshotOf(c).totalReactionMs,
+          12000,
+          reason: 'three fields at four seconds is twelve seconds banked',
+        );
+      },
+    );
 
     test('and floors a clock that ran backwards at zero', () {
       var now = DateTime.utc(2026);

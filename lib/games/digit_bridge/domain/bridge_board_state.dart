@@ -11,10 +11,6 @@ enum BridgeChipState {
   /// Untouched, and tappable.
   idle,
 
-  /// The matching numeral, just taken. It sinks into the accent's deep half
-  /// and holds.
-  matched,
-
   /// A near-miss, just taken. It sinks, wears an ink strike bar and shakes.
   rejected,
 

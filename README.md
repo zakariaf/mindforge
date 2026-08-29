@@ -19,9 +19,10 @@
 
 ---
 
-> **Status: 1.0.0 built, not yet on the App Store.** All eleven epics are merged and the tree is
-> tagged `v1.0.0+1`: the theme, the four locales, the component library, the engine and both games
-> are implemented and tested. The screenshots below are the *reference targets* under
+> **Status: 1.0.0 built, not yet on the App Store.** Twelve epics are merged: the theme, the four
+> locales, the component library, the engine and four games are implemented and tested. 1.0.0 was
+> submitted and rejected under App Store Guideline 4.3(a); `docs/review/app-review-4-3-a.md` records
+> what that means and what changed. The screenshots below are the *reference targets* under
 > `design/sunburst-pop/screens/` that every screen was built and signed off against — they render the
 > design source, not the simulator, so a shipped screen is compared to one rather than replaced by it.
 > Progress is tracked in [`epics/README.md`](epics/README.md).
@@ -69,18 +70,23 @@ solid ink border and one hard offset shadow at zero blur, and it presses down wh
 </p>
 <p align="center">
   <img src="design/sunburst-pop/screens/05-schulte-grid.png" width="185" alt="Schulte Grid: a five by five grid of scrambled numbers">
+  <img src="design/sunburst-pop/screens/09-digit-bridge.png" width="185" alt="Digit Bridge: the number 472 in Latin digits above six chips carrying Eastern Arabic numerals">
+  <img src="design/sunburst-pop/screens/10-false-light.png" width="185" alt="False Light: a grid of raised tiles with several pressed flat into the board">
   <img src="design/sunburst-pop/screens/06-results.png" width="185" alt="Results: score, new personal best badge, accuracy and reaction time">
+</p>
+<p align="center">
   <img src="design/sunburst-pop/screens/07-stats.png" width="185" alt="Stats: personal bests and a bar chart of recent runs">
   <img src="design/sunburst-pop/screens/08-settings.png" width="185" alt="Settings: sound, haptics, reduce motion, colour-blind palette and language">
 </p>
 
 <p align="center"><em>
   Home · Game detail · Countdown · Stroop Rush<br>
-  Schulte Grid · Results · Stats · Settings
+  Schulte Grid · Digit Bridge · False Light · Results<br>
+  Stats · Settings
 </em></p>
 
 Browse the full design system at [`design/sunburst-pop/system.html`](design/sunburst-pop/system.html),
-all eight screens at [`design/sunburst-pop/app.html`](design/sunburst-pop/app.html), or the two
+all ten screens at [`design/sunburst-pop/app.html`](design/sunburst-pop/app.html), or the two
 rejected alternatives from [`design/index.html`](design/index.html).
 
 ### Accessible by construction
@@ -130,7 +136,7 @@ CLAUDE.md           the house rules — read this first
 design/             the design exploration; sunburst-pop/ is the chosen direction
   sunburst-pop/
     system.html     authoritative for token values: hexes, radii, shadows, durations, type
-    app.html        authoritative for layout and spacing across the eight screens
+    app.html        authoritative for layout and spacing across the ten screens
     screens/        the reference screenshots every implementation is compared against
 epics/              the build plan, E01 to E12
 ```

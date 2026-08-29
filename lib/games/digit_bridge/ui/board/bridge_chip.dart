@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mindforge/games/digit_bridge/domain/bridge_board_state.dart';
 import 'package:mindforge/games/digit_bridge/ui/board/bridge_numeral.dart';
 import 'package:mindforge/shared/motion/shake_on_wrong.dart';
-import 'package:mindforge/theme/game_accent.dart';
 import 'package:mindforge/theme/sunburst_colors.dart';
 import 'package:mindforge/theme/sunburst_shape.dart';
 import 'package:mindforge/theme/sunburst_type.dart';
@@ -17,14 +16,15 @@ import 'package:mindforge/ui/components/pop_surface.dart';
 /// | state | fill | elevation | translate | strike bar |
 /// |---|---|---|---|---|
 /// | idle | surfaceRaised | e2 | none | no |
-/// | matched | accent deep | flat | (2, 2) | no |
 /// | rejected | surfaceRaised | flat | (2, 2) | yes |
 /// | locked | surfaceRaised | flat | none | no |
 ///
-/// The matched chip sinks rather than lifting, which is the opposite of Stroop
-/// Rush's accepted key and deliberate: there the answer is a colour and lifting
-/// it presents it, here the answer is a numeral the player has just finished
-/// reading and the satisfying thing is for it to go away into the board.
+/// **There is no "matched" state, and there was one until it was found to be
+/// unreachable.** A correct tap advances the round in the same frame, so the
+/// chip that was tapped is gone before it could draw anything. Its residue
+/// under Sound off, Haptics off and Reduce motion on is the whole board
+/// changing — a new target and six new numerals — which is a larger change than
+/// any single-chip animation would have been.
 ///
 /// A resolved chip **drops its `onTap`** rather than passing `enabled: false`:
 /// the disabled shape swaps the fill to `surfaceSunk`, which reads as a control
@@ -84,13 +84,6 @@ class BridgeChip extends StatelessWidget {
         colours.surfaceRaised,
         PopElevation.e2,
         Offset.zero,
-        false,
-      ),
-      // INTO the board, not out of it. See the class doc.
-      BridgeChipState.matched => (
-        colours.accentFor(GameAccent.digitBridge, GameColourRole.deep),
-        PopElevation.flat,
-        SunburstShape.pressedShadow,
         false,
       ),
       BridgeChipState.rejected => (
