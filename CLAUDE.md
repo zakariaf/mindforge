@@ -29,26 +29,32 @@ These are the easiest thing to break by adding one package. Check them before `d
 
 If a feature appears to require the network, it is the wrong feature.
 
-## Current state (as of 2026-08-19)
+## Current state (as of 2026-08-29)
 
-**The Flutter app is not scaffolded yet.** There is no `pubspec.yaml`, no `lib/`, no `test/`.
-What exists is the plan and the conventions: the skills, the design system with its rendered
-reference screens, the eleven epics, and the public repository furniture.
+**All eleven epics are merged and the tree is tagged `v1.0.0+1`.** The app is built: the theme, the
+four locales with their `ckb` delegates, the component library, the motion and feedback layer, the
+engine core, the eight shell screens and both games — Stroop Rush and Schulte Grid — are implemented,
+tested and signed off against the reference screens on the canonical simulator.
 
 ```
-README.md                         the public front door, with the eight screenshots
-CONTRIBUTING.md                   the outside-contributor path: epic -> implement -> PR
-LICENSE / NOTICE                  Apache-2.0; NOTICE also covers bundled font licensing
-CLAUDE.md                         this file — the house rules
-.github/PULL_REQUEST_TEMPLATE.md  the five required PR sections
-.claude/skills/                   45 skills — 40 general Flutter/Dart conventions + 5 sunburst-*
-epics/                            E01–E11, the build plan; superseded/ holds the old ten-epic plan
-design/index.html                 the three-direction picker
-design/sunburst-pop/              CHOSEN — system.html, app.html, README.md, screens/*.png, capture-screens.sh
+lib/                              the app; core/ theme/ l10n/ ui/ features/ games/ data/ shared/ routing/
+test/                             mirrors lib/, plus test/policy/ for the gate-backed invariants
+ios/                              the only platform target; bundle io.applander.mindforge
+tool/skill_gates.sh               the sanctioned gate set — never glob the skill scripts
+docs/decisions/                   the ADRs; docs/verification/ holds the per-epic sign-offs
+epics/                            E01–E11, all merged; superseded/ holds the old ten-epic plan
+design/sunburst-pop/              CHOSEN — system.html, app.html, screens/*.png, screens/rtl/*.png
 design/cotton-cloud/              rejected alternative, kept for reference
 design/paper-crayon/              rejected alternative, kept for reference
-50-apps-challenge-slides.html     episode slides
 ```
+
+**Shipped state, 2026-08-29.** 1.0.0 build 1 was uploaded to App Store Connect on 2026-08-21 under
+app id `6803829952`, and **App Review rejected it under Guideline 4.3(a) — Design: Spam**, on the
+grounds that the app shares a concept with apps from other developers. That is a catalogue judgement
+about the two games, not a claim about the code: Stroop and Schulte are public-domain tasks that the
+store already carries in quantity. The response is E12 — two games that are original rather than
+classical, chosen so the app's own differentiators (four locales across two scripts, and the shape
+language's single light source) are the mechanic rather than the packaging.
 
 The repository is public at `github.com/zakariaf/mindforge` under Apache-2.0. Anything added here is
 published, so it must be true — no aspirational feature lists, no screenshots of software that does
@@ -65,11 +71,9 @@ not exist described as if it ships.
 | `intl` | `0.20.2` — an **exact** pin inside `flutter_localizations`, not a range |
 | `ckb` in `GlobalMaterialLocalizations` | **absent** (82 codes; `en` `de` `fa` `ar` present). A custom delegate trio is required or a switch to Sorani throws — and silently renders LTR. |
 
-**Next step:** scaffold the app — `flutter create --platforms=ios`, a pinned `pubspec.yaml`,
-`analysis_options.yaml` on `very_good_analysis` — then build `lib/theme/` by transcribing
-`design/sunburst-pop/system.html` per `sunburst-tokens`. The theme layer comes before any screen,
-because every screen reads it, and localization comes before any component, because directional
-geometry cannot be retrofitted.
+**Next step:** E12 — the two games that answer the 4.3(a) rejection. Read `epics/E12-*.md` before
+touching `lib/games/`, and note that it is the first epic to add a `GameAccent`, which means new
+`SunburstColors` slots and therefore a deliberate edit to `design/sunburst-pop/system.html`.
 
 ## Architecture we are building toward
 

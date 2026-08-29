@@ -10,7 +10,7 @@
   <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.44.6-02569B">
   <img alt="Platform" src="https://img.shields.io/badge/platform-iOS%20%C2%B7%20Android-lightgrey">
   <img alt="Locales" src="https://img.shields.io/badge/locales-en%20%C2%B7%20de%20%C2%B7%20fa%20%C2%B7%20ckb-orange">
-  <img alt="Status" src="https://img.shields.io/badge/status-in%20development-yellow">
+  <img alt="Status" src="https://img.shields.io/badge/version-1.0.0-brightgreen">
 </p>
 
 <p align="center">
@@ -19,9 +19,11 @@
 
 ---
 
-> **Status: in development.** The design system, the engineering conventions and the full build plan
-> are done and in this repository. The Flutter app itself is not scaffolded yet — the screenshots below
-> are the *design targets* every screen is built and signed off against, not shipped software.
+> **Status: 1.0.0 built, not yet on the App Store.** All eleven epics are merged and the tree is
+> tagged `v1.0.0+1`: the theme, the four locales, the component library, the engine and both games
+> are implemented and tested. The screenshots below are the *reference targets* under
+> `design/sunburst-pop/screens/` that every screen was built and signed off against — they render the
+> design source, not the simulator, so a shipped screen is compared to one rather than replaced by it.
 > Progress is tracked in [`epics/README.md`](epics/README.md).
 
 ## What it is
@@ -135,7 +137,7 @@ epics/              the build plan, E01 to E12
 
 ### Building it
 
-The app is not scaffolded yet — these commands become real with E01.
+Requires Flutter 3.44.6, Xcode 26.6 and CocoaPods. iOS is the only target that ships today.
 
 ```bash
 flutter pub get
@@ -149,8 +151,6 @@ That UDID is an iPhone 14 simulator named `MindForge iPhone 14`. It is the canon
 is **exactly 390×844 logical points**, matching the reference screenshots. No iPhone 16-class simulator
 does — the 16 is 393×852 and the 16 Pro is 402×874 — so comparing a build against the references on
 anything else is not an honest comparison.
-
-Requires Flutter 3.44.6, Xcode 26.6 and CocoaPods.
 
 MindForge targets **iOS and Android**. iOS is being built first, so the current epics and the
 canonical device above are iOS; Android follows once the app runs end to end. Nothing in the
