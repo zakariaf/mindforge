@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:mindforge/core/numeral_script.dart';
 import 'package:mindforge/core/supported_locale.dart';
 
 /// The **one** `NumberFormat` construction site in `lib/`.
@@ -70,6 +71,58 @@ final class LocaleNumbers {
   String count(int value) =>
       NumberFormat.decimalPattern(_symbols).format(value);
 
+  /// A whole number as an **ungrouped** run of digits in [locale]'s script.
+  ///
+  /// `4723` renders `4723` in `en` and `۴۷۲۳` in `fa` — the same digits
+  /// [count] would use, without the group separator.
+  ///
+  /// **Not a stylistic variant of [count].** A grouped numeral is two things to
+  /// read, and Digit Bridge asks a player to match one numeral against six
+  /// candidates at speed: the separator carries no information and is a second
+  /// glyph to reject. It is also the wrong shape for the question — `4,723`
+  /// against `۴٬۷۲۳` invites a comparison of separators rather than of digits.
+  ///
+  /// Use [count] for a score, a total or anything a reader parses as a
+  /// quantity; use this for a numeral that IS the content.
+  String digits(int value) => _ungrouped(_symbols).format(value);
+
+  /// A whole number as an ungrouped run in [script], whatever [locale] is.
+  ///
+  /// **The one place in MindForge where a numeral's script is not the reader's,
+  /// and the exception is deliberate.** Working agreement 12 resolves numerals
+  /// from the locale at render, which is right for every surface that shows a
+  /// value. Digit Bridge shows the same value in two systems and asks which
+  /// candidate matches: if both sides took the locale's answer they would
+  /// render identically and the board would have no question on it.
+  ///
+  /// The exception is to **which** script renders, never to how one is
+  /// constructed — this routes through the same pinned formatter every other
+  /// method here uses, so there is still exactly one `NumberFormat` site in
+  /// `lib/`, which `test/policy/number_format_sites_test.dart` proves.
+  ///
+  /// It is scoped to the board's two numeral runs. The HUD, the score, the
+  /// results and the BEST pill all keep taking [digits] and [count].
+  String digitsInScript(int value, NumeralScript script) =>
+      _ungrouped(_scriptSymbols(script)).format(value);
+
+  /// The symbol locale whose CLDR data renders [script].
+  ///
+  /// `fa` rather than `ar` for Eastern Arabic, for the reason
+  /// [symbolLocaleFor] already records: CLDR's Arabic default is **Latin**
+  /// digits, so borrowing `ar` would render the wrong side of the bridge.
+  static String _scriptSymbols(NumeralScript script) => switch (script) {
+    NumeralScript.latin => 'en',
+    NumeralScript.easternArabic => 'fa',
+  };
+
+  /// A digits-only formatter for [symbols], with grouping off.
+  ///
+  /// The construction [clock] already uses, extracted so the two cannot drift:
+  /// a clock and a bridge numeral are both runs of digits with no separator.
+  static NumberFormat _ungrouped(String symbols) =>
+      NumberFormat.decimalPatternDigits(locale: symbols, decimalDigits: 0)
+        ..turnOffGrouping();
+
   /// A percentage from a ratio in `[0.0, 1.0]`, with no fractional part.
   ///
   /// `0.92` renders `92%` in `en`. The percent sign is placed by the locale's
@@ -120,10 +173,7 @@ final class LocaleNumbers {
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
 
-    final digits = NumberFormat.decimalPatternDigits(
-      locale: _symbols,
-      decimalDigits: 0,
-    )..turnOffGrouping();
+    final digits = _ungrouped(_symbols);
 
     return '${digits.format(minutes)}:'
         '${seconds < 10 ? digits.format(0) : ''}${digits.format(seconds)}';
