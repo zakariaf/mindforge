@@ -104,6 +104,31 @@ to rediscover it:
    invited exactly that — "a third one has to come here and argue for itself" —
    and this is the third one.
 
+## Follow-ups this epic deliberately did not take
+
+Both came out of `/simplify` and both are real. Neither belongs in an epic whose
+job is to add games, because both would edit a shipped one — recorded here so
+the next reader finds them rather than rediscovering them.
+
+1. **Three copies of the run score.** `StroopScore`, `BridgeScore` and
+   `LightScore` are the same five-int value type, the same `.zero()`, the same
+   `streakMultiplier` modulo which constant it divides by, and the same
+   `applyAnswer` fold modulo which class it constructs — about 95 lines
+   duplicated twice. They also each restate two **persistence** invariants in
+   prose (`CHECK (metric_value >= 0)` and `CHECK (longest_combo <=
+   correct_count)`) that belong to `lib/data/`, so the copies can drift apart
+   silently. The fence permits the fix: a `RunScore` in `lib/core/` names no
+   game, so `engine_seam_test`'s content grep passes. The per-game DERIVED
+   constants stay where they are; only the type and the fold move.
+
+2. **Three copies of the `TextPainter` fit measurement.** `BridgeTarget._fits`,
+   `StroopAnswerKey._fits` and `_StimulusCard._measure` all build a painter with
+   the ambient scaler, lay out **unconstrained**, compare and dispose. The
+   subtle parts are exactly the parts a copy gets wrong — and E12 proved that,
+   because the first version of its own fit TEST got the unconstrained part
+   wrong and passed against a real defect. A `textFits` helper in `lib/ui/`
+   would make the correct shape the only shape.
+
 ## What measurement changed before a line was written
 
 This epic was planned against the seam contracts and then **checked against the tree**. Four things it
