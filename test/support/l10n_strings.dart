@@ -49,7 +49,7 @@ Map<String, String> renderAllStrings(AppLocalizations l10n) {
     'dailyMixSummary': l10n.dailyMixSummary(3, 4, n(3), n(4)),
     'dailyMixTodaysPick': l10n.dailyMixTodaysPick(l10n.gameStroopRushName),
     'yourGamesTitle': l10n.yourGamesTitle,
-    'gamesUnlocked': l10n.gamesUnlocked(2, n(2)),
+    'gamesUnlocked': l10n.gamesUnlocked(4, n(4)),
     'bestLabel': l10n.bestLabel,
     'comingSoon': l10n.comingSoon,
     'gameStroopRushName': l10n.gameStroopRushName,
