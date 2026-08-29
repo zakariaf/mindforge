@@ -423,4 +423,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String bridgeChipValue(String numeral, String script) {
     return '$numeral, $script';
   }
+
+  @override
+  String get gameFalseLightName => 'False Light';
+
+  @override
+  String get gameFalseLightTagline => 'Sweep the tiles that are pressed';
+
+  @override
+  String get gameFalseLightKicker => 'ATTENTION · SPEED';
+
+  @override
+  String get lightTileRaised => 'Raised tile';
+
+  @override
+  String get lightTilePressed => 'Pressed tile';
+
+  @override
+  String get lightTileSwept => 'Cleared tile';
+
+  @override
+  String get lightFieldTimeLabel => 'Avg field';
 }

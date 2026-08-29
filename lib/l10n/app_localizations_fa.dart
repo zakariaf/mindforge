@@ -418,4 +418,25 @@ class AppLocalizationsFa extends AppLocalizations {
   String bridgeChipValue(String numeral, String script) {
     return '$numeral، $script';
   }
+
+  @override
+  String get gameFalseLightName => 'نور دروغین';
+
+  @override
+  String get gameFalseLightTagline => 'کاشی‌های فرورفته را پاک کن';
+
+  @override
+  String get gameFalseLightKicker => 'توجه · سرعت';
+
+  @override
+  String get lightTileRaised => 'کاشی برجسته';
+
+  @override
+  String get lightTilePressed => 'کاشی فرورفته';
+
+  @override
+  String get lightTileSwept => 'کاشی پاک‌شده';
+
+  @override
+  String get lightFieldTimeLabel => 'میانگین میدان';
 }

@@ -31,7 +31,12 @@ void main() {
 
       expect(
         container.read(gameRegistryProvider).map((game) => game.id.value),
-        <String>['stroop_rush', 'schulte_grid', 'digit_bridge'],
+        <String>[
+          'stroop_rush',
+          'schulte_grid',
+          'digit_bridge',
+          'false_light',
+        ],
       );
     });
 
@@ -49,6 +54,7 @@ void main() {
       final stroop = games.firstWhere((g) => g.id.value == 'stroop_rush');
       final schulte = games.firstWhere((g) => g.id.value == 'schulte_grid');
       final bridge = games.firstWhere((g) => g.id.value == 'digit_bridge');
+      final light = games.firstWhere((g) => g.id.value == 'false_light');
 
       expect(stroop.accent, GameAccent.stroop);
       expect(stroop.scoreFormat, ScoreFormat.points);
@@ -86,6 +92,18 @@ void main() {
             'a run limit would route the run through _expiredOutcome(), which '
             'is hardcoded to a trio of zeros',
       );
+
+      // THE FOURTH GAME, and the only board with nothing to localize on it.
+      // Its answer is depth, so every hue can be removed and it still plays --
+      // the axis no earlier game touched.
+      expect(light.accent, GameAccent.falseLight);
+      expect(light.colourRole, BoardColourRole.decorative);
+      expect(light.scoreFormat, ScoreFormat.points);
+      expect(light.scoreSource, ScoreSource.board);
+      expect(light.boardBackground, BoardBackground.gameAccent);
+      expect(light.difficulties, Difficulty.values);
+      expect(light.isLocked, isFalse);
+      expect(light.runLimitMsFor(Difficulty.classic), isNull);
     });
 
     test('and a MECHANIC board is never drawn on an accent', () {

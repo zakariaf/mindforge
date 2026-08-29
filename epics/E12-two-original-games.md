@@ -106,9 +106,8 @@ here rather than quietly dropped, because two of them were the epic's own headli
    vector stays locale-independent while the game is always "translate from or to what you know".
 
 The seam stresses that remain are real and still untested anywhere: a board whose stimulus script is
-chosen by the round rather than the locale, a board with **no text and no colour at all** whose golden
-is byte-identical across four locales, and the first two additions to `GameAccent` since the theme was
-written.
+chosen by the round rather than the locale, a board with **no text and no colour at all** — nothing on it for a
+locale to translate — and the first two additions to `GameAccent` since the theme was written.
 
 Three corrections to names this epic used, found the same way — the shipped API is
 `const LocaleNumbers(SupportedLocale)` (there is no `forLocale`), `BidiText.isolate` (there is no
@@ -143,8 +142,8 @@ axis nothing has yet touched:
 Three of those cells have never been exercised — the script-pinned stimulus, the total absence of
 colour, and the new accent. The "no colour anywhere" cell is the one that matters to E11's
 accessibility floor: False Light is the first board that is fully playable with every hue removed
-*without* the colour-blind palette being involved at all, and the first whose golden is byte-identical
-in `en` and `fa` because it contains nothing a locale can change.
+*without* the colour-blind palette being involved at all, and the first that contains nothing a
+locale can change — no string and no numeral. Its grid still mirrors, like every grid in the app.
 
 The localisation cells matter for the App Review answer specifically. Digit Bridge is the only game
 in the app that a reviewer cannot understand as a reskin of something else, because its content is
@@ -242,7 +241,8 @@ A reader can tell this epic is done by doing all of the following on
    on (Accessibility → Display & Text Size → Colour Filters → Greyscale) and it remains fully
    playable.
 9. Switch to **کوردیی ناوەندی**. Nothing throws, both new boards render, no glyph is a tofu box, and
-   False Light's field is byte-identical to the `en` render because it contains no text at all.
+   False Light's field carries the same depths in the same order as the `en` render, because it
+   contains no text at all — its grid mirrors, its content does not.
 10. Switch to **Deutsch** at text scale 1.3. Every new label still fits its pill; nothing is
     ellipsised, nothing is shrunk, nothing is wrapped in a clamped scaler.
 11. `bash tool/check_no_shell_edits.sh` prints `OK: lib/features/** untouched`. The whole diff is
@@ -686,7 +686,7 @@ sensitivity — which is a large fraction of the over-50 audience a brain traine
   under all four locales.
 - `test/policy/engine_locale_purity_test.dart` — extended: `lib/games/false_light/**` contains **no
   user-facing string at all**. This game has no text on its board, and asserting it is what makes the
-  byte-identical `en`/`fa` golden in T12.12 meaningful.
+  locale-invariance assertion in T12.12 meaningful.
 
 **Implementation.**
 1. `LightField` is an immutable value over a `List<TileDepth>` plus its grid shape.
@@ -757,8 +757,12 @@ state, the streak multiplier derived and never stored — `stroop_scoring.dart` 
   future refactor to `EdgeInsetsDirectional` would silently mirror the light and break the mechanic
   in exactly two locales.
 - `test/games/false_light/ui/light_board_golden_test.dart` — goldens in `en` and `fa`. **They must be
-  byte-identical**, because the board contains no text and no directional geometry. A diff here is a
-  bug, and it is the cheapest possible proof of the claim in step 9.
+  compared on CONTENT rather than on pixels**, because the grid mirrors while the field does not.
+  Measured: tile 0 sits at x=20 in `en` and x=291.5 in `fa`. Schulte pins its grid left-to-right
+  because 1..25 is ordered and `cells[0]` must mean a screen position; a False Light field is
+  unordered, so mirroring yields another equally valid field and pinning would make three of four
+  boards directional islands. The assertion is: no `Text` under the board, and the same tile depths
+  in the same traversal order in both locales.
 
 **Implementation.** `FalseLightBoard` → `LightField` → `LightTile`. If the tile becomes a
 `CustomPainter`, it takes an immutable scene, compares it in `shouldRepaint`, allocates nothing in
@@ -1014,7 +1018,8 @@ has no simulator, and this epic does not pretend otherwise.
 8. **`ckb` remains the locale with no system-language path.** Nothing here changes that; both new
    boards must still be exercised in Sorani through the in-app Language sheet. **Decision:** T12.16
    lists it explicitly. False Light makes it cheap — with no text on the board, its `ckb` render is
-   provably identical to its `en` one, and T12.12's byte-identical golden is what proves it.
+   provably free of anything a locale could change, and T12.12's depth-sequence comparison is what
+   proves it.
 
 9. **This epic does not guarantee the rejection is overturned.** 4.3(a) is a reviewer judgement, and
    shipping differentiation improves the argument without settling it. **Decision:** say so here
@@ -1029,7 +1034,7 @@ has no simulator, and this epic does not pretend otherwise.
    file and in the PR body with the reason each is game-agnostic.
 3. `flutter test` is green, including the locale-independent vector tables for both games, the
    real-font Persian lane for Digit Bridge, the greyscale and palette-independence goldens for False
-   Light, and the byte-identical `en`/`fa` golden that proves False Light carries no text.
+   Light, and the `en`/`fa` depth-sequence comparison that proves False Light carries no text.
 4. Every gate in `Gates that must pass` exits 0.
 5. `screens/09-digit-bridge.png`, `screens/10-false-light.png`, `screens/01-home.png` and all three
    `rtl/` counterparts exist, were captured from `app.html` in the same commit as the layout they

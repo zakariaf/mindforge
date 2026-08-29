@@ -191,5 +191,40 @@
   "@bridgeChipValue": {
     "description": "What a screen reader announces for one candidate chip: the numeral and which numbering system it is written in. Both are Strings -- an int placeholder would send ckb through intl's missing symbol data and silently emit Latin digits, and would also re-format a numeral the round deliberately pinned to the other script.",
     "x-review": "native-speaker-pending"
+  },
+  "gameFalseLightName": "Falsches Licht",
+  "@gameFalseLightName": {
+    "description": "The fourth game's name. A coined product name: one imaginary light falls on the whole board and a pressed tile is where it does not land. Not a psychologist's name -- this task is the app's own.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameFalseLightTagline": "Finde die eingedrueckten Kacheln",
+  "@gameFalseLightTagline": {
+    "description": "The fourth game's one-line description on the home card. 'Pressed' rather than 'dark' or 'different': the board carries no colour information, and the tagline must not promise one.",
+    "x-review": "native-speaker-pending"
+  },
+  "gameFalseLightKicker": "AUFMERKSAMKEIT · TEMPO",
+  "@gameFalseLightKicker": {
+    "description": "The short line above the board on the detail screen. Authored in capitals in en/de; the Arabic script has no case, so fa and ckb carry the same words unchanged -- that is correct, not a missing translation.",
+    "x-review": "native-speaker-pending"
+  },
+  "lightTileRaised": "Erhabene Kachel",
+  "@lightTileRaised": {
+    "description": "What a screen reader announces for a tile that is NOT a target. Depth is the only visual channel on this board and a screen-reader user cannot see a shadow, so the thing a sighted player reads off the geometry has to be said in words or the game is unplayable rather than merely harder.",
+    "x-review": "native-speaker-pending"
+  },
+  "lightTilePressed": "Eingedrueckte Kachel",
+  "@lightTilePressed": {
+    "description": "What a screen reader announces for a target tile. The counterpart of lightTileRaised, and the same argument: without it the board has no non-visual channel at all.",
+    "x-review": "native-speaker-pending"
+  },
+  "lightTileSwept": "Geraeumte Kachel",
+  "@lightTileSwept": {
+    "description": "What a screen reader announces for a tile already swept. A third state rather than reusing 'raised': a swept tile takes the raised construction on purpose, so the two look alike and a reader who was told 'raised' could not tell what is left to do.",
+    "x-review": "native-speaker-pending"
+  },
+  "lightFieldTimeLabel": "Feld im Schnitt",
+  "@lightFieldTimeLabel": {
+    "description": "The middle cell of False Light's results trio. A sweep is not a reflex, so an average per TAP would measure nothing a player recognises; the number they feel is how long a whole field took to clear.",
+    "x-review": "native-speaker-pending"
   }
 }

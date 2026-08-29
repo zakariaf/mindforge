@@ -772,6 +772,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{numeral}, {script}'**
   String bridgeChipValue(String numeral, String script);
+
+  /// The fourth game's name. A coined product name: one imaginary light falls on the whole board and a pressed tile is where it does not land. Not a psychologist's name -- this task is the app's own.
+  ///
+  /// In en, this message translates to:
+  /// **'False Light'**
+  String get gameFalseLightName;
+
+  /// The fourth game's one-line description on the home card. 'Pressed' rather than 'dark' or 'different': the board carries no colour information, and the tagline must not promise one.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweep the tiles that are pressed'**
+  String get gameFalseLightTagline;
+
+  /// The short line above the board on the detail screen. Authored in capitals in en/de; the Arabic script has no case, so fa and ckb carry the same words unchanged -- that is correct, not a missing translation.
+  ///
+  /// In en, this message translates to:
+  /// **'ATTENTION · SPEED'**
+  String get gameFalseLightKicker;
+
+  /// What a screen reader announces for a tile that is NOT a target. Depth is the only visual channel on this board and a screen-reader user cannot see a shadow, so the thing a sighted player reads off the geometry has to be said in words or the game is unplayable rather than merely harder.
+  ///
+  /// In en, this message translates to:
+  /// **'Raised tile'**
+  String get lightTileRaised;
+
+  /// What a screen reader announces for a target tile. The counterpart of lightTileRaised, and the same argument: without it the board has no non-visual channel at all.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressed tile'**
+  String get lightTilePressed;
+
+  /// What a screen reader announces for a tile already swept. A third state rather than reusing 'raised': a swept tile takes the raised construction on purpose, so the two look alike and a reader who was told 'raised' could not tell what is left to do.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared tile'**
+  String get lightTileSwept;
+
+  /// The middle cell of False Light's results trio. A sweep is not a reflex, so an average per TAP would measure nothing a player recognises; the number they feel is how long a whole field took to clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg field'**
+  String get lightFieldTimeLabel;
 }
 
 class _AppLocalizationsDelegate

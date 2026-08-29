@@ -418,4 +418,25 @@ class AppLocalizationsCkb extends AppLocalizations {
   String bridgeChipValue(String numeral, String script) {
     return '$numeral، $script';
   }
+
+  @override
+  String get gameFalseLightName => 'ڕووناکی درۆ';
+
+  @override
+  String get gameFalseLightTagline => 'خشتە چەقیوەکان پاک بکەرەوە';
+
+  @override
+  String get gameFalseLightKicker => 'سەرنج · خێرایی';
+
+  @override
+  String get lightTileRaised => 'خشتی بەرزکراوە';
+
+  @override
+  String get lightTilePressed => 'خشتی چەقیوە';
+
+  @override
+  String get lightTileSwept => 'خشتی پاککراوە';
+
+  @override
+  String get lightFieldTimeLabel => 'مامناوەندی مەیدان';
 }
