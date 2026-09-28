@@ -14,15 +14,16 @@
 </p>
 
 <p align="center">
-  <img src="docs/media/preview.png" alt="Four MindForge screens: the home hub, Stroop Rush with the word BLUE printed in red above four patterned answer keys, the Schulte Grid, and the results screen" width="100%">
+  <img src="docs/media/preview.png" alt="Five MindForge screens captured from the app: Stroop Rush, Schulte Grid, the home hub listing all four games, Digit Bridge and False Light" width="100%">
 </p>
 
 ---
 
-> **Status: 1.0.0 built, not yet on the App Store.** Twelve epics are merged: the theme, the four
-> locales, the component library, the engine and four games are implemented and tested. 1.0.0 was
-> submitted and rejected under App Store Guideline 4.3(a); `docs/review/app-review-4-3-a.md` records
-> what that means and what changed. The screenshots below are the *reference targets* under
+> **Status: 1.0.0 is [on the App Store](https://apps.apple.com/us/app/mindforge-brain-training/id6803829952).**
+> Twelve epics are merged: the theme, the four locales, the component library, the engine and four
+> games are implemented and tested. The first build was rejected under App Store Guideline 4.3(a);
+> `docs/review/app-review-4-3-a.md` records what that means and what changed before approval. The
+> image above is captured from the app. The screenshots below are the *reference targets* under
 > `design/sunburst-pop/screens/` that every screen was built and signed off against — they render the
 > design source, not the simulator, so a shipped screen is compared to one rather than replaced by it.
 > Progress is tracked in [`epics/README.md`](epics/README.md).
